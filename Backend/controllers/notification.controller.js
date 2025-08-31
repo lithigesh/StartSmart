@@ -22,3 +22,37 @@ exports.getNotifications = async (req, res, next) => {
         next(error);
     }
 };
+
+
+// @desc    Mark a notification as read
+// @route   PUT /api/notifications/:id/read
+// @access  Private
+exports.markNotificationAsRead = async (req, res, next) => {
+    try {
+        const notification = await Notification.findById(req.params.id);
+        if (!notification) return res.status(404).json({ message: 'Notification not found' });
+        if (notification.user.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+
+        notification.read = true;
+        await notification.save();
+        res.json(notification);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Delete a notification
+// @route   DELETE /api/notifications/:id
+// @access  Private
+exports.deleteNotification = async (req, res, next) => {
+    try {
+        const notification = await Notification.findById(req.params.id);
+        if (!notification) return res.status(404).json({ message: 'Notification not found' });
+        if (notification.user.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+        
+        await notification.deleteOne();
+        res.json({ message: 'Notification removed' });
+    } catch (error) {
+        next(error);
+    }
+};

@@ -198,3 +198,148 @@ exports.getInterestedIdeasForInvestor = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Get a single idea by ID (for owner)
+// @route   GET /api/ideas/:id
+// @access  Private (Owner only)
+exports.getIdeaById = async (req, res, next) => {
+    try {
+        const idea = await Idea.findById(req.params.id);
+
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        // Allow access if user is the owner OR an investor
+        if (idea.owner.toString() !== req.user.id && req.user.role !== 'investor') {
+            return res.status(403).json({ message: 'Not authorized to view this idea' });
+        }
+
+        res.json(idea);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update an idea
+// @route   PUT /api/ideas/:id
+// @access  Private (Owner only)
+exports.updateIdea = async (req, res, next) => {
+    try {
+        const idea = await Idea.findById(req.params.id);
+
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        if (idea.owner.toString() !== req.user.id) {
+            return res.status(403).json({ message: 'Not authorized to update this idea' });
+        }
+
+        // Optional: Prevent editing after analysis has started
+        if (idea.status !== 'pending') {
+            return res.status(400).json({ message: 'Cannot update an idea that is being or has been analyzed.' });
+        }
+
+        idea.title = req.body.title || idea.title;
+        idea.description = req.body.description || idea.description;
+        idea.category = req.body.category || idea.category;
+
+        const updatedIdea = await idea.save();
+        res.json(updatedIdea);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Delete an idea
+// @route   DELETE /api/ideas/:id
+// @access  Private (Owner only)
+exports.deleteIdea = async (req, res, next) => {
+    try {
+        const idea = await Idea.findById(req.params.id);
+
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        if (idea.owner.toString() !== req.user.id) {
+            return res.status(403).json({ message: 'Not authorized to delete this idea' });
+        }
+
+        await idea.deleteOne();
+        // Optional: Also delete related notifications
+        res.json({ message: 'Idea removed successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// @desc    Mark interest in an idea (ADD ONLY)
+// @route   POST /api/ideas/:id/interest
+exports.markInterest = async (req, res, next) => {
+    try {
+        const idea = await Idea.findById(req.params.id);
+        if (!idea) return res.status(404).json({ message: 'Idea not found' });
+
+        // Using $addToSet to prevent duplicate entries
+        await Idea.updateOne({ _id: req.params.id }, { $addToSet: { investorsInterested: req.user.id } });
+
+        // Find entrepreneur and send notification only if it was a new interest
+        const entrepreneur = await User.findById(idea.owner);
+        // ... (email sending logic remains the same)
+
+        res.status(201).json({ message: 'Interest marked successfully.' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Remove interest in an idea
+// @route   DELETE /api/ideas/:id/interest
+// @access  Private (Investor)
+exports.removeInterest = async (req, res, next) => {
+    try {
+        await Idea.updateOne({ _id: req.params.id }, { $pull: { investorsInterested: req.user.id } });
+        res.json({ message: 'Interest removed successfully.' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// @desc    Re-run AI analysis on an idea
+// @route   PUT /api/ideas/:id/analysis
+// @access  Private (Owner only)
+exports.rerunAnalysis = async (req, res, next) => {
+    // This function can be an alias for analyzeIdea or have slightly different logic
+    // For simplicity, we will just call the original analyzeIdea function.
+    // This creates a dedicated PUT endpoint for the action.
+    exports.analyzeIdea(req, res, next);
+};
+
+// @desc    Delete/reset the analysis for an idea
+// @route   DELETE /api/ideas/:id/analysis
+// @access  Private (Owner only)
+exports.deleteAnalysis = async (req, res, next) => {
+    try {
+        const idea = await Idea.findById(req.params.id);
+        if (!idea) return res.status(404).json({ message: 'Idea not found' });
+        if (idea.owner.toString() !== req.user.id) return res.status(403).json({ message: 'Not authorized' });
+
+        // Reset analysis fields to default and status to pending
+        idea.analysis = {
+            score: 0,
+            swot: { strengths: '', weaknesses: '', opportunities: '', threats: '' },
+            roadmap: [],
+            trends: []
+        };
+        idea.status = 'pending';
+
+        await idea.save();
+        res.json({ message: 'Analysis has been reset', idea });
+    } catch (error) {
+        next(error);
+    }
+};

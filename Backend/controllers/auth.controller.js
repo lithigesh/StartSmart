@@ -49,7 +49,7 @@ exports.loginUser = async (req, res, next) => {
 };
 
 // @desc    Get user profile
-// @route   GET /api/auth/me
+// @route   GET /api/auth/profile
 // @access  Private
 exports.getMe = async (req, res, next) => {
     try {
@@ -61,6 +61,59 @@ exports.getMe = async (req, res, next) => {
                 email: user.email,
                 role: user.role,
             });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateUserProfile = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (user) {
+            user.name = req.body.name || user.name;
+            // You can add more updatable fields here, e.g., settings
+            // user.settings.darkMode = req.body.settings.darkMode;
+            
+            if (req.body.password) {
+                user.password = req.body.password; // The 'pre-save' hook will hash it
+            }
+
+            const updatedUser = await user.save();
+
+            res.json({
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role,
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Delete user account
+// @route   DELETE /api/auth/profile
+// @access  Private
+exports.deleteUserAccount = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (user) {
+            // Business logic note: Decide what to do with the user's ideas.
+            // For now, we'll just delete the user.
+            await user.deleteOne();
+            res.json({ message: 'User account deleted successfully' });
         } else {
             res.status(404).json({ message: 'User not found' });
         }
