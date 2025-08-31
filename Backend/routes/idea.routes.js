@@ -10,6 +10,7 @@ const {
     getAllIdeasForInvestor,
     getIdeaDetailsForInvestor,
     markInterest,
+    getInterestedIdeasForInvestor,
 } = require('../controllers/idea.controller');
 const { protect } = require('../middlewares/auth.middleware');
 const { isEntrepreneur, isInvestor } = require('../middlewares/role.middleware');
@@ -23,6 +24,7 @@ router.get('/:id/report', protect, isEntrepreneur, getIdeaReport);
 
 // --- Investor Routes ---
 router.get('/', protect, isInvestor, getAllIdeasForInvestor);
+router.get('/interested', protect, isInvestor, getInterestedIdeasForInvestor);
 router.get('/:id', protect, isInvestor, getIdeaDetailsForInvestor);
 router.post('/:id/interest', protect, isInvestor, markInterest);
 

@@ -179,3 +179,22 @@ exports.getInterestedInvestors = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Get all ideas an investor has marked as interested
+// @route   GET /api/ideas/interested
+// @access  Private (Investor)
+exports.getInterestedIdeasForInvestor = async (req, res, next) => {
+    try {
+        const ideas = await Idea.find({ investorsInterested: req.user.id })
+            .populate('owner', 'name')
+            .sort({ createdAt: -1 });
+
+        if (!ideas) {
+            return res.json([]);
+        }
+
+        res.json(ideas);
+    } catch (error) {
+        next(error);
+    }
+};
