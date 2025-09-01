@@ -86,6 +86,28 @@ module.exports = {
     },
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
   darkMode: ["class"],
+  daisyui: {
+    themes: [
+      {
+        blackwhite: {
+          primary: "#ffffff",
+          secondary: "#000000",
+          accent: "#ffffff",
+          neutral: "#000000",
+          "base-100": "#000000",
+          "base-200": "#0d0d0d",
+          "base-300": "#1a1a1a",
+          info: "#ffffff",
+          success: "#ffffff",
+          warning: "#ffffff",
+          error: "#ffffff",
+        },
+      },
+    ],
+    base: false,
+    styled: true,
+    utils: true,
+  },
 };
