@@ -1,29 +1,20 @@
 // routes/auth.routes.js
 const express = require('express');
 const router = express.Router();
+const { protect } = require('../middlewares/auth.middleware');
 const {
     registerUser,
     loginUser,
     getMe,
-    updateUserProfile,
-    deleteUserAccount,
+    getUserHistory
 } = require('../controllers/auth.controller');
-const { protect } = require('../middlewares/auth.middleware');
 
+// Public routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+
+// Protected routes
 router.get('/me', protect, getMe);
-
-// Use /profile for actions on the currently authenticated user
-router.route('/profile')
-    .get(protect, getMe)
-    .put(protect, updateUserProfile)
-    .delete(protect, deleteUserAccount);
-
-// Note: I'm using /profile instead of /:id for security.
-// This prevents a user from trying to update/delete another user's account.
-// The user is identified by their token.
+router.get('/users/:id/history', protect, getUserHistory);
 
 module.exports = router;
-
-
