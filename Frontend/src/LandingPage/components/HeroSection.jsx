@@ -1,7 +1,13 @@
-import { ArrowDownIcon, Wand2Icon } from "lucide-react";
 import React from "react";
-import { Button } from "../../../components/ui/button.jsx";
-import { HERO_CONTENT } from "../../../data/content.js";
+
+const HERO_CONTENT = {
+  title: "Connect Ideas with Investment",
+  subtitle: "StartSmart Platform",
+  description:
+    "The comprehensive ecosystem where entrepreneurs submit innovative ideas and investors discover the next big opportunity. Powered by AI analysis and intelligent matching.",
+  primaryCta: "Submit Your Idea",
+  secondaryCta: "Explore as Investor",
+};
 
 export const HeroSection = () => {
   return (
@@ -22,32 +28,10 @@ export const HeroSection = () => {
             {HERO_CONTENT.description}
           </p>
         </div>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-7 relative w-full">
-          <Button
-            variant="outline"
-            className="gap-2 border-[1.4px] border-solid border-white bg-transparent hover:bg-white/10 px-6 md:px-[34px] py-3 md:py-3.5 h-auto rounded-[55px] w-full sm:w-auto overflow-hidden transition-all duration-200"
-          >
-            <span className="[font-family:'Poppins',Helvetica] font-medium text-white text-base whitespace-nowrap">
-              {HERO_CONTENT.primaryCta}
-            </span>
-            <Wand2Icon className="w-6 h-6 text-white flex-shrink-0" />
-          </Button>
-
-          <a href="#features">
-            <Button className="bg-white hover:bg-white/90 text-black px-6 md:px-[34px] py-3 md:py-3.5 h-auto rounded-[55px] w-full sm:w-auto transition-all duration-200">
-              <span className="relative w-fit mt-[-1.40px] [font-family:'Poppins',Helvetica] font-medium text-black text-base text-center tracking-[0] leading-[normal]">
-                {HERO_CONTENT.secondaryCta}
-              </span>
-              <ArrowDownIcon className="w-6 h-6 text-black ml-2" />
-            </Button>
-          </a>
-        </div>
       </div>
 
       {/* Background decorations */}
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-50 pointer-events-none"></div>
-      
     </div>
   );
 };
