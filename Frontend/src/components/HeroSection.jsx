@@ -3,7 +3,7 @@ import { FaArrowUp } from "react-icons/fa";
 export const HeroSection = () => {
   return (
     <div className="relative flex-1 w-full flex items-center justify-center">
-      <div className="flex flex-col w-full max-w-[878px] items-center gap-8 md:gap-12 px-4 md:px-8 py-16 md:py-24">
+      <div className="flex flex-col w-full max-w-[878px] items-center gap-8 md:gap-12 px-4 md:px-8 py-20 md:py-32 pt-24 md:pt-32">
         <div className="flex flex-col items-center gap-7 relative w-full">
           <div className="inline-flex flex-col items-center gap-2 relative">
 

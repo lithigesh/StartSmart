@@ -135,6 +135,17 @@
   animation: marquee-smooth-reverse 25s linear infinite;
 }
 
+/* Mobile-specific faster animations */
+@media (max-width: 768px) {
+  .animate-marquee-mobile {
+    animation: marquee-smooth 12s linear infinite;
+  }
+  
+  .animate-marquee-mobile-reverse {
+    animation: marquee-smooth-reverse 15s linear infinite;
+  }
+}
+
 .animate-shimmer {
   animation: shimmer 8s infinite;
 }

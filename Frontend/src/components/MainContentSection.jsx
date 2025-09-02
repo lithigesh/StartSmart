@@ -419,7 +419,7 @@ export const MainContentSection = () => {
         </div>
 
         <div className="w-full overflow-hidden relative z-10">
-          <div className="flex animate-marquee-fast">
+          <div className="flex animate-marquee-fast md:animate-marquee-fast animate-marquee-mobile">
             <div className="flex gap-8 pr-8">
               {[...logos, ...logos].map((logo, index) => (
                 <LogoCard key={`logo-${index}`} logo={logo} />
