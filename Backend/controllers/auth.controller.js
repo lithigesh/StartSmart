@@ -121,3 +121,57 @@ exports.deleteUserAccount = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Get a user's complete history (ideas, feedback, funding)
+// @route   GET /api/auth/users/:id/history
+exports.getUserHistory = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+
+        // Ensure the requester is the user themselves or an admin
+        if (req.user.id !== userId && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        const [ideas, feedbackGiven, fundingRequests] = await Promise.all([
+            Idea.find({ owner: userId }),
+            Feedback.find({ investor: userId }),
+            FundingRequest.find({ entrepreneur: userId })
+        ]);
+
+        res.json({
+            ideas,
+            feedbackGiven,
+            fundingRequests,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get a user's complete history (ideas, feedback, funding)
+// @route   GET /api/auth/users/:id/history
+exports.getUserHistory = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        if (req.user.id !== userId && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Not authorized to view this history' });
+        }
+
+        // Aggregate data for the user
+        const [ideasSubmitted, feedbackGiven, fundingRequestsMade] = await Promise.all([
+            Idea.find({ owner: userId }).lean(),
+            Feedback.find({ investor: userId }).populate('idea', 'title').lean(),
+            FundingRequest.find({ entrepreneur: userId }).populate('idea', 'title').lean(),
+        ]);
+
+        res.json({
+            ideasSubmitted,
+            feedbackGiven,
+            fundingRequestsMade,
+        });
+    } catch (error) {
+        next(error);
+    }
+};

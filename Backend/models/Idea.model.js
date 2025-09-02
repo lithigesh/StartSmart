@@ -1,17 +1,4 @@
-// models/Idea.model.js
 const mongoose = require('mongoose');
-
-const SwotSchema = new mongoose.Schema({
-    strengths: { type: String, default: '' },
-    weaknesses: { type: String, default: '' },
-    opportunities: { type: String, default: '' },
-    threats: { type: String, default: '' },
-});
-
-const TrendSchema = new mongoose.Schema({
-    year: Number,
-    popularity: Number,
-});
 
 const IdeaSchema = new mongoose.Schema({
     title: { type: String, required: true },
@@ -20,16 +7,20 @@ const IdeaSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     status: {
         type: String,
-        enum: ['pending', 'analyzing', 'analyzed', 'failed'],
-        default: 'pending',
+        enum: ['draft', 'submitted', 'analyzed', 'funding_requested', 'closed'],
+        default: 'submitted',
     },
     analysis: {
-        score: { type: Number, default: 0 },
-        swot: SwotSchema,
+        score: { type: Number, min: 0, max: 100 },
+        swot: {
+            strengths: String,
+            weaknesses: String,
+            opportunities: String,
+            threats: String,
+        },
         roadmap: [String],
-        trends: [TrendSchema],
+        trends: [{ year: Number, popularity: Number }],
     },
-    investorsInterested: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Idea', IdeaSchema);

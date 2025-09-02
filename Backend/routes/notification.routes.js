@@ -1,15 +1,21 @@
 // routes/notification.routes.js
 const express = require('express');
 const router = express.Router();
-const { 
-    getNotifications, 
-    markNotificationAsRead, 
-    deleteNotification 
-} = require('../controllers/notification.controller');
 const { protect } = require('../middlewares/auth.middleware');
+const {
+    getUserNotifications,
+    markNotificationAsRead,
+    deleteNotification
+} = require('../controllers/notification.controller');
 
-router.get('/:userId', protect, getNotifications);
-router.put('/:id/read', protect, markNotificationAsRead);
-router.delete('/:id', protect, deleteNotification);
+// All routes are for the currently logged-in user
+router.route('/')
+    .get(protect, getUserNotifications);
+
+router.route('/:id/read')
+    .put(protect, markNotificationAsRead);
+
+router.route('/:id')
+    .delete(protect, deleteNotification);
 
 module.exports = router;
