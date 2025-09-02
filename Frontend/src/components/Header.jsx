@@ -1,4 +1,4 @@
-import StartSmartIcon from "../assests/w_startSmart_icon.png";
+import StartSmartIcon from "/w_startSmart_icon.png";
 
 export const Header = () => {
   return (

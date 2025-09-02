@@ -1,10 +1,10 @@
 import React from "react";
-import { Header } from "./components/Header.jsx";
-import { Footer } from "./components/Footer.jsx";
-import { HeroSection } from "./components/HeroSection.jsx";
-import { MainContentSection } from "./components/MainContentSection.jsx";
+import { Header } from "../components/Header.jsx";
+import { Footer } from "../components/Footer.jsx";
+import { HeroSection } from "../components/HeroSection.jsx";
+import { MainContentSection } from "../components/MainContentSection.jsx";
 
-export const HomePage = () => {
+const LandingPage = () => {
   return (
     <main className="flex flex-col w-full relative bg-black min-h-screen overflow-x-hidden">
       <section className="relative w-full min-h-screen bg-black overflow-hidden flex flex-col">
@@ -21,4 +21,6 @@ export const HomePage = () => {
       </div>
     </main>
   );
-};
+}
+
+export default LandingPage;
