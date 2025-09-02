@@ -1,23 +1,7 @@
 import {
   FaArrowUp,
-  FaApple,
-  FaGoogle,
-  FaMicrosoft,
-  FaAmazon,
-  FaFacebook,
-  FaTwitter,
-  FaLinkedin,
-  FaGithub,
   FaLightbulb,
   FaDollarSign,
-  FaPaypal,
-  FaDropbox,
-  FaSlack,
-  FaReddit,
-  FaYoutube,
-  FaInstagram,
-  FaWhatsapp,
-  FaTelegram,
   FaChartLine,
   FaUsers,
   FaFileAlt,
@@ -25,26 +9,20 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import {
-  SiTesla,
-  SiNetflix,
-  SiSpotify,
+  SiCashapp,
   SiUber,
   SiAirbnb,
   SiStripe,
-  SiZoom,
+  SiDoordash,
+  SiCoinbase,
+  SiRoblox,
+  SiVisa,
   SiDiscord,
-  SiTiktok,
-  SiSnapchat,
-  SiPinterest,
-  SiShopify,
-  SiSquare,
-  SiAdobe,
-  SiSalesforce,
-  SiZendesk,
-  SiHubspot,
-  SiTrello,
-  SiNotion,
-  SiFigma,
+  SiAsana,
+  SiNextdoor,
+  SiYcombinator,
+  SiSnowflake,
+  SiTwilio,
 } from "react-icons/si";
 import React from "react";
 
@@ -101,51 +79,34 @@ const FEATURES_DATA = [
 ];
 
 export const MainContentSection = () => {
-  const logos = [
-    { icon: <FaApple />, name: "Apple" },
-    { icon: <FaGoogle />, name: "Google" },
-    { icon: <FaMicrosoft />, name: "Microsoft" },
-    { icon: <FaAmazon />, name: "Amazon" },
-    { icon: <FaFacebook />, name: "Meta" },
-    { icon: <FaTwitter />, name: "Twitter" },
-    { icon: <FaLinkedin />, name: "LinkedIn" },
-    { icon: <FaGithub />, name: "GitHub" },
-    { icon: <FaPaypal />, name: "PayPal" },
-    { icon: <FaDropbox />, name: "Dropbox" },
-    { icon: <FaSlack />, name: "Slack" },
-    { icon: <FaReddit />, name: "Reddit" },
-    { icon: <FaYoutube />, name: "YouTube" },
-    { icon: <FaInstagram />, name: "Instagram" },
-    { icon: <SiTesla />, name: "Tesla" },
-    { icon: <SiNetflix />, name: "Netflix" },
-    { icon: <SiSpotify />, name: "Spotify" },
-    { icon: <SiUber />, name: "Uber" },
-    { icon: <SiAirbnb />, name: "Airbnb" },
-    { icon: <SiStripe />, name: "Stripe" },
-    { icon: <SiZoom />, name: "Zoom" },
-    { icon: <SiDiscord />, name: "Discord" },
-    { icon: <SiShopify />, name: "Shopify" },
-    { icon: <SiAdobe />, name: "Adobe" },
-    { icon: <SiSalesforce />, name: "Salesforce" },
-    { icon: <SiHubspot />, name: "HubSpot" },
-    { icon: <SiTrello />, name: "Trello" },
-    { icon: <SiNotion />, name: "Notion" },
-    { icon: <SiFigma />, name: "Figma" },
+  const startupLogos = [
+    // 14 Startup Company Icons as per the list
+    { icon: <SiCashapp />, name: "Cash App" },     // Cash App (Square) - Fintech
+    { icon: <SiUber />, name: "Uber" },            // Ride-sharing startup
+    { icon: <SiAirbnb />, name: "Airbnb" },        // Hospitality startup
+    { icon: <SiStripe />, name: "Stripe" },        // Payment processing startup
+    { icon: <SiDoordash />, name: "DoorDash" },    // Food delivery startup
+    { icon: <SiCoinbase />, name: "Coinbase" },    // Cryptocurrency startup
+    { icon: <SiRoblox />, name: "Roblox" },        // Gaming platform startup
+    { icon: <SiVisa />, name: "Visa" },            // Digital payment startup
+    { icon: <SiDiscord />, name: "Discord" },      // Communication platform
+    { icon: <SiAsana />, name: "Asana" },          // Project management startup
+    { icon: <SiNextdoor />, name: "Nextdoor" },    // Community platform
+    { icon: <SiYcombinator />, name: "Y Combinator" }, // Startup accelerator
+    { icon: <SiSnowflake />, name: "Snowflake" },  // Data warehousing startup
+    { icon: <SiTwilio />, name: "Twilio" },        // Communications API startup
   ];
 
   const LogoCard = ({ logo }) => (
-    <div className="flex flex-col items-center justify-center px-6 py-4 min-w-[140px] transition-transform duration-300 ease-in-out hover:scale-105 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 rounded-lg will-change-transform relative overflow-hidden">
-      {/* Logo background glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
-      
-      {/* Shimmer effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-      
+    <div
+      className="flex flex-col items-center justify-center px-4 py-3 min-w-[120px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 rounded-lg will-change-transform"
+      tabIndex={0}
+    >
       {React.cloneElement(logo.icon, {
         className:
-          "w-8 h-8 text-text-primary transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-gray-200 mb-3 relative z-10 group-hover:rotate-3",
+          "w-8 h-8 md:w-10 md:h-10 text-text-primary transition-all duration-300 ease-in-out hover:scale-110 hover:text-gray-200 mb-3",
       })}
-      <span className="text-sm font-medium text-text-secondary transition-colors duration-300 ease-in-out group-hover:text-gray-300 text-center tracking-wide relative z-10 group-hover:translate-y-[-1px]">
+      <span className="text-sm font-medium text-text-secondary transition-colors duration-300 ease-in-out hover:text-gray-300 text-center tracking-wide">
         {logo.name}
       </span>
     </div>
@@ -421,7 +382,7 @@ export const MainContentSection = () => {
         <div className="w-full overflow-hidden relative z-10 group">
           <div className="flex animate-marquee-fast md:animate-marquee-fast animate-marquee-mobile group-hover:pause-marquee">
             <div className="flex gap-8 pr-8">
-              {[...logos, ...logos].map((logo, index) => (
+              {[...startupLogos, ...startupLogos].map((logo, index) => (
                 <LogoCard key={`logo-${index}`} logo={logo} />
               ))}
             </div>
