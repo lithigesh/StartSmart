@@ -41,6 +41,11 @@
   .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50;
   }
+
+  /* Hover to pause marquee animation */
+  .group:hover .group-hover\:pause-marquee {
+    animation-play-state: paused;
+  }
 }
 
 :root {
