@@ -8,6 +8,16 @@ module.exports = {
     extend: {
       colors: {
         "shades-0": "var(--shades-0)",
+        // StartSmart Design System Colors
+        "dark-bg": "#0d0d0d",
+        "dark-bg-hover": "#151515",
+        "text-primary": "#ffffff",
+        "text-secondary": "#ffffff99",
+        "text-muted": "#828282",
+        "text-muted-hover": "#a0a0a0",
+        "border-primary": "rgba(255, 255, 255, 0.2)",
+        "border-hover": "rgba(255, 255, 255, 0.4)",
+        "border-muted": "rgba(255, 255, 255, 0.1)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -42,6 +52,16 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      spacing: {
+        18: "4.5rem",
+        88: "22rem",
+        128: "32rem",
+      },
+      maxWidth: {
+        content: "833px",
+        section: "1200px",
+        cta: "1308px",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -57,6 +77,8 @@ module.exports = {
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
         ],
+        manrope: ["Manrope", "Helvetica", "sans-serif"],
+        poppins: ["Poppins", "Helvetica", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

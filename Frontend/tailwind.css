@@ -26,6 +26,21 @@
   .container-responsive {
     @apply w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+
+  /* Marquee gap utility */
+  .\[--gap\:1\.75rem\] {
+    --gap: 1.75rem;
+  }
+
+  /* Performance optimization for hover effects */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  /* Focus utilities for better accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50;
+  }
 }
 
 :root {

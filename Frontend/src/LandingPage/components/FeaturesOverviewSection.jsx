@@ -13,12 +13,12 @@ import React from "react";
 
 const SectionTitle = ({ title, description, className = "" }) => (
   <div
-    className={`flex flex-col max-w-[833px] items-center gap-7 px-4 md:px-8 w-full ${className}`}
+    className={`flex flex-col max-w-content items-center gap-7 px-4 md:px-8 w-full ${className}`}
   >
-    <h1 className="self-stretch mt-[-1.00px] [font-family:'Manrope',Helvetica] font-medium text-white text-2xl md:text-4xl lg:text-5xl text-center tracking-[-0.48px] leading-tight md:leading-[56px]">
+    <h1 className="self-stretch mt-[-1.00px] font-manrope font-medium text-text-primary text-2xl md:text-4xl lg:text-5xl text-center tracking-[-0.48px] leading-tight md:leading-[56px]">
       {title}
     </h1>
-    <p className="self-stretch [font-family:'Poppins',Helvetica] font-normal text-[#ffffff99] text-sm md:text-base text-center tracking-[-0.29px] leading-6 md:leading-[28.8px]">
+    <p className="self-stretch font-poppins font-normal text-text-secondary text-sm md:text-base text-center tracking-[-0.29px] leading-6 md:leading-[28.8px]">
       {description}
     </p>
   </div>
@@ -41,8 +41,14 @@ export const FeaturesOverviewSection = () => {
   ];
 
   const LogoCard = ({ logo }) => (
-    <div className="justify-center items-center flex p-6 bg-[#0d0d0d] rounded-lg">
-      {React.cloneElement(logo, { className: "w-16 h-16 text-white" })}
+    <div
+      className="justify-center items-center flex p-6 bg-dark-bg rounded-lg transition-transform duration-300 ease-in-out hover:scale-110 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
+      tabIndex={0}
+    >
+      {React.cloneElement(logo, {
+        className:
+          "w-16 h-16 text-text-primary transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:text-gray-200",
+      })}
     </div>
   );
 
@@ -55,23 +61,13 @@ export const FeaturesOverviewSection = () => {
 
       <div className="w-full overflow-hidden">
         <div className="flex flex-col gap-7">
-          <div
-            className="flex gap-[30px] animate-marquee"
-            style={{ "--duration": "20s", "--gap": "30px" }}
-          >
+          <div className="flex gap-7 animate-marquee [--duration:20s] [--gap:1.75rem]">
             {logos.concat(logos).map((logo, index) => (
               <LogoCard key={`row1-${index}`} logo={logo} />
             ))}
           </div>
 
-          <div
-            className="flex gap-[30px] animate-marquee"
-            style={{
-              "--duration": "25s",
-              "--gap": "30px",
-              animationDirection: "reverse",
-            }}
-          >
+          <div className="flex gap-7 animate-marquee [--duration:25s] [--gap:1.75rem] [animation-direction:reverse]">
             {logos.concat(logos).map((logo, index) => (
               <LogoCard key={`row2-${index}`} logo={logo} />
             ))}
