@@ -133,21 +133,21 @@
 }
 
 .animate-marquee-fast {
-  animation: marquee-smooth 20s linear infinite;
+  animation: marquee-smooth 8s linear infinite;
 }
 
 .animate-marquee-fast-reverse {
-  animation: marquee-smooth-reverse 25s linear infinite;
+  animation: marquee-smooth-reverse 10s linear infinite;
 }
 
 /* Mobile-specific faster animations */
 @media (max-width: 768px) {
   .animate-marquee-mobile {
-    animation: marquee-smooth 12s linear infinite;
+    animation: marquee-smooth 6s linear infinite;
   }
-  
+
   .animate-marquee-mobile-reverse {
-    animation: marquee-smooth-reverse 15s linear infinite;
+    animation: marquee-smooth-reverse 8s linear infinite;
   }
 }
 
@@ -254,7 +254,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -263,7 +264,8 @@
 }
 
 @keyframes float-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
@@ -272,7 +274,8 @@
 }
 
 @keyframes float-reverse {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(-10px) rotate(0deg);
   }
   50% {
@@ -281,7 +284,8 @@
 }
 
 @keyframes pulse-slow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(1);
   }
