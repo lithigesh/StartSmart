@@ -1,6 +1,28 @@
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowUp } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 
 export const HeroSection = () => {
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmitIdea = () => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      navigate("/register", { state: { role: "entrepreneur" } });
+    }
+  };
+
+  const handleExploreAsInvestor = () => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      navigate("/register", { state: { role: "investor" } });
+    }
+  };
+
   return (
     <div className="relative w-full flex items-center justify-center h-screen">
       <div className="flex flex-col w-full max-w-[878px] items-center gap-8 md:gap-12 px-4 md:px-8 py-20 md:py-32 pt-24 md:pt-32">
@@ -25,7 +47,10 @@ export const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center mt-4">
-            <button className="relative overflow-hidden btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform">
+            <button
+              onClick={handleSubmitIdea}
+              className="relative overflow-hidden btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
+            >
               {/* Shimmer effect */}
               <div className="absolute inset-0 -top-1 -bottom-1 bg-gradient-to-r from-transparent via-white/30 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
@@ -41,12 +66,17 @@ export const HeroSection = () => {
               <div className="absolute inset-0 rounded-[55px] bg-white/10 scale-0 group-hover:scale-100 group-hover:opacity-0 opacity-50 transition-all duration-500 ease-out"></div>
 
               <span className="relative z-10 font-poppins font-medium text-base">
-                Submit Your Idea
+                {isAuthenticated && user?.role === "entrepreneur"
+                  ? "My Dashboard"
+                  : "Submit Your Idea"}
               </span>
               <FaArrowUp className="relative z-10 w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
             </button>
 
-            <button className="relative overflow-hidden btn btn-outline btn-lg rounded-[55px] gap-2 w-full sm:w-auto border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform">
+            <button
+              onClick={handleExploreAsInvestor}
+              className="relative overflow-hidden btn btn-outline btn-lg rounded-[55px] gap-2 w-full sm:w-auto border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
+            >
               {/* Border glow effect */}
               <div className="absolute inset-0 rounded-[55px] border-2 border-white/50 scale-110 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out"></div>
 
@@ -69,7 +99,9 @@ export const HeroSection = () => {
               <div className="absolute inset-0 rounded-[55px] bg-white/5 scale-95 group-hover:scale-105 opacity-0 group-hover:opacity-100 transition-all duration-400 ease-out"></div>
 
               <span className="relative z-10 font-poppins font-medium text-base">
-                Explore as Investor
+                {isAuthenticated && user?.role === "investor"
+                  ? "My Dashboard"
+                  : "Explore as Investor"}
               </span>
             </button>
           </div>
