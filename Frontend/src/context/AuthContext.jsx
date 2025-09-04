@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 
+// Get API URL from environment variables
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+
 // Auth Context
 const AuthContext = createContext();
 
@@ -70,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   const loadUser = async () => {
     if (localStorage.getItem("token")) {
       try {
-        const response = await fetch("http://localhost:5001/api/auth/me", {
+        const response = await fetch(`${API_URL}/api/auth/me`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "application/json",
@@ -101,7 +104,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -136,7 +139,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
-      const response = await fetch("http://localhost:5001/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
