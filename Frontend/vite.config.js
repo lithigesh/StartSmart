@@ -7,6 +7,9 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   base: "./",
+  server: {
+    historyApiFallback: true,
+  },
   css: {
     postcss: {
       plugins: [tailwind()],
