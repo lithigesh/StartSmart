@@ -120,17 +120,20 @@ export const AuthProvider = ({ children }) => {
           payload: data,
         });
         await loadUser();
+        return { success: true, data };
       } else {
         dispatch({
           type: "REGISTER_FAIL",
           payload: data.message || "Registration failed",
         });
+        return { success: false, error: data.message || "Registration failed" };
       }
     } catch (error) {
       dispatch({
         type: "REGISTER_FAIL",
         payload: error.message || "Network error",
       });
+      return { success: false, error: error.message || "Network error" };
     }
   };
 

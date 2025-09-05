@@ -25,6 +25,7 @@ const LoginPage = () => {
 
   const from = location.state?.from?.pathname || "/dashboard";
   const successMessage = location.state?.message;
+  const errorMessage = location.state?.error;
   const preFilledEmail = location.state?.email;
 
   useEffect(() => {
@@ -137,7 +138,14 @@ const LoginPage = () => {
               </div>
             )}
 
-            {/* Error message */}
+            {/* Error message from navigation state */}
+            {errorMessage && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-red-400 text-sm font-manrope">{errorMessage}</p>
+              </div>
+            )}
+
+            {/* Error message from auth context */}
             {error && (
               <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
                 <p className="text-red-400 text-sm font-manrope">{error}</p>
@@ -193,15 +201,15 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full relative overflow-hidden btn btn-lg rounded-lg bg-white text-black hover:bg-gray-100 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full relative overflow-hidden px-6 py-3 rounded-lg font-manrope font-medium text-black transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-white/50 bg-white hover:bg-gray-100 hover:scale-105 hover:shadow-xl disabled:bg-white disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
               >
-                {/* Shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                {/* Subtle shimmer effect on hover only */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent transform translate-x-[-200%] hover:translate-x-[200%] transition-transform duration-1000 ease-out pointer-events-none opacity-0 hover:opacity-100"></div>
 
-                <span className="relative z-10 font-manrope font-medium flex items-center justify-center gap-2">
+                <span className="relative z-10 flex items-center justify-center gap-2">
                   {isLoading ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
                       Signing In...
                     </>
                   ) : (
