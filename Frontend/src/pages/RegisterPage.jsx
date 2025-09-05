@@ -6,6 +6,8 @@ import {
   FaArrowRight,
   FaBriefcase,
   FaLightbulb,
+  FaCheck,
+  FaTimes,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
@@ -25,10 +27,25 @@ const RegisterPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
+  const [emailValid, setEmailValid] = useState(null); // null = not validated, true = valid, false = invalid
+  const [passwordValid, setPasswordValid] = useState(null); // null = not validated, true = valid, false = invalid
   const [successMessage, setSuccessMessage] = useState("");
 
   const { register, isAuthenticated, error, clearErrors } = useAuth();
   const navigate = useNavigate();
+
+  // Email validation function
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Password validation function
+  const validatePassword = (password) => {
+    return password.length >= 6;
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -40,29 +57,108 @@ const RegisterPage = () => {
     clearErrors();
     setSuccessMessage(""); // Clear success message when component mounts
     setPasswordError(""); // Clear password errors
-  }, [clearErrors]);
+    setEmailError(""); // Clear email errors
+  }, []); // Remove clearErrors dependency to prevent repeated clearing
 
   const handleChange = (e) => {
-    setFormData({
+    const { name, value } = e.target;
+    const updatedFormData = {
       ...formData,
-      [e.target.name]: e.target.value,
-    });
+      [name]: value,
+    };
 
-    if (e.target.name === "password" || e.target.name === "confirmPassword") {
-      setPasswordError("");
+    setFormData(updatedFormData);
+
+    // Real-time email validation
+    if (name === "email") {
+      // Clear email error when user starts typing
+      if (emailError) {
+        setEmailError("");
+      }
+
+      if (value.length === 0) {
+        setEmailValid(null); // No validation for empty field
+      } else if (value.length < 3) {
+        setEmailValid(null); // Don't validate too early
+      } else {
+        setEmailValid(validateEmail(value));
+      }
+    }
+
+    // Real-time password validation
+    if (name === "password") {
+      if (value.length === 0) {
+        setPasswordValid(null); // No validation for empty field
+      } else {
+        setPasswordValid(validatePassword(value));
+      }
+    }
+
+    // Real-time password matching validation
+    if (name === "password" || name === "confirmPassword") {
+      const newPassword = updatedFormData.password;
+      const newConfirmPassword = updatedFormData.confirmPassword;
+
+      // Check if both fields have content
+      if (newPassword && newConfirmPassword) {
+        if (newPassword === newConfirmPassword) {
+          // Passwords match - set positive indicator
+          setPasswordsMatch(true);
+          // Clear error only if it was a mismatch error (not length error)
+          if (passwordError === "Passwords do not match") {
+            setPasswordError("");
+          }
+        } else {
+          // Passwords don't match - show error immediately
+          setPasswordsMatch(false);
+          setPasswordError("Passwords do not match");
+        }
+      } else {
+        // One or both fields empty - reset states
+        setPasswordsMatch(false);
+        // Don't clear other types of password errors
+        if (passwordError === "Passwords do not match") {
+          setPasswordError("");
+        }
+      }
+    }
+  };
+
+  // Validate passwords when user leaves the confirm password field
+  const handleConfirmPasswordBlur = () => {
+    if (formData.password && formData.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
+        setPasswordError("Passwords do not match");
+      } else {
+        setPasswordError("");
+      }
+    } else if (formData.confirmPassword && !formData.password) {
+      setPasswordError("Please enter a password first");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      setPasswordError("Passwords do not match");
+    // Clear previous errors
+    setEmailError("");
+    setPasswordError("");
+
+    // Validate email format
+    if (!validateEmail(formData.email)) {
+      setEmailError("Please enter a valid email address");
       return;
     }
 
+    // Validate password length
     if (formData.password.length < 6) {
       setPasswordError("Password must be at least 6 characters long");
+      return;
+    }
+
+    // Validate password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match");
       return;
     }
 
@@ -77,7 +173,27 @@ const RegisterPage = () => {
       setIsLoading(false);
 
       if (result.success) {
-        // Registration was successful
+        // Check if this is actually a duplicate account scenario
+        // Some backends might return success=true even for existing accounts
+        if (
+          result.message &&
+          (result.message.toLowerCase().includes("already exists") ||
+            result.message.toLowerCase().includes("already registered"))
+        ) {
+          // This is actually a duplicate account, not a real success
+          setSuccessMessage("");
+          navigate("/login", {
+            replace: true,
+            state: {
+              error:
+                "Account already exists. Please sign in with your credentials.",
+              email: formData.email,
+            },
+          });
+          return;
+        }
+
+        // Registration was genuinely successful
         setSuccessMessage(
           "Account created successfully! Redirecting to login..."
         );
@@ -94,25 +210,33 @@ const RegisterPage = () => {
           });
         }, 2000);
       } else {
-        // Registration failed - check if account already exists
+        // Registration failed - handle different error cases
         setSuccessMessage("");
         console.log("Registration failed:", result.error);
-        
-        // If account already exists, redirect to login immediately
-        if (result.error && result.error.toLowerCase().includes('already exists') || 
-            result.error && result.error.toLowerCase().includes('already registered')) {
-          
-          // Redirect to login immediately
+
+        // Check both result.error and result.message for duplicate account indicators
+        const errorMessage = result.error || result.message || "";
+        const isDuplicateAccount =
+          errorMessage.toLowerCase().includes("already exists") ||
+          errorMessage.toLowerCase().includes("already registered") ||
+          errorMessage.toLowerCase().includes("user exists") ||
+          errorMessage.toLowerCase().includes("email taken");
+
+        if (isDuplicateAccount) {
+          // Account already exists, redirect to login immediately
           navigate("/login", {
             replace: true,
             state: {
-              error: "Account already exists. Please sign in with your credentials.",
+              error:
+                "Account already exists. Please sign in with your credentials.",
               email: formData.email,
             },
           });
+        } else {
+          // Other registration errors - show the error message
+          // The error will be displayed via the auth context error state
         }
       }
-
     } catch (err) {
       console.error("Registration error:", err);
       setSuccessMessage("");
@@ -167,7 +291,7 @@ const RegisterPage = () => {
               />
             </div>
             <span className="font-manrope font-medium group-hover:translate-x-1 transition-transform duration-300">
-              Back to StartSmart
+              Back to Start Smart
             </span>
           </Link>
         </div>
@@ -188,26 +312,33 @@ const RegisterPage = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <h1 className="font-manrope font-bold text-3xl text-white mb-2">
-                Join StartSmart
+                Join Start Smart
               </h1>
               <p className="font-manrope text-white/70">
                 Create your account and start your journey
               </p>
-              {preSelectedRole && (
-                <div className="mt-4 px-4 py-2 bg-white/10 border border-white/20 rounded-lg">
-                  <p className="text-white/80 text-sm font-manrope capitalize">
-                    Signing up as {preSelectedRole}
-                  </p>
-                </div>
-              )}
             </div>
 
             {/* Error/Success messages */}
-            {(error || passwordError) && (
+            {emailError && (
               <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
                 <p className="text-red-400 text-sm font-manrope">
-                  {error || passwordError}
+                  {emailError}
                 </p>
+              </div>
+            )}
+
+            {passwordError && !emailError && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-red-400 text-sm font-manrope">
+                  {passwordError}
+                </p>
+              </div>
+            )}
+
+            {error && !passwordError && !emailError && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <p className="text-red-400 text-sm font-manrope">{error}</p>
               </div>
             )}
 
@@ -221,38 +352,6 @@ const RegisterPage = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name Field */}
-              <div className="space-y-2">
-                <label className="block text-white/90 font-manrope font-medium">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/[0.05] border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-300 font-manrope"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-
-              {/* Email Field */}
-              <div className="space-y-2">
-                <label className="block text-white/90 font-manrope font-medium">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-white/[0.05] border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-300 font-manrope"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-
               {/* Role Selection */}
               <div className="space-y-3">
                 <label className="block text-white/90 font-manrope font-medium">
@@ -324,10 +423,76 @@ const RegisterPage = () => {
                 </div>
               </div>
 
+              {/* Name Field */}
+              <div className="space-y-2">
+                <label className="block text-white/90 font-manrope font-medium">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-white/[0.05] border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-300 font-manrope"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label className="block text-white/90 font-manrope font-medium">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-3 bg-white/[0.05] border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300 font-manrope pr-12 ${
+                      emailValid === false
+                        ? "border-red-500/50 focus:ring-red-500/30 focus:border-red-500/40"
+                        : emailValid === true
+                        ? "border-green-500/50 focus:ring-green-500/30 focus:border-green-500/40"
+                        : "border-white/20 focus:ring-white/30 focus:border-white/40"
+                    }`}
+                    placeholder="Enter your email"
+                    required
+                  />
+                  {/* Email validation indicators */}
+                  {emailValid !== null && formData.email && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      {emailValid ? (
+                        <FaCheck className="w-4 h-4 text-green-400" />
+                      ) : (
+                        <FaTimes className="w-4 h-4 text-red-400" />
+                      )}
+                    </div>
+                  )}
+                </div>
+                {/* Inline email validation messages */}
+                {emailValid === false && formData.email && (
+                  <p className="text-red-400 text-xs font-manrope mt-1 flex items-center gap-1">
+                    <FaTimes className="w-3 h-3" />
+                    Please enter a valid email address
+                  </p>
+                )}
+                {emailValid === true && formData.email && (
+                  <p className="text-green-400 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
+                    <FaCheck className="w-3 h-3" />
+                    Valid email format
+                  </p>
+                )}
+              </div>
+
               {/* Password Field */}
               <div className="space-y-2">
                 <label className="block text-white/90 font-manrope font-medium">
-                  Password
+                  Password{" "}
+                  <span className="text-white/60 text-sm font-normal">
+                    (minimum 6 characters)
+                  </span>
                 </label>
                 <div className="relative">
                   <input
@@ -335,10 +500,26 @@ const RegisterPage = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/[0.05] border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-300 font-manrope pr-12"
+                    className={`w-full px-4 py-3 bg-white/[0.05] border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300 font-manrope pr-12 ${
+                      passwordValid === false
+                        ? "border-red-500/50 focus:ring-red-500/30 focus:border-red-500/40"
+                        : passwordValid === true
+                        ? "border-green-500/50 focus:ring-green-500/30 focus:border-green-500/40"
+                        : "border-white/20 focus:ring-white/30 focus:border-white/40"
+                    }`}
                     placeholder="Create a password"
                     required
                   />
+                  {/* Password validation indicators */}
+                  {passwordValid !== null && formData.password && (
+                    <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                      {passwordValid ? (
+                        <FaCheck className="w-4 h-4 text-green-400" />
+                      ) : (
+                        <FaTimes className="w-4 h-4 text-red-400" />
+                      )}
+                    </div>
+                  )}
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -347,6 +528,19 @@ const RegisterPage = () => {
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {/* Inline password validation messages */}
+                {passwordValid === false && formData.password && (
+                  <p className="text-red-400 text-xs font-manrope mt-1 flex items-center gap-1">
+                    <FaTimes className="w-3 h-3" />
+                    Password must be at least 6 characters long
+                  </p>
+                )}
+                {passwordValid === true && formData.password && (
+                  <p className="text-green-400 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
+                    <FaCheck className="w-3 h-3" />
+                    Password meets requirements
+                  </p>
+                )}
               </div>
 
               {/* Confirm Password Field */}
@@ -360,10 +554,27 @@ const RegisterPage = () => {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/[0.05] border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-300 font-manrope pr-12"
+                    onBlur={handleConfirmPasswordBlur}
+                    className={`w-full px-4 py-3 bg-white/[0.05] border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300 font-manrope pr-12 ${
+                      passwordError && passwordError.includes("not match")
+                        ? "border-red-500/50 focus:ring-red-500/30"
+                        : passwordsMatch &&
+                          formData.password &&
+                          formData.confirmPassword
+                        ? "border-green-500/50 focus:ring-green-500/30 focus:border-green-500/40"
+                        : "border-white/20 focus:ring-white/30 focus:border-white/40"
+                    }`}
                     placeholder="Confirm your password"
                     required
                   />
+                  {/* Success indicator when passwords match */}
+                  {passwordsMatch &&
+                    formData.password &&
+                    formData.confirmPassword && (
+                      <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
+                        <FaCheck className="w-4 h-4 text-green-400" />
+                      </div>
+                    )}
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -372,6 +583,22 @@ const RegisterPage = () => {
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {/* Inline success message when passwords match */}
+                {passwordsMatch &&
+                  formData.password &&
+                  formData.confirmPassword &&
+                  !passwordError && (
+                    <p className="text-green-400 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
+                      <FaCheck className="w-3 h-3" />
+                      Passwords match
+                    </p>
+                  )}
+                {/* Inline error message for password mismatch */}
+                {passwordError && passwordError.includes("not match") && (
+                  <p className="text-red-400 text-xs font-manrope mt-1">
+                    {passwordError}
+                  </p>
+                )}
               </div>
 
               {/* Submit Button */}

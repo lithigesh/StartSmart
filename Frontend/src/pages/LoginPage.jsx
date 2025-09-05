@@ -4,9 +4,6 @@ import {
   FaEye,
   FaEyeSlash,
   FaArrowRight,
-  FaUser,
-  FaBriefcase,
-  FaLightbulb,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
@@ -101,7 +98,7 @@ const LoginPage = () => {
               />
             </div>
             <span className="font-manrope font-medium group-hover:translate-x-1 transition-transform duration-300">
-              Back to StartSmart
+              Back to Start Smart
             </span>
           </Link>
         </div>
@@ -125,7 +122,7 @@ const LoginPage = () => {
                 Welcome Back
               </h1>
               <p className="font-manrope text-white/70">
-                Sign in to access your StartSmart account
+                Sign in to access your Start Smart account
               </p>
             </div>
 
@@ -234,22 +231,6 @@ const LoginPage = () => {
                 </Link>
               </p>
             </div>
-          </div>
-        </div>
-
-        {/* Role Info Cards */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
-          <div className="bg-white/[0.02] backdrop-blur-lg border border-white/10 rounded-lg p-4 hover:bg-white/[0.04] transition-all duration-300">
-            <FaLightbulb className="w-6 h-6 text-white/70 mx-auto mb-2" />
-            <p className="text-white/60 text-sm font-manrope">
-              Entrepreneur? Submit your innovative ideas
-            </p>
-          </div>
-          <div className="bg-white/[0.02] backdrop-blur-lg border border-white/10 rounded-lg p-4 hover:bg-white/[0.04] transition-all duration-300">
-            <FaBriefcase className="w-6 h-6 text-white/70 mx-auto mb-2" />
-            <p className="text-white/60 text-sm font-manrope">
-              Investor? Discover promising startups
-            </p>
           </div>
         </div>
       </div>
