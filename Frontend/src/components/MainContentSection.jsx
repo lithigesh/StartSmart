@@ -25,6 +25,8 @@ import {
   SiTwilio,
 } from "react-icons/si";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const SectionTitle = ({ title, description, className = "" }) => (
   <div
@@ -79,6 +81,16 @@ const FEATURES_DATA = [
 ];
 
 export const MainContentSection = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  const handleNavigation = (role) => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      navigate("/register", { state: { role } });
+    }
+  };
   const startupLogos = [
     // 14 Startup Company Icons as per the list
     { icon: <SiCashapp />, name: "Cash App" }, // Cash App (Square) - Fintech
@@ -425,18 +437,38 @@ export const MainContentSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center">
-            <button className="btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
-              <span className="font-poppins font-medium text-base">
-                Submit Your Idea
-              </span>
-              <FaArrowUp className="w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
-            </button>
+            {isAuthenticated ? (
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+              >
+                <span className="font-poppins font-medium text-base">
+                  My Dashboard
+                </span>
+                <FaArrowUp className="w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => handleNavigation("entrepreneur")}
+                  className="btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                >
+                  <span className="font-poppins font-medium text-base">
+                    Submit Your Idea
+                  </span>
+                  <FaArrowUp className="w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
+                </button>
 
-            <button className="btn btn-outline btn-lg rounded-[55px] gap-2 w-full sm:w-auto border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50">
-              <span className="font-poppins font-medium text-base">
-                Explore as Investor
-              </span>
-            </button>
+                <button
+                  onClick={() => handleNavigation("investor")}
+                  className="btn btn-outline btn-lg rounded-[55px] gap-2 w-full sm:w-auto border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                >
+                  <span className="font-poppins font-medium text-base">
+                    Explore as Investor
+                  </span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

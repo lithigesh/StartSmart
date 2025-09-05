@@ -47,63 +47,89 @@ export const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 items-center mt-4">
-            <button
-              onClick={handleSubmitIdea}
-              className="relative overflow-hidden btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 -top-1 -bottom-1 bg-gradient-to-r from-transparent via-white/30 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+            {isAuthenticated ? (
+              // Show only "My Dashboard" button for authenticated users
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="relative overflow-hidden btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -top-1 -bottom-1 bg-gradient-to-r from-transparent via-white/30 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-              {/* Glitter particles */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute top-2 left-4 w-1 h-1 bg-white rounded-full animate-ping"></div>
-                <div className="absolute top-4 right-6 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-100"></div>
-                <div className="absolute bottom-3 left-8 w-1 h-1 bg-white rounded-full animate-ping delay-200"></div>
-                <div className="absolute bottom-2 right-4 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-300"></div>
-              </div>
+                {/* Glitter particles */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute top-2 left-4 w-1 h-1 bg-white rounded-full animate-ping"></div>
+                  <div className="absolute top-4 right-6 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-100"></div>
+                  <div className="absolute bottom-3 left-8 w-1 h-1 bg-white rounded-full animate-ping delay-200"></div>
+                  <div className="absolute bottom-2 right-4 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-300"></div>
+                </div>
 
-              {/* Ripple effect */}
-              <div className="absolute inset-0 rounded-[55px] bg-white/10 scale-0 group-hover:scale-100 group-hover:opacity-0 opacity-50 transition-all duration-500 ease-out"></div>
+                {/* Ripple effect */}
+                <div className="absolute inset-0 rounded-[55px] bg-white/10 scale-0 group-hover:scale-100 group-hover:opacity-0 opacity-50 transition-all duration-500 ease-out"></div>
 
-              <span className="relative z-10 font-poppins font-medium text-base">
-                {isAuthenticated && user?.role === "entrepreneur"
-                  ? "My Dashboard"
-                  : "Submit Your Idea"}
-              </span>
-              <FaArrowUp className="relative z-10 w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
-            </button>
+                <span className="relative z-10 font-poppins font-medium text-base">
+                  My Dashboard
+                </span>
+                <FaArrowUp className="relative z-10 w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
+              </button>
+            ) : (
+              // Show both buttons for non-authenticated users
+              <>
+                <button
+                  onClick={handleSubmitIdea}
+                  className="relative overflow-hidden btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
+                >
+                  {/* Shimmer effect */}
+                  <div className="absolute inset-0 -top-1 -bottom-1 bg-gradient-to-r from-transparent via-white/30 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
 
-            <button
-              onClick={handleExploreAsInvestor}
-              className="relative overflow-hidden btn btn-outline btn-lg rounded-[55px] gap-2 w-full sm:w-auto border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
-            >
-              {/* Border glow effect */}
-              <div className="absolute inset-0 rounded-[55px] border-2 border-white/50 scale-110 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out"></div>
+                  {/* Glitter particles */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute top-2 left-4 w-1 h-1 bg-white rounded-full animate-ping"></div>
+                    <div className="absolute top-4 right-6 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-100"></div>
+                    <div className="absolute bottom-3 left-8 w-1 h-1 bg-white rounded-full animate-ping delay-200"></div>
+                    <div className="absolute bottom-2 right-4 w-0.5 h-0.5 bg-white rounded-full animate-pulse delay-300"></div>
+                  </div>
 
-              {/* Sliding border animation */}
-              <div className="absolute inset-0 rounded-[55px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform rotate-0 group-hover:rotate-180 transition-transform duration-1000 ease-out opacity-0 group-hover:opacity-100"></div>
+                  {/* Ripple effect */}
+                  <div className="absolute inset-0 rounded-[55px] bg-white/10 scale-0 group-hover:scale-100 group-hover:opacity-0 opacity-50 transition-all duration-500 ease-out"></div>
 
-              {/* Sparkle effects */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute top-3 left-6 w-1 h-1 bg-white rounded-full animate-bounce"></div>
-                <div className="absolute top-5 right-8 w-0.5 h-0.5 bg-white rounded-full animate-ping delay-150"></div>
-                <div className="absolute bottom-4 left-10 w-1 h-1 bg-white rounded-full animate-pulse delay-75"></div>
-                <div className="absolute bottom-2 right-6 w-0.5 h-0.5 bg-white rounded-full animate-bounce delay-300"></div>
-                <div className="absolute top-2 left-1/2 w-0.5 h-0.5 bg-white rounded-full animate-ping delay-200"></div>
-              </div>
+                  <span className="relative z-10 font-poppins font-medium text-base">
+                    Submit Your Idea
+                  </span>
+                  <FaArrowUp className="relative z-10 w-6 h-6 transition-transform duration-300 ease-in-out group-hover:rotate-12 group-hover:scale-110" />
+                </button>
 
-              {/* Gradient sweep */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-800 ease-in-out"></div>
+                <button
+                  onClick={handleExploreAsInvestor}
+                  className="relative overflow-hidden btn btn-outline btn-lg rounded-[55px] gap-2 w-full sm:w-auto border-white text-white hover:bg-white hover:text-black transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
+                >
+                  {/* Border glow effect */}
+                  <div className="absolute inset-0 rounded-[55px] border-2 border-white/50 scale-110 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out"></div>
 
-              {/* Pulsing background */}
-              <div className="absolute inset-0 rounded-[55px] bg-white/5 scale-95 group-hover:scale-105 opacity-0 group-hover:opacity-100 transition-all duration-400 ease-out"></div>
+                  {/* Sliding border animation */}
+                  <div className="absolute inset-0 rounded-[55px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform rotate-0 group-hover:rotate-180 transition-transform duration-1000 ease-out opacity-0 group-hover:opacity-100"></div>
 
-              <span className="relative z-10 font-poppins font-medium text-base">
-                {isAuthenticated && user?.role === "investor"
-                  ? "My Dashboard"
-                  : "Explore as Investor"}
-              </span>
-            </button>
+                  {/* Sparkle effects */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute top-3 left-6 w-1 h-1 bg-white rounded-full animate-bounce"></div>
+                    <div className="absolute top-5 right-8 w-0.5 h-0.5 bg-white rounded-full animate-ping delay-150"></div>
+                    <div className="absolute bottom-4 left-10 w-1 h-1 bg-white rounded-full animate-pulse delay-75"></div>
+                    <div className="absolute bottom-2 right-6 w-0.5 h-0.5 bg-white rounded-full animate-bounce delay-300"></div>
+                    <div className="absolute top-2 left-1/2 w-0.5 h-0.5 bg-white rounded-full animate-ping delay-200"></div>
+                  </div>
+
+                  {/* Gradient sweep */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-800 ease-in-out"></div>
+
+                  {/* Pulsing background */}
+                  <div className="absolute inset-0 rounded-[55px] bg-white/5 scale-95 group-hover:scale-105 opacity-0 group-hover:opacity-100 transition-all duration-400 ease-out"></div>
+
+                  <span className="relative z-10 font-poppins font-medium text-base">
+                    Explore as Investor
+                  </span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
