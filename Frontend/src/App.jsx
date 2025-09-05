@@ -1,4 +1,5 @@
 import React from "react";
+import { Analytics } from "@vercel/analytics/react"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -38,6 +39,7 @@ const App = () => {
             {/* Catch all unmatched routes */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          <Analytics />
         </BrowserRouter>
       </AuthProvider>
     </ErrorBoundary>
