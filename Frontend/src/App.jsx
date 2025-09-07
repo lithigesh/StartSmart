@@ -1,5 +1,5 @@
 import React from "react";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -8,6 +8,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
+import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
 import {
   NotFoundPage,
   ServerErrorPage,
@@ -29,6 +30,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/idea/:ideaId"
+              element={
+                <ProtectedRoute>
+                  <IdeaDetailPage />
                 </ProtectedRoute>
               }
             />
