@@ -1,5 +1,8 @@
 // controllers/auth.controller.js
 const User = require('../models/User.model');
+const Idea = require('../models/Idea.model');
+const Feedback = require('../models/Feedback.model');
+const FundingRequest = require('../models/FundingRequest.model');
 const generateToken = require('../utils/generateToken');
 
 // @desc    Register a new user
@@ -124,34 +127,7 @@ exports.deleteUserAccount = async (req, res, next) => {
 
 // @desc    Get a user's complete history (ideas, feedback, funding)
 // @route   GET /api/auth/users/:id/history
-exports.getUserHistory = async (req, res, next) => {
-    try {
-        const userId = req.params.id;
-
-        // Ensure the requester is the user themselves or an admin
-        if (req.user.id !== userId && req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'Not authorized' });
-        }
-
-        const [ideas, feedbackGiven, fundingRequests] = await Promise.all([
-            Idea.find({ owner: userId }),
-            Feedback.find({ investor: userId }),
-            FundingRequest.find({ entrepreneur: userId })
-        ]);
-
-        res.json({
-            ideas,
-            feedbackGiven,
-            fundingRequests,
-        });
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-// @desc    Get a user's complete history (ideas, feedback, funding)
-// @route   GET /api/auth/users/:id/history
+// @access  Private
 exports.getUserHistory = async (req, res, next) => {
     try {
         const userId = req.params.id;

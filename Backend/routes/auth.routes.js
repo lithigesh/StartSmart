@@ -6,6 +6,8 @@ const {
     registerUser,
     loginUser,
     getMe,
+    updateUserProfile,
+    deleteUserAccount,
     getUserHistory
 } = require('../controllers/auth.controller');
 
@@ -15,6 +17,8 @@ router.post('/login', loginUser);
 
 // Protected routes
 router.get('/me', protect, getMe);
+router.put('/profile', protect, updateUserProfile);
+router.delete('/profile', protect, deleteUserAccount);
 router.get('/users/:id/history', protect, getUserHistory);
 
 module.exports = router;
