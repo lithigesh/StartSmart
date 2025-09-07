@@ -4,10 +4,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RoleBasedRoute from "./components/RoleBasedRoute";
 import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
-import DashboardPage from "./pages/DashboardPage.jsx";
+import InvestorDashboard from "./pages/InvestorDashboard.jsx";
+import EntrepreneurDashboard from "./pages/EntrepreneurDashboard.jsx";
 import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
 import {
   NotFoundPage,
@@ -26,11 +28,19 @@ const App = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route
-              path="/dashboard"
+              path="/investor/dashboard"
               element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
+                <RoleBasedRoute allowedRole="investor">
+                  <InvestorDashboard />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/dashboard"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <EntrepreneurDashboard />
+                </RoleBasedRoute>
               }
             />
             <Route

@@ -4,12 +4,13 @@ import { FaArrowUp } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 export const HeroSection = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, getRoleDashboardUrl } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmitIdea = () => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      const dashboardUrl = getRoleDashboardUrl(user);
+      navigate(dashboardUrl);
     } else {
       navigate("/register", { state: { role: "entrepreneur" } });
     }
@@ -17,10 +18,16 @@ export const HeroSection = () => {
 
   const handleExploreAsInvestor = () => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      const dashboardUrl = getRoleDashboardUrl(user);
+      navigate(dashboardUrl);
     } else {
       navigate("/register", { state: { role: "investor" } });
     }
+  };
+
+  const handleMyDashboard = () => {
+    const dashboardUrl = getRoleDashboardUrl(user);
+    navigate(dashboardUrl);
   };
 
   return (
@@ -50,7 +57,7 @@ export const HeroSection = () => {
             {isAuthenticated ? (
               // Show only "My Dashboard" button for authenticated users
               <button
-                onClick={() => navigate("/dashboard")}
+                onClick={handleMyDashboard}
                 className="relative overflow-hidden btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 will-change-transform"
               >
                 {/* Shimmer effect */}

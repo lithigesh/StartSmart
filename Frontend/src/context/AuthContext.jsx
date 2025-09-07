@@ -29,10 +29,11 @@ const authReducer = (state, action) => {
     case "REGISTER_SUCCESS":
     case "LOGIN_SUCCESS":
       localStorage.setItem("token", action.payload.token);
+      const { token, ...userData } = action.payload;
       return {
         ...state,
-        token: action.payload.token,
-        user: action.payload,
+        token: token,
+        user: userData,
         isAuthenticated: true,
         loading: false,
         error: null,
@@ -68,6 +69,12 @@ const authReducer = (state, action) => {
 // Auth Provider Component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
+  // Get role-based dashboard URL
+  const getRoleDashboardUrl = (user) => {
+    if (!user || !user.role) return "/";
+    return user.role === "investor" ? "/investor/dashboard" : "/entrepreneur/dashboard";
+  };
 
   // Load user
   const loadUser = async () => {
@@ -159,12 +166,14 @@ export const AuthProvider = ({ children }) => {
           payload: data,
         });
         console.log("Login successful, user data set");
+        return { success: true };
       } else {
         console.error("Login failed:", data.message);
         dispatch({
           type: "LOGIN_FAIL",
           payload: data.message || "Login failed",
         });
+        return { success: false, error: data.message || "Login failed" };
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -172,6 +181,7 @@ export const AuthProvider = ({ children }) => {
         type: "LOGIN_FAIL",
         payload: error.message || "Network error",
       });
+      return { success: false, error: error.message || "Network error" };
     }
   };
 
@@ -198,6 +208,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         clearErrors,
         loadUser,
+        getRoleDashboardUrl,
       }}
     >
       {children}
