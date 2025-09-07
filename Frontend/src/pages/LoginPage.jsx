@@ -22,10 +22,18 @@ const LoginPage = () => {
 
   // Use role-based dashboard if no specific redirect location was set
   const getRedirectUrl = () => {
-    if (location.state?.from?.pathname && location.state.from.pathname !== "/") {
-      return location.state.from.pathname;
+    const fromPath = location.state?.from?.pathname;
+    console.log("LoginPage - fromPath:", fromPath, "user:", user);
+    
+    // Always use role-based dashboard URL instead of the "from" path
+    // This prevents redirecting to the wrong dashboard
+    if (user && getRoleDashboardUrl) {
+      const roleDashboard = getRoleDashboardUrl(user);
+      console.log("LoginPage - Role-based dashboard:", roleDashboard);
+      return roleDashboard;
     }
-    return user ? getRoleDashboardUrl(user) : "/";
+    
+    return "/";
   };
 
   useEffect(() => {
@@ -37,13 +45,12 @@ const LoginPage = () => {
       "user:",
       user
     );
-    if (isAuthenticated && user && !loading) {
+    // Only redirect if we have both authentication and user data
+    // and we're not in a loading state
+    if (isAuthenticated && user && !loading && user.role) {
       const redirectUrl = getRedirectUrl();
       console.log("Redirecting to:", redirectUrl);
-      // Small delay to ensure all auth state is settled
-      setTimeout(() => {
-        navigate(redirectUrl, { replace: true });
-      }, 100);
+      navigate(redirectUrl, { replace: true });
     }
   }, [isAuthenticated, navigate, loading, user]);
 
@@ -72,11 +79,11 @@ const LoginPage = () => {
 
     try {
       const result = await login(formData);
-      if (result.success) {
+      if (result && result.success) {
         console.log("Login successful, waiting for redirect...");
-        // The useEffect will handle the redirect when auth state updates
+        // Let the useEffect handle the redirect
       } else {
-        console.error("Login failed:", result.error);
+        console.error("Login failed:", result?.error);
       }
     } catch (err) {
       console.error("Login error:", err);
