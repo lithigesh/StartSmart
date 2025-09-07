@@ -1,11 +1,47 @@
 const InvestorInterest = require('../models/InvestorInterest.model');
 const Idea = require('../models/Idea.model');
 
+// @desc    Get investor's interested ideas
+// @route   GET /api/investors/interested
+exports.getInterestedIdeas = async (req, res, next) => {
+    try {
+        const investorId = req.user.id;
+        
+        // Find all interests for this investor and populate the idea details
+        const interests = await InvestorInterest.find({ 
+            investor: investorId, 
+            status: 'interested' 
+        }).populate({
+            path: 'idea',
+            populate: {
+                path: 'owner',
+                select: 'name email'
+            }
+        });
+
+        // Extract the ideas from the interest records
+        const interestedIdeas = interests
+            .filter(interest => interest.idea) // Filter out any null ideas
+            .map(interest => interest.idea);
+
+        res.json(interestedIdeas);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Investor browses all analyzed ideas
 // @route   GET /api/investors/ideas
 exports.getInvestorIdeas = async (req, res, next) => {
     try {
-        const ideas = await Idea.find({ status: 'analyzed' }).populate('owner', 'name');
+        // Get all ideas that are either analyzed or submitted (for testing purposes)
+        // In production, you might want to restrict this to only 'analyzed' ideas
+        const ideas = await Idea.find({ 
+            status: { $in: ['analyzed', 'submitted'] }
+        })
+            .populate('owner', 'name email')
+            .sort({ createdAt: -1 }); // Sort by newest first
+        
         res.json(ideas);
     } catch (error) {
         next(error);
@@ -19,14 +55,39 @@ exports.markInterest = async (req, res, next) => {
         const { ideaId } = req.params;
         const investorId = req.user.id;
 
-        // Use findOneAndUpdate with upsert to create or update interest
-        const interest = await InvestorInterest.findOneAndUpdate(
-            { idea: ideaId, investor: investorId },
-            { $set: { status: 'interested' } },
-            { upsert: true, new: true }
-        );
+        // First check if the idea exists
+        const idea = await Idea.findById(ideaId);
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
 
-        res.status(201).json(interest);
+        // For now, allow interest in submitted ideas as well for testing
+        // In production, you might want to restrict to only 'analyzed' ideas
+        if (!['analyzed', 'submitted'].includes(idea.status)) {
+            return res.status(400).json({ message: 'Can only show interest in analyzed or submitted ideas' });
+        }
+
+        // Check if interest already exists
+        const existingInterest = await InvestorInterest.findOne({
+            idea: ideaId,
+            investor: investorId
+        });
+
+        if (existingInterest) {
+            // Update existing interest to 'interested'
+            existingInterest.status = 'interested';
+            await existingInterest.save();
+            return res.json({ message: 'Interest updated successfully', interest: existingInterest });
+        }
+
+        // Create new interest
+        const interest = await InvestorInterest.create({
+            idea: ideaId,
+            investor: investorId,
+            status: 'interested'
+        });
+
+        res.status(201).json({ message: 'Interest marked successfully', interest });
     } catch (error) {
         next(error);
     }
@@ -61,14 +122,21 @@ exports.updateInterestStatus = async (req, res, next) => {
 // @route   DELETE /api/investors/:ideaId/interest
 exports.withdrawInterest = async (req, res, next) => {
     try {
-        const result = await InvestorInterest.findOneAndDelete({
-            idea: req.params.ideaId,
-            investor: req.user.id,
+        const { ideaId } = req.params;
+        const investorId = req.user.id;
+
+        const interest = await InvestorInterest.findOne({
+            idea: ideaId,
+            investor: investorId,
         });
 
-        if (!result) {
+        if (!interest) {
             return res.status(404).json({ message: 'Interest record not found' });
         }
+
+        // Instead of deleting, we could set status to 'withdrawn' or actually delete
+        // For now, let's delete the record completely
+        await InvestorInterest.findByIdAndDelete(interest._id);
 
         res.json({ message: 'Interest withdrawn successfully' });
     } catch (error) {
