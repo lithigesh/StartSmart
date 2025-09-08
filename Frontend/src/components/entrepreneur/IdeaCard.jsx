@@ -1,4 +1,4 @@
-import React from "react";
+
 import { FaLightbulb } from "react-icons/fa";
 
 const IdeaCard = ({ idea, index, getStatusColor }) => {

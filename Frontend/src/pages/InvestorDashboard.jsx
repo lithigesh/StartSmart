@@ -1,46 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAuth } from "../context/AuthContext";
 import { investorAPI, fundingAPI } from "../services/api";
 import { useNotifications } from "../hooks/useNotifications";
-import IdeaCard from "../components/IdeaCard";
-import EmptyState from "../components/EmptyState";
 import {
-  FaUser,
-  FaSignOutAlt,
-  FaCog,
-  FaBell,
+  InvestorDashboardHeader,
+  NotificationsPopup,
+  InvestorWelcomeSection,
+  InvestorDashboardCards,
+  ErrorMessage,
+  IdeasSection,
+  LoadingSpinner
+} from "../components/investor";
+import {
   FaChartLine,
   FaLightbulb,
-  FaSearch,
-  FaEye,
   FaHeart,
-  FaHeartBroken,
-  FaDollarSign,
-  FaStar,
-  FaSpinner,
-  FaSync,
-  FaCheck,
-  FaCheckDouble,
-  FaTimes,
-  FaTrash,
+  FaBell,
 } from "react-icons/fa";
 
 const InvestorDashboard = () => {
-  const { user, logout } = useAuth();
-  
-  // Notification management
-  const {
-    notifications,
-    unreadCount,
-    loading: notificationsLoading,
-    error: notificationsError,
-    loadNotifications,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    clearAllNotifications,
-    clearError: clearNotificationsError
-  } = useNotifications();
+  const { unreadCount } = useNotifications();
 
   // State management
   const [loading, setLoading] = useState(true);
@@ -138,10 +116,6 @@ const InvestorDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-  };
-
   // Scroll to section functions
   const scrollToBrowseIdeas = () => {
     browseIdeasRef.current?.scrollIntoView({
@@ -214,9 +188,6 @@ const InvestorDashboard = () => {
           ideas.length
         ).toFixed(1)
       : "0";
-  const newOpportunities = notifications.filter(notif => 
-    notif.type === 'new_idea' && !notif.read
-  ).length;
 
   const dashboardCards = [
     {
@@ -250,569 +221,82 @@ const InvestorDashboard = () => {
   ];
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <FaSpinner className="w-8 h-8 text-white animate-spin mx-auto mb-4" />
-          <p className="text-white font-manrope">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white">
-                <FaUser className="w-6 h-6" />
-              </div>
-              <div>
-                <h1 className="text-white font-manrope font-semibold text-lg">
-                  Welcome, {user?.name}
-                </h1>
-                <p className="text-white/60 text-sm capitalize font-manrope">
-                  Investor Dashboard
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className="relative p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
-              >
-                <FaBell className="w-5 h-5" />
-                {/* Notification badge */}
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </button>
-              <button className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg">
-                <FaCog className="w-5 h-5" />
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope"
-              >
-                <FaSignOutAlt className="w-4 h-4" />
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <InvestorDashboardHeader 
+        showNotifications={showNotifications}
+        setShowNotifications={setShowNotifications}
+      />
 
       {/* Notifications Popup */}
-      {showNotifications && (
-        <div className="fixed inset-0 z-50">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowNotifications(false)}
-          ></div>
-
-          {/* Popup Content */}
-          <div className="absolute top-20 right-4 w-96 max-w-[calc(100vw-2rem)] bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 max-h-[70vh] overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-            <div className="relative z-10">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-xl font-manrope font-bold text-white">
-                    Notifications
-                  </h3>
-                  {unreadCount > 0 && (
-                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                      {unreadCount}
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {/* Mark All Read */}
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={async () => {
-                        try {
-                          await markAllAsRead();
-                        } catch (err) {
-                          console.error('Failed to mark all as read:', err);
-                        }
-                      }}
-                      className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
-                      title="Mark all as read"
-                    >
-                      <FaCheckDouble className="w-4 h-4" />
-                    </button>
-                  )}
-                  
-                  {/* Clear All */}
-                  {notifications.length > 0 && (
-                    <button
-                      onClick={async () => {
-                        if (window.confirm('Are you sure you want to clear all notifications?')) {
-                          try {
-                            await clearAllNotifications();
-                          } catch (err) {
-                            console.error('Failed to clear all notifications:', err);
-                          }
-                        }
-                      }}
-                      className="p-2 text-white/70 hover:text-red-400 transition-colors duration-300 hover:bg-white/10 rounded-lg"
-                      title="Clear all notifications"
-                    >
-                      <FaTrash className="w-4 h-4" />
-                    </button>
-                  )}
-                  
-                  {/* Close */}
-                  <button
-                    onClick={() => setShowNotifications(false)}
-                    className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
-                  >
-                    <FaTimes className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Loading State */}
-              {notificationsLoading && (
-                <div className="flex items-center justify-center py-8">
-                  <FaSpinner className="w-6 h-6 text-white/60 animate-spin" />
-                </div>
-              )}
-
-              {/* Error State */}
-              {notificationsError && (
-                <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <div className="flex justify-between items-start">
-                    <p className="text-red-400 text-sm font-manrope">{notificationsError}</p>
-                    <button
-                      onClick={clearNotificationsError}
-                      className="text-red-300 hover:text-red-100 text-sm"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Content */}
-              <div className="max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
-                {notifications.length === 0 ? (
-                  <div className="text-center py-8">
-                    <FaBell className="w-8 h-8 text-white/40 mx-auto mb-3" />
-                    <p className="text-white/60 font-manrope">
-                      No notifications
-                    </p>
-                    <p className="text-white/40 text-sm font-manrope mt-1">
-                      New updates will appear here
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {notifications.map((notification) => (
-                      <div
-                        key={notification._id}
-                        className={`relative group p-4 rounded-lg border transition-all duration-300 cursor-pointer ${
-                          notification.read 
-                            ? 'bg-white/[0.02] border-white/10 hover:bg-white/[0.05]' 
-                            : 'bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/20'
-                        }`}
-                        onClick={async () => {
-                          // Mark as read when clicked
-                          if (!notification.read) {
-                            try {
-                              await markAsRead(notification._id);
-                            } catch (err) {
-                              console.error('Failed to mark as read:', err);
-                            }
-                          }
-                          
-                          // Handle navigation if actionUrl is provided
-                          if (notification.actionUrl) {
-                            // You might want to use React Router here
-                            setShowNotifications(false);
-                            // navigate(notification.actionUrl);
-                          }
-                        }}
-                      >
-                        <div className="flex items-start gap-4">
-                          {/* Icon */}
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                            notification.type === 'new_idea' ? 'bg-green-500/20 text-green-400' :
-                            notification.type === 'idea_update' ? 'bg-blue-500/20 text-blue-400' :
-                            notification.type === 'interest_confirmation' ? 'bg-purple-500/20 text-purple-400' :
-                            notification.type === 'funding_update' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {notification.type === 'new_idea' ? <FaLightbulb className="w-4 h-4" /> :
-                             notification.type === 'idea_update' ? <FaSync className="w-4 h-4" /> :
-                             notification.type === 'interest_confirmation' ? <FaHeart className="w-4 h-4" /> :
-                             notification.type === 'funding_update' ? <FaDollarSign className="w-4 h-4" /> :
-                             <FaBell className="w-4 h-4" />}
-                          </div>
-                          
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <h4 className="text-white font-manrope font-semibold text-sm mb-1 truncate">
-                                  {notification.title}
-                                </h4>
-                                <p className="text-white/70 text-sm font-manrope line-clamp-2 mb-2">
-                                  {notification.message}
-                                </p>
-                                <div className="flex items-center justify-between">
-                                  <p className="text-white/40 text-xs font-manrope">
-                                    {new Date(notification.createdAt).toLocaleDateString('en-US', {
-                                      month: 'short',
-                                      day: 'numeric',
-                                      hour: '2-digit',
-                                      minute: '2-digit'
-                                    })}
-                                  </p>
-                                  <div className="flex items-center gap-1">
-                                    {notification.priority === 'high' && (
-                                      <span className="text-red-400 text-xs">●</span>
-                                    )}
-                                    {!notification.read && (
-                                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              {/* Action buttons (visible on hover) */}
-                              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                {!notification.read && (
-                                  <button
-                                    onClick={async (e) => {
-                                      e.stopPropagation();
-                                      try {
-                                        await markAsRead(notification._id);
-                                      } catch (err) {
-                                        console.error('Failed to mark as read:', err);
-                                      }
-                                    }}
-                                    className="p-1 text-white/50 hover:text-green-400 transition-colors duration-200"
-                                    title="Mark as read"
-                                  >
-                                    <FaCheck className="w-3 h-3" />
-                                  </button>
-                                )}
-                                <button
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    try {
-                                      await deleteNotification(notification._id);
-                                    } catch (err) {
-                                      console.error('Failed to delete notification:', err);
-                                    }
-                                  }}
-                                  className="p-1 text-white/50 hover:text-red-400 transition-colors duration-200"
-                                  title="Delete notification"
-                                >
-                                  <FaTimes className="w-3 h-3" />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Load More Button (if needed for pagination) */}
-                {notifications.length >= 50 && (
-                  <div className="mt-6 pt-4 border-t border-white/10 text-center">
-                    <button
-                      onClick={() => loadNotifications({ page: 2 })}
-                      className="text-blue-400 hover:text-blue-300 font-manrope text-sm hover:underline"
-                    >
-                      Load more notifications
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <NotificationsPopup 
+        showNotifications={showNotifications}
+        setShowNotifications={setShowNotifications}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-4 right-4 w-1 h-1 bg-white/40 rounded-full animate-ping"></div>
-              <div className="absolute bottom-6 left-8 w-1 h-1 bg-white/35 rounded-full animate-bounce"></div>
-            </div>
-
-            <div className="relative z-10">
-              <h2 className="text-2xl md:text-3xl font-manrope font-bold text-white mb-4">
-                Ready to invest in the future?
-              </h2>
-              <p className="text-white/70 font-manrope mb-6 max-w-2xl">
-                Explore curated startup ideas, analyze opportunities, and build
-                your investment portfolio with promising entrepreneurs. Discover
-                the next big innovation.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={scrollToBrowseIdeas}
-                  className="btn rounded-lg px-6 py-3 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 bg-white text-black hover:bg-white/90"
-                >
-                  <FaSearch className="w-4 h-4" />
-                  Browse Ideas ({availableIdeas})
-                </button>
-                <button
-                  onClick={scrollToInterestedIdeas}
-                  className="btn rounded-lg px-6 py-3 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 border border-white/20"
-                >
-                  <FaHeart className="w-4 h-4" />
-                  My Interests ({totalInvestments})
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <InvestorWelcomeSection
+          availableIdeas={availableIdeas}
+          totalInvestments={totalInvestments}
+          scrollToBrowseIdeas={scrollToBrowseIdeas}
+          scrollToInterestedIdeas={scrollToInterestedIdeas}
+        />
 
         {/* Dashboard Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {dashboardCards.map((card, index) => (
-            <div
-              key={index}
-              className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer group relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-transparent to-white/[0.02] rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center ${card.color} group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    {card.icon}
-                  </div>
-                  <span
-                    className={`text-2xl font-bold ${card.color} font-manrope`}
-                  >
-                    {card.count}
-                  </span>
-                </div>
-
-                <h3 className="text-white font-manrope font-semibold text-lg mb-2 group-hover:text-gray-200 transition-colors duration-300">
-                  {card.title}
-                </h3>
-                <p className="text-white/60 text-sm font-manrope group-hover:text-white/80 transition-colors duration-300">
-                  {card.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <InvestorDashboardCards dashboardCards={dashboardCards} />
 
         {/* Error Message */}
-        {error && (
-          <div className="mb-6 bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-            <div className="flex justify-between items-start">
-              <p className="text-red-400 font-manrope">{error}</p>
-              <div className="flex gap-2">
-                <button
-                  onClick={loadDashboardData}
-                  className="text-red-300 hover:text-red-100 text-sm flex items-center gap-1"
-                  title="Retry"
-                >
-                  <FaSync className="w-3 h-3" />
-                </button>
-                <button
-                  onClick={() => setError(null)}
-                  className="text-red-300 hover:text-red-100 text-sm"
-                  title="Dismiss"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <ErrorMessage
+          error={error}
+          onRetry={loadDashboardData}
+          onDismiss={() => setError(null)}
+        />
 
         {/* Available Ideas Section */}
-        <div
-          ref={browseIdeasRef}
-          className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-          <div className="relative z-10">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-              <h3 className="text-xl font-manrope font-bold text-white">
-                Available Ideas ({getFilteredIdeas(ideas).length} of{" "}
-                {availableIdeas})
-              </h3>
-
-              {/* Filter Controls */}
-              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                {/* Search */}
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4" />
-                  <input
-                    type="text"
-                    placeholder="Search ideas..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors w-full sm:w-64"
-                  />
-                </div>
-
-                {/* Category Filter */}
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
-                >
-                  <option value="all" className="bg-gray-800">
-                    All Categories
-                  </option>
-                  {getCategories().map((category) => (
-                    <option
-                      key={category}
-                      value={category}
-                      className="bg-gray-800"
-                    >
-                      {category}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Sort */}
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
-                >
-                  <option value="newest" className="bg-gray-800">
-                    Newest First
-                  </option>
-                  <option value="oldest" className="bg-gray-800">
-                    Oldest First
-                  </option>
-                  <option value="score" className="bg-gray-800">
-                    Highest Score
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            {getFilteredIdeas(ideas).length === 0 ? (
-              <EmptyState
-                type={
-                  searchTerm || categoryFilter !== "all" ? "search" : "ideas"
-                }
-                title={
-                  searchTerm || categoryFilter !== "all"
-                    ? "No Results Found"
-                    : "No Ideas Available"
-                }
-                description={
-                  searchTerm || categoryFilter !== "all"
-                    ? "No ideas match your current filters. Try adjusting your search criteria."
-                    : "No ideas are available at the moment. Check back later for new opportunities."
-                }
-                action={
-                  searchTerm || categoryFilter !== "all"
-                    ? () => {
-                        setSearchTerm("");
-                        setCategoryFilter("all");
-                      }
-                    : null
-                }
-                actionText={
-                  searchTerm || categoryFilter !== "all"
-                    ? "Clear Filters"
-                    : null
-                }
-              />
-            ) : (
-              <div className="relative">
-                <div className="max-h-[600px] overflow-y-auto pr-8 custom-scrollbar">
-                  <div className="grid gap-6">
-                    {getFilteredIdeas(ideas).map((idea) => (
-                      <IdeaCard
-                        key={idea._id}
-                        idea={idea}
-                        showInterestButton={true}
-                        isInterested={interestedIdeas.some(
-                          (interested) => interested._id === idea._id
-                        )}
-                        onInterest={handleInterest}
-                        loading={actionLoading[idea._id]}
-                      />
-                    ))}
-                  </div>
-                </div>
-                {/* Scroll indicator gradient - only shown when content overflows */}
-                {getFilteredIdeas(ideas).length > 3 && (
-                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        <IdeasSection
+          title="Available Ideas"
+          ideas={ideas}
+          filteredIdeas={getFilteredIdeas(ideas)}
+          interestedIdeas={interestedIdeas}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          categories={getCategories()}
+          onInterest={handleInterest}
+          actionLoading={actionLoading}
+          showFilters={true}
+          emptyStateType="search"
+          emptyStateAction={() => {
+            setSearchTerm("");
+            setCategoryFilter("all");
+          }}
+          emptyStateActionText="Clear Filters"
+          sectionRef={browseIdeasRef}
+        />
 
         {/* My Interested Ideas Section */}
-        <div
-          ref={interestedIdeasRef}
-          className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-          <div className="relative z-10">
-            <h3 className="text-xl font-manrope font-bold text-white mb-6">
-              My Interested Ideas ({totalInvestments})
-            </h3>
-
-            {interestedIdeas.length === 0 ? (
-              <EmptyState
-                type="interested"
-                action={scrollToBrowseIdeas}
-                actionText="Browse Ideas"
-              />
-            ) : (
-              <div className="relative">
-                <div className="max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
-                  <div className="grid gap-6">
-                    {interestedIdeas.map((idea) => (
-                      <IdeaCard
-                        key={idea._id}
-                        idea={idea}
-                        showInterestButton={true}
-                        isInterested={true}
-                        onInterest={handleInterest}
-                        loading={actionLoading[idea._id]}
-                      />
-                    ))}
-                  </div>
-                </div>
-                {/* Scroll indicator gradient - only shown when content overflows */}
-                {interestedIdeas.length > 3 && (
-                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
+        <IdeasSection
+          title="My Interested Ideas"
+          ideas={interestedIdeas}
+          filteredIdeas={interestedIdeas}
+          interestedIdeas={interestedIdeas}
+          onInterest={handleInterest}
+          actionLoading={actionLoading}
+          showFilters={false}
+          emptyStateType="interested"
+          emptyStateAction={scrollToBrowseIdeas}
+          emptyStateActionText="Browse Ideas"
+          sectionRef={interestedIdeasRef}
+        />
       </div>
     </div>
   );
