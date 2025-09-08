@@ -92,7 +92,12 @@ exports.markInterest = async (req, res, next) => {
         const populatedIdea = await Idea.findById(ideaId).populate('owner');
         
         // Notify the entrepreneur about the new interest
-        await NotificationService.createInvestorInterestNotification(populatedIdea, req.user);
+        await NotificationService.createInvestorInterestNotification(
+            req.user.id, // investorId
+            ideaId, // ideaId
+            populatedIdea.owner._id, // entrepreneurId
+            populatedIdea.title // ideaTitle
+        );
 
         res.status(201).json({ message: 'Interest marked successfully', interest });
     } catch (error) {

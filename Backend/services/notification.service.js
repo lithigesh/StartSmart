@@ -74,6 +74,42 @@ class NotificationService {
         }
     }
 
+    // Create notification when investor shows interest in an idea
+    static async createInvestorInterestNotification(investorId, ideaId, entrepreneurId, ideaTitle) {
+        try {
+            const investor = await User.findById(investorId);
+            
+            // Notify the entrepreneur that an investor is interested
+            await Notification.create({
+                user: entrepreneurId,
+                title: 'Investor Interest in Your Idea',
+                message: `${investor.name} has shown interest in your idea "${ideaTitle}". This could be a great opportunity to connect!`,
+                type: 'interest_confirmation',
+                relatedIdea: ideaId,
+                relatedUser: investorId,
+                actionUrl: `/entrepreneur/ideas/${ideaId}`,
+                priority: 'high'
+            });
+
+            // Notify the investor about their interest confirmation
+            await Notification.create({
+                user: investorId,
+                title: 'Interest Marked Successfully',
+                message: `You've successfully marked interest in "${ideaTitle}". The entrepreneur has been notified and may reach out to you.`,
+                type: 'interest_confirmation',
+                relatedIdea: ideaId,
+                relatedUser: entrepreneurId,
+                actionUrl: `/investor/ideas/${ideaId}`,
+                priority: 'medium'
+            });
+
+            console.log(`Created interest notifications for investor ${investorId} and entrepreneur ${entrepreneurId}`);
+        } catch (error) {
+            console.error('Error creating investor interest notifications:', error);
+            throw error;
+        }
+    }
+
     // Create system notification for specific user
     static async createSystemNotification(userId, title, message, options = {}) {
         try {
