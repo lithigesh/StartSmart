@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
 
 export const Header = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, getRoleDashboardUrl } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -22,6 +22,10 @@ export const Header = () => {
       default:
         return "text-blue-400";
     }
+  };
+
+  const getDashboardUrl = () => {
+    return user ? getRoleDashboardUrl(user) : "/";
   };
 
   return (
@@ -53,7 +57,7 @@ export const Header = () => {
               <div className="flex items-center gap-4">
                 {/* User Info */}
                 <Link
-                  to="/dashboard"
+                  to={getDashboardUrl()}
                   className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white/[0.08] backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/[0.12] hover:border-white/30 transition-all duration-300 hover:scale-105 group"
                 >
                   <div
@@ -73,7 +77,7 @@ export const Header = () => {
 
                 {/* Mobile User Button */}
                 <Link
-                  to="/dashboard"
+                  to={getDashboardUrl()}
                   className="sm:hidden w-10 h-10 bg-white/[0.08] backdrop-blur-sm border border-white/20 rounded-lg flex items-center justify-center hover:bg-white/[0.12] hover:border-white/30 transition-all duration-300 hover:scale-105"
                 >
                   <FaUser className={`w-4 h-4 ${getRoleColor()}`} />

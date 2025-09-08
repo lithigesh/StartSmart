@@ -16,27 +16,47 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login, isAuthenticated, loading, error, clearErrors } = useAuth();
+  const { login, isAuthenticated, loading, error, clearErrors, user, getRoleDashboardUrl } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/dashboard";
-  const successMessage = location.state?.message;
-  const errorMessage = location.state?.error;
-  const preFilledEmail = location.state?.email;
+  // Use role-based dashboard if no specific redirect location was set
+  const getRedirectUrl = () => {
+    const fromPath = location.state?.from?.pathname;
+    console.log("LoginPage - fromPath:", fromPath, "user:", user);
+    
+    // Always use role-based dashboard URL instead of the "from" path
+    // This prevents redirecting to the wrong dashboard
+    if (user && getRoleDashboardUrl) {
+      const roleDashboard = getRoleDashboardUrl(user);
+      console.log("LoginPage - Role-based dashboard:", roleDashboard);
+      return roleDashboard;
+    }
+    
+    return "/";
+  };
 
   useEffect(() => {
     console.log(
       "Login page - isAuthenticated:",
       isAuthenticated,
       "loading:",
-      loading
+      loading,
+      "user:",
+      user
     );
-    if (isAuthenticated) {
-      console.log("Redirecting to:", from);
-      navigate(from, { replace: true });
+    // Only redirect if we have both authentication and user data
+    // and we're not in a loading state
+    if (isAuthenticated && user && !loading && user.role) {
+      const redirectUrl = getRedirectUrl();
+      console.log("Redirecting to:", redirectUrl);
+      navigate(redirectUrl, { replace: true });
     }
-  }, [isAuthenticated, navigate, from, loading]);
+  }, [isAuthenticated, navigate, loading, user]);
+
+  const successMessage = location.state?.message;
+  const errorMessage = location.state?.error;
+  const preFilledEmail = location.state?.email;
 
   useEffect(() => {
     clearErrors();
@@ -58,7 +78,13 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await login(formData);
+      const result = await login(formData);
+      if (result && result.success) {
+        console.log("Login successful, waiting for redirect...");
+        // Let the useEffect handle the redirect
+      } else {
+        console.error("Login failed:", result?.error);
+      }
     } catch (err) {
       console.error("Login error:", err);
     } finally {

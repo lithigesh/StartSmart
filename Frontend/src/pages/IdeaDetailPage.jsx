@@ -23,13 +23,17 @@ import {
 const IdeaDetailPage = () => {
   const { ideaId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, getRoleDashboardUrl } = useAuth();
 
   const [idea, setIdea] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isInterested, setIsInterested] = useState(false);
+
+  const getDashboardUrl = () => {
+    return user ? getRoleDashboardUrl(user) : "/";
+  };
 
   useEffect(() => {
     loadIdea();
@@ -111,7 +115,7 @@ const IdeaDetailPage = () => {
             {error || "Idea not found"}
           </p>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate(getDashboardUrl())}
             className="btn bg-white text-black hover:bg-gray-100 rounded-lg px-6 py-2 font-manrope"
           >
             Back to Dashboard
@@ -128,7 +132,7 @@ const IdeaDetailPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(getDashboardUrl())}
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <FaArrowLeft className="w-4 h-4" />

@@ -6,11 +6,15 @@ const {
     markInterest,
     updateInterestStatus,
     withdrawInterest,
-    getInvestorIdeas
+    getInvestorIdeas,
+    getInterestedIdeas
 } = require('../controllers/investor.controller');
 
 // Route for investors to browse all analyzed ideas
 router.get('/ideas', protect, isInvestor, getInvestorIdeas);
+
+// Route for investors to get their interested ideas
+router.get('/interested', protect, isInvestor, getInterestedIdeas);
 
 // Routes for managing interest in a specific idea
 router.route('/:ideaId/interest')

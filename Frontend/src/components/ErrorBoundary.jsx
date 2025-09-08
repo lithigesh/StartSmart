@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { FaHome, FaSync, FaBug } from "react-icons/fa";
 import StartSmartIcon from "/w_startSmart_icon.png";
 
@@ -29,6 +28,11 @@ class ErrorBoundary extends React.Component {
     this.setState({ hasError: false, error: null, errorInfo: null });
     // Reload the page
     window.location.reload();
+  };
+
+  handleGoHome = () => {
+    // Go to home page
+    window.location.href = '/';
   };
 
   render() {
@@ -132,25 +136,25 @@ class ErrorBoundary extends React.Component {
                   </button>
 
                   {/* Home Button */}
-                  <Link
-                    to="/"
+                  <button
+                    onClick={this.handleGoHome}
                     className="group relative overflow-hidden px-6 py-3 rounded-lg font-manrope font-medium text-white border border-white/20 bg-white/[0.05] hover:bg-white/[0.08] transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-white/30 hover:scale-105 hover:shadow-xl flex items-center gap-2"
                   >
                     <FaHome className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                     Back to Home
-                  </Link>
+                  </button>
                 </div>
 
                 {/* Additional Help */}
                 <div className="mt-8 pt-8 border-t border-white/10">
                   <p className="font-manrope text-white/60 text-sm">
                     If this problem continues, please contact our{" "}
-                    <Link
-                      to="/"
+                    <button
+                      onClick={this.handleGoHome}
                       className="text-white hover:text-white/80 font-medium transition-colors duration-300 underline underline-offset-4 hover:underline-offset-2"
                     >
                       support team
-                    </Link>
+                    </button>
                   </p>
                 </div>
               </div>

@@ -33,7 +33,7 @@ const RegisterPage = () => {
   const [passwordValid, setPasswordValid] = useState(null); // null = not validated, true = valid, false = invalid
   const [successMessage, setSuccessMessage] = useState("");
 
-  const { register, isAuthenticated, error, clearErrors } = useAuth();
+  const { register, isAuthenticated, error, clearErrors, user, getRoleDashboardUrl } = useAuth();
   const navigate = useNavigate();
 
   // Email validation function
@@ -48,10 +48,11 @@ const RegisterPage = () => {
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard", { replace: true });
+    if (isAuthenticated && user) {
+      const redirectUrl = getRoleDashboardUrl(user);
+      navigate(redirectUrl, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user]);
 
   useEffect(() => {
     clearErrors();

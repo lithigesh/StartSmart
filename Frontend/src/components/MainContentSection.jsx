@@ -82,11 +82,12 @@ const FEATURES_DATA = [
 
 export const MainContentSection = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, getRoleDashboardUrl } = useAuth();
 
   const handleNavigation = (role) => {
     if (isAuthenticated) {
-      navigate("/dashboard");
+      const dashboardUrl = getRoleDashboardUrl(user);
+      navigate(dashboardUrl);
     } else {
       navigate("/register", { state: { role } });
     }
@@ -439,7 +440,7 @@ export const MainContentSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             {isAuthenticated ? (
               <button
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate(getRoleDashboardUrl(user))}
                 className="btn btn-lg rounded-[55px] gap-2 w-full sm:w-auto shadow-lg bg-white text-black hover:bg-gray-100 border-white transition-all duration-300 ease-in-out hover:scale-105 hover:-translate-y-1 hover:shadow-xl group focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
               >
                 <span className="font-poppins font-medium text-base">
