@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { investorAPI, fundingAPI } from "../services/api";
 import IdeaCard from "../components/IdeaCard";
 import EmptyState from "../components/EmptyState";
 import {
-  FaBriefcase,
+  FaUser,
   FaSignOutAlt,
   FaCog,
   FaBell,
@@ -29,12 +29,15 @@ const InvestorDashboard = () => {
   const [ideas, setIdeas] = useState([]);
   const [interestedIdeas, setInterestedIdeas] = useState([]);
   const [fundingRequests, setFundingRequests] = useState([]);
-  const [activeView, setActiveView] = useState("browse"); // 'browse', 'interested', 'funding'
   const [actionLoading, setActionLoading] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest"); // 'newest', 'oldest', 'score'
   const [showNotifications, setShowNotifications] = useState(false);
+
+  // Refs for scrolling to sections
+  const browseIdeasRef = useRef(null);
+  const interestedIdeasRef = useRef(null);
 
   // Load dashboard data
   useEffect(() => {
@@ -120,6 +123,21 @@ const InvestorDashboard = () => {
     logout();
   };
 
+  // Scroll to section functions
+  const scrollToBrowseIdeas = () => {
+    browseIdeasRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const scrollToInterestedIdeas = () => {
+    interestedIdeasRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   // Filter and sort ideas
   const getFilteredIdeas = (ideasList) => {
     let filtered = ideasList;
@@ -190,28 +208,28 @@ const InvestorDashboard = () => {
       description: "Ideas you've shown interest in",
       icon: <FaHeart />,
       count: totalInvestments.toString(),
-      color: "text-pink-400",
+      color: "text-white",
     },
     {
       title: "Available Ideas",
       description: "Browse innovative startup ideas seeking funding",
       icon: <FaLightbulb />,
       count: availableIdeas.toString(),
-      color: "text-yellow-400",
+      color: "text-white",
     },
     {
       title: "Average Score",
       description: "AI analysis score of available ideas",
       icon: <FaChartLine />,
       count: `${avgScore}%`,
-      color: "text-blue-400",
+      color: "text-white",
     },
     {
       title: "New This Week",
       description: "Recently submitted ideas requiring review",
       icon: <FaBell />,
       count: newOpportunities.toString(),
-      color: "text-purple-400",
+      color: "text-white",
     },
   ];
 
@@ -233,8 +251,8 @@ const InvestorDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-green-400">
-                <FaBriefcase className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-white">
+                <FaUser className="w-6 h-6" />
               </div>
               <div>
                 <h1 className="text-white font-manrope font-semibold text-lg">
@@ -314,7 +332,7 @@ const InvestorDashboard = () => {
                       }}
                     >
                       <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
-                        <FaLightbulb className="w-4 h-4 text-yellow-400" />
+                        <FaLightbulb className="w-4 h-4 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-manrope font-medium truncate">
@@ -333,7 +351,7 @@ const InvestorDashboard = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             setShowNotifications(false);
-                            setActiveView("browse");
+                            scrollToBrowseIdeas();
                           }}
                           className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-1 font-manrope text-sm"
                         >
@@ -361,11 +379,11 @@ const InvestorDashboard = () => {
                     <button
                       onClick={() => {
                         setShowNotifications(false);
-                        setActiveView("browse");
+                        scrollToBrowseIdeas();
                       }}
                       className="text-blue-400 hover:text-blue-300 font-manrope text-sm hover:underline"
                     >
-                      Clear all →
+                      View all ideas →
                     </button>
                   </div>
                 )}
@@ -399,23 +417,15 @@ const InvestorDashboard = () => {
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => setActiveView("browse")}
-                  className={`btn rounded-lg px-6 py-3 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
-                    activeView === "browse"
-                      ? "bg-white text-black"
-                      : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
+                  onClick={scrollToBrowseIdeas}
+                  className="btn rounded-lg px-6 py-3 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 bg-white text-black hover:bg-white/90"
                 >
                   <FaSearch className="w-4 h-4" />
                   Browse Ideas ({availableIdeas})
                 </button>
                 <button
-                  onClick={() => setActiveView("interested")}
-                  className={`btn rounded-lg px-6 py-3 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
-                    activeView === "interested"
-                      ? "bg-white text-black"
-                      : "btn-outline border-white text-white hover:bg-white hover:text-black"
-                  }`}
+                  onClick={scrollToInterestedIdeas}
+                  className="btn rounded-lg px-6 py-3 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 border border-white/20"
                 >
                   <FaHeart className="w-4 h-4" />
                   My Interests ({totalInvestments})
@@ -484,168 +494,171 @@ const InvestorDashboard = () => {
           </div>
         )}
 
-        {/* Dynamic Content Based on Active View */}
-        {activeView === "browse" && (
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        {/* Available Ideas Section */}
+        <div
+          ref={browseIdeasRef}
+          className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
 
-            <div className="relative z-10">
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-                <h3 className="text-xl font-manrope font-bold text-white">
-                  Available Ideas ({getFilteredIdeas(ideas).length} of{" "}
-                  {availableIdeas})
-                </h3>
-
-                {/* Filter Controls */}
-                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                  {/* Search */}
-                  <div className="relative">
-                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
-                    <input
-                      type="text"
-                      placeholder="Search ideas..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors w-full sm:w-64"
-                    />
-                  </div>
-
-                  {/* Category Filter */}
-                  <select
-                    value={categoryFilter}
-                    onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
-                  >
-                    <option value="all" className="bg-gray-800">
-                      All Categories
-                    </option>
-                    {getCategories().map((category) => (
-                      <option
-                        key={category}
-                        value={category}
-                        className="bg-gray-800"
-                      >
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* Sort */}
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
-                  >
-                    <option value="newest" className="bg-gray-800">
-                      Newest First
-                    </option>
-                    <option value="oldest" className="bg-gray-800">
-                      Oldest First
-                    </option>
-                    <option value="score" className="bg-gray-800">
-                      Highest Score
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              {getFilteredIdeas(ideas).length === 0 ? (
-                <EmptyState
-                  type={
-                    searchTerm || categoryFilter !== "all" ? "search" : "ideas"
-                  }
-                  title={
-                    searchTerm || categoryFilter !== "all"
-                      ? "No Results Found"
-                      : "No Ideas Available"
-                  }
-                  description={
-                    searchTerm || categoryFilter !== "all"
-                      ? "No ideas match your current filters. Try adjusting your search criteria."
-                      : "No ideas are available at the moment. Check back later for new opportunities."
-                  }
-                  action={
-                    searchTerm || categoryFilter !== "all"
-                      ? () => {
-                          setSearchTerm("");
-                          setCategoryFilter("all");
-                        }
-                      : null
-                  }
-                  actionText={
-                    searchTerm || categoryFilter !== "all"
-                      ? "Clear Filters"
-                      : null
-                  }
-                />
-              ) : (
-                <div className="relative">
-                  <div className="max-h-[600px] overflow-y-auto pr-8 custom-scrollbar">
-                    <div className="grid gap-6">
-                      {getFilteredIdeas(ideas).map((idea) => (
-                        <IdeaCard
-                          key={idea._id}
-                          idea={idea}
-                          showInterestButton={true}
-                          isInterested={interestedIdeas.some(
-                            (interested) => interested._id === idea._id
-                          )}
-                          onInterest={handleInterest}
-                          loading={actionLoading[idea._id]}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Scroll indicator gradient - only shown when content overflows */}
-                  {getFilteredIdeas(ideas).length > 3 && (
-                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {activeView === "interested" && (
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-            <div className="relative z-10">
-              <h3 className="text-xl font-manrope font-bold text-white mb-6">
-                My Interested Ideas ({totalInvestments})
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+              <h3 className="text-xl font-manrope font-bold text-white">
+                Available Ideas ({getFilteredIdeas(ideas).length} of{" "}
+                {availableIdeas})
               </h3>
 
-              {interestedIdeas.length === 0 ? (
-                <EmptyState
-                  type="interested"
-                  action={() => setActiveView("browse")}
-                  actionText="Browse Ideas"
-                />
-              ) : (
+              {/* Filter Controls */}
+              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                {/* Search */}
                 <div className="relative">
-                  <div className="max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
-                    <div className="grid gap-6">
-                      {interestedIdeas.map((idea) => (
-                        <IdeaCard
-                          key={idea._id}
-                          idea={idea}
-                          showInterestButton={true}
-                          isInterested={true}
-                          onInterest={handleInterest}
-                          loading={actionLoading[idea._id]}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Scroll indicator gradient - only shown when content overflows */}
-                  {interestedIdeas.length > 3 && (
-                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
-                  )}
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search ideas..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors w-full sm:w-64"
+                  />
                 </div>
-              )}
+
+                {/* Category Filter */}
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
+                >
+                  <option value="all" className="bg-gray-800">
+                    All Categories
+                  </option>
+                  {getCategories().map((category) => (
+                    <option
+                      key={category}
+                      value={category}
+                      className="bg-gray-800"
+                    >
+                      {category}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Sort */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
+                >
+                  <option value="newest" className="bg-gray-800">
+                    Newest First
+                  </option>
+                  <option value="oldest" className="bg-gray-800">
+                    Oldest First
+                  </option>
+                  <option value="score" className="bg-gray-800">
+                    Highest Score
+                  </option>
+                </select>
+              </div>
             </div>
+
+            {getFilteredIdeas(ideas).length === 0 ? (
+              <EmptyState
+                type={
+                  searchTerm || categoryFilter !== "all" ? "search" : "ideas"
+                }
+                title={
+                  searchTerm || categoryFilter !== "all"
+                    ? "No Results Found"
+                    : "No Ideas Available"
+                }
+                description={
+                  searchTerm || categoryFilter !== "all"
+                    ? "No ideas match your current filters. Try adjusting your search criteria."
+                    : "No ideas are available at the moment. Check back later for new opportunities."
+                }
+                action={
+                  searchTerm || categoryFilter !== "all"
+                    ? () => {
+                        setSearchTerm("");
+                        setCategoryFilter("all");
+                      }
+                    : null
+                }
+                actionText={
+                  searchTerm || categoryFilter !== "all"
+                    ? "Clear Filters"
+                    : null
+                }
+              />
+            ) : (
+              <div className="relative">
+                <div className="max-h-[600px] overflow-y-auto pr-8 custom-scrollbar">
+                  <div className="grid gap-6">
+                    {getFilteredIdeas(ideas).map((idea) => (
+                      <IdeaCard
+                        key={idea._id}
+                        idea={idea}
+                        showInterestButton={true}
+                        isInterested={interestedIdeas.some(
+                          (interested) => interested._id === idea._id
+                        )}
+                        onInterest={handleInterest}
+                        loading={actionLoading[idea._id]}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {/* Scroll indicator gradient - only shown when content overflows */}
+                {getFilteredIdeas(ideas).length > 3 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
+                )}
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* My Interested Ideas Section */}
+        <div
+          ref={interestedIdeasRef}
+          className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+
+          <div className="relative z-10">
+            <h3 className="text-xl font-manrope font-bold text-white mb-6">
+              My Interested Ideas ({totalInvestments})
+            </h3>
+
+            {interestedIdeas.length === 0 ? (
+              <EmptyState
+                type="interested"
+                action={scrollToBrowseIdeas}
+                actionText="Browse Ideas"
+              />
+            ) : (
+              <div className="relative">
+                <div className="max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+                  <div className="grid gap-6">
+                    {interestedIdeas.map((idea) => (
+                      <IdeaCard
+                        key={idea._id}
+                        idea={idea}
+                        showInterestButton={true}
+                        isInterested={true}
+                        onInterest={handleInterest}
+                        loading={actionLoading[idea._id]}
+                      />
+                    ))}
+                  </div>
+                </div>
+                {/* Scroll indicator gradient - only shown when content overflows */}
+                {interestedIdeas.length > 3 && (
+                  <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

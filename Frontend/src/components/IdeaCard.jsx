@@ -46,7 +46,7 @@ const IdeaCard = ({
           <div className="flex items-center gap-2 ml-4">
             <button
               onClick={() => navigate(`/idea/${idea._id}`)}
-              className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <FaEye className="w-3 h-3" />
               View Details
@@ -58,8 +58,8 @@ const IdeaCard = ({
               disabled={loading}
               className={`btn btn-sm rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
                 isInterested
-                  ? "bg-red-500 hover:bg-red-600 text-white"
-                  : "bg-pink-500 hover:bg-pink-600 text-white"
+                  ? "bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                  : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
               }`}
             >
               {loading ? (
@@ -77,22 +77,22 @@ const IdeaCard = ({
 
       {/* Metadata */}
       <div className="flex flex-wrap items-center gap-4 text-sm mb-4">
-        <div className="flex items-center gap-1 text-blue-400">
+        <div className="flex items-center gap-1 text-white/70">
           <FaTag className="w-3 h-3" />
           <span className="font-manrope">{idea.category}</span>
         </div>
-        <div className="flex items-center gap-1 text-green-400">
+        <div className="flex items-center gap-1 text-white/70">
           <FaUser className="w-3 h-3" />
           <span className="font-manrope">
             {idea.owner?.name || "Anonymous"}
           </span>
         </div>
-        <div className="flex items-center gap-1 text-gray-400">
+        <div className="flex items-center gap-1 text-white/70">
           <FaCalendar className="w-3 h-3" />
           <span className="font-manrope">{formatDate(idea.createdAt)}</span>
         </div>
         {idea.analysis?.score && (
-          <div className="flex items-center gap-1 text-yellow-400">
+          <div className="flex items-center gap-1 text-white">
             <FaStar className="w-3 h-3" />
             <span className="font-manrope font-semibold">
               Score: {idea.analysis.score}%
