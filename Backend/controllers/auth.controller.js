@@ -3,6 +3,7 @@ const User = require('../models/User.model');
 const Idea = require('../models/Idea.model');
 const Feedback = require('../models/Feedback.model');
 const FundingRequest = require('../models/FundingRequest.model');
+const NotificationService = require('../services/notification.service');
 const generateToken = require('../utils/generateToken');
 
 // @desc    Register a new user
@@ -16,6 +17,10 @@ exports.registerUser = async (req, res, next) => {
             return res.status(400).json({ message: 'User already exists' });
         }
         const user = await User.create({ name, email, password, role });
+        
+        // Create welcome notification for new user
+        await NotificationService.createWelcomeNotification(user);
+        
         res.status(201).json({
             _id: user._id,
             name: user.name,

@@ -1,5 +1,5 @@
 // API service functions for backend integration
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API_URL =  "http://localhost:5001";
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -127,22 +127,69 @@ export const fundingAPI = {
 
 // Notifications API (if available)
 export const notificationsAPI = {
-  // Get user notifications
-  getNotifications: async () => {
-    const response = await fetch(`${API_URL}/api/notifications`, {
+  // Get all notifications for the user
+  getNotifications: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(
+      `${API_URL}/api/notifications${query ? `?${query}` : ''}`,
+      {
+        headers: getAuthHeaders(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  // Get unread notification count
+  getUnreadCount: async () => {
+    const response = await fetch(`${API_URL}/api/notifications/count`, {
       headers: getAuthHeaders(),
     });
     return handleResponse(response);
   },
 
-  // Mark notification as read
+  // Mark a notification as read
   markAsRead: async (notificationId) => {
     const response = await fetch(
-      `${API_URL}/api/notifications/${notificationId}`,
+      `${API_URL}/api/notifications/${notificationId}/read`,
       {
         method: "PUT",
         headers: getAuthHeaders(),
-        body: JSON.stringify({ read: true }),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  // Mark all notifications as read
+  markAllAsRead: async () => {
+    const response = await fetch(
+      `${API_URL}/api/notifications/mark-all-read`,
+      {
+        method: "PUT",
+        headers: getAuthHeaders(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  // Delete a specific notification
+  deleteNotification: async (notificationId) => {
+    const response = await fetch(
+      `${API_URL}/api/notifications/${notificationId}`,
+      {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      }
+    );
+    return handleResponse(response);
+  },
+
+  // Clear all notifications
+  clearAllNotifications: async () => {
+    const response = await fetch(
+      `${API_URL}/api/notifications/clear-all`,
+      {
+        method: "DELETE",
+        headers: getAuthHeaders(),
       }
     );
     return handleResponse(response);

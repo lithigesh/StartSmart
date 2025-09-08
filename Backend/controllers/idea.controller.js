@@ -1,6 +1,7 @@
 // controllers/idea.controller.js
 const Idea = require('../models/Idea.model');
 const Notification = require('../models/Notification.model');
+const NotificationService = require('../services/notification.service');
 const aiService = require('../services/aiAnalysis.service');
 const pdfService = require('../services/pdf.service');
 
@@ -17,6 +18,10 @@ exports.submitIdea = async (req, res, next) => {
             category,
             owner: req.user.id,
         });
+
+        // Create notifications for all investors about the new idea
+        await NotificationService.createNewIdeaNotification(idea, req.user);
+
         res.status(201).json(idea);
     } catch (error) {
         next(error);
@@ -51,6 +56,10 @@ exports.analyzeIdea = async (req, res, next) => {
                 };
                 idea.status = 'analyzed';
                 await idea.save();
+                
+                // Notify the entrepreneur that analysis is complete
+                await NotificationService.createAnalysisCompleteNotification(idea);
+                
                 console.log(`Analysis complete for idea: ${idea.title}`);
             } catch (aiError) {
                 idea.status = 'failed';

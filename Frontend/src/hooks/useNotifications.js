@@ -1,0 +1,154 @@
+import { useState, useEffect, useCallback } from 'react';
+import { notificationsAPI } from '../services/api';
+
+export const useNotifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Load notifications
+  const loadNotifications = useCallback(async (params = {}) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await notificationsAPI.getNotifications(params);
+      
+      if (response.notifications) {
+        // New paginated format
+        setNotifications(response.notifications);
+        setUnreadCount(response.unreadCount || 0);
+      } else {
+        // Legacy format
+        setNotifications(response);
+        // Count unread notifications
+        const unread = response.filter(notif => !notif.read).length;
+        setUnreadCount(unread);
+      }
+    } catch (err) {
+      console.error('Error loading notifications:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Load unread count only
+  const loadUnreadCount = useCallback(async () => {
+    try {
+      const response = await notificationsAPI.getUnreadCount();
+      setUnreadCount(response.unreadCount || 0);
+    } catch (err) {
+      console.error('Error loading unread count:', err);
+    }
+  }, []);
+
+  // Mark notification as read
+  const markAsRead = useCallback(async (notificationId) => {
+    try {
+      await notificationsAPI.markAsRead(notificationId);
+      
+      // Update local state
+      setNotifications(prev => 
+        prev.map(notif => 
+          notif._id === notificationId 
+            ? { ...notif, read: true }
+            : notif
+        )
+      );
+      
+      // Update unread count
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+      setError(err.message);
+      throw err;
+    }
+  }, []);
+
+  // Mark all notifications as read
+  const markAllAsRead = useCallback(async () => {
+    try {
+      await notificationsAPI.markAllAsRead();
+      
+      // Update local state
+      setNotifications(prev => 
+        prev.map(notif => ({ ...notif, read: true }))
+      );
+      
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Error marking all notifications as read:', err);
+      setError(err.message);
+      throw err;
+    }
+  }, []);
+
+  // Delete notification
+  const deleteNotification = useCallback(async (notificationId) => {
+    try {
+      await notificationsAPI.deleteNotification(notificationId);
+      
+      // Find the notification to check if it was unread
+      const notification = notifications.find(notif => notif._id === notificationId);
+      const wasUnread = notification && !notification.read;
+      
+      // Update local state
+      setNotifications(prev => 
+        prev.filter(notif => notif._id !== notificationId)
+      );
+      
+      // Update unread count if necessary
+      if (wasUnread) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+    } catch (err) {
+      console.error('Error deleting notification:', err);
+      setError(err.message);
+      throw err;
+    }
+  }, [notifications]);
+
+  // Clear all notifications
+  const clearAllNotifications = useCallback(async () => {
+    try {
+      await notificationsAPI.clearAllNotifications();
+      
+      // Update local state
+      setNotifications([]);
+      setUnreadCount(0);
+    } catch (err) {
+      console.error('Error clearing all notifications:', err);
+      setError(err.message);
+      throw err;
+    }
+  }, []);
+
+  // Auto-load notifications on mount
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
+
+  // Auto-refresh unread count periodically (every 30 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadUnreadCount();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [loadUnreadCount]);
+
+  return {
+    notifications,
+    unreadCount,
+    loading,
+    error,
+    loadNotifications,
+    loadUnreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    clearAllNotifications,
+    clearError: () => setError(null)
+  };
+};

@@ -1,5 +1,6 @@
 const InvestorInterest = require('../models/InvestorInterest.model');
 const Idea = require('../models/Idea.model');
+const NotificationService = require('../services/notification.service');
 
 // @desc    Get investor's interested ideas
 // @route   GET /api/investors/interested
@@ -86,6 +87,12 @@ exports.markInterest = async (req, res, next) => {
             investor: investorId,
             status: 'interested'
         });
+
+        // Populate the idea with owner details for notification
+        const populatedIdea = await Idea.findById(ideaId).populate('owner');
+        
+        // Notify the entrepreneur about the new interest
+        await NotificationService.createInvestorInterestNotification(populatedIdea, req.user);
 
         res.status(201).json({ message: 'Interest marked successfully', interest });
     } catch (error) {
