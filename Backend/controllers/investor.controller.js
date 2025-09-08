@@ -165,7 +165,7 @@ exports.updateInterestStatus = async (req, res, next) => {
 exports.withdrawInterest = async (req, res, next) => {
     try {
         const { ideaId } = req.params;
-        const investorId = req.user.id;
+        const investorId = req.user._id || req.user.id;
 
         const interest = await InvestorInterest.findOne({
             idea: ideaId,
