@@ -6,7 +6,7 @@ const NotificationService = require('../services/notification.service');
 // @route   GET /api/investors/interested
 exports.getInterestedIdeas = async (req, res, next) => {
     try {
-        const investorId = req.user.id;
+        const investorId = req.user._id || req.user.id;
         
         // Find all interests for this investor and populate the idea details
         const interests = await InvestorInterest.find({ 
@@ -54,12 +54,25 @@ exports.getInvestorIdeas = async (req, res, next) => {
 exports.markInterest = async (req, res, next) => {
     try {
         const { ideaId } = req.params;
-        const investorId = req.user.id;
+        const investorId = req.user._id || req.user.id;
+
+        console.log(`Marking interest - Investor ID: ${investorId}, Idea ID: ${ideaId}`);
+        console.log(`User object:`, req.user);
+
+        // Validate ObjectId format
+        if (!ideaId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ message: 'Invalid idea ID format' });
+        }
 
         // First check if the idea exists
         const idea = await Idea.findById(ideaId);
         if (!idea) {
             return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        // Verify investor exists
+        if (!req.user) {
+            return res.status(401).json({ message: 'User not authenticated' });
         }
 
         // For now, allow interest in submitted ideas as well for testing
@@ -91,16 +104,31 @@ exports.markInterest = async (req, res, next) => {
         // Populate the idea with owner details for notification
         const populatedIdea = await Idea.findById(ideaId).populate('owner');
         
+        if (!populatedIdea || !populatedIdea.owner) {
+            console.error(`Idea or idea owner not found for idea: ${ideaId}`);
+            // Still return success since the interest was created successfully
+            return res.status(201).json({ 
+                message: 'Interest marked successfully (notification skipped due to missing owner)', 
+                interest 
+            });
+        }
+
         // Notify the entrepreneur about the new interest
-        await NotificationService.createInvestorInterestNotification(
-            req.user.id, // investorId
-            ideaId, // ideaId
-            populatedIdea.owner._id, // entrepreneurId
-            populatedIdea.title // ideaTitle
-        );
+        try {
+            await NotificationService.createInvestorInterestNotification(
+                investorId.toString(), // investorId
+                ideaId, // ideaId
+                populatedIdea.owner._id.toString(), // entrepreneurId
+                populatedIdea.title // ideaTitle
+            );
+        } catch (notificationError) {
+            console.error('Failed to create notifications:', notificationError);
+            // Don't fail the entire request if notification fails
+        }
 
         res.status(201).json({ message: 'Interest marked successfully', interest });
     } catch (error) {
+        console.error('Error in markInterest:', error);
         next(error);
     }
 };
@@ -114,8 +142,10 @@ exports.updateInterestStatus = async (req, res, next) => {
             return res.status(400).json({ message: 'Invalid status' });
         }
 
+        const investorId = req.user._id || req.user.id;
+
         const interest = await InvestorInterest.findOneAndUpdate(
-            { idea: req.params.ideaId, investor: req.user.id },
+            { idea: req.params.ideaId, investor: investorId },
             { $set: { status: status } },
             { new: true }
         );
