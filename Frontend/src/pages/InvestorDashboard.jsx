@@ -34,6 +34,7 @@ const InvestorDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest"); // 'newest', 'oldest', 'score'
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Load dashboard data
   useEffect(() => {
@@ -246,6 +247,18 @@ const InvestorDashboard = () => {
             </div>
 
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
+              >
+                <FaBell className="w-5 h-5" />
+                {/* Notification badge */}
+                {newOpportunities > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {newOpportunities > 9 ? "9+" : newOpportunities}
+                  </span>
+                )}
+              </button>
               <button className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg">
                 <FaCog className="w-5 h-5" />
               </button>
@@ -260,6 +273,107 @@ const InvestorDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Notifications Popup */}
+      {showNotifications && (
+        <div className="fixed inset-0 z-50">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowNotifications(false)}
+          ></div>
+
+          {/* Popup Content */}
+          <div className="absolute top-20 right-4 w-96 max-w-[calc(100vw-2rem)] bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 max-h-[70vh] overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-manrope font-bold text-white">
+                  Recent Activity
+                </h3>
+                <button
+                  onClick={() => setShowNotifications(false)}
+                  className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="max-h-[50vh] overflow-y-auto custom-scrollbar pr-4">
+                <div className="space-y-4">
+                  {ideas.slice(0, 5).map((idea) => (
+                    <div
+                      key={idea._id}
+                      className="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-lg hover:bg-white/[0.05] transition-all duration-300 cursor-pointer"
+                      onClick={() => {
+                        setShowNotifications(false);
+                        handleInterest(idea._id, "add");
+                      }}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                        <FaLightbulb className="w-4 h-4 text-yellow-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-manrope font-medium truncate">
+                          New idea: "{idea.title}"{" "}
+                          {idea.analysis?.score
+                            ? `(Score: ${idea.analysis.score}%)`
+                            : ""}
+                        </p>
+                        <p className="text-white/60 text-sm font-manrope truncate">
+                          by {idea.owner?.name || "Anonymous"} •{" "}
+                          {new Date(idea.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowNotifications(false);
+                            setActiveView("browse");
+                          }}
+                          className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-1 font-manrope text-sm"
+                        >
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {ideas.length === 0 && (
+                    <div className="text-center py-8">
+                      <FaBell className="w-8 h-8 text-white/40 mx-auto mb-3" />
+                      <p className="text-white/60 font-manrope">
+                        No recent activity
+                      </p>
+                      <p className="text-white/40 text-sm font-manrope mt-1">
+                        New ideas and updates will appear here
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {ideas.length > 5 && (
+                  <div className="mt-6 pt-4 border-t border-white/10 text-center">
+                    <button
+                      onClick={() => {
+                        setShowNotifications(false);
+                        setActiveView("browse");
+                      }}
+                      className="text-blue-400 hover:text-blue-300 font-manrope text-sm hover:underline"
+                    >
+                      Clear all →
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -465,19 +579,27 @@ const InvestorDashboard = () => {
                   }
                 />
               ) : (
-                <div className="grid gap-6">
-                  {getFilteredIdeas(ideas).map((idea) => (
-                    <IdeaCard
-                      key={idea._id}
-                      idea={idea}
-                      showInterestButton={true}
-                      isInterested={interestedIdeas.some(
-                        (interested) => interested._id === idea._id
-                      )}
-                      onInterest={handleInterest}
-                      loading={actionLoading[idea._id]}
-                    />
-                  ))}
+                <div className="relative">
+                  <div className="max-h-[600px] overflow-y-auto pr-8 custom-scrollbar">
+                    <div className="grid gap-6">
+                      {getFilteredIdeas(ideas).map((idea) => (
+                        <IdeaCard
+                          key={idea._id}
+                          idea={idea}
+                          showInterestButton={true}
+                          isInterested={interestedIdeas.some(
+                            (interested) => interested._id === idea._id
+                          )}
+                          onInterest={handleInterest}
+                          loading={actionLoading[idea._id]}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  {/* Scroll indicator gradient - only shown when content overflows */}
+                  {getFilteredIdeas(ideas).length > 3 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
+                  )}
                 </div>
               )}
             </div>
@@ -500,88 +622,30 @@ const InvestorDashboard = () => {
                   actionText="Browse Ideas"
                 />
               ) : (
-                <div className="grid gap-6">
-                  {interestedIdeas.map((idea) => (
-                    <IdeaCard
-                      key={idea._id}
-                      idea={idea}
-                      showInterestButton={true}
-                      isInterested={true}
-                      onInterest={handleInterest}
-                      loading={actionLoading[idea._id]}
-                    />
-                  ))}
+                <div className="relative">
+                  <div className="max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+                    <div className="grid gap-6">
+                      {interestedIdeas.map((idea) => (
+                        <IdeaCard
+                          key={idea._id}
+                          idea={idea}
+                          showInterestButton={true}
+                          isInterested={true}
+                          onInterest={handleInterest}
+                          loading={actionLoading[idea._id]}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  {/* Scroll indicator gradient - only shown when content overflows */}
+                  {interestedIdeas.length > 3 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-b-2xl"></div>
+                  )}
                 </div>
               )}
             </div>
           </div>
         )}
-
-        {/* Recent Activity Section */}
-        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-          <div className="relative z-10">
-            <h3 className="text-xl font-manrope font-bold text-white mb-6">
-              Recent Activity
-            </h3>
-
-            <div className="space-y-4">
-              {ideas.slice(0, 3).map((idea) => (
-                <div
-                  key={idea._id}
-                  className="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-lg hover:bg-white/[0.05] transition-all duration-300"
-                >
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                    <FaLightbulb className="w-4 h-4 text-yellow-400" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-white font-manrope font-medium">
-                      New idea: "{idea.title}"{" "}
-                      {idea.analysis?.score
-                        ? `(Score: ${idea.analysis.score}%)`
-                        : ""}
-                    </p>
-                    <p className="text-white/60 text-sm font-manrope">
-                      by {idea.owner?.name || "Anonymous"} •{" "}
-                      {new Date(idea.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleInterest(idea._id, "add")}
-                    disabled={actionLoading[idea._id]}
-                    className="btn btn-sm bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-3 py-1 font-manrope text-sm"
-                  >
-                    {actionLoading[idea._id] ? (
-                      <FaSpinner className="w-3 h-3 animate-spin" />
-                    ) : (
-                      "View"
-                    )}
-                  </button>
-                </div>
-              ))}
-
-              {ideas.length === 0 && (
-                <EmptyState
-                  type="ideas"
-                  title="No Recent Activity"
-                  description="No recent ideas or activity to display."
-                />
-              )}
-            </div>
-
-            {ideas.length > 3 && (
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => setActiveView("browse")}
-                  className="text-blue-400 hover:text-blue-300 font-manrope text-sm"
-                >
-                  View all {ideas.length} ideas →
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   );
