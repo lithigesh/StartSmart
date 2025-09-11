@@ -16,8 +16,8 @@ const AdminLoginPage = () => {
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
-    email: "admin@startsmart.com", // Pre-fill for testing
-    password: "StartSmart@Admin2025", // Pre-fill for testing
+    email: "", 
+    password: "", 
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -166,7 +166,7 @@ const AdminLoginPage = () => {
                   name="email"
                   value={credentials.email}
                   onChange={handleInputChange}
-                  placeholder="admin@startsmart.com"
+                  placeholder="Enter admin email"
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/50 font-manrope focus:outline-none focus:border-red-500/50 focus:bg-white/10 transition-all duration-300"
                   required
                   disabled={isLoading}

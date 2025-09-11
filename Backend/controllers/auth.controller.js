@@ -46,7 +46,7 @@ exports.loginUser = async (req, res, next) => {
             // Prevent admin users from logging in through normal login
             if (user.role === 'admin') {
                 return res.status(403).json({ 
-                    message: 'Admin users must use the admin login portal' 
+                    message: 'Invalid email or password' 
                 });
             }
             
