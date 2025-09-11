@@ -11,6 +11,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import InvestorDashboard from "./pages/InvestorDashboard.jsx";
 import EntrepreneurDashboard from "./pages/EntrepreneurDashboard.jsx";
 import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
+import AdminDashboard from "./pages/AdminPage.jsx";
 import {
   NotFoundPage,
   ServerErrorPage,
@@ -40,6 +41,14 @@ const App = () => {
               element={
                 <RoleBasedRoute allowedRole="entrepreneur">
                   <EntrepreneurDashboard />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <RoleBasedRoute allowedRole="admin">
+                  <AdminDashboard />
                 </RoleBasedRoute>
               }
             />
