@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
@@ -20,67 +20,76 @@ import {
   NetworkErrorPage,
 } from "./pages/errors";
 
+// Loading component
+const LoadingSpinner = () => (
+  <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="text-white text-xl">Loading...</div>
+  </div>
+);
+
 const App = () => {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route
-              path="/investor/dashboard"
-              element={
-                <RoleBasedRoute allowedRole="investor">
-                  <InvestorDashboard />
-                </RoleBasedRoute>
-              }
-            />
-            <Route
-              path="/entrepreneur/dashboard"
-              element={
-                <RoleBasedRoute allowedRole="entrepreneur">
-                  <EntrepreneurDashboard />
-                </RoleBasedRoute>
-              }
-            />
-            {/* Admin Routes */}
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route
-              path="/admin"
-              element={
-                <RoleBasedRoute allowedRole="admin">
-                  <AdminDashboard />
-                </RoleBasedRoute>
-              }
-            />
-            <Route
-              path="/admin/dashboard"
-              element={
-                <RoleBasedRoute allowedRole="admin">
-                  <AdminDashboard />
-                </RoleBasedRoute>
-              }
-            />
-            <Route
-              path="/idea/:ideaId"
-              element={
-                <ProtectedRoute>
-                  <IdeaDetailPage />
-                </ProtectedRoute>
-              }
-            />
-            {/* Error Pages */}
-            <Route path="/error/500" element={<ServerErrorPage />} />
-            <Route path="/error/401" element={<UnauthorizedPage />} />
-            <Route path="/error/network" element={<NetworkErrorPage />} />
-            {/* Catch all unmatched routes */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-          <Analytics />
-        </BrowserRouter>
-      </AuthProvider>
+      <Suspense fallback={<LoadingSpinner />}>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route
+                path="/investor/dashboard"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/entrepreneur/dashboard"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <EntrepreneurDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route
+                path="/admin"
+                element={
+                  <RoleBasedRoute allowedRole="admin">
+                    <AdminDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <RoleBasedRoute allowedRole="admin">
+                    <AdminDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/idea/:ideaId"
+                element={
+                  <ProtectedRoute>
+                    <IdeaDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Error Pages */}
+              <Route path="/error/500" element={<ServerErrorPage />} />
+              <Route path="/error/401" element={<UnauthorizedPage />} />
+              <Route path="/error/network" element={<NetworkErrorPage />} />
+              {/* Catch all unmatched routes */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+            <Analytics />
+          </BrowserRouter>
+        </AuthProvider>
+      </Suspense>
     </ErrorBoundary>
   );
 };

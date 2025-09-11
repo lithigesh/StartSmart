@@ -7,28 +7,46 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 // Auth Context
 const AuthContext = createContext();
 
-// Initial state
-const initialState = {
-  user: null,
-  token: localStorage.getItem("token"),
-  isAuthenticated: false,
-  loading: true,
-  error: null,
+// Initial state with safe localStorage access
+const getInitialState = () => {
+  const baseState = {
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    loading: true,
+    error: null,
+  };
+
+  // Only access localStorage in browser environment
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      const token = localStorage.getItem("token");
+      const storedUser = localStorage.getItem("user");
+      
+      if (token && storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        return {
+          ...baseState,
+          user: parsedUser,
+          token,
+          isAuthenticated: true,
+          loading: false,
+        };
+      }
+    } catch (error) {
+      console.error("Error parsing stored user:", error);
+      // Clean up corrupted data
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+      }
+    }
+  }
+
+  return baseState;
 };
 
-// Try to get user from localStorage if available
-const storedUser = localStorage.getItem("user");
-if (storedUser) {
-  try {
-    const parsedUser = JSON.parse(storedUser);
-    initialState.user = parsedUser;
-    initialState.isAuthenticated = !!localStorage.getItem("token");
-    initialState.loading = false;
-  } catch (error) {
-    console.error("Error parsing stored user:", error);
-    localStorage.removeItem("user");
-  }
-}
+const initialState = getInitialState();
 
 // Auth reducer
 const authReducer = (state, action) => {
@@ -105,8 +123,21 @@ export const AuthProvider = ({ children }) => {
 
   // Load user - wrapped with useCallback to prevent infinite loops
   const loadUser = useCallback(async () => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+    // Skip if not in browser environment
+    if (typeof window === 'undefined' || !window.localStorage) {
+      dispatch({ type: "AUTH_ERROR" });
+      return;
+    }
+
+    let token, storedUser;
+    try {
+      token = localStorage.getItem("token");
+      storedUser = localStorage.getItem("user");
+    } catch (error) {
+      console.error("Error accessing localStorage:", error);
+      dispatch({ type: "AUTH_ERROR" });
+      return;
+    }
     
     if (token && storedUser) {
       try {
@@ -119,7 +150,11 @@ export const AuthProvider = ({ children }) => {
         return;
       } catch (error) {
         console.error("Error parsing stored user:", error);
-        localStorage.removeItem("user");
+        try {
+          localStorage.removeItem("user");
+        } catch (e) {
+          console.error("Error removing corrupted user data:", e);
+        }
       }
     }
     
@@ -204,9 +239,15 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Store token and user data
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        // Store token and user data safely
+        if (typeof window !== 'undefined' && window.localStorage) {
+          try {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+          } catch (error) {
+            console.error("Error storing to localStorage:", error);
+          }
+        }
         
         // Update state
         dispatch({
@@ -237,9 +278,15 @@ export const AuthProvider = ({ children }) => {
 
   // Logout user with optional redirect - wrapped with useCallback
   const logout = useCallback((redirectTo = null) => {
-    // Clear storage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    // Clear storage safely
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      } catch (error) {
+        console.error("Error clearing localStorage:", error);
+      }
+    }
     
     // Update state
     dispatch({ type: "LOGOUT" });

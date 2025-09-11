@@ -6,9 +6,22 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "./",
+  base: "/",
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
   server: {
     historyApiFallback: true,
+  },
+  preview: {
+    port: 3000,
+    host: true,
   },
   css: {
     postcss: {
