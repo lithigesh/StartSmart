@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from "react";
 
 // Get API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
@@ -90,16 +90,44 @@ export const AuthProvider = ({ children }) => {
   // Get role-based dashboard URL
   const getRoleDashboardUrl = (user) => {
     if (!user || !user.role) return "/";
-    return user.role === "investor" ? "/investor/dashboard" : "/entrepreneur/dashboard";
+    
+    switch (user.role) {
+      case "admin":
+        return "/admin/dashboard";
+      case "investor":
+        return "/investor/dashboard";
+      case "entrepreneur":
+        return "/entrepreneur/dashboard";
+      default:
+        return "/";
+    }
   };
 
-  // Load user
-  const loadUser = async () => {
-    if (localStorage.getItem("token")) {
+  // Load user - wrapped with useCallback to prevent infinite loops
+  const loadUser = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    
+    if (token && storedUser) {
+      try {
+        // Try to use stored user data first
+        const userData = JSON.parse(storedUser);
+        dispatch({
+          type: "USER_LOADED",
+          payload: userData,
+        });
+        return;
+      } catch (error) {
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem("user");
+      }
+    }
+    
+    if (token) {
       try {
         const response = await fetch(`${API_URL}/api/auth/me`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -121,10 +149,10 @@ export const AuthProvider = ({ children }) => {
     } else {
       dispatch({ type: "AUTH_ERROR" });
     }
-  };
+  }, [API_URL]); // Only depend on API_URL which shouldn't change
 
-  // Register user
-  const register = async (formData) => {
+  // Register user - wrapped with useCallback
+  const register = useCallback(async (formData) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
@@ -143,8 +171,7 @@ export const AuthProvider = ({ children }) => {
           type: "REGISTER_SUCCESS",
           payload: data,
         });
-        await loadUser();
-        return { success: true, data };
+        return { success: true, data, user: data.user };
       } else {
         dispatch({
           type: "REGISTER_FAIL",
@@ -159,10 +186,10 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: false, error: error.message || "Network error" };
     }
-  };
+  }, [API_URL]);
 
-  // Login user
-  const login = async (formData) => {
+  // Login user - simplified and more reliable, wrapped with useCallback
+  const login = useCallback(async (formData) => {
     dispatch({ type: "SET_LOADING", payload: true });
 
     try {
@@ -175,17 +202,24 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
-      console.log("Login response:", data);
 
       if (response.ok) {
+        // Store token and user data
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Update state
         dispatch({
           type: "LOGIN_SUCCESS",
           payload: data,
         });
-        console.log("Login successful, user data set");
-        return { success: true };
+        
+        return { 
+          success: true, 
+          user: data.user,
+          redirectUrl: getRoleDashboardUrl(data.user)
+        };
       } else {
-        console.error("Login failed:", data.message);
         dispatch({
           type: "LOGIN_FAIL",
           payload: data.message || "Login failed",
@@ -193,28 +227,40 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: data.message || "Login failed" };
       }
     } catch (error) {
-      console.error("Login error:", error);
       dispatch({
         type: "LOGIN_FAIL",
         payload: error.message || "Network error",
       });
       return { success: false, error: error.message || "Network error" };
     }
-  };
+  }, [API_URL]);
 
-  // Logout user
-  const logout = () => {
+  // Logout user with optional redirect - wrapped with useCallback
+  const logout = useCallback((redirectTo = null) => {
+    // Clear storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    
+    // Update state
     dispatch({ type: "LOGOUT" });
-  };
+    
+    // Handle redirect
+    if (redirectTo) {
+      // Use setTimeout to ensure state is updated before redirect
+      setTimeout(() => {
+        window.location.href = redirectTo;
+      }, 100);
+    }
+  }, []);
 
-  // Clear errors
-  const clearErrors = () => {
+  // Clear errors - wrapped with useCallback
+  const clearErrors = useCallback(() => {
     dispatch({ type: "CLEAR_ERRORS" });
-  };
+  }, []);
 
   useEffect(() => {
     loadUser();
-  }, []);
+  }, [loadUser]);
 
   return (
     <AuthContext.Provider

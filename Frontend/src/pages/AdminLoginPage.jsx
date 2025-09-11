@@ -12,12 +12,12 @@ import {
 } from "react-icons/fa";
 
 const AdminLoginPage = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, loadUser } = useAuth();
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
+    email: "admin@startsmart.com", // Pre-fill for testing
+    password: "StartSmart@Admin2025", // Pre-fill for testing
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -35,8 +35,8 @@ const AdminLoginPage = () => {
 
   // Redirect if already authenticated as admin
   useEffect(() => {
-    if (!loading && isAuthenticated && user && user.role === "admin") {
-      navigate("/admin/dashboard");
+    if (isAuthenticated && user && user.role === "admin" && !loading) {
+      navigate("/admin/dashboard", { replace: true });
     }
   }, [isAuthenticated, loading, user, navigate]);
 
@@ -45,6 +45,8 @@ const AdminLoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    console.log("Admin login attempt:", { email: credentials.email, API_BASE });
 
     try {
       const response = await fetch(`${API_BASE}/api/admin/login`, {
@@ -59,19 +61,28 @@ const AdminLoginPage = () => {
       });
 
       const data = await response.json();
+      console.log("Admin login response:", { status: response.status, data });
 
       if (!response.ok) {
         throw new Error(data.message || "Admin login failed");
       }
 
+      console.log("Admin login successful, storing data and redirecting...");
+
       // Store authentication data
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Navigate to admin dashboard
-      navigate("/admin/dashboard");
-      window.location.reload(); // Force auth context refresh
+      // Update auth context
+      if (loadUser) {
+        await loadUser();
+      }
+
+      // Navigate to admin dashboard immediately
+      navigate("/admin/dashboard", { replace: true });
+      
     } catch (err) {
+      console.error("Admin login error:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);

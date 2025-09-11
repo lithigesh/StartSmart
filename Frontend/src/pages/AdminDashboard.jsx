@@ -273,7 +273,7 @@ const AdminDashboard = () => {
           </Link>
 
           <button
-            onClick={logout}
+            onClick={() => logout('/admin/login')}
             className="px-4 py-2 bg-red-500/80 text-white rounded-lg font-manrope font-medium hover:bg-red-600 transition-all duration-300 flex items-center gap-2"
           >
             <FaSignOutAlt /> Logout
