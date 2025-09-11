@@ -16,10 +16,25 @@ const initialState = {
   error: null,
 };
 
+// Try to get user from localStorage if available
+const storedUser = localStorage.getItem("user");
+if (storedUser) {
+  try {
+    const parsedUser = JSON.parse(storedUser);
+    initialState.user = parsedUser;
+    initialState.isAuthenticated = !!localStorage.getItem("token");
+    initialState.loading = false;
+  } catch (error) {
+    console.error("Error parsing stored user:", error);
+    localStorage.removeItem("user");
+  }
+}
+
 // Auth reducer
 const authReducer = (state, action) => {
   switch (action.type) {
     case "USER_LOADED":
+      localStorage.setItem("user", JSON.stringify(action.payload));
       return {
         ...state,
         isAuthenticated: true,
@@ -30,11 +45,11 @@ const authReducer = (state, action) => {
     case "REGISTER_SUCCESS":
     case "LOGIN_SUCCESS":
       localStorage.setItem("token", action.payload.token);
-      const { token, ...userData } = action.payload;
+      localStorage.setItem("user", JSON.stringify(action.payload.user));
       return {
         ...state,
-        token: token,
-        user: userData,
+        token: action.payload.token,
+        user: action.payload.user,
         isAuthenticated: true,
         loading: false,
         error: null,
@@ -44,6 +59,7 @@ const authReducer = (state, action) => {
     case "LOGIN_FAIL":
     case "LOGOUT":
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       return {
         ...state,
         token: null,

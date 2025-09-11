@@ -5,20 +5,28 @@ const AdminActionSchema = new mongoose.Schema({
     admin: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false // Made optional for failed login attempts
     },
     actionType: {
         type: String,
         required: true,
-        enum: ['deleteIdea', 'deleteUser', 'changeRole']
+        enum: [
+            'deleteIdea', 
+            'deleteUser', 
+            'changeRole',
+            'adminLogin',
+            'failedAdminLogin',
+            'adminVerification',
+            'failedAdminVerification'
+        ]
     },
     targetId: { // The ID of the document that was affected
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        required: false // Made optional for login actions
     },
     targetModel: { // The model of the affected document
         type: String,
-        required: true,
+        required: false, // Made optional for login actions
         enum: ['User', 'Idea']
     },
     details: { // Optional extra details, e.g., "Role changed from X to Y"

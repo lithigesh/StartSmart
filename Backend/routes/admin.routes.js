@@ -4,7 +4,8 @@ const router = express.Router();
 const { protect } = require('../middlewares/auth.middleware');
 const { isAdmin } = require('../middlewares/role.middleware');
 const {
-    loginAdmin,
+    adminLogin,
+    verifyAdminPassword,
     getAllUsers,
     changeUserRole,
     deleteUser,
@@ -12,7 +13,11 @@ const {
     getAdminActivities
 } = require('../controllers/admin.controller');
 
-router.post('/login', loginAdmin);
+// Public Admin Login Route (no middleware needed)
+router.post('/login', adminLogin);
+
+// Admin verification endpoint (requires JWT from regular login) - LEGACY
+router.post('/verify', protect, isAdmin, verifyAdminPassword);
 
 // Protected Admin Routes
 router.get('/users', protect, isAdmin, getAllUsers);

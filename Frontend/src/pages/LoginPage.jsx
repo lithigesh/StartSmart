@@ -246,7 +246,7 @@ const LoginPage = () => {
             </form>
 
             {/* Footer */}
-            <div className="mt-8 text-center">
+            <div className="mt-8 text-center space-y-3">
               <p className="text-white/70 font-manrope">
                 Don't have an account?{" "}
                 <Link
@@ -256,6 +256,19 @@ const LoginPage = () => {
                   Sign up here
                 </Link>
               </p>
+              
+              {/* Admin Login Link */}
+              <div className="pt-2 border-t border-white/10">
+                <p className="text-white/50 text-sm font-manrope">
+                  Admin access?{" "}
+                  <Link
+                    to="/admin/login"
+                    className="text-red-400 hover:text-red-300 font-medium transition-colors duration-300"
+                  >
+                    Admin Portal
+                  </Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>
