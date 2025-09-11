@@ -145,9 +145,6 @@ const AdminLoginPage = () => {
               <h1 className="font-manrope font-bold text-2xl text-white mb-2">
                 Admin Access
               </h1>
-              <p className="font-manrope text-white/70">
-                Enter admin credentials to access the dashboard
-              </p>
             </div>
 
             {error && (
@@ -171,9 +168,6 @@ const AdminLoginPage = () => {
                   required
                   disabled={isLoading}
                 />
-                <p className="mt-1 text-white/50 text-xs font-manrope">
-                  Use the admin email from server configuration
-                </p>
               </div>
 
               <div className="relative">
@@ -198,9 +192,6 @@ const AdminLoginPage = () => {
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
-                <p className="mt-1 text-white/50 text-xs font-manrope">
-                  Use the admin password from server configuration
-                </p>
               </div>
 
               <button
@@ -221,12 +212,6 @@ const AdminLoginPage = () => {
                 )}
               </button>
             </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-white/50 text-sm font-manrope">
-                Server-side admin authentication only
-              </p>
-            </div>
 
             {/* Link to regular login */}
             <div className="mt-4 text-center">
