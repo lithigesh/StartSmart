@@ -58,8 +58,8 @@ const IdeaCard = ({
               disabled={loading}
               className={`btn btn-sm rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
                 isInterested
-                  ? "bg-white/10 text-white hover:bg-white/20 border border-white/20"
-                  : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                  ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
+                  : "bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/30"
               }`}
             >
               {loading ? (

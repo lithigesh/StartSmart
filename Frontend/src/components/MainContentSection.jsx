@@ -132,7 +132,7 @@ export const MainContentSection = () => {
 
       <div className="flex flex-col items-center gap-8 md:gap-12 w-full relative z-10">
         <SectionTitle
-          title="How StartSmart Works"
+          title="How Start Smart Works"
           description="Our platform bridges the gap between innovative entrepreneurs and forward-thinking investors. Experience a seamless journey from idea submission to funding through our intelligent dual-sided ecosystem."
         />
       </div>
@@ -363,7 +363,6 @@ export const MainContentSection = () => {
                   <div className="flex items-center justify-start mb-4">
                     <div className="w-12 h-12 bg-white/[0.08] backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center transition-all duration-300 ease-in-out group-hover:bg-white/[0.15] group-hover:border-white/30 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-white/20 relative overflow-hidden">
                       {/* Icon background animation with glassmorphism */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 transform rotate-45 scale-0 group-hover:scale-150 group-hover:rotate-180 transition-all duration-700 ease-out"></div>
                       <div className="absolute inset-0 bg-white/5 rounded-xl blur-sm"></div>
                       {React.cloneElement(feature.icon, {
                         className:

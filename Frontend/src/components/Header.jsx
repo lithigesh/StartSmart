@@ -46,7 +46,7 @@ export const Header = () => {
               />
             </div>
             <span className="text-text-primary font-semibold text-xl md:text-2xl lg:text-3xl font-manrope whitespace-nowrap">
-              StartSmart
+              Start Smart
             </span>
           </Link>
 

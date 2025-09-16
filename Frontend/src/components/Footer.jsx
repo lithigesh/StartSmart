@@ -53,7 +53,7 @@ export const Footer = () => {
               />
             </div>
             <span className="text-text-primary font-semibold text-lg md:text-xl lg:text-2xl font-manrope whitespace-nowrap">
-              StartSmart
+              Start Smart
             </span>
           </div>
 
@@ -79,7 +79,7 @@ export const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col items-center md:flex-row md:items-center md:justify-between gap-4">
-          <p className="text-sm text-center md:text-left">© 2025 StartSmart. All rights reserved.</p>
+          <p className="text-sm text-center md:text-left">© 2025 Start Smart. All rights reserved.</p>
 
           {/* Desktop scroll to top button */}
           <button

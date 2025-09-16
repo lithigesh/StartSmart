@@ -1,5 +1,5 @@
-import React from "react";
-import { FaSearch } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaSearch, FaFilter, FaTimes } from "react-icons/fa";
 import IdeaCard from "../IdeaCard";
 import EmptyState from "../EmptyState";
 
@@ -22,8 +22,81 @@ const IdeasSection = ({
   emptyStateAction,
   emptyStateActionText,
   sectionRef,
-  maxHeight = "600px"
+  maxHeight = "600px",
+  // Advanced filter props
+  minScore = 0,
+  setMinScore,
+  maxScore = 100,
+  setMaxScore,
+  fundingRange = "all",
+  setFundingRange,
+  statusFilter = "all",
+  setStatusFilter,
+  selectedTags = [],
+  setSelectedTags,
+  showAdvancedFilters = false,
 }) => {
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+
+  // Available tags for filtering
+  const availableTags = [
+    "AI",
+    "Machine Learning",
+    "Blockchain",
+    "IoT",
+    "SaaS",
+    "Mobile",
+    "Web",
+    "E-commerce",
+    "Healthcare",
+    "Education",
+    "Finance",
+    "Gaming",
+  ];
+
+  // Funding range options
+  const fundingRanges = [
+    { value: "all", label: "Any Amount" },
+    { value: "0-10k", label: "$0 - $10,000" },
+    { value: "10k-50k", label: "$10,000 - $50,000" },
+    { value: "50k-100k", label: "$50,000 - $100,000" },
+    { value: "100k+", label: "$100,000+" },
+  ];
+
+  // Status options
+  const statusOptions = [
+    { value: "all", label: "All Status" },
+    { value: "new", label: "New Ideas" },
+    { value: "analyzed", label: "AI Analyzed" },
+    { value: "funded", label: "Seeking Funding" },
+  ];
+
+  // Handle tag toggle
+  const handleTagToggle = (tag) => {
+    if (setSelectedTags) {
+      setSelectedTags((prev) =>
+        prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+      );
+    }
+  };
+
+  // Clear all advanced filters
+  const clearAdvancedFilters = () => {
+    if (setMinScore) setMinScore(0);
+    if (setMaxScore) setMaxScore(100);
+    if (setFundingRange) setFundingRange("all");
+    if (setStatusFilter) setStatusFilter("all");
+    if (setSelectedTags) setSelectedTags([]);
+  };
+
+  // Count active advanced filters
+  const activeAdvancedFilters = [
+    minScore > 0 ? 1 : 0,
+    maxScore < 100 ? 1 : 0,
+    fundingRange !== "all" ? 1 : 0,
+    statusFilter !== "all" ? 1 : 0,
+    selectedTags.length > 0 ? 1 : 0,
+  ].reduce((sum, count) => sum + count, 0);
   return (
     <div
       ref={sectionRef}
@@ -39,55 +112,199 @@ const IdeasSection = ({
 
           {/* Filter Controls */}
           {showFilters && (
-            <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-              {/* Search */}
-              <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search ideas..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors w-full sm:w-64"
-                />
+            <div className="space-y-4">
+              {/* Basic Filters Row */}
+              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                {/* Search */}
+                <div className="relative">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search ideas..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 w-full sm:w-64 font-manrope"
+                  />
+                </div>
+
+                {/* Category Filter */}
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope"
+                >
+                  <option value="all" className="bg-gray-800">
+                    All Categories
+                  </option>
+                  {categories.map((category) => (
+                    <option
+                      key={category}
+                      value={category}
+                      className="bg-gray-800"
+                    >
+                      {category}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Sort */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope"
+                >
+                  <option value="newest" className="bg-gray-800">
+                    Newest First
+                  </option>
+                  <option value="oldest" className="bg-gray-800">
+                    Oldest First
+                  </option>
+                  <option value="score" className="bg-gray-800">
+                    Highest Score
+                  </option>
+                </select>
+
+                {/* Advanced Filters Toggle */}
+                {showAdvancedFilters && (
+                  <button
+                    onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-manrope ${
+                      isAdvancedOpen
+                        ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                        : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
+                    }`}
+                  >
+                    <FaFilter className="w-4 h-4" />
+                    Advanced
+                    {activeAdvancedFilters > 0 && (
+                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                        {activeAdvancedFilters}
+                      </span>
+                    )}
+                  </button>
+                )}
               </div>
 
-              {/* Category Filter */}
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
-              >
-                <option value="all" className="bg-gray-800">
-                  All Categories
-                </option>
-                {categories.map((category) => (
-                  <option
-                    key={category}
-                    value={category}
-                    className="bg-gray-800"
-                  >
-                    {category}
-                  </option>
-                ))}
-              </select>
+              {/* Advanced Filters Panel */}
+              {showAdvancedFilters && isAdvancedOpen && (
+                <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-lg p-6 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-white font-semibold text-lg font-manrope">
+                      Advanced Filters
+                    </h4>
+                    {activeAdvancedFilters > 0 && (
+                      <button
+                        onClick={clearAdvancedFilters}
+                        className="flex items-center gap-2 px-3 py-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors duration-300 font-manrope"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                        Clear Advanced
+                      </button>
+                    )}
+                  </div>
 
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/30 transition-colors"
-              >
-                <option value="newest" className="bg-gray-800">
-                  Newest First
-                </option>
-                <option value="oldest" className="bg-gray-800">
-                  Oldest First
-                </option>
-                <option value="score" className="bg-gray-800">
-                  Highest Score
-                </option>
-              </select>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* AI Score Range */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2 font-manrope">
+                        AI Score Range: {minScore}% - {maxScore}%
+                      </label>
+                      <div className="space-y-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={minScore}
+                          onChange={(e) =>
+                            setMinScore && setMinScore(parseInt(e.target.value))
+                          }
+                          className="w-full accent-green-500"
+                        />
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={maxScore}
+                          onChange={(e) =>
+                            setMaxScore && setMaxScore(parseInt(e.target.value))
+                          }
+                          className="w-full accent-green-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Funding Range */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2 font-manrope">
+                        Funding Range
+                      </label>
+                      <select
+                        value={fundingRange}
+                        onChange={(e) =>
+                          setFundingRange && setFundingRange(e.target.value)
+                        }
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope"
+                      >
+                        {fundingRanges.map((range) => (
+                          <option
+                            key={range.value}
+                            value={range.value}
+                            className="bg-gray-800"
+                          >
+                            {range.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Status Filter */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2 font-manrope">
+                        Status
+                      </label>
+                      <select
+                        value={statusFilter}
+                        onChange={(e) =>
+                          setStatusFilter && setStatusFilter(e.target.value)
+                        }
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope"
+                      >
+                        {statusOptions.map((status) => (
+                          <option
+                            key={status.value}
+                            value={status.value}
+                            className="bg-gray-800"
+                          >
+                            {status.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Tags Filter */}
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2 font-manrope">
+                      Tags ({selectedTags.length} selected)
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {availableTags.map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => handleTagToggle(tag)}
+                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 font-manrope ${
+                            selectedTags.includes(tag)
+                              ? "bg-green-500 text-white"
+                              : "bg-white/10 text-white/70 hover:bg-white/20"
+                          }`}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -98,16 +315,16 @@ const IdeasSection = ({
             title={
               searchTerm || categoryFilter !== "all"
                 ? "No Results Found"
-                : emptyStateType === "interested" 
-                  ? "No Interested Ideas"
-                  : "No Ideas Available"
+                : emptyStateType === "interested"
+                ? "No Interested Ideas"
+                : "No Ideas Available"
             }
             description={
               searchTerm || categoryFilter !== "all"
                 ? "No ideas match your current filters. Try adjusting your search criteria."
                 : emptyStateType === "interested"
-                  ? "You haven't shown interest in any ideas yet. Browse available ideas to get started."
-                  : "No ideas are available at the moment. Check back later for new opportunities."
+                ? "You haven't shown interest in any ideas yet. Browse available ideas to get started."
+                : "No ideas are available at the moment. Check back later for new opportunities."
             }
             action={emptyStateAction}
             actionText={
@@ -118,7 +335,7 @@ const IdeasSection = ({
           />
         ) : (
           <div className="relative">
-            <div 
+            <div
               className="overflow-y-auto pr-8 custom-scrollbar"
               style={{ maxHeight }}
             >
