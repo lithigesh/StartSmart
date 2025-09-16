@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../../context/AuthContext";
-import { FaLightbulb, FaSignOutAlt, FaCog } from "react-icons/fa";
+import { FaLightbulb, FaSignOutAlt, FaCog, FaBell } from "react-icons/fa";
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
@@ -28,9 +28,17 @@ const DashboardHeader = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Notification Bell */}
+            <button className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg">
+              <FaBell className="w-5 h-5" />
+            </button>
+            
+            {/* Settings */}
             <button className="p-2 text-white/70 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-lg">
               <FaCog className="w-5 h-5" />
             </button>
+            
+            {/* Logout */}
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope"

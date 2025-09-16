@@ -11,6 +11,17 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import InvestorDashboard from "./pages/InvestorDashboard.jsx";
 import EntrepreneurDashboard from "./pages/EntrepreneurDashboard.jsx";
 import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
+
+// Entrepreneur Pages
+import MyIdeasPage from "./pages/entrepreneur/MyIdeasPage.jsx";
+import FundingPage from "./pages/entrepreneur/FundingPage.jsx";
+import InvestorsPage from "./pages/entrepreneur/InvestorsPage.jsx";
+import AnalyticsPage from "./pages/entrepreneur/AnalyticsPage.jsx";
+import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
+import CollaborationsPage from "./pages/entrepreneur/CollaborationsPage.jsx";
+import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
+import HelpPage from "./pages/entrepreneur/HelpPage.jsx";
+
 import {
   NotFoundPage,
   ServerErrorPage,
@@ -40,6 +51,70 @@ const App = () => {
               element={
                 <RoleBasedRoute allowedRole="entrepreneur">
                   <EntrepreneurDashboard />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/ideas"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <MyIdeasPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/funding"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <FundingPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/investors"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <InvestorsPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/analytics"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <AnalyticsPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/ideathons"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <IdeathonsPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/collaborations"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <CollaborationsPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/settings"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <SettingsPage />
+                </RoleBasedRoute>
+              }
+            />
+            <Route
+              path="/entrepreneur/help"
+              element={
+                <RoleBasedRoute allowedRole="entrepreneur">
+                  <HelpPage />
                 </RoleBasedRoute>
               }
             />
