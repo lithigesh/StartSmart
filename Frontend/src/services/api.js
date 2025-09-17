@@ -22,8 +22,18 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
-// Investor specific API - Standardized to use investor endpoints
+// Ideas API - For both entrepreneurs and investors
 export const ideasAPI = {
+  // Submit a new idea (for entrepreneurs)
+  submitIdea: async (ideaData) => {
+    const response = await fetch(`${API_URL}/api/ideas`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(ideaData),
+    });
+    return handleResponse(response);
+  },
+
   // Get a specific idea by ID
   getIdeaById: async (ideaId) => {
     const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {

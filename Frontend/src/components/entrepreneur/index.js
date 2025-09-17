@@ -7,3 +7,5 @@ export { default as IdeaCard } from './IdeaCard';
 export { default as MyIdeasSection } from './MyIdeasSection';
 export { default as ActivityItem } from './ActivityItem';
 export { default as RecentActivitySection } from './RecentActivitySection';
+export { default as SideBar } from './SideBar';
+export { default as IdeaSubmissionForm } from './IdeaSubmissionForm';

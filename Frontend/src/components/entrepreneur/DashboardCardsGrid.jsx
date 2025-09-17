@@ -30,13 +30,7 @@ const DashboardCardsGrid = () => {
       count: "8",
       color: "text-blue-400",
     },
-    {
-      title: "Notifications",
-      description: "Stay updated with latest activities",
-      icon: <FaBell />,
-      count: "5",
-      color: "text-purple-400",
-    },
+    
   ];
 
   return (
