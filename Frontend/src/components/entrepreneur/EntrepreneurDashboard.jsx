@@ -8,6 +8,8 @@ import WelcomeSection from "./WelcomeSection";
 import MyIdeasSection from "./MyIdeasSection";
 import RecentActivitySection from "./RecentActivitySection";
 import NotificationsPopup from "./NotificationsPopup";
+import IdeathonRegistrationForm from "./IdeathonRegistrationForm";
+import FundingRequestForm from "./FundingRequestForm";
 import {
   FaLightbulb,
   FaDollarSign,
@@ -57,6 +59,13 @@ const EntrepreneurDashboard = () => {
     interestedInvestors: 0
   });
 
+  // Ideathon registration form state
+  const [isRegistrationFormOpen, setIsRegistrationFormOpen] = useState(false);
+  const [selectedIdeathon, setSelectedIdeathon] = useState(null);
+
+  // Funding request form state
+  const [isFundingFormOpen, setIsFundingFormOpen] = useState(false);
+
   // Refs for scrolling to sections
   const myIdeasRef = useRef(null);
   const analyticsRef = useRef(null);
@@ -64,6 +73,19 @@ const EntrepreneurDashboard = () => {
   // Fetch dashboard metrics on component mount
   useEffect(() => {
     fetchDashboardMetrics();
+  }, []);
+
+  // Listen for navigation events from registration form
+  useEffect(() => {
+    const handleNavigateToIdeas = () => {
+      setActiveSection("my-ideas");
+    };
+
+    window.addEventListener('navigateToIdeas', handleNavigateToIdeas);
+    
+    return () => {
+      window.removeEventListener('navigateToIdeas', handleNavigateToIdeas);
+    };
   }, []);
 
   const fetchDashboardMetrics = async () => {
@@ -81,6 +103,32 @@ const EntrepreneurDashboard = () => {
 
   const handleSectionChange = (section) => {
     setActiveSection(section);
+  };
+
+  // Handle ideathon registration
+  const handleOpenRegistration = (ideathonId, ideathonTitle) => {
+    setSelectedIdeathon({ id: ideathonId, title: ideathonTitle });
+    setIsRegistrationFormOpen(true);
+  };
+
+  const handleCloseRegistration = () => {
+    setIsRegistrationFormOpen(false);
+    setSelectedIdeathon(null);
+  };
+
+  // Handle funding request form
+  const handleOpenFundingForm = () => {
+    setIsFundingFormOpen(true);
+  };
+
+  const handleCloseFundingForm = () => {
+    setIsFundingFormOpen(false);
+  };
+
+  const handleFundingSuccess = () => {
+    // Refresh funding data after successful submission
+    // This would typically call an API to reload the funding requests
+    console.log("Funding request submitted successfully - refreshing data");
   };
 
   const dashboardCards = [
@@ -242,7 +290,10 @@ const EntrepreneurDashboard = () => {
                       <h3 className="text-xl font-semibold text-white">Your Funding Requests</h3>
                       <p className="text-white/60 mt-1">Manage and track your funding applications</p>
                     </div>
-                    <button className="flex items-center gap-2 bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-4 py-2 rounded-lg transition-all duration-300  font-manrope">
+                    <button 
+                      onClick={handleOpenFundingForm}
+                      className="flex items-center gap-2 bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-4 py-2 rounded-lg transition-all duration-300  font-manrope"
+                    >
                       <FaPlus className="w-4 h-4" />
                       Create Request
                     </button>
@@ -819,7 +870,10 @@ const EntrepreneurDashboard = () => {
                             <FaRegClock className="w-3 h-3" />
                             Deadline: Mar 15, 2024
                           </span>
-                          <button className="bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-3 py-1 rounded text-sm transition-all duration-300">
+                          <button 
+                            onClick={() => handleOpenRegistration(1, "Global Innovation Challenge 2024")}
+                            className="bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-3 py-1 rounded text-sm transition-all duration-300"
+                          >
                             Register
                           </button>
                         </div>
@@ -885,7 +939,10 @@ const EntrepreneurDashboard = () => {
                             <FaRegClock className="w-3 h-3" />
                             Deadline: Apr 30, 2024
                           </span>
-                          <button className="bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-3 py-1 rounded text-sm transition-all duration-300">
+                          <button 
+                            onClick={() => handleOpenRegistration(3, "Green Tech Innovation Awards")}
+                            className="bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-3 py-1 rounded text-sm transition-all duration-300"
+                          >
                             Register
                           </button>
                         </div>
@@ -1385,6 +1442,21 @@ const EntrepreneurDashboard = () => {
           {renderSectionContent()}
         </div>
       </div>
+
+      {/* Ideathon Registration Form Modal */}
+      <IdeathonRegistrationForm
+        isOpen={isRegistrationFormOpen}
+        onClose={handleCloseRegistration}
+        ideathonId={selectedIdeathon?.id}
+        ideathonTitle={selectedIdeathon?.title}
+      />
+
+      {/* Funding Request Form Modal */}
+      <FundingRequestForm
+        isOpen={isFundingFormOpen}
+        onClose={handleCloseFundingForm}
+        onSuccess={handleFundingSuccess}
+      />
     </div>
   );
 };
