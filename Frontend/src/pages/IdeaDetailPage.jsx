@@ -10,7 +10,9 @@ import {
   FaHeartBroken,
   FaSpinner,
   FaUser,
+  FaCalendarAlt,
   FaTag,
+  FaTrash,
   FaCalendar,
   FaChartLine,
   FaDownload,
@@ -21,9 +23,12 @@ import {
 } from "react-icons/fa";
 
 const IdeaDetailPage = () => {
-  const { ideaId } = useParams();
+  const { ideaId, id } = useParams(); // Support both ideaId and id params
   const navigate = useNavigate();
   const { user, getRoleDashboardUrl } = useAuth();
+  
+  const currentId = id || ideaId; // Use whichever param is available
+  const isAdminView = user?.role === 'admin' && window.location.pathname.includes('/admin/idea/');
 
   const [idea, setIdea] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -31,28 +36,44 @@ const IdeaDetailPage = () => {
   const [error, setError] = useState(null);
   const [isInterested, setIsInterested] = useState(false);
 
+  const token = localStorage.getItem("token");
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
+
   const getDashboardUrl = () => {
+    if (isAdminView) return '/admin/dashboard?section=ideas';
     return user ? getRoleDashboardUrl(user) : "/";
   };
 
   useEffect(() => {
     loadIdea();
-  }, [ideaId]);
+  }, [currentId]);
 
   const loadIdea = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const ideaData = await investorAPI.getIdeaById(ideaId);
+      let ideaData;
+      if (isAdminView) {
+        // Admin API call
+        const res = await fetch(`${API_BASE}/api/admin/ideas/${currentId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('Failed to fetch idea');
+        ideaData = await res.json();
+      } else {
+        // Investor API call
+        ideaData = await investorAPI.getIdeaById(currentId);
+      }
+      
       setIdea(ideaData);
 
-      // Check if user has shown interest
-      if (user?.role === "investor") {
+      // Check if user has shown interest (only for investors)
+      if (user?.role === "investor" && !isAdminView) {
         try {
           const interestedIdeas = await investorAPI.getInterestedIdeas();
           setIsInterested(
-            interestedIdeas.some((interested) => interested._id === ideaId)
+            interestedIdeas.some((interested) => interested._id === currentId)
           );
         } catch (err) {
           console.error("Error checking interest status:", err);
@@ -73,15 +94,39 @@ const IdeaDetailPage = () => {
       setActionLoading(true);
 
       if (isInterested) {
-        await investorAPI.removeInterest(ideaId);
+        await investorAPI.removeInterest(currentId);
         setIsInterested(false);
       } else {
-        await investorAPI.markInterest(ideaId);
+        await investorAPI.markInterest(currentId);
         setIsInterested(true);
       }
     } catch (err) {
       console.error("Error updating interest:", err);
       setError("Failed to update interest");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!isAdminView) return;
+    if (!window.confirm('Are you sure you want to delete this idea?')) return;
+    
+    try {
+      setActionLoading(true);
+      const res = await fetch(`${API_BASE}/api/admin/ideas/${currentId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to delete idea');
+      }
+      
+      navigate('/admin/dashboard');
+    } catch (err) {
+      console.error("Error deleting idea:", err);
+      setError("Failed to delete idea");
     } finally {
       setActionLoading(false);
     }
@@ -128,7 +173,7 @@ const IdeaDetailPage = () => {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border-b border-white/10">
+      <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
@@ -136,10 +181,23 @@ const IdeaDetailPage = () => {
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <FaArrowLeft className="w-4 h-4" />
-              <span className="font-manrope">Back to Dashboard</span>
+              <span className="font-manrope">{isAdminView ? 'Back to All Ideas' : 'Back to Dashboard'}</span>
             </button>
 
-            {user?.role === "investor" && (
+            {isAdminView ? (
+              <button
+                onClick={handleDelete}
+                disabled={actionLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              >
+                {actionLoading ? (
+                  <FaSpinner className="w-4 h-4 animate-spin" />
+                ) : (
+                  <FaTrash className="w-4 h-4" />
+                )}
+                Delete Idea
+              </button>
+            ) : user?.role === "investor" && (
               <button
                 onClick={handleInterest}
                 disabled={actionLoading}
@@ -156,7 +214,7 @@ const IdeaDetailPage = () => {
                 ) : (
                   <FaHeart className="w-4 h-4" />
                 )}
-                {isInterested ? "Remove Interest" : "Mark Interest"}
+                {isInterested ? "Remove Interest" : "Show Interest"}
               </button>
             )}
           </div>

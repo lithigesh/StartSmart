@@ -188,6 +188,37 @@ exports.deleteUser = async (req, res, next) => {
     }
 };
 
+// @desc    Admin gets all ideas
+// @route   GET /api/admin/ideas
+exports.getAllIdeas = async (req, res, next) => {
+    try {
+        const ideas = await Idea.find({})
+            .populate('owner', 'name email')
+            .sort({ createdAt: -1 });
+        
+        res.json(ideas);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get a single idea by ID
+// @route   GET /api/admin/ideas/:id
+exports.getIdeaById = async (req, res, next) => {
+    try {
+        const idea = await Idea.findById(req.params.id)
+            .populate('owner', 'name email');
+        
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+        
+        res.json(idea);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Admin deletes an idea
 // @route   DELETE /api/admin/ideas/:id
 exports.deleteIdea = async (req, res, next) => {

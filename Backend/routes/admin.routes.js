@@ -7,6 +7,8 @@ const {
     adminLogin,
     verifyAdminPassword,
     getAllUsers,
+    getAllIdeas,
+    getIdeaById,
     changeUserRole,
     deleteUser,
     deleteIdea,
@@ -21,6 +23,8 @@ router.post('/verify', protect, isAdmin, verifyAdminPassword);
 
 // Protected Admin Routes
 router.get('/users', protect, isAdmin, getAllUsers);
+router.get('/ideas', protect, isAdmin, getAllIdeas);
+router.get('/ideas/:id', protect, isAdmin, getIdeaById);
 router.put('/users/:id/role', protect, isAdmin, changeUserRole);
 router.delete('/users/:id', protect, isAdmin, deleteUser);
 router.delete('/ideas/:id', protect, isAdmin, deleteIdea);

@@ -57,7 +57,7 @@ const App = () => {
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route
-                path="/admin"
+                path="/admin/dashboard"
                 element={
                   <RoleBasedRoute allowedRole="admin">
                     <AdminDashboard />
@@ -65,10 +65,10 @@ const App = () => {
                 }
               />
               <Route
-                path="/admin/dashboard"
+                path="/admin/idea/:id"
                 element={
                   <RoleBasedRoute allowedRole="admin">
-                    <AdminDashboard />
+                    <IdeaDetailPage />
                   </RoleBasedRoute>
                 }
               />

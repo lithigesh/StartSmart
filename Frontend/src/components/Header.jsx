@@ -28,13 +28,20 @@ export const Header = () => {
     return user ? getRoleDashboardUrl(user) : "/";
   };
 
+  const getLogoUrl = () => {
+    if (isAuthenticated && user?.role === 'admin') {
+      return '/admin/dashboard';
+    }
+    return "/";
+  };
+
   return (
     <nav className="absolute top-0 left-0 right-0 z-50 w-full bg-black/80 backdrop-blur-md supports-[backdrop-filter]:bg-black/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-18 lg:h-20">
           {/* Logo */}
           <Link
-            to="/"
+            to={getLogoUrl()}
             className="flex items-center space-x-3 md:space-x-4 cursor-pointer focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 rounded-lg p-1 transition-transform duration-300 hover:scale-105"
             tabIndex={0}
           >

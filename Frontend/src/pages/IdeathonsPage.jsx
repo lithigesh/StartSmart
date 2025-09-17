@@ -187,9 +187,9 @@ const IdeathonsPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'upcoming': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
-      case 'ongoing': return 'text-green-400 bg-green-400/10 border-green-400/20';
-      case 'past': return 'text-gray-400 bg-gray-400/10 border-gray-400/20';
+      case 'upcoming': return 'text-blue-400 bg-blue-400/20 border-blue-400/30';
+      case 'ongoing': return 'text-green-400 bg-green-400/20 border-green-400/30';
+      case 'past': return 'text-red-400 bg-red-400/20 border-red-400/30';
       default: return 'text-gray-400 bg-gray-400/10 border-gray-400/20';
     }
   };
@@ -254,38 +254,51 @@ const IdeathonsPage = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-black text-white relative">
+        {/* Animated background - matching landing page style */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/[0.03] rounded-full animate-pulse blur-xl"></div>
+          <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-white/[0.02] rounded-full animate-spin blur-2xl"></div>
+          <div className="absolute top-1/2 left-1/6 w-16 h-16 bg-white/[0.04] rounded-full animate-ping blur-lg"></div>
+          <div className="absolute bottom-1/4 right-1/3 w-20 h-20 bg-white/[0.02] rounded-full animate-bounce blur-xl"></div>
+          <div className="absolute top-1/6 right-1/6 w-12 h-12 bg-white/[0.025] rounded-full animate-pulse blur-lg"></div>
+          <div className="absolute bottom-1/3 left-1/3 w-28 h-28 bg-white/[0.015] rounded-full animate-spin blur-2xl"></div>
+        </div>
+
         {/* Header */}
-        <div className="border-b border-gray-800 bg-black/50 backdrop-blur-xl sticky top-0 z-10">
+        <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border-b border-white/10 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="relative">
+                <h1 className="text-3xl font-bold text-white">
                   Ideathons & Competitions
                 </h1>
-                <p className="text-gray-400 mt-1">
+                <p className="text-white/70 mt-1">
                   Participate in exciting innovation challenges and win prizes
                 </p>
+                {/* Floating particles */}
+                <div className="absolute top-2 right-4 w-1 h-1 bg-white/60 rounded-full animate-ping"></div>
+                <div className="absolute bottom-2 right-8 w-1 h-1 bg-white/50 rounded-full animate-bounce"></div>
               </div>
             </div>
 
             {/* Search and Filters */}
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1 relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50" />
                 <input
                   type="text"
                   placeholder="Search ideathons, themes, or organizers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-gray-900/50 border border-gray-800 rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full bg-white/[0.05] border border-white/20 rounded-lg pl-12 pr-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none focus:bg-white/[0.08] transition-all duration-300"
                 />
               </div>
               
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
+                className="bg-white/[0.05] border border-white/20 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none focus:bg-white/[0.08] transition-all duration-300"
               >
                 <option value="all">All Events</option>
                 <option value="upcoming">Upcoming</option>
@@ -296,48 +309,56 @@ const IdeathonsPage = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl hover:scale-105 hover:-translate-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Available Events</p>
-                  <p className="text-2xl font-bold text-white">{filteredIdeathons.length}</p>
+                  <p className="text-white/70 text-sm font-manrope">Available Events</p>
+                  <p className="text-2xl font-bold text-white group-hover:scale-110 transition-transform duration-300">{filteredIdeathons.length}</p>
                 </div>
-                <FaTrophy className="text-yellow-400 text-2xl" />
+                <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-all duration-300">
+                  <FaTrophy className="text-white text-2xl" />
+                </div>
               </div>
             </div>
             
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl hover:scale-105 hover:-translate-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Your Registrations</p>
-                  <p className="text-2xl font-bold text-blue-400">{registrations.length}</p>
+                  <p className="text-white/70 text-sm font-manrope">Your Registrations</p>
+                  <p className="text-2xl font-bold text-white group-hover:scale-110 transition-transform duration-300">{registrations.length}</p>
                 </div>
-                <FaUserPlus className="text-blue-400 text-2xl" />
+                <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-all duration-300">
+                  <FaUserPlus className="text-white text-2xl" />
+                </div>
               </div>
             </div>
             
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl hover:scale-105 hover:-translate-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Total Participants</p>
-                  <p className="text-2xl font-bold text-green-400">
+                  <p className="text-white/70 text-sm font-manrope">Total Participants</p>
+                  <p className="text-2xl font-bold text-white group-hover:scale-110 transition-transform duration-300">
                     {filteredIdeathons.reduce((sum, event) => sum + event.participants, 0).toLocaleString()}
                   </p>
                 </div>
-                <FaUsers className="text-green-400 text-2xl" />
+                <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-all duration-300">
+                  <FaUsers className="text-white text-2xl" />
+                </div>
               </div>
             </div>
             
-            <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl hover:scale-105 hover:-translate-y-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-400 text-sm">Prize Pool</p>
-                  <p className="text-2xl font-bold text-purple-400">$195K+</p>
+                  <p className="text-white/70 text-sm font-manrope">Prize Pool</p>
+                  <p className="text-2xl font-bold text-white group-hover:scale-110 transition-transform duration-300">$195K+</p>
                 </div>
-                <FaAward className="text-purple-400 text-2xl" />
+                <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-all duration-300">
+                  <FaAward className="text-white text-2xl" />
+                </div>
               </div>
             </div>
           </div>
@@ -346,58 +367,58 @@ const IdeathonsPage = () => {
           {filteredIdeathons.filter(event => event.featured).length > 0 && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                <FaStar className="text-yellow-400" />
+                <FaStar className="text-white" />
                 Featured Events
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredIdeathons.filter(event => event.featured).map((ideathon) => (
                   <div 
                     key={ideathon._id} 
-                    className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-800/50 rounded-xl p-6 backdrop-blur-sm hover:border-blue-700/50 transition-all duration-200"
+                    className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 shadow-xl hover:scale-105 hover:-translate-y-1 flex flex-col h-full"
                   >
-                    <div className="flex gap-4 mb-4">
+                    <div className="flex gap-4 mb-4 flex-shrink-0">
                       <img
                         src={ideathon.image || `https://ui-avatars.com/api/?name=${ideathon.title}&background=1f2937&color=ffffff&size=80`}
                         alt={ideathon.title}
-                        className="w-20 h-20 rounded-lg object-cover"
+                        className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
                       />
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-xl font-semibold text-white">{ideathon.title}</h3>
-                          <span className={`px-3 py-1 rounded-full text-sm border ${getStatusColor(ideathon.status)}`}>
+                          <h3 className="text-xl font-semibold text-white line-clamp-2 pr-2 leading-tight">{ideathon.title}</h3>
+                          <span className={`px-3 py-1 rounded-full text-sm border whitespace-nowrap ${getStatusColor(ideathon.status)}`}>
                             {ideathon.status}
                           </span>
                         </div>
-                        <p className="text-blue-400 text-sm mb-1">{ideathon.theme}</p>
-                        <p className="text-gray-400 text-sm">{ideathon.organizer}</p>
+                        <p className="text-white/70 text-sm mb-1 truncate">{ideathon.theme}</p>
+                        <p className="text-white/60 text-sm truncate">{ideathon.organizer}</p>
                       </div>
                     </div>
                     
-                    <p className="text-gray-300 text-sm mb-4 line-clamp-2">{ideathon.description}</p>
+                    <p className="text-white/80 text-sm mb-4 line-clamp-2 flex-shrink-0 leading-relaxed">{ideathon.description}</p>
                     
-                    <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <FaCalendarAlt className="text-gray-400" />
-                        <span className="text-gray-300">{formatDate(ideathon.startDate)}</span>
+                    <div className="grid grid-cols-2 gap-4 mb-4 text-sm flex-shrink-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FaCalendarAlt className="text-white/60 flex-shrink-0" />
+                        <span className="text-white/80 truncate">{formatDate(ideathon.startDate)}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <FaMapMarkerAlt className="text-gray-400" />
-                        <span className="text-gray-300">{ideathon.location}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FaMapMarkerAlt className="text-white/60 flex-shrink-0" />
+                        <span className="text-white/80 truncate">{ideathon.location}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <FaUsers className="text-gray-400" />
-                        <span className="text-gray-300">{ideathon.participants}/{ideathon.maxParticipants}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FaUsers className="text-white/60 flex-shrink-0" />
+                        <span className="text-white/80 truncate">{ideathon.participants}/{ideathon.maxParticipants}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <FaAward className="text-gray-400" />
-                        <span className="text-gray-300">{ideathon.fundingPrizes}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FaAward className="text-white/60 flex-shrink-0" />
+                        <span className="text-white/80 truncate">{ideathon.fundingPrizes}</span>
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-700">
+                    <div className="flex items-center justify-between pt-4 border-t border-white/20 mt-auto">
                       <button
                         onClick={() => setSelectedIdeathon(ideathon)}
-                        className="px-4 py-2 bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 rounded-lg transition-colors text-sm flex items-center gap-2"
+                        className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white border border-white/20 rounded-lg transition-all duration-300 text-sm flex items-center gap-2"
                       >
                         <FaInfoCircle className="text-xs" />
                         Details
@@ -406,7 +427,7 @@ const IdeathonsPage = () => {
                       {isRegistered(ideathon._id) ? (
                         <button
                           disabled
-                          className="px-6 py-2 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg text-sm flex items-center gap-2"
+                          className="px-6 py-2 bg-white/20 text-white border border-white/30 rounded-lg text-sm flex items-center gap-2"
                         >
                           <FaCheckCircle className="text-xs" />
                           Registered
@@ -415,7 +436,7 @@ const IdeathonsPage = () => {
                         <button
                           onClick={() => handleRegister(ideathon._id)}
                           disabled={actionLoading[ideathon._id]}
-                          className="px-6 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-600/30 rounded-lg transition-colors text-sm flex items-center gap-2 disabled:opacity-50"
+                          className="px-6 py-2 bg-white text-black hover:bg-white/90 rounded-lg transition-colors text-sm flex items-center gap-2 disabled:opacity-50 font-medium"
                         >
                           <FaUserPlus className="text-xs" />
                           {actionLoading[ideathon._id] ? "Registering..." : "Register"}
@@ -423,7 +444,7 @@ const IdeathonsPage = () => {
                       ) : (
                         <button
                           disabled
-                          className="px-6 py-2 bg-gray-600/20 text-gray-400 border border-gray-600/30 rounded-lg text-sm"
+                          className="px-6 py-2 bg-white/10 text-white/60 border border-white/20 rounded-lg text-sm"
                         >
                           Registration Closed
                         </button>
@@ -456,57 +477,65 @@ const IdeathonsPage = () => {
                   return (
                     <div 
                       key={ideathon._id} 
-                      className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm hover:border-gray-700 transition-all duration-200"
+                      className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 rounded-xl p-6 hover:from-white/[0.08] hover:to-white/[0.04] transition-all duration-300 shadow-lg hover:scale-105 hover:-translate-y-1 flex flex-col h-full"
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-white mb-2">{ideathon.title}</h3>
-                          <p className="text-blue-400 text-sm mb-1">{ideathon.theme}</p>
-                          <p className="text-gray-400 text-sm">{ideathon.organizer}</p>
+                      <div className="flex items-start justify-between mb-4 flex-shrink-0">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold text-white mb-2 line-clamp-2 leading-tight">{ideathon.title}</h3>
+                          <p className="text-white/70 text-sm mb-1 truncate">{ideathon.theme}</p>
+                          <p className="text-white/60 text-sm truncate">{ideathon.organizer}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <StatusIcon className="text-sm text-gray-400" />
-                          <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(ideathon.status)}`}>
+                        <div className="flex items-center gap-2 ml-2 flex-shrink-0">
+                          <StatusIcon className={`text-sm ${
+                            ideathon.status === 'upcoming' ? 'text-blue-400' : 
+                            ideathon.status === 'ongoing' ? 'text-green-400' : 
+                            'text-red-400'
+                          }`} />
+                          <span className={`px-2 py-1 rounded-full text-xs border whitespace-nowrap ${getStatusColor(ideathon.status)}`}>
                             {ideathon.status}
                           </span>
                         </div>
                       </div>
                       
-                      <p className="text-gray-300 text-sm mb-4 line-clamp-3">{ideathon.description}</p>
+                      <p className="text-white/80 text-sm mb-4 line-clamp-3 flex-shrink-0 leading-relaxed">{ideathon.description}</p>
                       
-                      <div className="space-y-2 mb-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <FaCalendarAlt className="text-gray-400" />
-                          <span className="text-gray-300">{formatDate(ideathon.startDate)} - {formatDate(ideathon.endDate)}</span>
+                      <div className="space-y-2 mb-4 text-sm flex-shrink-0">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FaCalendarAlt className="text-white/60 flex-shrink-0" />
+                          <span className="text-white/80 truncate">{formatDate(ideathon.startDate)} - {formatDate(ideathon.endDate)}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <FaMapMarkerAlt className="text-gray-400" />
-                          <span className="text-gray-300">{ideathon.location}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FaMapMarkerAlt className="text-white/60 flex-shrink-0" />
+                          <span className="text-white/80 truncate">{ideathon.location}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <FaAward className="text-gray-400" />
-                          <span className="text-gray-300">{ideathon.fundingPrizes}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FaAward className="text-white/60 flex-shrink-0" />
+                          <span className="text-white/80 truncate">{ideathon.fundingPrizes}</span>
                         </div>
                       </div>
                       
                       {/* Progress bar for participants */}
-                      <div className="mb-4">
+                      <div className="mb-4 flex-shrink-0">
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-gray-400">Participants</span>
-                          <span className="text-gray-300">{ideathon.participants}/{ideathon.maxParticipants}</span>
+                          <span className="text-white/60">Participants</span>
+                          <span className="text-white/80">{ideathon.participants}/{ideathon.maxParticipants}</span>
                         </div>
-                        <div className="w-full bg-gray-800 rounded-full h-2">
+                        <div className="w-full bg-white/10 rounded-full h-2">
                           <div 
-                            className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                            className={`h-2 rounded-full transition-all duration-500 ${
+                              ideathon.status === 'upcoming' ? 'bg-blue-400' : 
+                              ideathon.status === 'ongoing' ? 'bg-green-400' : 
+                              'bg-red-400'
+                            }`}
                             style={{ width: `${(ideathon.participants / ideathon.maxParticipants) * 100}%` }}
                           ></div>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 pt-4 border-t border-gray-800">
+                      <div className="flex items-center gap-3 pt-4 border-t border-white/20 mt-auto">
                         <button
                           onClick={() => setSelectedIdeathon(ideathon)}
-                          className="flex-1 px-3 py-2 bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+                          className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white border border-white/20 rounded-lg transition-all duration-300 text-sm flex items-center justify-center gap-2"
                         >
                           <FaInfoCircle className="text-xs" />
                           Details
@@ -515,7 +544,7 @@ const IdeathonsPage = () => {
                         {isRegistered(ideathon._id) ? (
                           <button
                             disabled
-                            className="flex-1 px-3 py-2 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg text-sm flex items-center justify-center gap-2"
+                            className="flex-1 px-3 py-2 bg-white/20 text-white border border-white/30 rounded-lg text-sm flex items-center justify-center gap-2"
                           >
                             <FaCheckCircle className="text-xs" />
                             Registered
@@ -524,7 +553,7 @@ const IdeathonsPage = () => {
                           <button
                             onClick={() => handleRegister(ideathon._id)}
                             disabled={actionLoading[ideathon._id]}
-                            className="flex-1 px-3 py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-600/30 rounded-lg transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="flex-1 px-3 py-2 bg-white text-black hover:bg-white/90 rounded-lg transition-colors text-sm flex items-center justify-center gap-2 disabled:opacity-50 font-medium"
                           >
                             <FaUserPlus className="text-xs" />
                             {actionLoading[ideathon._id] ? "..." : "Register"}
@@ -532,7 +561,7 @@ const IdeathonsPage = () => {
                         ) : (
                           <button
                             disabled
-                            className="flex-1 px-3 py-2 bg-gray-600/20 text-gray-400 border border-gray-600/30 rounded-lg text-sm"
+                            className="flex-1 px-3 py-2 bg-white/10 text-white/60 border border-white/20 rounded-lg text-sm"
                           >
                             Closed
                           </button>
@@ -548,13 +577,13 @@ const IdeathonsPage = () => {
 
         {/* Details Modal */}
         {selectedIdeathon && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold text-white">{selectedIdeathon.title}</h2>
                 <button
                   onClick={() => setSelectedIdeathon(null)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-white/70 hover:text-white transition-colors hover:bg-white/10 rounded-lg p-2"
                 >
                   <FaTimes />
                 </button>
@@ -563,12 +592,12 @@ const IdeathonsPage = () => {
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-medium text-white mb-2">Theme</h3>
-                  <p className="text-blue-400">{selectedIdeathon.theme}</p>
+                  <p className="text-white/70">{selectedIdeathon.theme}</p>
                 </div>
                 
                 <div>
                   <h3 className="text-lg font-medium text-white mb-2">Description</h3>
-                  <p className="text-gray-300">{selectedIdeathon.description}</p>
+                  <p className="text-white/80">{selectedIdeathon.description}</p>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -576,24 +605,24 @@ const IdeathonsPage = () => {
                     <h3 className="text-lg font-medium text-white mb-3">Event Details</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex items-center gap-2">
-                        <FaCalendarAlt className="text-gray-400" />
-                        <span className="text-gray-300">
+                        <FaCalendarAlt className="text-white/60" />
+                        <span className="text-white/80">
                           {formatDate(selectedIdeathon.startDate)} - {formatDate(selectedIdeathon.endDate)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FaMapMarkerAlt className="text-gray-400" />
-                        <span className="text-gray-300">{selectedIdeathon.location}</span>
+                        <FaMapMarkerAlt className="text-white/60" />
+                        <span className="text-white/80">{selectedIdeathon.location}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FaUsers className="text-gray-400" />
-                        <span className="text-gray-300">
+                        <FaUsers className="text-white/60" />
+                        <span className="text-white/80">
                           {selectedIdeathon.participants}/{selectedIdeathon.maxParticipants} participants
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FaClock className="text-gray-400" />
-                        <span className="text-gray-300">
+                        <FaClock className="text-white/60" />
+                        <span className="text-white/80">
                           Registration deadline: {formatDate(selectedIdeathon.registrationDeadline)}
                         </span>
                       </div>
@@ -604,9 +633,9 @@ const IdeathonsPage = () => {
                     <h3 className="text-lg font-medium text-white mb-3">Prizes</h3>
                     <div className="space-y-2">
                       {selectedIdeathon.prizes?.map((prize, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
-                          <span className="text-gray-300">{prize.place} - {prize.description}</span>
-                          <span className="text-green-400 font-medium">{formatCurrency(prize.amount)}</span>
+                        <div key={index} className="flex items-center justify-between p-2 bg-white/[0.05] rounded-lg border border-white/10">
+                          <span className="text-white/80">{prize.place} - {prize.description}</span>
+                          <span className="text-white font-medium">{formatCurrency(prize.amount)}</span>
                         </div>
                       ))}
                     </div>
@@ -616,10 +645,10 @@ const IdeathonsPage = () => {
                 {selectedIdeathon.requirements && (
                   <div>
                     <h3 className="text-lg font-medium text-white mb-3">Requirements</h3>
-                    <ul className="space-y-1 text-gray-300">
+                    <ul className="space-y-1 text-white/80">
                       {selectedIdeathon.requirements.map((req, index) => (
                         <li key={index} className="flex items-center gap-2">
-                          <FaCheckCircle className="text-green-400 text-sm" />
+                          <FaCheckCircle className="text-white text-sm" />
                           {req}
                         </li>
                       ))}
@@ -632,19 +661,19 @@ const IdeathonsPage = () => {
                     <h3 className="text-lg font-medium text-white mb-3">Winners</h3>
                     <div className="space-y-2">
                       {selectedIdeathon.winners.map((winner, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-gray-800/50 rounded-lg">
-                          <span className="text-gray-300">{winner.name}</span>
-                          <span className="text-yellow-400">{winner.prize}</span>
+                        <div key={index} className="flex items-center justify-between p-2 bg-white/[0.05] rounded-lg border border-white/10">
+                          <span className="text-white/80">{winner.name}</span>
+                          <span className="text-white">{winner.prize}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
                 
-                <div className="flex gap-3 pt-4 border-t border-gray-800">
+                <div className="flex gap-3 pt-4 border-t border-white/20">
                   <button
                     onClick={() => setSelectedIdeathon(null)}
-                    className="flex-1 px-4 py-3 bg-gray-600/20 hover:bg-gray-600/30 text-gray-400 border border-gray-600/30 rounded-lg transition-colors"
+                    className="flex-1 px-4 py-3 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white border border-white/20 rounded-lg transition-all duration-300"
                   >
                     Close
                   </button>
@@ -652,7 +681,7 @@ const IdeathonsPage = () => {
                   {isRegistered(selectedIdeathon._id) ? (
                     <button
                       disabled
-                      className="flex-1 px-4 py-3 bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg flex items-center justify-center gap-2"
+                      className="flex-1 px-4 py-3 bg-white/20 text-white border border-white/30 rounded-lg flex items-center justify-center gap-2"
                     >
                       <FaCheckCircle />
                       Already Registered
@@ -661,7 +690,7 @@ const IdeathonsPage = () => {
                     <button
                       onClick={() => handleRegister(selectedIdeathon._id)}
                       disabled={actionLoading[selectedIdeathon._id]}
-                      className="flex-1 px-4 py-3 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-600/30 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                      className="flex-1 px-4 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
                     >
                       <FaUserPlus />
                       {actionLoading[selectedIdeathon._id] ? "Registering..." : "Register Now"}
@@ -669,7 +698,7 @@ const IdeathonsPage = () => {
                   ) : (
                     <button
                       disabled
-                      className="flex-1 px-4 py-3 bg-gray-600/20 text-gray-400 border border-gray-600/30 rounded-lg"
+                      className="flex-1 px-4 py-3 bg-white/10 text-white/60 border border-white/20 rounded-lg"
                     >
                       Registration Closed
                     </button>
