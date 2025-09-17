@@ -24,6 +24,7 @@ const {
 // --- Middleware Imports ---
 const { protect } = require('../middlewares/auth.middleware');
 const { isEntrepreneur, isInvestor } = require('../middlewares/role.middleware');
+const { uploadIdeaAttachments, handleUploadError } = require('../middlewares/upload.middleware');
 
 // --- Validator Imports ---
 // Import validation rules for creating an idea
@@ -36,7 +37,7 @@ const { validateIdeaCreation } = require('../validators/idea.validator');
 // --- Base Route: /api/ideas ---
 // Handles creation of new ideas (by Entrepreneurs) and listing all ideas (for Investors)
 router.route('/')
-    .post(protect, isEntrepreneur, validateIdeaCreation, submitIdea)
+    .post(protect, isEntrepreneur, uploadIdeaAttachments, handleUploadError, validateIdeaCreation, submitIdea)
     .get(protect, isInvestor, getAllIdeasForInvestor);
 
 // --- Investor's Interest History Route: /api/ideas/interested/list ---

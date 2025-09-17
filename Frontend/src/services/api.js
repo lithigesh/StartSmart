@@ -22,16 +22,54 @@ const handleResponse = async (response) => {
   return response.json();
 };
 
+// Helper function to get auth headers for file uploads
+const getAuthHeadersForUpload = () => {
+  const token = localStorage.getItem("token");
+  return {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    // Don't set Content-Type for FormData - browser will set it with boundary
+  };
+};
+
 // Ideas API - For both entrepreneurs and investors
 export const ideasAPI = {
-  // Submit a new idea (for entrepreneurs)
+  // Submit a new idea (for entrepreneurs) - Updated to handle file uploads
   submitIdea: async (ideaData) => {
-    const response = await fetch(`${API_URL}/api/ideas`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(ideaData),
-    });
-    return handleResponse(response);
+    // Check if ideaData contains files (attachments)
+    const hasFiles = ideaData.attachments && ideaData.attachments.length > 0;
+    
+    if (hasFiles) {
+      // Use FormData for file uploads
+      const formData = new FormData();
+      
+      // Append all form fields
+      Object.keys(ideaData).forEach(key => {
+        if (key === 'attachments') {
+          // Handle file attachments
+          ideaData.attachments.forEach(file => {
+            formData.append('attachments', file);
+          });
+        } else {
+          // Append other fields
+          formData.append(key, ideaData[key] || '');
+        }
+      });
+
+      const response = await fetch(`${API_URL}/api/ideas`, {
+        method: "POST",
+        headers: getAuthHeadersForUpload(),
+        body: formData,
+      });
+      return handleResponse(response);
+    } else {
+      // Use JSON for ideas without files
+      const response = await fetch(`${API_URL}/api/ideas`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(ideaData),
+      });
+      return handleResponse(response);
+    }
   },
 
   // Get a specific idea by ID

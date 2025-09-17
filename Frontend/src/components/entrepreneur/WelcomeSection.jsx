@@ -8,49 +8,49 @@ const WelcomeSection = () => {
 
   const handleSubmitIdea = async (formData) => {
     try {
-      // For now, send only the fields supported by the current backend
-      // The complete form data can be stored locally or sent to a more comprehensive endpoint later
+      // Now send all comprehensive form data to the updated backend
       const ideaData = {
+        // Basic Information
         title: formData.title,
-        description: formData.detailedDescription,
-        category: formData.category,
-        // Store additional comprehensive data in description for now
         elevatorPitch: formData.elevatorPitch,
+        description: formData.detailedDescription, // Maps to 'description' in backend
+        category: formData.category,
         targetAudience: formData.targetAudience,
+
+        // Problem & Solution
         problemStatement: formData.problemStatement,
         solution: formData.solution,
-        // Add metadata with all form data for future use
-        metadata: {
-          comprehensive: true,
-          formVersion: "1.0",
-          allData: formData
-        }
+        competitors: formData.competitors,
+
+        // Business Model
+        revenueStreams: formData.revenueStreams,
+        pricingStrategy: formData.pricingStrategy,
+        keyPartnerships: formData.keyPartnerships,
+
+        // Market & Growth
+        marketSize: formData.marketSize,
+        goToMarketStrategy: formData.goToMarketStrategy,
+        scalabilityPlan: formData.scalabilityPlan,
+
+        // Technical Requirements
+        technologyStack: formData.technologyStack,
+        developmentRoadmap: formData.developmentRoadmap,
+        challengesAnticipated: formData.challengesAnticipated,
+
+        // Sustainability & Social Impact
+        ecoFriendlyPractices: formData.ecoFriendlyPractices,
+        socialImpact: formData.socialImpact,
+
+        // Funding & Investment
+        fundingRequirements: formData.fundingRequirements,
+        useOfFunds: formData.useOfFunds,
+        equityOffer: formData.equityOffer,
+
+        // Attachments
+        attachments: formData.attachments || []
       };
 
-      // For current backend compatibility, format description to include key info
-      const comprehensiveDescription = `
-${formData.detailedDescription}
-
-ELEVATOR PITCH: ${formData.elevatorPitch}
-
-PROBLEM STATEMENT: ${formData.problemStatement}
-
-SOLUTION: ${formData.solution}
-
-TARGET AUDIENCE: ${formData.targetAudience}
-
-${formData.revenueStreams ? `REVENUE MODEL: ${formData.revenueStreams}` : ''}
-
-${formData.fundingRequirements ? `FUNDING NEEDED: ${formData.fundingRequirements}` : ''}
-      `.trim();
-
-      const backendData = {
-        title: formData.title,
-        description: comprehensiveDescription,
-        category: formData.category
-      };
-
-      await ideasAPI.submitIdea(backendData);
+      await ideasAPI.submitIdea(ideaData);
       alert("Idea submitted successfully!");
       setIsFormOpen(false);
     } catch (error) {

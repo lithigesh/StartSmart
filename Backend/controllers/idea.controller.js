@@ -4,6 +4,8 @@ const Notification = require('../models/Notification.model');
 const NotificationService = require('../services/notification.service');
 const aiService = require('../services/aiAnalysis.service');
 const pdfService = require('../services/pdf.service');
+const fs = require('fs');
+const path = require('path');
 
 // ------ ENTREPRENEUR CONTROLLERS ------
 
@@ -11,19 +13,117 @@ const pdfService = require('../services/pdf.service');
 // @route   POST /api/ideas
 exports.submitIdea = async (req, res, next) => {
     try {
-        const { title, description, category } = req.body;
-        const idea = await Idea.create({
+        const {
+            // Basic Information
             title,
+            elevatorPitch,
+            description, // detailedDescription from frontend
+            category,
+            targetAudience,
+
+            // Problem & Solution
+            problemStatement,
+            solution,
+            competitors,
+
+            // Business Model
+            revenueStreams,
+            pricingStrategy,
+            keyPartnerships,
+
+            // Market & Growth
+            marketSize,
+            goToMarketStrategy,
+            scalabilityPlan,
+
+            // Technical Requirements
+            technologyStack,
+            developmentRoadmap,
+            challengesAnticipated,
+
+            // Sustainability & Social Impact
+            ecoFriendlyPractices,
+            socialImpact,
+
+            // Funding & Investment
+            fundingRequirements,
+            useOfFunds,
+            equityOffer,
+        } = req.body;
+
+        // Process uploaded files
+        const attachments = [];
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                attachments.push({
+                    filename: file.filename,
+                    originalname: file.originalname,
+                    mimetype: file.mimetype,
+                    size: file.size,
+                    path: file.path,
+                });
+            });
+        }
+
+        const idea = await Idea.create({
+            // Basic Information
+            title,
+            elevatorPitch,
             description,
             category,
+            targetAudience,
+
+            // Problem & Solution
+            problemStatement,
+            solution,
+            competitors,
+
+            // Business Model
+            revenueStreams,
+            pricingStrategy,
+            keyPartnerships,
+
+            // Market & Growth
+            marketSize,
+            goToMarketStrategy,
+            scalabilityPlan,
+
+            // Technical Requirements
+            technologyStack,
+            developmentRoadmap,
+            challengesAnticipated,
+
+            // Sustainability & Social Impact
+            ecoFriendlyPractices,
+            socialImpact,
+
+            // Funding & Investment
+            fundingRequirements,
+            useOfFunds,
+            equityOffer,
+
+            // System fields
             owner: req.user.id,
+            attachments,
         });
 
         // Create notifications for all investors about the new idea
         await NotificationService.createNewIdeaNotification(idea, req.user);
 
-        res.status(201).json(idea);
+        res.status(201).json({
+            success: true,
+            message: 'Idea submitted successfully',
+            data: idea
+        });
     } catch (error) {
+        // If there's an error, clean up uploaded files
+        if (req.files && req.files.length > 0) {
+            req.files.forEach(file => {
+                fs.unlink(file.path, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+        }
         next(error);
     }
 };
