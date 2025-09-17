@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNotifications } from "../hooks/useNotifications";
-import DashboardHeader from "../components/entrepreneur/DashboardHeader";
-import SideBar from "../components/entrepreneur/SideBar";
-import WelcomeSection from "../components/entrepreneur/WelcomeSection";
-import MyIdeasSection from "../components/entrepreneur/MyIdeasSection";
-import RecentActivitySection from "../components/entrepreneur/RecentActivitySection";
-import NotificationsPopup from "../components/entrepreneur/NotificationsPopup";
+import { useAuth } from "../../context/AuthContext";
+import { useNotifications } from "../../hooks/useNotifications";
+import { entrepreneurAPI } from "../../services/api";
+import DashboardHeader from "./DashboardHeader";
+import SideBar from "./SideBar";
+import WelcomeSection from "./WelcomeSection";
+import MyIdeasSection from "./MyIdeasSection";
+import RecentActivitySection from "./RecentActivitySection";
+import NotificationsPopup from "./NotificationsPopup";
 import {
   FaLightbulb,
   FaDollarSign,
@@ -29,39 +30,59 @@ const EntrepreneurDashboard = () => {
     typeof window !== "undefined" ? window.innerWidth < 1024 : false
   );
 
+  // Dashboard metrics state
+  const [dashboardMetrics, setDashboardMetrics] = useState({
+    totalIdeas: 0,
+    fundingReceived: 0,
+    interestedInvestors: 0
+  });
+
   // Refs for scrolling to sections
   const myIdeasRef = useRef(null);
   const analyticsRef = useRef(null);
 
+  // Fetch dashboard metrics on component mount
+  useEffect(() => {
+    fetchDashboardMetrics();
+  }, []);
+
+  const fetchDashboardMetrics = async () => {
+    try {
+      setLoading(true);
+      const metrics = await entrepreneurAPI.getDashboardMetrics();
+      setDashboardMetrics(metrics);
+    } catch (err) {
+      console.error('Error fetching dashboard metrics:', err);
+      setError('Failed to load dashboard data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSectionChange = (section) => {
     setActiveSection(section);
   };
-
-  // Calculate dashboard metrics (will be loaded from API)
-  const totalIdeas = 0;
-  const fundingReceived = 0;
-  const interestedInvestors = 0;
 
   const dashboardCards = [
     {
       title: "My Ideas",
       description: "Startup ideas you've submitted",
       icon: <FaLightbulb className="w-6 h-6" />,
-      count: totalIdeas.toString(),
+      count: dashboardMetrics.totalIdeas.toString(),
       onClick: () => setActiveSection("my-ideas"),
     },
     {
       title: "Funding Received",
       description: "Total funding received from investors",
       icon: <FaDollarSign className="w-6 h-6" />,
-      count: `$${(fundingReceived / 1000).toFixed(0)}K`,
+      count: `$${(dashboardMetrics.fundingReceived / 1000).toFixed(0)}K`,
       onClick: () => setActiveSection("funding"),
     },
     {
       title: "Interested Investors",
       description: "Investors showing interest in your ideas",
       icon: <FaBriefcase className="w-6 h-6" />,
-      count: interestedInvestors.toString(),
+      count: dashboardMetrics.interestedInvestors.toString(),
       onClick: () => setActiveSection("investors"),
     },
     {

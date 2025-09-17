@@ -81,6 +81,120 @@ export const ideasAPI = {
   },
 };
 
+// Entrepreneur specific API
+export const entrepreneurAPI = {
+  // Get all ideas for the current entrepreneur
+  getMyIdeas: async () => {
+    // First get the current user info to get userId
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+    
+    // Decode token to get user ID (simple base64 decode of JWT payload)
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.id;
+    
+    const response = await fetch(`${API_URL}/api/ideas/user/${userId}`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Get dashboard metrics for entrepreneur
+  getDashboardMetrics: async () => {
+    try {
+      // Get all user's ideas first
+      const ideas = await entrepreneurAPI.getMyIdeas();
+      
+      // Calculate metrics from the ideas
+      const totalIdeas = ideas.length;
+      let fundingReceived = 0;
+      let interestedInvestors = 0;
+      
+      // For each idea, we'd need to get funding and investor interest
+      // For now, we'll return basic metrics
+      for (const idea of ideas) {
+        // You can expand this to call specific endpoints for funding/interest data
+        if (idea.fundingReceived) {
+          fundingReceived += idea.fundingReceived;
+        }
+        if (idea.interestedInvestors) {
+          interestedInvestors += idea.interestedInvestors.length;
+        }
+      }
+      
+      return {
+        totalIdeas,
+        fundingReceived,
+        interestedInvestors,
+        ideas
+      };
+    } catch (error) {
+      console.error('Error fetching dashboard metrics:', error);
+      return {
+        totalIdeas: 0,
+        fundingReceived: 0,
+        interestedInvestors: 0,
+        ideas: []
+      };
+    }
+  },
+
+  // Get recent activity for entrepreneur
+  getRecentActivity: async () => {
+    try {
+      // This would typically come from a dedicated activity endpoint
+      // For now, we'll derive it from other data sources
+      const activities = [];
+      
+      // You can implement this by calling multiple endpoints:
+      // - Recent notifications
+      // - Recent investor interests
+      // - Recent funding updates
+      
+      return activities;
+    } catch (error) {
+      console.error('Error fetching recent activity:', error);
+      return [];
+    }
+  },
+
+  // Trigger analysis for an idea
+  analyzeIdea: async (ideaId) => {
+    const response = await fetch(`${API_URL}/api/ideas/${ideaId}/analysis`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Get interested investors for an idea
+  getInterestedInvestors: async (ideaId) => {
+    const response = await fetch(`${API_URL}/api/ideas/${ideaId}/investors`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Update an idea
+  updateIdea: async (ideaId, ideaData) => {
+    const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(ideaData),
+    });
+    return handleResponse(response);
+  },
+
+  // Delete an idea
+  deleteIdea: async (ideaId) => {
+    const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+};
+
 // Investor specific API - Standardized to use investor endpoints
 export const investorAPI = {
   // Get all analyzed ideas through investor endpoint
@@ -247,6 +361,7 @@ export const notificationsAPI = {
 
 export default {
   ideasAPI,
+  entrepreneurAPI,
   investorAPI,
   fundingAPI,
   notificationsAPI,
