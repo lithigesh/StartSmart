@@ -533,12 +533,12 @@ const IdeaSubmissionForm = ({ isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose}></div>
       
       {/* Modal */}
-      <div className="relative w-full max-w-4xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden">
+      <div className="relative w-full max-w-4xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[70]">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div>
@@ -569,11 +569,11 @@ const IdeaSubmissionForm = ({ isOpen, onClose, onSubmit }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-white/10 bg-white/5">
+        <div className="flex items-center justify-between p-6 border-t border-white/10 bg-black relative z-[75]">
           <button
             onClick={prevStep}
             disabled={currentStep === 1}
-            className="px-6 py-2 text-white/60 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-3 text-white/60 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors rounded-lg hover:bg-white/10"
           >
             Previous
           </button>
@@ -582,7 +582,7 @@ const IdeaSubmissionForm = ({ isOpen, onClose, onSubmit }) => {
             {currentStep < totalSteps ? (
               <button
                 onClick={nextStep}
-                className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
+                className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Next
               </button>
@@ -590,7 +590,7 @@ const IdeaSubmissionForm = ({ isOpen, onClose, onSubmit }) => {
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-white/30 hover:bg-white/40 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 shadow-lg hover:shadow-xl"
               >
                 {isSubmitting ? "Submitting..." : "Submit Idea"}
               </button>

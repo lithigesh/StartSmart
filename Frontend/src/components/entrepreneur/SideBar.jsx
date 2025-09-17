@@ -165,7 +165,7 @@ const SideBar = ({
       {/* Sidebar */}
       <div
         className={`
-        fixed left-0 top-0 h-full bg-white/[0.03] backdrop-blur-xl border-r border-white/10 z-50 transition-all duration-300 flex flex-col
+        fixed left-0 top-0 h-full bg-black border-r border-white/10 z-50 transition-all duration-300 flex flex-col
         ${isCollapsed ? "w-16" : "w-72"}
         lg:translate-x-0
         ${isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0"}
@@ -214,16 +214,16 @@ const SideBar = ({
         {!isCollapsed && (
           <div className="p-4 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-black">
+              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white">
                 <span className="font-semibold text-sm">
                   {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-black font-semibold text-sm truncate">
+                <h3 className="text-white font-semibold text-sm truncate">
                   {user?.name || "Entrepreneur"}
                 </h3>
-                <p className="text-gray-600 text-xs truncate">
+                <p className="text-white/60 text-xs truncate">
                   {user?.email}
                 </p>
               </div>
@@ -267,7 +267,7 @@ const SideBar = ({
         {/* Collapsed User Profile */}
         {isCollapsed && (
           <div className="p-4 border-t border-white/10">
-            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white mx-auto">
+            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white mx-auto">
               <span className="font-semibold text-xs">
                 {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
               </span>
