@@ -4,18 +4,20 @@ const ActivityItem = ({ item, index }) => {
   return (
     <div
       key={index}
-      className="flex items-center gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-lg hover:bg-white/[0.05] transition-all duration-300"
+      className="bg-gray-900 border border-gray-800 rounded-lg p-4 hover:shadow-sm transition-all duration-200"
     >
-      <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-        {item.icon}
-      </div>
-      <div className="flex-1">
-        <p className="text-white font-manrope font-medium">
-          {item.message}
-        </p>
-        <p className="text-white/60 text-sm font-manrope">
-          {item.time}
-        </p>
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center flex-shrink-0">
+          {item.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-medium text-sm leading-relaxed">
+            {item.message}
+          </p>
+          <p className="text-gray-400 text-xs mt-1">
+            {item.time}
+          </p>
+        </div>
       </div>
     </div>
   );

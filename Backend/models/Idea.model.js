@@ -51,7 +51,7 @@ const IdeaSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     status: {
         type: String,
-        enum: ['draft', 'submitted', 'analyzed', 'funding_requested', 'closed'],
+        enum: ['draft', 'submitted', 'analyzing', 'analyzed', 'funding_requested', 'closed'],
         default: 'submitted',
     },
     

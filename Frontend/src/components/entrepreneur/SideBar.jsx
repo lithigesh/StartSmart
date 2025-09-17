@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useNotifications } from "../../hooks/useNotifications";
 import {
+  FaHome,
   FaLightbulb,
   FaDollarSign,
   FaBriefcase,
@@ -8,196 +10,272 @@ import {
   FaTrophy,
   FaUsers,
   FaCog,
-  FaQuestionCircle,
+  FaBell,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+  FaUser,
   FaChevronLeft,
   FaChevronRight,
-  FaBell,
-  FaHome
 } from "react-icons/fa";
 
-const SideBar = ({ activeSection = "dashboard", onSectionChange }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+const SideBar = ({
+  activeSection,
+  onSectionChange,
+  isCollapsed,
+  setIsCollapsed,
+}) => {
+  const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
 
   const navigationItems = [
     {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: <FaHome />,
-      path: "/entrepreneur/dashboard"
+      id: "overview",
+      label: "Overview",
+      icon: <FaHome className="w-5 h-5" />,
     },
     {
-      id: "ideas",
+      id: "my-ideas",
       label: "My Ideas",
-      icon: <FaLightbulb />,
-      path: "/entrepreneur/ideas",
-      badge: "3"
+      icon: <FaLightbulb className="w-5 h-5" />,
+      badge: "3",
     },
     {
       id: "funding",
       label: "Funding",
-      icon: <FaDollarSign />,
-      path: "/entrepreneur/funding",
-      badge: "$25K"
+      icon: <FaDollarSign className="w-5 h-5" />,
     },
     {
       id: "investors",
       label: "Investors",
-      icon: <FaBriefcase />,
-      path: "/entrepreneur/investors",
-      badge: "8"
+      icon: <FaBriefcase className="w-5 h-5" />,
+      badge: "8",
     },
     {
       id: "analytics",
       label: "Analytics",
-      icon: <FaChartBar />,
-      path: "/entrepreneur/analytics"
+      icon: <FaChartBar className="w-5 h-5" />,
     },
     {
       id: "ideathons",
       label: "Ideathons",
-      icon: <FaTrophy />,
-      path: "/entrepreneur/ideathons",
-      badge: "2"
+      icon: <FaTrophy className="w-5 h-5" />,
     },
     {
       id: "collaborations",
       label: "Collaborations",
-      icon: <FaUsers />,
-      path: "/entrepreneur/collaborations"
+      icon: <FaUsers className="w-5 h-5" />,
     },
-  ];
-
-  const bottomItems = [
+    {
+      id: "notifications",
+      label: "Notifications",
+      icon: <FaBell className="w-5 h-5" />,
+      badge: unreadCount > 0 ? unreadCount : null,
+    },
     {
       id: "settings",
       label: "Settings",
-      icon: <FaCog />,
-      path: "/entrepreneur/settings"
+      icon: <FaCog className="w-5 h-5" />,
     },
-    {
-      id: "help",
-      label: "Help & Support",
-      icon: <FaQuestionCircle />,
-      path: "/entrepreneur/help"
-    }
   ];
 
-  const handleItemClick = (item) => {
-    navigate(item.path);
-    if (onSectionChange) {
-      onSectionChange(item.id);
+  const handleLogout = () => {
+    logout();
+  };
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsCollapsed && setIsCollapsed(true);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [setIsCollapsed]);
+
+  // Helper function for mobile auto-collapse
+  const handleNavigation = (sectionId) => {
+    onSectionChange && onSectionChange(sectionId);
+    // Auto-collapse on mobile after selection
+    if (window.innerWidth < 1024) {
+      setIsCollapsed && setIsCollapsed(true);
     }
   };
 
-  // Determine active section based on current path
-  const getActiveSection = () => {
-    const currentPath = location.pathname;
-    const activeItem = [...navigationItems, ...bottomItems].find(item => item.path === currentPath);
-    return activeItem ? activeItem.id : activeSection;
-  };
-
-  return (
-    <div className={`bg-black border-r border-white/10 transition-all duration-300 flex flex-col ${
-      isCollapsed ? "w-16" : "w-64"
-    }`}>
-      {/* Sidebar Header */}
-      <div className="p-4 border-b border-white/10">
-        <div className="flex items-center justify-between">
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                <FaLightbulb className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-white font-bold text-lg">StartSmart</span>
-            </div>
-          )}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-          >
-            {isCollapsed ? <FaChevronRight className="w-4 h-4" /> : <FaChevronLeft className="w-4 h-4" />}
-          </button>
-        </div>
+  const SidebarItem = ({ item, isActive, onClick }) => (
+    <button
+      onClick={() => onClick(item.id)}
+      className={`
+        w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative
+        ${
+          isActive
+            ? "bg-white text-black shadow-sm"
+            : "text-white/70 hover:text-white hover:bg-white/20"
+        }
+        ${isCollapsed ? "justify-center" : "justify-start"}
+      `}
+      title={isCollapsed ? item.label : ""}
+    >
+      <div className="flex-shrink-0 relative">
+        {item.icon}
+        {item.badge && (
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+            {item.badge > 9 ? "9+" : item.badge}
+          </span>
+        )}
       </div>
 
-      {/* Navigation Items */}
-      <div className="flex-1 py-4">
-        <nav className="space-y-1 px-2">
-          {navigationItems.map((item) => {
-            const isActive = getActiveSection() === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleItemClick(item)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all duration-200 group ${
-                  isActive
-                    ? "bg-white/20 text-white border border-white/30"
-                    : "text-white/70 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={`${
-                    isActive ? "text-white" : "text-white/70 group-hover:text-white"
-                  } transition-colors`}>
-                    {item.icon}
-                  </div>
-                  {!isCollapsed && (
-                    <span className="font-medium">{item.label}</span>
-                  )}
-                </div>
-                {!isCollapsed && item.badge && (
-                  <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${
-                    isActive
-                      ? "bg-white/30 text-white"
-                      : "bg-white/20 text-white/80"
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
+      {!isCollapsed && (
+        <span className="font-medium text-sm">
+          {item.label}
+        </span>
+      )}
 
-      {/* Bottom Items */}
-      <div className="border-t border-white/10 p-2">
-        <nav className="space-y-1">
-          {bottomItems.map((item) => {
-            const isActive = getActiveSection() === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleItemClick(item)}
-                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group ${
-                  isActive
-                    ? "bg-white/20 text-white border border-white/30"
-                    : "text-white/70 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                <div className={`${
-                  isActive ? "text-white" : "text-white/70 group-hover:text-white"
-                } transition-colors`}>
-                  {item.icon}
-                </div>
-                {!isCollapsed && (
-                  <span className="font-medium">{item.label}</span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Collapse indicator when collapsed */}
+      {/* Tooltip for collapsed state */}
       {isCollapsed && (
-        <div className="px-2 py-4">
-          <div className="w-full h-px bg-white/10"></div>
+        <div className="absolute left-full ml-2 bg-white text-black px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
+          {item.label}
         </div>
       )}
-    </div>
+    </button>
+  );
+
+  return (
+    <>
+      {/* Mobile Menu Button - Show when sidebar is collapsed on mobile */}
+      {isCollapsed && (
+        <button
+          onClick={() => setIsCollapsed && setIsCollapsed(false)}
+          className="lg:hidden fixed top-4 left-4 z-50 bg-white text-black p-2 rounded-lg shadow-lg"
+        >
+          <FaBars className="w-5 h-5" />
+        </button>
+      )}
+
+      {/* Mobile overlay */}
+      {!isCollapsed && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsCollapsed && setIsCollapsed(true)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`
+        fixed left-0 top-0 h-full bg-white/[0.03] backdrop-blur-xl border-r border-white/10 z-50 transition-all duration-300 flex flex-col
+        ${isCollapsed ? "w-16" : "w-72"}
+        lg:translate-x-0
+        ${isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0"}
+      `}
+      >
+        {/* Header */}
+        <div className="flex items-center h-16 px-4 border-b border-white/10">
+          <div className="flex items-center justify-between w-full">
+            {!isCollapsed && (
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black">
+                  <span className="font-bold text-sm">SS</span>
+                </div>
+                <div>
+                  <h2 className="text-white font-semibold text-sm">
+                    StartSmart
+                  </h2>
+                  <p className="text-white/50 text-xs">Entrepreneur</p>
+                </div>
+              </div>
+            )}
+
+            {/* Desktop collapse/expand button */}
+            <button
+              onClick={() => setIsCollapsed && setIsCollapsed(!isCollapsed)}
+              className="hidden lg:block p-1.5 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
+            >
+              {isCollapsed ? (
+                <FaChevronRight className="w-4 h-4" />
+              ) : (
+                <FaChevronLeft className="w-4 h-4" />
+              )}
+            </button>
+
+            {/* Mobile close button */}
+            <button
+              onClick={() => setIsCollapsed && setIsCollapsed(true)}
+              className="lg:hidden p-2 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* User Profile - Show when not collapsed */}
+        {!isCollapsed && (
+          <div className="p-4 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-black">
+                <span className="font-semibold text-sm">
+                  {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-black font-semibold text-sm truncate">
+                  {user?.name || "Entrepreneur"}
+                </h3>
+                <p className="text-gray-600 text-xs truncate">
+                  {user?.email}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto py-4">
+          <div className="px-4">
+            <div className="space-y-2">
+              {navigationItems.map((item) => (
+                <SidebarItem
+                  key={item.id}
+                  item={item}
+                  isActive={activeSection === item.id}
+                  onClick={handleNavigation}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="p-4 border-t border-white/10">
+          <button
+            onClick={handleLogout}
+            className={`
+              w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
+              text-red-400 hover:text-red-300 hover:bg-red-900/20
+              ${isCollapsed ? "justify-center" : "justify-start"}
+            `}
+          >
+            <FaSignOutAlt className="w-5 h-5" />
+            {!isCollapsed && (
+              <span className="font-medium text-sm">Logout</span>
+            )}
+          </button>
+        </div>
+
+        {/* Collapsed User Profile */}
+        {isCollapsed && (
+          <div className="p-4 border-t border-white/10">
+            <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white mx-auto">
+              <span className="font-semibold text-xs">
+                {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

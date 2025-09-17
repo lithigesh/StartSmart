@@ -28,7 +28,7 @@ const DashboardCardsGrid = () => {
       description: "See who's interested in your ideas",
       icon: <FaBriefcase />,
       count: "8",
-      color: "text-blue-400",
+      color: "text-purple-400",
     },
     
   ];

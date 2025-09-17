@@ -130,6 +130,25 @@ class NotificationService {
             console.error('Error creating system notification:', error);
         }
     }
+
+    // Create notification when AI analysis is complete
+    static async createAnalysisCompleteNotification(idea) {
+        try {
+            await Notification.create({
+                user: idea.owner,
+                title: 'AI Analysis Complete',
+                message: `AI analysis for your idea "${idea.title}" is now complete. View the detailed SWOT analysis and roadmap.`,
+                type: 'analysis_complete',
+                relatedIdea: idea._id,
+                actionUrl: `/entrepreneur/ideas/${idea._id}`,
+                priority: 'high'
+            });
+
+            console.log(`Created analysis complete notification for idea: ${idea.title}`);
+        } catch (error) {
+            console.error('Error creating analysis complete notification:', error);
+        }
+    }
 }
 
 module.exports = NotificationService;

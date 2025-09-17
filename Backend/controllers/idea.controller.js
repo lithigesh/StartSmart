@@ -140,19 +140,36 @@ exports.analyzeIdea = async (req, res, next) => {
         idea.status = 'analyzing';
         await idea.save();
 
-        // Asynchronous analysis
+        // Asynchronous analysis with enhanced comprehensive data
         (async () => {
             try {
+                // Pass the complete idea object to get comprehensive analysis
                 const [aiResult, trendsResult] = await Promise.all([
-                    aiService.generateSwotAndRoadmap(idea.title, idea.description),
+                    aiService.generateSwotAndRoadmap(idea), // Pass entire idea object
                     aiService.getMarketTrends(idea.category)
                 ]);
 
+                // Process and validate the AI results before storing
+                let roadmap = aiResult.roadmap;
+                if (Array.isArray(roadmap)) {
+                    // Convert roadmap objects to strings if needed
+                    roadmap = roadmap.map(item => {
+                        if (typeof item === 'object' && item.milestone) {
+                            return `${item.timeframe || 'TBD'}: ${item.milestone}`;
+                        }
+                        return typeof item === 'string' ? item : String(item);
+                    });
+                }
+
+                // Store the enhanced analysis results
                 idea.analysis = {
                     score: aiResult.score,
                     swot: aiResult.swot,
-                    roadmap: aiResult.roadmap,
+                    roadmap: roadmap,
                     trends: trendsResult,
+                    // Store additional analysis if provided
+                    recommendations: aiResult.recommendations || {},
+                    marketAssessment: aiResult.market_assessment || {}
                 };
                 idea.status = 'analyzed';
                 await idea.save();
@@ -160,15 +177,38 @@ exports.analyzeIdea = async (req, res, next) => {
                 // Notify the entrepreneur that analysis is complete
                 await NotificationService.createAnalysisCompleteNotification(idea);
                 
-                console.log(`Analysis complete for idea: ${idea.title}`);
+                console.log(`Enhanced AI analysis complete for idea: ${idea.title}`);
             } catch (aiError) {
-                idea.status = 'failed';
+                idea.status = 'submitted'; // Reset to submitted instead of failed
                 await idea.save();
                 console.error(`AI analysis failed for idea ${idea._id}:`, aiError);
+                
+                // Store a basic fallback analysis
+                idea.analysis = {
+                    score: 50,
+                    swot: {
+                        strengths: "Manual analysis required - AI analysis temporarily unavailable",
+                        weaknesses: "Manual analysis required - AI analysis temporarily unavailable",
+                        opportunities: "Manual analysis required - AI analysis temporarily unavailable",
+                        threats: "Manual analysis required - AI analysis temporarily unavailable"
+                    },
+                    roadmap: [
+                        "Q1: Conduct market research and validation",
+                        "Q2: Develop MVP and gather user feedback", 
+                        "Q3: Refine product based on market response",
+                        "Q4: Scale and seek additional funding"
+                    ],
+                    trends: []
+                };
+                idea.status = 'analyzed';
+                await idea.save();
             }
         })();
 
-        res.status(202).json({ message: 'Analysis has started. Results will be available shortly.' });
+        res.status(202).json({ 
+            message: 'Enhanced AI analysis has started. Comprehensive results will be available shortly.',
+            status: 'analyzing'
+        });
 
     } catch (error) {
         next(error);
@@ -444,7 +484,7 @@ exports.deleteAnalysis = async (req, res, next) => {
             roadmap: [],
             trends: []
         };
-        idea.status = 'pending';
+        idea.status = 'submitted';
 
         await idea.save();
         res.json({ message: 'Analysis has been reset', idea });

@@ -1,8 +1,8 @@
 import React from "react";
 import IdeaCard from "./IdeaCard";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaLightbulb } from "react-icons/fa";
 
-const MyIdeasSection = () => {
+const MyIdeasSection = ({ showTitle = true }) => {
   const myIdeas = [
     {
       title: "AI-Powered Healthcare Platform",
@@ -30,42 +30,59 @@ const MyIdeasSection = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Funded":
-        return "text-green-400 bg-green-400/10";
+        return "text-green-400 bg-green-900/20";
       case "Seeking Investment":
-        return "text-yellow-400 bg-yellow-400/10";
+        return "text-yellow-400 bg-yellow-900/20";
       case "Under Review":
-        return "text-blue-400 bg-blue-400/10";
+        return "text-purple-400 bg-purple-900/20";
       default:
-        return "text-gray-400 bg-gray-400/10";
+        return "text-gray-400 bg-gray-900/20";
     }
   };
 
   return (
-    <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
-      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-manrope font-bold text-white">
-            My Ideas
-          </h3>
-          <button className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope">
+    <div className="space-y-6">
+      {showTitle && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <FaLightbulb className="w-5 h-5 text-yellow-500" />
+            <h3 className="text-xl font-bold text-white">
+              My Ideas
+            </h3>
+          </div>
+          <button className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200">
             <FaPlus className="w-4 h-4" />
             Add New Idea
           </button>
         </div>
+      )}
 
-        <div className="space-y-4">
-          {myIdeas.map((idea, index) => (
-            <IdeaCard 
-              key={index} 
-              idea={idea} 
-              index={index} 
-              getStatusColor={getStatusColor} 
-            />
-          ))}
-        </div>
+      <div className="space-y-4">
+        {myIdeas.map((idea, index) => (
+          <IdeaCard 
+            key={index} 
+            idea={idea} 
+            index={index} 
+            getStatusColor={getStatusColor} 
+          />
+        ))}
       </div>
+
+      {myIdeas.length === 0 && (
+        <div className="text-center py-12">
+          <FaLightbulb className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">
+            No ideas yet
+          </h3>
+          <p className="text-gray-400 mb-4">
+            Start your entrepreneurial journey by submitting your first idea
+          </p>
+          <button className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200">
+            <FaPlus className="w-4 h-4" />
+            Submit Your First Idea
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,68 +5,196 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 /**
- * Generates a SWOT analysis, a viability score, and a product roadmap for a startup idea.
- * @param {string} title - The title of the startup idea.
- * @param {string} description - A detailed description of the startup idea.
- * @returns {Promise<object>} A promise that resolves to an object containing the analysis.
+ * Generates a comprehensive SWOT analysis, viability score, and product roadmap for a startup idea.
+ * Now enhanced to use all comprehensive data from the idea submission form.
+ * @param {object} ideaData - The complete idea object with all fields from the form.
+ * @returns {Promise<object>} A promise that resolves to an object containing the enhanced analysis.
  */
-async function generateSwotAndRoadmap(title, description) {
+async function generateSwotAndRoadmap(ideaData) {
+    console.log('=== Enhanced AI Analysis Started ===');
+    console.log('Idea Title:', ideaData.title);
+    console.log('Idea Category:', ideaData.category);
+    
     try {
         // --- MODEL SELECTION ---
-        // We use 'gemini-1.5-flash-latest' as it's a fast, modern, and highly capable model
-        // suitable for generating structured JSON data. The previous 'gemini-pro' is often deprecated.
+        // Using 'gemini-1.5-flash-latest' for fast, structured JSON output
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
-        // --- PROMPT ENGINEERING ---
-        // A detailed prompt is crucial for getting reliable, structured JSON output.
-        // We specify the exact keys, data types, and provide a clear example.
+        console.log('Gemini model initialized successfully');
+
+        // --- ENHANCED COMPREHENSIVE PROMPT ---
         const prompt = `
-            Analyze the following startup idea and provide a structured analysis.
-            Idea Title: "${title}"
-            Idea Description: "${description}"
+            As an expert startup analyst and venture capitalist, analyze this comprehensive startup idea and provide a detailed assessment.
 
-            Your task is to return the analysis in a clean JSON format, and nothing else. The JSON object must have the following keys: "score", "swot", "roadmap".
+            === STARTUP IDEA ANALYSIS ===
+            
+            📋 BASIC INFORMATION:
+            - Title: "${ideaData.title}"
+            - Elevator Pitch: "${ideaData.elevatorPitch}"
+            - Description: "${ideaData.description}"
+            - Category: "${ideaData.category}"
+            - Target Audience: "${ideaData.targetAudience}"
 
-            - "score": A viability score from 1 to 100, representing the idea's potential for success. This should be a number.
-            - "swot": An object with four string keys: "strengths", "weaknesses", "opportunities", and "threats". Each value should be a concise paragraph.
-            - "roadmap": An array of 3-5 strings, where each string is a key milestone for the first year (e.g., "MVP Development", "Beta Launch", "Secure Seed Funding").
+            🎯 PROBLEM & SOLUTION:
+            - Problem Statement: "${ideaData.problemStatement}"
+            - Solution: "${ideaData.solution}"
+            - Competitors: "${ideaData.competitors || 'Not specified'}"
 
-            Example of the exact JSON output format required:
+            💼 BUSINESS MODEL:
+            - Revenue Streams: "${ideaData.revenueStreams || 'Not specified'}"
+            - Pricing Strategy: "${ideaData.pricingStrategy || 'Not specified'}"
+            - Key Partnerships: "${ideaData.keyPartnerships || 'Not specified'}"
+
+            📈 MARKET & GROWTH:
+            - Market Size: "${ideaData.marketSize || 'Not specified'}"
+            - Go-to-Market Strategy: "${ideaData.goToMarketStrategy || 'Not specified'}"
+            - Scalability Plan: "${ideaData.scalabilityPlan || 'Not specified'}"
+
+            🔧 TECHNICAL REQUIREMENTS:
+            - Technology Stack: "${ideaData.technologyStack || 'Not specified'}"
+            - Development Roadmap: "${ideaData.developmentRoadmap || 'Not specified'}"
+            - Anticipated Challenges: "${ideaData.challengesAnticipated || 'Not specified'}"
+
+            🌱 SUSTAINABILITY & IMPACT:
+            - Eco-Friendly Practices: "${ideaData.ecoFriendlyPractices || 'Not specified'}"
+            - Social Impact: "${ideaData.socialImpact || 'Not specified'}"
+
+            💰 FUNDING & INVESTMENT:
+            - Funding Requirements: "${ideaData.fundingRequirements || 'Not specified'}"
+            - Use of Funds: "${ideaData.useOfFunds || 'Not specified'}"
+            - Equity Offer: "${ideaData.equityOffer || 'Not specified'}"
+
+            === ANALYSIS REQUIREMENTS ===
+
+            Based on this comprehensive information, provide a detailed analysis in JSON format with the following structure:
+
             {
-              "score": 85,
+              "score": [1-100 integer - Overall viability score based on all factors],
               "swot": {
-                "strengths": "The idea addresses a clear and growing market need for sustainable energy solutions.",
-                "weaknesses": "High initial hardware costs and competition from established energy companies could be significant barriers.",
-                "opportunities": "Government incentives for green technology and increasing consumer awareness provide a favorable market environment.",
-                "threats": "Potential regulatory changes and rapid technological shifts in the IoT space could impact long-term viability."
+                "strengths": "[Detailed analysis of internal strengths - consider market fit, team capabilities, technology advantages, unique value proposition, revenue model strength, competitive advantages]",
+                "weaknesses": "[Detailed analysis of internal weaknesses - consider execution risks, resource constraints, technical challenges, market entry barriers, financial sustainability]",
+                "opportunities": "[Detailed analysis of external opportunities - consider market trends, regulatory environment, technological advances, partnership potential, expansion possibilities]",
+                "threats": "[Detailed analysis of external threats - consider competitive landscape, market risks, regulatory changes, technological disruption, economic factors]"
               },
               "roadmap": [
-                "Q1: Finalize hardware prototype and develop core software platform.",
-                "Q2: Launch a pilot program with 50 households to gather data and feedback.",
-                "Q3: Iterate on the product based on pilot feedback and prepare for a larger beta launch.",
-                "Q4: Secure seed funding and establish manufacturing partnerships."
-              ]
+                "[Array of 5-7 strategic milestones as strings with timeframes included, e.g., 'Q1 2024: Complete MVP development and initial testing', 'Q2 2024: Secure Series A funding', etc.]"
+              ],
+              "recommendations": {
+                "immediate_actions": "[3-4 specific actions to take in the next 3 months]",
+                "risk_mitigation": "[Key risks identified and how to address them]",
+                "growth_strategy": "[Specific recommendations for scaling the business]",
+                "funding_advice": "[Assessment of funding requirements and suggestions]"
+              },
+              "market_assessment": {
+                "market_size_evaluation": "[Assessment of the stated market size and potential]",
+                "competitive_positioning": "[Analysis of competitive landscape and positioning]",
+                "customer_validation": "[Assessment of target audience and market demand]"
+              }
             }
+
+            === ANALYSIS GUIDELINES ===
+            - Consider the comprehensiveness and quality of the information provided
+            - Factor in the realistic feasibility of the technical implementation
+            - Assess the market opportunity and competitive landscape
+            - Evaluate the business model sustainability and revenue potential
+            - Consider the team's apparent understanding of their market and challenges
+            - Account for the social and environmental impact potential
+            - Provide actionable, specific insights rather than generic advice
+            - Score should reflect realistic market potential, execution feasibility, and competitive advantage
+
+            Return ONLY the JSON object, no additional text or formatting.
         `;
+
+        console.log('Sending comprehensive prompt to Gemini API...');
+        console.log('Prompt length:', prompt.length, 'characters');
 
         // --- API CALL ---
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
         
+        console.log('Gemini API response received');
+        console.log('Response length:', text.length, 'characters');
+        console.log('First 200 chars of response:', text.substring(0, 200));
+        
         // --- RESPONSE CLEANING ---
-        // The API might wrap the JSON in markdown backticks (```json ... ```).
-        // This cleaning step removes them to ensure the string can be parsed correctly.
         const jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
         
-        // --- PARSING AND RETURNING ---
-        return JSON.parse(jsonString);
+        console.log('Cleaned JSON string length:', jsonString.length);
+        console.log('First 200 chars of cleaned JSON:', jsonString.substring(0, 200));
+        
+        // --- PARSING AND VALIDATION ---
+        const analysis = JSON.parse(jsonString);
+        
+        console.log('Successfully parsed analysis object');
+        console.log('Analysis score:', analysis.score);
+        console.log('Analysis has SWOT:', !!analysis.swot);
+        console.log('Analysis has roadmap:', !!analysis.roadmap);
+        
+        // Validate required fields and provide defaults if missing
+        if (!analysis.score || analysis.score < 1 || analysis.score > 100) {
+            analysis.score = 50; // Default neutral score
+        }
+        
+        if (!analysis.swot) {
+            analysis.swot = {
+                strengths: "Analysis pending - insufficient data provided",
+                weaknesses: "Analysis pending - insufficient data provided", 
+                opportunities: "Analysis pending - insufficient data provided",
+                threats: "Analysis pending - insufficient data provided"
+            };
+        }
+        
+        if (!analysis.roadmap || !Array.isArray(analysis.roadmap)) {
+            analysis.roadmap = [
+                "Q1: Market research and MVP development",
+                "Q2: Beta testing and user feedback collection", 
+                "Q3: Product refinement and initial market launch",
+                "Q4: Customer acquisition and growth optimization"
+            ];
+        } else {
+            // Convert roadmap objects to strings if needed
+            analysis.roadmap = analysis.roadmap.map(item => {
+                if (typeof item === 'object' && item.milestone) {
+                    return `${item.timeframe || 'TBD'}: ${item.milestone}`;
+                }
+                return typeof item === 'string' ? item : String(item);
+            });
+        }
+
+        return analysis;
 
     } catch (error) {
-        // Log the detailed error from the API for debugging purposes.
-        console.error("Error calling Gemini API:", error);
-        // Throw a generic, user-friendly error to be caught by the controller.
-        throw new Error("Failed to generate AI analysis.");
+        console.error("Error calling Gemini API for comprehensive analysis:", error);
+        console.error("Raw response text:", error.message);
+        
+        // Return a structured fallback response
+        return {
+            score: 50,
+            swot: {
+                strengths: "AI analysis temporarily unavailable. Manual review recommended.",
+                weaknesses: "AI analysis temporarily unavailable. Manual review recommended.",
+                opportunities: "AI analysis temporarily unavailable. Manual review recommended.", 
+                threats: "AI analysis temporarily unavailable. Manual review recommended."
+            },
+            roadmap: [
+                "Q1: Conduct thorough market research and competitive analysis",
+                "Q2: Develop minimum viable product (MVP)",
+                "Q3: Test MVP with target customers and gather feedback",
+                "Q4: Refine product and prepare for market launch"
+            ],
+            recommendations: {
+                immediate_actions: "AI analysis unavailable - conduct manual business analysis",
+                risk_mitigation: "AI analysis unavailable - identify risks through market research",
+                growth_strategy: "AI analysis unavailable - develop strategy based on market feedback",
+                funding_advice: "AI analysis unavailable - consult with financial advisors"
+            },
+            market_assessment: {
+                market_size_evaluation: "AI analysis unavailable - conduct independent market sizing",
+                competitive_positioning: "AI analysis unavailable - perform competitive analysis",
+                customer_validation: "AI analysis unavailable - validate through customer interviews"
+            }
+        };
     }
 }
 
