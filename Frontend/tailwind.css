@@ -1,3 +1,6 @@
+/* Import custom scrollbar and UI styles */
+@import './src/styles/scrollbar.css';
+
 @tailwind components;
 @tailwind utilities;
 

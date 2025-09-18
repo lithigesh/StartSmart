@@ -56,6 +56,7 @@ const App = () => {
               />
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin" element={<AdminLoginPage />} />
               <Route
                 path="/admin/dashboard"
                 element={

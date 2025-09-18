@@ -6,13 +6,34 @@ const User = require('../models/User.model');
 // @route   POST /api/ideathons
 exports.createIdeathon = async (req, res, next) => {
     try {
-        const { title, theme, fundingPrizes, startDate, endDate } = req.body;
+        const { 
+            title, 
+            theme, 
+            fundingPrizes, 
+            startDate, 
+            endDate,
+            description,
+            organizers,
+            submissionFormat,
+            eligibilityCriteria,
+            judgingCriteria,
+            location,
+            contactInformation
+        } = req.body;
         
         // Validate required fields
-        if (!title || !startDate || !endDate) {
+        if (!title || !startDate || !endDate || !description || !organizers || !submissionFormat) {
             return res.status(400).json({ 
                 success: false,
-                message: 'Title, start date, and end date are required' 
+                message: 'Title, start date, end date, description, organizers, and submission format are required' 
+            });
+        }
+
+        // Validate submission format is an array
+        if (!Array.isArray(submissionFormat) || submissionFormat.length === 0) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'At least one submission format must be selected' 
             });
         }
 
@@ -32,6 +53,13 @@ exports.createIdeathon = async (req, res, next) => {
             fundingPrizes, 
             startDate: start, 
             endDate: end,
+            description,
+            organizers,
+            submissionFormat,
+            eligibilityCriteria,
+            judgingCriteria,
+            location,
+            contactInformation,
             createdBy: req.user.id
         });
         
@@ -45,18 +73,86 @@ exports.createIdeathon = async (req, res, next) => {
     }
 };
 
-// @desc    Get all ideathons
+// @desc    Get all ideathons with search and filter
 // @route   GET /api/ideathons
 exports.getAllIdeathons = async (req, res, next) => {
     try {
-        const ideathons = await Ideathon.find()
+        const { 
+            search, 
+            status, 
+            location, 
+            theme,
+            page = 1, 
+            limit = 10,
+            sortBy = 'createdAt',
+            sortOrder = 'desc'
+        } = req.query;
+
+        // Build search query
+        let query = {};
+
+        // Text search across title, theme, and organizers
+        if (search) {
+            query.$or = [
+                { title: { $regex: search, $options: 'i' } },
+                { theme: { $regex: search, $options: 'i' } },
+                { organizers: { $regex: search, $options: 'i' } },
+                { description: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        // Filter by status
+        if (status && status !== 'all') {
+            query.status = status;
+        }
+
+        // Filter by location
+        if (location && location !== 'all') {
+            query.location = location;
+        }
+
+        // Filter by theme (partial match)
+        if (theme && theme !== 'all') {
+            query.theme = { $regex: theme, $options: 'i' };
+        }
+
+        // Build sort object
+        const sortObj = {};
+        sortObj[sortBy] = sortOrder === 'desc' ? -1 : 1;
+
+        // Calculate pagination
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const skip = (pageNum - 1) * limitNum;
+
+        // Execute query with pagination
+        const ideathons = await Ideathon.find(query)
             .populate('createdBy', 'name email')
-            .sort({ createdAt: -1 });
-        
+            .sort(sortObj)
+            .skip(skip)
+            .limit(limitNum);
+
+        // Get total count for pagination
+        const total = await Ideathon.countDocuments(query);
+        const totalPages = Math.ceil(total / limitNum);
+
+        // Get filter options for frontend
+        const statusOptions = await Ideathon.distinct('status');
+        const locationOptions = await Ideathon.distinct('location');
+        const themeOptions = await Ideathon.distinct('theme');
+
         res.status(200).json({ 
             success: true,
             count: ideathons.length,
-            data: ideathons 
+            total,
+            totalPages,
+            currentPage: pageNum,
+            data: ideathons,
+            filters: {
+                statusOptions,
+                locationOptions,
+                themeOptions
+            }
         });
     } catch (error) {
         console.error('Get all ideathons error:', error);
@@ -92,7 +188,20 @@ exports.getIdeathonById = async (req, res, next) => {
 // @route   PUT /api/ideathons/:id
 exports.updateIdeathon = async (req, res, next) => {
     try {
-        const { title, theme, fundingPrizes, startDate, endDate } = req.body;
+        const { 
+            title, 
+            theme, 
+            fundingPrizes, 
+            startDate, 
+            endDate,
+            description,
+            organizers,
+            submissionFormat,
+            eligibilityCriteria,
+            judgingCriteria,
+            location,
+            contactInformation
+        } = req.body;
         
         let ideathon = await Ideathon.findById(req.params.id);
         if (!ideathon) {
@@ -113,10 +222,31 @@ exports.updateIdeathon = async (req, res, next) => {
                 });
             }
         }
+
+        // Validate submission format if provided
+        if (submissionFormat && (!Array.isArray(submissionFormat) || submissionFormat.length === 0)) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'At least one submission format must be selected' 
+            });
+        }
         
         ideathon = await Ideathon.findByIdAndUpdate(
             req.params.id,
-            { title, theme, fundingPrizes, startDate, endDate },
+            { 
+                title, 
+                theme, 
+                fundingPrizes, 
+                startDate, 
+                endDate,
+                description,
+                organizers,
+                submissionFormat,
+                eligibilityCriteria,
+                judgingCriteria,
+                location,
+                contactInformation
+            },
             { new: true, runValidators: true }
         ).populate('createdBy', 'name email');
         
