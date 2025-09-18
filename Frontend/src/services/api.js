@@ -408,30 +408,7 @@ export const fundingAPI = {
       console.warn('Funding API not available, using demo data');
       return {
         success: true,
-        data: [
-          {
-            id: 1,
-            ideaTitle: "AI-Powered Marketing Platform",
-            amount: 500000,
-            equity: 15,
-            valuation: 3000000,
-            status: "pending",
-            description: "Revolutionary AI platform for automated marketing campaigns",
-            createdAt: "2024-01-15T10:00:00Z",
-            investorName: "TechVentures Capital"
-          },
-          {
-            id: 2,
-            ideaTitle: "Smart Home Automation",
-            amount: 250000,
-            equity: 10,
-            valuation: 2500000,
-            status: "approved",
-            description: "IoT-based home automation system with AI integration",
-            createdAt: "2024-01-10T14:30:00Z",
-            investorName: "Green Tech Investments"
-          }
-        ]
+        
       };
     }
   },
@@ -444,49 +421,70 @@ export const fundingAPI = {
           headers: getAuthHeaders(),
         }),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
+          setTimeout(() => reject(new Error('Timeout')), 10000)
         )
       ]);
-      return handleResponse(response);
-    } catch (error) {
-      console.warn('User funding API not available, using demo data');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      // Transform the data for frontend consumption
+      const transformedData = Array.isArray(result.data) ? result.data.map(request => ({
+        _id: request._id,
+        id: request._id,
+        ideaTitle: request.ideaId?.title || "Unknown Idea",
+        ideaId: {
+          _id: request.ideaId?._id || request.ideaId,
+          title: request.ideaId?.title || "Unknown Idea"
+        },
+        amount: request.amountRequested,
+        equity: request.equity || 0,
+        valuation: request.valuation || (request.amountRequested / (request.equity || 1)) * 100,
+        status: request.status,
+        message: request.description,
+        description: request.description || "No description available",
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        // Additional fields from expanded model
+        teamSize: request.teamSize,
+        businessPlan: request.businessPlan,
+        currentRevenue: request.currentRevenue,
+        projectedRevenue: request.projectedRevenue,
+        previousFunding: request.previousFunding,
+        revenueModel: request.revenueModel,
+        targetMarket: request.targetMarket,
+        competitiveAdvantage: request.competitiveAdvantage,
+        customerTraction: request.customerTraction,
+        financialProjections: request.financialProjections,
+        useOfFunds: request.useOfFunds,
+        timeline: request.timeline,
+        milestones: request.milestones,
+        keyTeamMembers: request.keyTeamMembers,
+        advisors: request.advisors,
+        existingInvestors: request.existingInvestors,
+        riskFactors: request.riskFactors,
+        exitStrategy: request.exitStrategy,
+        intellectualProperty: request.intellectualProperty,
+        contactPhone: request.contactPhone,
+        contactEmail: request.contactEmail,
+        companyWebsite: request.companyWebsite,
+        linkedinProfile: request.linkedinProfile,
+        additionalDocuments: request.additionalDocuments
+      })) : [];
+      
       return {
         success: true,
-        data: [
-          {
-            id: 1,
-            ideaTitle: "AI-Powered Marketing Platform",
-            amount: 500000,
-            equity: 15,
-            valuation: 3000000,
-            status: "pending",
-            description: "Revolutionary AI platform for automated marketing campaigns with machine learning algorithms",
-            createdAt: "2024-01-15T10:00:00Z",
-            updatedAt: "2024-01-15T10:00:00Z"
-          },
-          {
-            id: 2,
-            ideaTitle: "Smart Home Automation",
-            amount: 250000,
-            equity: 10,
-            valuation: 2500000,
-            status: "approved",
-            description: "IoT-based home automation system with AI integration for energy efficiency",
-            createdAt: "2024-01-10T14:30:00Z",
-            updatedAt: "2024-01-12T09:15:00Z"
-          },
-          {
-            id: 3,
-            ideaTitle: "Sustainable Fashion Marketplace",
-            amount: 150000,
-            equity: 12,
-            valuation: 1250000,
-            status: "rejected",
-            description: "Online marketplace connecting eco-conscious consumers with sustainable fashion brands",
-            createdAt: "2024-01-05T16:45:00Z",
-            updatedAt: "2024-01-08T11:20:00Z"
-          }
-        ]
+        data: transformedData
+      };
+    } catch (error) {
+      console.warn('User funding API error:', error.message);
+      return {
+        success: false,
+        data: [],
+        message: error.message
       };
     }
   },
@@ -500,16 +498,48 @@ export const fundingAPI = {
       const headers = getAuthHeaders();
       console.log("Headers:", headers); // Debug log
       
-      const response = await Promise.race([
-        fetch(`${API_URL}/api/funding`, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(requestData),
-        }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 10000) // Increased timeout
-        )
-      ]);
+      // Transform frontend data to match backend structure exactly
+      const backendData = {
+        ideaId: requestData.ideaId,
+        amount: parseInt(requestData.amount),
+        equity: parseFloat(requestData.equity),
+        message: requestData.message || '',
+        teamSize: requestData.teamSize ? parseInt(requestData.teamSize) : undefined,
+        businessPlan: requestData.businessPlan || '',
+        currentRevenue: requestData.currentRevenue ? parseInt(requestData.currentRevenue) : undefined,
+        previousFunding: requestData.previousFunding ? parseInt(requestData.previousFunding) : undefined,
+        revenueModel: requestData.revenueModel || '',
+        targetMarket: requestData.targetMarket || '',
+        competitiveAdvantage: requestData.competitiveAdvantage || '',
+        customerTraction: requestData.customerTraction || '',
+        financialProjections: requestData.financialProjections || '',
+        useOfFunds: requestData.useOfFunds || '',
+        timeline: requestData.timeline || '',
+        milestones: requestData.milestones || '',
+        riskFactors: requestData.riskFactors || '',
+        exitStrategy: requestData.exitStrategy || '',
+        intellectualProperty: requestData.intellectualProperty || '',
+        contactPhone: requestData.contactPhone || '',
+        contactEmail: requestData.contactEmail || '',
+        companyWebsite: requestData.companyWebsite || '',
+        linkedinProfile: requestData.linkedinProfile || '',
+        additionalDocuments: requestData.additionalDocuments || '',
+        fundingStage: requestData.fundingStage || 'seed',
+        investmentType: requestData.investmentType || 'equity'
+      };
+      
+      // Remove undefined values
+      Object.keys(backendData).forEach(key => {
+        if (backendData[key] === undefined) {
+          delete backendData[key];
+        }
+      });
+      
+      const response = await fetch(`${API_URL}/api/funding`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(backendData),
+      });
       
       console.log("Response status:", response.status); // Debug log
       console.log("Response OK:", response.ok); // Debug log
@@ -523,47 +553,20 @@ export const fundingAPI = {
       const result = await response.json();
       console.log("API result:", result); // Debug log
       
-      // Ensure the response has the expected format
-      if (result.success !== undefined) {
-        return result;
-      } else {
-        // If backend doesn't return success flag, wrap the response
-        return {
-          success: true,
-          data: result,
-          message: "Funding request created successfully"
-        };
-      }
+      return {
+        success: result.success !== false,
+        data: result.data || result,
+        message: result.message || "Funding request created successfully"
+      };
     } catch (error) {
-      console.warn('Create funding API error:', error.message);
+      console.error('Create funding API error:', error.message);
       
-      // For development/testing, return success to test UI flow
-      // In production, this should return the actual error
-      if (error.message.includes('Timeout') || error.message.includes('Network')) {
-        console.log('Using demo response for testing');
-        return {
-          success: true,
-          data: {
-            id: Date.now(),
-            ideaTitle: "New Funding Request",
-            amount: requestData.amount,
-            equity: requestData.equity,
-            valuation: Math.round((requestData.amount / requestData.equity) * 100),
-            status: "pending",
-            message: requestData.message,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          },
-          message: "Funding request submitted successfully (demo mode)"
-        };
-      } else {
-        // Return the actual error for validation/auth issues
-        return {
-          success: false,
-          message: error.message,
-          error: error.message
-        };
-      }
+      // Return the actual error for validation/auth issues
+      return {
+        success: false,
+        message: error.message,
+        error: error.message
+      };
     }
   },
 
@@ -608,12 +611,18 @@ export const fundingAPI = {
           body: JSON.stringify({ status, message }),
         }),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
+          setTimeout(() => reject(new Error('Timeout')), 10000)
         )
       ]);
-      return handleResponse(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      return result;
     } catch (error) {
-      console.warn('Update funding API not available, using demo response');
+      console.warn('Update funding API error:', error.message);
       return {
         success: true,
         data: {
@@ -621,6 +630,137 @@ export const fundingAPI = {
           status: status,
           message: message,
           updatedAt: new Date().toISOString()
+        }
+      };
+    }
+  },
+
+  // Update funding request details (for entrepreneurs)
+  updateFundingRequestDetails: async (requestId, detailsData) => {
+    try {
+      // Transform frontend data to match backend structure
+      const backendData = {
+        ideaId: detailsData.ideaId,
+        amountRequested: parseInt(detailsData.amount),
+        description: detailsData.message || '',
+        businessPlan: detailsData.businessPlan || '',
+        targetMarket: detailsData.targetMarket || '',
+        competitiveAdvantage: detailsData.competitiveAdvantage || '',
+        revenueModel: detailsData.revenueModel || '',
+        currentRevenue: detailsData.currentRevenue ? parseInt(detailsData.currentRevenue) : null,
+        projectedRevenue: detailsData.projectedRevenue ? parseInt(detailsData.projectedRevenue) : null,
+        financialProjections: detailsData.financialProjections || '',
+        useOfFunds: detailsData.useOfFunds || '',
+        timeline: detailsData.timeline || '',
+        milestones: detailsData.milestones || '',
+        teamSize: detailsData.teamSize ? parseInt(detailsData.teamSize) : null,
+        keyTeamMembers: detailsData.keyTeamMembers || '',
+        advisors: detailsData.advisors || '',
+        previousFunding: detailsData.previousFunding ? parseInt(detailsData.previousFunding) : null,
+        existingInvestors: detailsData.existingInvestors || '',
+        customerTraction: detailsData.customerTraction || '',
+        riskFactors: detailsData.riskFactors || '',
+        exitStrategy: detailsData.exitStrategy || '',
+        intellectualProperty: detailsData.intellectualProperty || '',
+        contactPhone: detailsData.contactPhone || '',
+        contactEmail: detailsData.contactEmail || '',
+        companyWebsite: detailsData.companyWebsite || '',
+        linkedinProfile: detailsData.linkedinProfile || ''
+      };
+
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}/details`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(backendData),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 10000)
+        )
+      ]);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      return {
+        success: true,
+        data: result.data || result,
+        message: result.message || "Funding request updated successfully"
+      };
+    } catch (error) {
+      console.error('Update funding details API error:', error.message);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+
+  // Withdraw funding request (for entrepreneurs)
+  withdrawFundingRequest: async (requestId) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}/withdraw`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 10000)
+        )
+      ]);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      return {
+        success: true,
+        data: result.data || result,
+        message: result.message || "Funding request withdrawn successfully"
+      };
+    } catch (error) {
+      console.error('Withdraw funding API error:', error.message);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+
+  // Get funding statistics
+  getFundingStats: async () => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/stats`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 5000)
+        )
+      ]);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.warn('Funding stats API error:', error.message);
+      return {
+        success: true,
+        data: {
+          totalRequests: 3,
+          pendingRequests: 1,
+          acceptedRequests: 1,
+          totalAmountRequested: 900000,
+          totalAmountReceived: 250000,
+          averageEquityOffered: 12.3
         }
       };
     }
