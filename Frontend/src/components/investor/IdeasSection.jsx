@@ -106,7 +106,7 @@ const IdeasSection = ({
 
       <div className="relative z-10">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <h3 className="text-xl font-manrope font-bold text-white">
+          <h3 className="text-lg sm:text-xl lg:text-2xl font-manrope font-bold text-white">
             {title} ({filteredIdeas.length} of {ideas.length})
           </h3>
 
@@ -116,14 +116,14 @@ const IdeasSection = ({
               {/* Basic Filters Row */}
               <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                 {/* Search */}
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4" />
+                <div className="relative min-w-0 flex-1 sm:flex-initial sm:w-64">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4 pointer-events-none" />
                   <input
                     type="text"
                     placeholder="Search ideas..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 w-full sm:w-64 font-manrope"
+                    className="w-full pl-10 pr-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -131,7 +131,7 @@ const IdeasSection = ({
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope"
+                  className="px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto"
                 >
                   <option value="all" className="bg-gray-800">
                     All Categories
@@ -151,7 +151,7 @@ const IdeasSection = ({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope"
+                  className="px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto"
                 >
                   <option value="newest" className="bg-gray-800">
                     Newest First
@@ -168,16 +168,16 @@ const IdeasSection = ({
                 {showAdvancedFilters && (
                   <button
                     onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-manrope ${
+                    className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto justify-center sm:justify-start ${
                       isAdvancedOpen
                         ? "bg-green-500/20 text-green-400 border border-green-500/30"
                         : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
                     }`}
                   >
                     <FaFilter className="w-4 h-4" />
-                    Advanced
+                    <span className="whitespace-nowrap">Advanced</span>
                     {activeAdvancedFilters > 0 && (
-                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center">
                         {activeAdvancedFilters}
                       </span>
                     )}
@@ -203,33 +203,39 @@ const IdeasSection = ({
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {/* AI Score Range */}
-                    <div>
-                      <label className="block text-white/80 text-sm font-medium mb-2 font-manrope">
+                    <div className="sm:col-span-2 lg:col-span-1">
+                      <label className="block text-white/80 text-sm font-medium mb-3 font-manrope">
                         AI Score Range: {minScore}% - {maxScore}%
                       </label>
-                      <div className="space-y-2">
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={minScore}
-                          onChange={(e) =>
-                            setMinScore && setMinScore(parseInt(e.target.value))
-                          }
-                          className="w-full accent-green-500"
-                        />
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={maxScore}
-                          onChange={(e) =>
-                            setMaxScore && setMaxScore(parseInt(e.target.value))
-                          }
-                          className="w-full accent-green-500"
-                        />
+                      <div className="space-y-3">
+                        <div>
+                          <label className="text-xs text-white/60 mb-1 block">Min: {minScore}%</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={minScore}
+                            onChange={(e) =>
+                              setMinScore && setMinScore(parseInt(e.target.value))
+                            }
+                            className="w-full accent-green-500 h-2"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-white/60 mb-1 block">Max: {maxScore}%</label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={maxScore}
+                            onChange={(e) =>
+                              setMaxScore && setMaxScore(parseInt(e.target.value))
+                            }
+                            className="w-full accent-green-500 h-2"
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -283,16 +289,16 @@ const IdeasSection = ({
                   </div>
 
                   {/* Tags Filter */}
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2 font-manrope">
+                  <div className="sm:col-span-2 lg:col-span-3 xl:col-span-4">
+                    <label className="block text-white/80 text-sm font-medium mb-3 font-manrope">
                       Tags ({selectedTags.length} selected)
                     </label>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
                       {availableTags.map((tag) => (
                         <button
                           key={tag}
                           onClick={() => handleTagToggle(tag)}
-                          className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 font-manrope ${
+                          className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 font-manrope min-h-[36px] touch-manipulation whitespace-nowrap ${
                             selectedTags.includes(tag)
                               ? "bg-green-500 text-white"
                               : "bg-white/10 text-white/70 hover:bg-white/20"

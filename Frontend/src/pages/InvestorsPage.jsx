@@ -190,62 +190,64 @@ const InvestorsPage = () => {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-black text-white overflow-x-hidden">
         {/* Header */}
         <div className="border-b border-gray-800 bg-black/50 backdrop-blur-xl sticky top-0 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center justify-between mb-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   Find Investors
                 </h1>
-                <p className="text-gray-400 mt-1">
+                <p className="text-gray-400 mt-1 text-sm sm:text-base">
                   Connect with investors who align with your vision and industry
                 </p>
               </div>
             </div>
 
             {/* Search and Filters */}
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className="flex flex-col gap-4">
+              <div className="relative">
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
                 <input
                   type="text"
                   placeholder="Search investors, companies, or expertise..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-gray-900/50 border border-gray-800 rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                  className="w-full bg-gray-900/50 border border-gray-800 rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none min-h-[44px] touch-manipulation"
                 />
               </div>
               
-              <select
-                value={industryFilter}
-                onChange={(e) => setIndustryFilter(e.target.value)}
-                className="bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
-              >
-                <option value="all">All Industries</option>
-                {industries.map(industry => (
-                  <option key={industry} value={industry}>{industry}</option>
-                ))}
-              </select>
-              
-              <select
-                value={investmentRangeFilter}
-                onChange={(e) => setInvestmentRangeFilter(e.target.value)}
-                className="bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none"
-              >
-                <option value="all">All Investment Ranges</option>
-                {investmentRanges.map(range => (
-                  <option key={range.value} value={range.value}>{range.label}</option>
-                ))}
-              </select>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <select
+                  value={industryFilter}
+                  onChange={(e) => setIndustryFilter(e.target.value)}
+                  className="bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none min-h-[44px] touch-manipulation flex-1 sm:flex-initial"
+                >
+                  <option value="all">All Industries</option>
+                  {industries.map(industry => (
+                    <option key={industry} value={industry}>{industry}</option>
+                  ))}
+                </select>
+                
+                <select
+                  value={investmentRangeFilter}
+                  onChange={(e) => setInvestmentRangeFilter(e.target.value)}
+                  className="bg-gray-900/50 border border-gray-800 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none min-h-[44px] touch-manipulation flex-1 sm:flex-initial"
+                >
+                  <option value="all">All Investment Ranges</option>
+                  {investmentRanges.map(range => (
+                    <option key={range.value} value={range.value}>{range.label}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
             <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <div>
@@ -296,55 +298,55 @@ const InvestorsPage = () => {
               }}
             />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {filteredInvestors.map((investor) => (
                 <div 
                   key={investor._id} 
                   className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 backdrop-blur-sm hover:border-gray-700 transition-all duration-200 group"
                 >
                   {/* Header */}
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="relative">
+                  <div className="flex items-start gap-3 sm:gap-4 mb-4">
+                    <div className="relative flex-shrink-0">
                       <img
                         src={investor.profileImage || `https://ui-avatars.com/api/?name=${investor.name}&background=1f2937&color=ffffff`}
                         alt={investor.name}
-                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-700"
+                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-gray-700"
                       />
                       {investor.isVerified && (
-                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                        <div className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-blue-500 rounded-full flex items-center justify-center">
                           <FaStar className="text-white text-xs" />
                         </div>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-white mb-1">{investor.name}</h3>
-                      <p className="text-blue-400 text-sm mb-1">{investor.title}</p>
-                      <p className="text-gray-400 text-sm">{investor.company}</p>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold text-white mb-1 truncate">{investor.name}</h3>
+                      <p className="text-blue-400 text-xs sm:text-sm mb-1 truncate">{investor.title}</p>
+                      <p className="text-gray-400 text-xs sm:text-sm truncate">{investor.company}</p>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <FaStar className="text-yellow-400 text-sm" />
-                      <span className="text-gray-400 text-sm">{investor.rating}</span>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <FaStar className="text-yellow-400 text-xs sm:text-sm" />
+                      <span className="text-gray-400 text-xs sm:text-sm">{investor.rating}</span>
                     </div>
                   </div>
 
                   {/* Bio */}
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-3">{investor.bio}</p>
+                  <p className="text-gray-300 text-xs sm:text-sm mb-4 line-clamp-2 sm:line-clamp-3">{investor.bio}</p>
 
                   {/* Details */}
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <FaMapMarkerAlt className="text-gray-400" />
-                      <span className="text-gray-300">{investor.location}</span>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm">
+                      <FaMapMarkerAlt className="text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-300 truncate">{investor.location}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <FaDollarSign className="text-gray-400" />
-                      <span className="text-gray-300">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm">
+                      <FaDollarSign className="text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-300 truncate">
                         Avg: {formatCurrency(investor.averageTicketSize)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <FaEye className="text-gray-400" />
-                      <span className="text-gray-300">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm">
+                      <FaEye className="text-gray-400 flex-shrink-0" />
+                      <span className="text-gray-300 truncate">
                         {investor.totalInvestments} investments, {investor.successfulExits} exits
                       </span>
                     </div>

@@ -23,7 +23,7 @@ const InvestorDashboardHeader = ({ onToggleSidebar }) => {
             {/* Mobile sidebar toggle */}
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 text-white/70 hover:text-white transition-all duration-300 hover:bg-white/20 rounded-lg hover:scale-105"
+              className="lg:hidden p-3 text-white/70 hover:text-white transition-all duration-300 hover:bg-white/20 rounded-lg hover:scale-105 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
             >
               <FaBars className="w-5 h-5" />
             </button>
@@ -47,7 +47,7 @@ const InvestorDashboardHeader = ({ onToggleSidebar }) => {
           <div className="flex items-center gap-4">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope"
+              className="flex items-center gap-2 px-4 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope min-h-[44px] touch-manipulation"
             >
               <FaSignOutAlt className="w-4 h-4" />
               Logout

@@ -2,7 +2,7 @@ import React from "react";
 
 const InvestorDashboardCards = ({ dashboardCards }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
       {dashboardCards.map((card, index) => (
         <div
           key={index}
@@ -23,10 +23,10 @@ const InvestorDashboardCards = ({ dashboardCards }) => {
               </span>
             </div>
 
-            <h3 className="text-white font-manrope font-semibold text-lg mb-2 group-hover:text-white/90 transition-colors duration-300">
+            <h3 className="text-white font-manrope font-semibold text-base sm:text-lg mb-2 group-hover:text-white/90 transition-colors duration-300">
               {card.title}
             </h3>
-            <p className="text-white/60 text-sm font-manrope group-hover:text-white/80 transition-colors duration-300">
+            <p className="text-white/60 text-xs sm:text-sm font-manrope group-hover:text-white/80 transition-colors duration-300">
               {card.description}
             </p>
           </div>

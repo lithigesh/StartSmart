@@ -13,10 +13,10 @@ const InvestorWelcomeSection = () => {
         </div>
 
         <div className="relative z-10">
-          <h2 className="text-2xl md:text-3xl font-manrope font-bold text-white mb-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-manrope font-bold text-white mb-4">
             Ready to invest in the future?
           </h2>
-          <p className="text-white/70 font-manrope mb-6 max-w-2xl">
+          <p className="text-sm sm:text-base text-white/70 font-manrope mb-6 max-w-2xl">
             Explore curated startup ideas, analyze opportunities, and build your
             investment portfolio with promising entrepreneurs. Discover the next
             big innovation.

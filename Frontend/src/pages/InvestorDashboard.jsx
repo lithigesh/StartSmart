@@ -37,9 +37,24 @@ const InvestorDashboard = () => {
 
   // Sidebar state
   const [activeSection, setActiveSection] = useState("overview");
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 1024 : true
-  ); // Always expanded on desktop (>= 1024px), collapsed on mobile
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Handle responsive sidebar behavior
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarCollapsed(true);
+      } else {
+        setIsSidebarCollapsed(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+    
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Refs for scrolling to sections
   const browseIdeasRef = useRef(null);
@@ -409,27 +424,22 @@ const InvestorDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black overflow-x-hidden">
       {/* Sidebar */}
       <InvestorSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         isCollapsed={isSidebarCollapsed}
-        setIsCollapsed={(collapsed) => {
-          // Only allow collapse/expand on mobile (< 1024px)
-          if (typeof window !== "undefined" && window.innerWidth < 1024) {
-            setIsSidebarCollapsed(collapsed);
-          }
-        }}
+        setIsCollapsed={setIsSidebarCollapsed}
       />
 
       {/* Main Content */}
-      <div className="lg:ml-72">
+      <div className="lg:ml-72 transition-all duration-300">
         {/* Header */}
         <InvestorDashboardHeader />
 
         {/* Page Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {renderSectionContent()}
         </div>
       </div>

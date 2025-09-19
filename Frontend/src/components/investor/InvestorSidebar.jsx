@@ -69,9 +69,14 @@ const InvestorSidebar = ({
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setIsCollapsed(true);
+      } else {
+        setIsCollapsed(false);
       }
     };
 
+    // Set initial state
+    handleResize();
+    
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [setIsCollapsed]);
@@ -89,7 +94,7 @@ const InvestorSidebar = ({
     <button
       onClick={() => onClick(item.id)}
       className={`
-        w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden
+        w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
         ${
           isActive
             ? "bg-white/20 border-l-4 border-white text-white"
@@ -144,8 +149,8 @@ const InvestorSidebar = ({
         className={`
         fixed left-0 top-0 h-full bg-white/[0.03] backdrop-blur-xl border-r border-white/10 z-50 transition-all duration-300 flex flex-col
         ${isCollapsed ? "w-16" : "w-72"}
-        lg:translate-x-0
         ${isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0"}
+        lg:translate-x-0
       `}
       >
         {/* Glass morphism overlay */}
@@ -169,7 +174,7 @@ const InvestorSidebar = ({
 
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105 lg:hidden"
+              className="p-3 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105 min-h-[44px] min-w-[44px] flex items-center justify-center lg:hidden"
             >
               {isCollapsed ? (
                 <FaBars className="w-4 h-4" />
