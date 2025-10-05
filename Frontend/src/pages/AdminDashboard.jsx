@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import '../styles/AdminEnhancements.css';
 import {
   FaUsers,
   FaUserShield,
@@ -29,7 +30,13 @@ import {
   FaEnvelope,
   FaArrowLeft,
   FaArrowRight,
+  FaCreditCard,
+  FaLeaf,
 } from "react-icons/fa";
+import AnalyticsDashboard from '../components/admin/AnalyticsDashboard';
+import IdeathonRegistrationMaster from '../components/admin/IdeathonRegistrationMaster';
+import FeedbackFormsSection from '../components/admin/FeedbackFormsSection';
+import SustainabilityScoringSection from '../components/admin/SustainabilityScoringSection';
 
 const AdminDashboard = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
@@ -79,6 +86,10 @@ const AdminDashboard = () => {
     { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb },
     { id: 'ideathons', label: 'Ideathons', icon: FaTrophy },
     { id: 'activities', label: 'Activities', icon: FaUserShield },
+    { id: 'analytics', label: 'Analytics', icon: FaChartBar },
+    { id: 'registration-master', label: 'Registration Master', icon: FaTrophy },
+    { id: 'feedback', label: 'Feedback Forms', icon: FaEdit },
+    { id: 'sustainability', label: 'Sustainability Scoring', icon: FaLeaf },
   ];
 
   // Helper function to get ideathon status
@@ -1941,6 +1952,10 @@ const AdminDashboard = () => {
             {activeSection === 'ideas' && <IdeasSection />}
             {activeSection === 'ideathons' && <IdeathonsSection />}
             {activeSection === 'activities' && <ActivitiesSection />}
+            {activeSection === 'analytics' && <AnalyticsDashboard />}
+            {activeSection === 'registration-master' && <IdeathonRegistrationMaster />}
+            {activeSection === 'feedback' && <FeedbackFormsSection />}
+            {activeSection === 'sustainability' && <SustainabilityScoringSection />}
           </div>
         </div>
       </div>

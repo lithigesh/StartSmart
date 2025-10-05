@@ -2,6 +2,9 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
 //const API_URL = "http://localhost:5001";
 
+// Export API_BASE for direct usage in components
+export const API_BASE = API_URL;
+
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -1533,7 +1536,7 @@ export const collaborationsAPI = {
   }
 };
 
-export default {
+const API_SERVICES = {
   ideasAPI,
   entrepreneurAPI,
   investorAPI,
@@ -1544,3 +1547,6 @@ export default {
   ideathonsAPI,
   collaborationsAPI,
 };
+
+// Default export for compatibility
+export default API_BASE;

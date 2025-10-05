@@ -19,6 +19,10 @@ const IdeathonRegistrationSchema = new mongoose.Schema({
     pitchDetails: {
         type: String
     },
+    registeredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     status: {
         type: String,
         enum: ['registered', 'shortlisted', 'winner'],

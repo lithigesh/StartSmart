@@ -18,14 +18,16 @@ router.route('/')
     .post(protect, isAdmin, createIdeathon)
     .get(protect, getAllIdeathons);
 
+// Routes for participation (must come before /:id routes to avoid conflicts)
+router.get('/registrations', protect, isAdmin, getIdeathonRegistrations);
+router.post('/:id/register', protect, registerForIdeathon); // Allow both admin and entrepreneur
+router.get('/:id/registrations', protect, isAdmin, getIdeathonRegistrations);
+router.put('/:id/results', protect, isAdmin, postIdeathonWinners);
+
+// Specific ideathon routes (must come after other routes to avoid conflicts)
 router.route('/:id')
     .get(protect, getIdeathonById)
     .put(protect, isAdmin, updateIdeathon)
     .delete(protect, isAdmin, deleteIdeathon);
-
-// Routes for participation
-router.post('/:id/register', protect, isEntrepreneur, registerForIdeathon);
-router.get('/:id/registrations', protect, isAdmin, getIdeathonRegistrations);
-router.put('/:id/results', protect, isAdmin, postIdeathonWinners);
 
 module.exports = router;

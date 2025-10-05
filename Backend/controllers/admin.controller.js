@@ -1,6 +1,10 @@
 // controllers/admin.controller.js
 const User = require('../models/User.model');
 const Idea = require('../models/Idea.model');
+const Ideathon = require('../models/Ideathon.model');
+const IdeathonRegistration = require('../models/IdeathonRegistration.model');
+const Feedback = require('../models/Feedback.model');
+const Sustainability = require('../models/Sustainability.model');
 const AdminAction = require('../models/AdminAction.model');
 const generateToken = require('../utils/generateToken');
 
@@ -251,6 +255,783 @@ exports.getAdminActivities = async (req, res, next) => {
             .populate('admin', 'name email')
             .sort({ createdAt: -1 });
         res.json(activities);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+
+
+// ========== ANALYTICS & DASHBOARD ==========
+
+// @desc    Get dashboard analytics
+// @route   GET /api/admin/analytics/dashboard
+// @access  Private (Admin only)
+exports.getDashboardAnalytics = async (req, res, next) => {
+    try {
+        const { dateRange } = req.query;
+        let dateFilter = {};
+        
+        if (dateRange) {
+            const { start, end } = JSON.parse(dateRange);
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(start),
+                    $lte: new Date(end)
+                }
+            };
+        }
+
+        // Get user statistics
+        const userStats = await User.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalUsers: { $sum: 1 },
+                    entrepreneurs: { $sum: { $cond: [{ $eq: ['$role', 'entrepreneur'] }, 1, 0] } },
+                    investors: { $sum: { $cond: [{ $eq: ['$role', 'investor'] }, 1, 0] } },
+                    admins: { $sum: { $cond: [{ $eq: ['$role', 'admin'] }, 1, 0] } }
+                }
+            }
+        ]);
+
+        // Get user growth by month
+        const userGrowth = await User.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: '$createdAt' },
+                        month: { $month: '$createdAt' }
+                    },
+                    count: { $sum: 1 },
+                    entrepreneurs: { $sum: { $cond: [{ $eq: ['$role', 'entrepreneur'] }, 1, 0] } },
+                    investors: { $sum: { $cond: [{ $eq: ['$role', 'investor'] }, 1, 0] } }
+                }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1 } }
+        ]);
+
+        // Get idea statistics
+        const ideaStats = await Idea.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalIdeas: { $sum: 1 },
+                    approvedIdeas: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } },
+                    pendingIdeas: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
+                    rejectedIdeas: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } }
+                }
+            }
+        ]);
+
+        // Get ideas by category
+        const ideasByCategory = await Idea.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: '$category',
+                    count: { $sum: 1 },
+                    approved: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+
+        // Get ideathon statistics
+        const ideathonStats = await Ideathon.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalIdeathons: { $sum: 1 },
+                    activeIdeathons: { 
+                        $sum: { 
+                            $cond: [
+                                { 
+                                    $and: [
+                                        { $lte: ['$startDate', new Date()] },
+                                        { $gte: ['$endDate', new Date()] }
+                                    ]
+                                }, 
+                                1, 
+                                0
+                            ] 
+                        }
+                    },
+                    upcomingIdeathons: {
+                        $sum: { $cond: [{ $gt: ['$startDate', new Date()] }, 1, 0] }
+                    },
+                    completedIdeathons: {
+                        $sum: { $cond: [{ $lt: ['$endDate', new Date()] }, 1, 0] }
+                    }
+                }
+            }
+        ]);
+
+        // Get feedback statistics
+        const feedbackStats = await Feedback.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalFeedback: { $sum: 1 },
+                    averageRating: { $avg: '$rating' },
+                    positiveCount: { $sum: { $cond: [{ $gte: ['$rating', 4] }, 1, 0] } },
+                    negativeCount: { $sum: { $cond: [{ $lte: ['$rating', 2] }, 1, 0] } }
+                }
+            }
+        ]);
+
+        // Get sustainability statistics
+        const sustainabilityStats = await Sustainability.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalAssessments: { $sum: 1 },
+                    averageScore: { $avg: '$overallScore' },
+                    averageEnvironmental: { $avg: '$environmentalImpact.score' },
+                    averageSocial: { $avg: '$socialImpact.score' },
+                    averageEconomic: { $avg: '$economicSustainability.score' }
+                }
+            }
+        ]);
+
+        res.json({
+            users: userStats[0] || {
+                totalUsers: 0,
+                entrepreneurs: 0,
+                investors: 0,
+                admins: 0
+            },
+            userGrowth,
+            ideas: ideaStats[0] || {
+                totalIdeas: 0,
+                approvedIdeas: 0,
+                pendingIdeas: 0,
+                rejectedIdeas: 0
+            },
+            ideasByCategory,
+            ideathons: ideathonStats[0] || {
+                totalIdeathons: 0,
+                activeIdeathons: 0,
+                upcomingIdeathons: 0,
+                completedIdeathons: 0
+            },
+            feedback: feedbackStats[0] || {
+                totalFeedback: 0,
+                averageRating: 0,
+                positiveCount: 0,
+                negativeCount: 0
+            },
+            sustainability: sustainabilityStats[0] || {
+                totalAssessments: 0,
+                averageScore: 0,
+                averageEnvironmental: 0,
+                averageSocial: 0,
+                averageEconomic: 0
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get chart data for visualization
+// @route   GET /api/admin/analytics/charts
+// @access  Private (Admin only)
+exports.getChartData = async (req, res, next) => {
+    try {
+        const { type, dateRange } = req.query;
+        let dateFilter = {};
+        
+        if (dateRange) {
+            const { start, end } = JSON.parse(dateRange);
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(start),
+                    $lte: new Date(end)
+                }
+            };
+        }
+
+        let chartData = {};
+
+        switch (type) {
+            case 'users':
+                chartData = await User.aggregate([
+                    { $match: dateFilter },
+                    {
+                        $group: {
+                            _id: {
+                                year: { $year: '$createdAt' },
+                                month: { $month: '$createdAt' },
+                                day: { $dayOfMonth: '$createdAt' }
+                            },
+                            count: { $sum: 1 }
+                        }
+                    },
+                    { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+                ]);
+                break;
+
+            case 'ideas':
+                chartData = await Idea.aggregate([
+                    { $match: dateFilter },
+                    {
+                        $group: {
+                            _id: {
+                                year: { $year: '$createdAt' },
+                                month: { $month: '$createdAt' },
+                                day: { $dayOfMonth: '$createdAt' }
+                            },
+                            count: { $sum: 1 },
+                            approved: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } },
+                            pending: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
+                            rejected: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } }
+                        }
+                    },
+                    { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+                ]);
+                break;
+
+            case 'ideathons':
+                chartData = await Ideathon.aggregate([
+                    { $match: dateFilter },
+                    {
+                        $group: {
+                            _id: {
+                                year: { $year: '$createdAt' },
+                                month: { $month: '$createdAt' }
+                            },
+                            count: { $sum: 1 }
+                        }
+                    },
+                    { $sort: { '_id.year': 1, '_id.month': 1 } }
+                ]);
+                break;
+
+            case 'feedback':
+                chartData = await Feedback.aggregate([
+                    { $match: dateFilter },
+                    {
+                        $group: {
+                            _id: {
+                                year: { $year: '$createdAt' },
+                                month: { $month: '$createdAt' },
+                                day: { $dayOfMonth: '$createdAt' }
+                            },
+                            count: { $sum: 1 },
+                            averageRating: { $avg: '$rating' },
+                            positive: { $sum: { $cond: [{ $gte: ['$rating', 4] }, 1, 0] } },
+                            negative: { $sum: { $cond: [{ $lte: ['$rating', 2] }, 1, 0] } }
+                        }
+                    },
+                    { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+                ]);
+                break;
+
+            case 'sustainability':
+                chartData = await Sustainability.aggregate([
+                    { $match: dateFilter },
+                    {
+                        $group: {
+                            _id: {
+                                year: { $year: '$createdAt' },
+                                month: { $month: '$createdAt' },
+                                day: { $dayOfMonth: '$createdAt' }
+                            },
+                            count: { $sum: 1 },
+                            averageScore: { $avg: '$overallScore' },
+                            environmental: { $avg: '$environmentalImpact.score' },
+                            social: { $avg: '$socialImpact.score' },
+                            economic: { $avg: '$economicSustainability.score' }
+                        }
+                    },
+                    { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+                ]);
+                break;
+
+            default:
+                return res.status(400).json({ message: 'Invalid chart type' });
+        }
+
+        res.json({ type, data: chartData });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ========== REPORT GENERATION ==========
+
+// @desc    Generate and download report
+// @route   GET /api/admin/reports/:type
+// @access  Private (Admin only)
+exports.generateReport = async (req, res, next) => {
+    try {
+        const { type } = req.params;
+        const { format = 'json', dateRange } = req.query;
+        
+        let dateFilter = {};
+        if (dateRange) {
+            const { start, end } = JSON.parse(dateRange);
+            dateFilter = {
+                createdAt: {
+                    $gte: new Date(start),
+                    $lte: new Date(end)
+                }
+            };
+        }
+
+        let reportData = {};
+        let fileName = '';
+
+        switch (type) {
+            case 'users':
+                reportData = await User.find(dateFilter)
+                    .select('-password')
+                    .sort({ createdAt: -1 });
+                fileName = `users-report-${new Date().toISOString().split('T')[0]}`;
+                break;
+
+            case 'ideas':
+                reportData = await Idea.find(dateFilter)
+                    .populate('owner', 'name email')
+                    .sort({ createdAt: -1 });
+                fileName = `ideas-report-${new Date().toISOString().split('T')[0]}`;
+                break;
+
+            case 'ideathons':
+                reportData = await Ideathon.find(dateFilter)
+                    .sort({ createdAt: -1 });
+                fileName = `ideathons-report-${new Date().toISOString().split('T')[0]}`;
+                break;
+
+            case 'feedback':
+                reportData = await Feedback.find(dateFilter)
+                    .populate('idea', 'title')
+                    .populate('author', 'name email')
+                    .sort({ createdAt: -1 });
+                fileName = `feedback-report-${new Date().toISOString().split('T')[0]}`;
+                break;
+
+            case 'sustainability':
+                reportData = await Sustainability.find(dateFilter)
+                    .populate('idea', 'title')
+                    .populate('assessor', 'name email')
+                    .sort({ createdAt: -1 });
+                fileName = `sustainability-report-${new Date().toISOString().split('T')[0]}`;
+                break;
+
+            case 'analytics':
+                reportData = await exports.getDashboardAnalytics(req, { json: () => {} }, () => {});
+                fileName = `analytics-report-${new Date().toISOString().split('T')[0]}`;
+                break;
+
+            default:
+                return res.status(400).json({ message: 'Invalid report type' });
+        }
+
+        // Log report generation
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'generateReport',
+            details: `Generated ${type} report in ${format} format`
+        });
+
+        if (format === 'csv') {
+            // For CSV format, we'll send JSON with CSV headers
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Content-Disposition', `attachment; filename="${fileName}.json"`);
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Content-Disposition', `attachment; filename="${fileName}.json"`);
+        }
+
+        res.json({
+            reportType: type,
+            generatedAt: new Date(),
+            generatedBy: req.user.name,
+            dateRange: dateRange ? JSON.parse(dateRange) : 'All time',
+            data: reportData,
+            metadata: {
+                totalRecords: Array.isArray(reportData) ? reportData.length : 1,
+                format
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ========== FEEDBACK MANAGEMENT ==========
+
+// @desc    Get all feedback
+// @route   GET /api/admin/feedback
+// @access  Private (Admin only)
+exports.getAllFeedback = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 20, ideaId, category, rating } = req.query;
+        
+        const filter = {};
+        if (ideaId) filter.idea = ideaId;
+        if (category) filter.category = category;
+        if (rating) filter.rating = parseInt(rating);
+
+        const feedbacks = await Feedback.find(filter)
+            .populate('idea', 'title description category entrepreneur')
+            .populate('admin', 'name email')
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        const total = await Feedback.countDocuments(filter);
+
+        res.json({
+            feedback: feedbacks,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            total
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Create feedback for an idea
+// @route   POST /api/admin/feedback
+// @access  Private (Admin only)
+exports.createFeedback = async (req, res, next) => {
+    try {
+        const {
+            ideaId,
+            rating,
+            comments,
+            suggestions,
+            category,
+            strengths = [],
+            improvements = [],
+            followUpRequired,
+            followUpNotes,
+            visibility
+        } = req.body;
+
+        // Validate required fields
+        if (!ideaId || !rating || !comments) {
+            return res.status(400).json({
+                message: 'Idea ID, rating, and comments are required'
+            });
+        }
+
+        // Validate idea exists
+        const idea = await Idea.findById(ideaId);
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        const feedback = new Feedback({
+            idea: ideaId,
+            admin: req.user.id,
+            rating,
+            comments,
+            suggestions,
+            category: category || 'general',
+            strengths,
+            improvements,
+            followUpRequired: followUpRequired || false,
+            followUpNotes,
+            visibility: visibility || 'entrepreneur_only',
+            feedbackType: 'admin'
+        });
+
+        await feedback.save();
+
+        // Log admin action
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'createFeedback',
+            targetId: feedback._id,
+            targetModel: 'Feedback',
+            details: `Created feedback for idea "${idea.title}" with rating ${rating}/5`
+        });
+
+        const populatedFeedback = await Feedback.findById(feedback._id)
+            .populate('idea', 'title description category entrepreneur')
+            .populate('admin', 'name email');
+
+        res.status(201).json({
+            message: 'Feedback created successfully',
+            feedback: populatedFeedback
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update feedback
+// @route   PUT /api/admin/feedback/:id
+// @access  Private (Admin only)
+exports.updateFeedback = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        const feedback = await Feedback.findById(id);
+        if (!feedback) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        // Check if feedback can be edited
+        if (!feedback.canBeEdited()) {
+            return res.status(400).json({
+                message: 'Feedback cannot be edited after 24 hours or if already reviewed'
+            });
+        }
+
+        const updatedFeedback = await Feedback.findByIdAndUpdate(
+            id,
+            { ...updateData, updatedAt: new Date() },
+            { new: true }
+        ).populate('idea', 'title description category entrepreneur')
+         .populate('admin', 'name email');
+
+        // Log admin action
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'updateFeedback',
+            targetId: feedback._id,
+            targetModel: 'Feedback',
+            details: `Updated feedback for idea "${updatedFeedback.idea.title}"`
+        });
+
+        res.json({
+            message: 'Feedback updated successfully',
+            feedback: updatedFeedback
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Delete feedback
+// @route   DELETE /api/admin/feedback/:id
+// @access  Private (Admin only)
+exports.deleteFeedback = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const feedback = await Feedback.findById(id).populate('idea', 'title');
+        if (!feedback) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        await Feedback.findByIdAndDelete(id);
+
+        // Log admin action
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'deleteFeedback',
+            targetId: id,
+            targetModel: 'Feedback',
+            details: `Deleted feedback for idea "${feedback.idea.title}"`
+        });
+
+        res.json({ message: 'Feedback deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ========== SUSTAINABILITY MANAGEMENT ==========
+
+// @desc    Get all sustainability assessments
+// @route   GET /api/admin/sustainability
+// @access  Private (Admin only)
+exports.getAllSustainabilityAssessments = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 20, ideaId, rank, minScore, maxScore } = req.query;
+        
+        const filter = {};
+        if (ideaId) filter.idea = ideaId;
+        if (rank) filter.sustainabilityRank = rank;
+        if (minScore || maxScore) {
+            filter.overallSustainabilityScore = {};
+            if (minScore) filter.overallSustainabilityScore.$gte = parseFloat(minScore);
+            if (maxScore) filter.overallSustainabilityScore.$lte = parseFloat(maxScore);
+        }
+
+        const assessments = await Sustainability.find(filter)
+            .populate('idea', 'title description category entrepreneur')
+            .populate('admin', 'name email')
+            .sort({ overallSustainabilityScore: -1, createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        const total = await Sustainability.countDocuments(filter);
+
+        res.json({
+            assessments,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            total
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Create sustainability assessment for an idea
+// @route   POST /api/admin/sustainability
+// @access  Private (Admin only)
+exports.createSustainabilityAssessment = async (req, res, next) => {
+    try {
+        const {
+            ideaId,
+            environmentalImpact,
+            socialImpact,
+            economicSustainability,
+            certifications = [],
+            sdgAlignment = [],
+            recommendations = [],
+            visibility
+        } = req.body;
+
+        // Validate required fields
+        if (!ideaId || !environmentalImpact || !socialImpact || !economicSustainability) {
+            return res.status(400).json({
+                message: 'Idea ID and all impact assessments are required'
+            });
+        }
+
+        // Validate idea exists
+        const idea = await Idea.findById(ideaId);
+        if (!idea) {
+            return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        const assessment = new Sustainability({
+            idea: ideaId,
+            admin: req.user.id,
+            environmentalImpact,
+            socialImpact,
+            economicSustainability,
+            certifications,
+            sdgAlignment,
+            recommendations,
+            visibility: visibility || 'entrepreneur_only'
+        });
+
+        await assessment.save();
+
+        // Log admin action
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'createSustainabilityAssessment',
+            targetId: assessment._id,
+            targetModel: 'Sustainability',
+            details: `Created sustainability assessment for idea "${idea.title}" with score ${assessment.overallSustainabilityScore}/10`
+        });
+
+        const populatedAssessment = await Sustainability.findById(assessment._id)
+            .populate('idea', 'title description category entrepreneur')
+            .populate('admin', 'name email');
+
+        res.status(201).json({
+            message: 'Sustainability assessment created successfully',
+            assessment: populatedAssessment
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update sustainability assessment
+// @route   PUT /api/admin/sustainability/:id
+// @access  Private (Admin only)
+exports.updateSustainabilityAssessment = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
+
+        const assessment = await Sustainability.findById(id);
+        if (!assessment) {
+            return res.status(404).json({ message: 'Sustainability assessment not found' });
+        }
+
+        const updatedAssessment = await Sustainability.findByIdAndUpdate(
+            id,
+            { ...updateData, updatedAt: new Date() },
+            { new: true }
+        ).populate('idea', 'title description category entrepreneur')
+         .populate('admin', 'name email');
+
+        // Log admin action
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'updateSustainabilityAssessment',
+            targetId: assessment._id,
+            targetModel: 'Sustainability',
+            details: `Updated sustainability assessment for idea "${updatedAssessment.idea.title}"`
+        });
+
+        res.json({
+            message: 'Sustainability assessment updated successfully',
+            assessment: updatedAssessment
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Delete sustainability assessment
+// @route   DELETE /api/admin/sustainability/:id
+// @access  Private (Admin only)
+exports.deleteSustainabilityAssessment = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const assessment = await Sustainability.findById(id).populate('idea', 'title');
+        if (!assessment) {
+            return res.status(404).json({ message: 'Sustainability assessment not found' });
+        }
+
+        await Sustainability.findByIdAndDelete(id);
+
+        // Log admin action
+        await AdminAction.create({
+            admin: req.user.id,
+            actionType: 'deleteSustainabilityAssessment',
+            targetId: id,
+            targetModel: 'Sustainability',
+            details: `Deleted sustainability assessment for idea "${assessment.idea.title}"`
+        });
+
+        res.json({ message: 'Sustainability assessment deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get sustainability statistics
+// @route   GET /api/admin/sustainability/stats
+// @access  Private (Admin only)
+exports.getSustainabilityStats = async (req, res, next) => {
+    try {
+        const stats = await Sustainability.getSustainabilityStats();
+        
+        res.json({
+            message: 'Sustainability statistics retrieved successfully',
+            stats: stats[0] || {
+                averageScore: 0,
+                totalAssessments: 0,
+                rankDistribution: []
+            }
+        });
     } catch (error) {
         next(error);
     }

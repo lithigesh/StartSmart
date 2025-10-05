@@ -291,7 +291,7 @@ exports.deleteIdeathon = async (req, res, next) => {
 // @route   POST /api/ideathons/:id/register
 exports.registerForIdeathon = async (req, res, next) => {
     try {
-        const { ideaId, pitchDetails } = req.body;
+        const { ideaId, pitchDetails, userId } = req.body;
         
         // Check if ideathon exists
         const ideathon = await Ideathon.findById(req.params.id);
@@ -302,10 +302,14 @@ exports.registerForIdeathon = async (req, res, next) => {
             });
         }
         
+        // Determine entrepreneur ID: if admin is registering someone else, use userId from body
+        // If entrepreneur is registering themselves, use req.user.id
+        const entrepreneurId = (req.user.role === 'admin' && userId) ? userId : req.user.id;
+        
         // Check if already registered
         const existingRegistration = await IdeathonRegistration.findOne({
             ideathon: req.params.id,
-            entrepreneur: req.user.id
+            entrepreneur: entrepreneurId
         });
         
         if (existingRegistration) {
@@ -317,9 +321,10 @@ exports.registerForIdeathon = async (req, res, next) => {
         
         const registration = await IdeathonRegistration.create({
             ideathon: req.params.id,
-            entrepreneur: req.user.id,
+            entrepreneur: entrepreneurId,
             idea: ideaId,
-            pitchDetails
+            pitchDetails,
+            registeredBy: req.user.id // Track who created the registration
         });
         
         res.status(201).json({ 
@@ -336,11 +341,17 @@ exports.registerForIdeathon = async (req, res, next) => {
 // @route   GET /api/ideathons/:id/registrations
 exports.getIdeathonRegistrations = async (req, res, next) => {
     try {
-        const registrations = await IdeathonRegistration.find({ 
-            ideathon: req.params.id 
-        })
+        let filter = {};
+        
+        // If ID is provided, get registrations for specific ideathon
+        if (req.params.id) {
+            filter.ideathon = req.params.id;
+        }
+        
+        const registrations = await IdeathonRegistration.find(filter)
         .populate('entrepreneur', 'name email')
         .populate('idea', 'title description category')
+        .populate('ideathon', 'title startDate endDate')
         .sort({ createdAt: -1 });
         
         res.status(200).json({ 
