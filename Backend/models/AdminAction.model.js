@@ -17,7 +17,8 @@ const AdminActionSchema = new mongoose.Schema({
             'adminLogin',
             'failedAdminLogin',
             'adminVerification',
-            'failedAdminVerification'
+            'failedAdminVerification',
+            'generateReport'
         ]
     },
     targetId: { // The ID of the document that was affected

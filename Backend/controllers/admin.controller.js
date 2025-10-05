@@ -8,6 +8,85 @@ const Sustainability = require('../models/Sustainability.model');
 const AdminAction = require('../models/AdminAction.model');
 const generateToken = require('../utils/generateToken');
 
+// Helper function to get analytics data for reports
+const getAnalyticsData = async (dateFilter = {}) => {
+    try {
+        // Get user statistics
+        const userStats = await User.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalUsers: { $sum: 1 },
+                    entrepreneurs: { $sum: { $cond: [{ $eq: ['$role', 'entrepreneur'] }, 1, 0] } },
+                    investors: { $sum: { $cond: [{ $eq: ['$role', 'investor'] }, 1, 0] } },
+                    admins: { $sum: { $cond: [{ $eq: ['$role', 'admin'] }, 1, 0] } }
+                }
+            }
+        ]);
+
+        // Get idea statistics
+        const ideaStats = await Idea.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalIdeas: { $sum: 1 },
+                    approvedIdeas: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } },
+                    pendingIdeas: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
+                    rejectedIdeas: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } }
+                }
+            }
+        ]);
+
+        // Get ideathon statistics
+        const ideathonStats = await Ideathon.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalIdeathons: { $sum: 1 },
+                    activeIdeathons: { 
+                        $sum: { 
+                            $cond: [
+                                { 
+                                    $and: [
+                                        { $lte: ['$startDate', new Date()] },
+                                        { $gte: ['$endDate', new Date()] }
+                                    ]
+                                }, 
+                                1, 
+                                0
+                            ] 
+                        }
+                    }
+                }
+            }
+        ]);
+
+        // Get feedback statistics
+        const feedbackStats = await Feedback.aggregate([
+            { $match: dateFilter },
+            {
+                $group: {
+                    _id: null,
+                    totalFeedback: { $sum: 1 },
+                    averageRating: { $avg: '$rating' }
+                }
+            }
+        ]);
+
+        return {
+            users: userStats[0] || { totalUsers: 0, entrepreneurs: 0, investors: 0, admins: 0 },
+            ideas: ideaStats[0] || { totalIdeas: 0, approvedIdeas: 0, pendingIdeas: 0, rejectedIdeas: 0 },
+            ideathons: ideathonStats[0] || { totalIdeathons: 0, activeIdeathons: 0 },
+            feedback: feedbackStats[0] || { totalFeedback: 0, averageRating: 0 }
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
 // @desc    Admin login - single step authentication
 // @route   POST /api/admin/login
 // @access  Public (but validates admin credentials from .env)
@@ -274,7 +353,10 @@ exports.getDashboardAnalytics = async (req, res, next) => {
         const { dateRange } = req.query;
         let dateFilter = {};
         
-        if (dateRange) {
+        // Temporarily disable date filtering to test if data exists
+
+        
+        if (dateRange && false) { // Temporarily disabled
             const { start, end } = JSON.parse(dateRange);
             dateFilter = {
                 createdAt: {
@@ -283,6 +365,9 @@ exports.getDashboardAnalytics = async (req, res, next) => {
                 }
             };
         }
+
+
+
 
         // Get user statistics
         const userStats = await User.aggregate([
@@ -297,6 +382,7 @@ exports.getDashboardAnalytics = async (req, res, next) => {
                 }
             }
         ]);
+        
 
         // Get user growth by month
         const userGrowth = await User.aggregate([
@@ -402,7 +488,7 @@ exports.getDashboardAnalytics = async (req, res, next) => {
             }
         ]);
 
-        res.json({
+        const responseData = {
             users: userStats[0] || {
                 totalUsers: 0,
                 entrepreneurs: 0,
@@ -436,7 +522,10 @@ exports.getDashboardAnalytics = async (req, res, next) => {
                 averageSocial: 0,
                 averageEconomic: 0
             }
-        });
+        };
+
+
+        res.json(responseData);
     } catch (error) {
         next(error);
     }
@@ -451,21 +540,35 @@ exports.getChartData = async (req, res, next) => {
         let dateFilter = {};
         
         if (dateRange) {
-            const { start, end } = JSON.parse(dateRange);
-            dateFilter = {
-                createdAt: {
-                    $gte: new Date(start),
-                    $lte: new Date(end)
-                }
-            };
+            try {
+                const { start, end } = JSON.parse(dateRange);
+                dateFilter = {
+                    createdAt: {
+                        $gte: new Date(start),
+                        $lte: new Date(end)
+                    }
+                };
+                console.log('Chart data dateFilter:', dateFilter);
+            } catch (e) {
+                console.log('Date parsing error:', e);
+                // If date parsing fails, don't apply date filter
+                dateFilter = {};
+            }
         }
+        
+        console.log('Fetching chart data for type:', type, 'with filter:', dateFilter);
 
         let chartData = {};
 
         switch (type) {
             case 'users':
                 chartData = await User.aggregate([
-                    { $match: dateFilter },
+                    { 
+                        $match: {
+                            ...dateFilter,
+                            createdAt: { $exists: true, $type: "date" }
+                        }
+                    },
                     {
                         $group: {
                             _id: {
@@ -481,8 +584,15 @@ exports.getChartData = async (req, res, next) => {
                 break;
 
             case 'ideas':
+                // First, let's debug what ideas exist
+                const totalIdeasCount = await Idea.countDocuments();
+                console.log('Total ideas in database:', totalIdeasCount);
+                
+                const allIdeas = await Idea.find({}).select('_id title status createdAt');
+                console.log('All ideas from database:', JSON.stringify(allIdeas, null, 2));
+                
                 chartData = await Idea.aggregate([
-                    { $match: dateFilter },
+                    // Since all ideas have valid createdAt dates, use them directly
                     {
                         $group: {
                             _id: {
@@ -493,16 +603,23 @@ exports.getChartData = async (req, res, next) => {
                             count: { $sum: 1 },
                             approved: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } },
                             pending: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
-                            rejected: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } }
+                            rejected: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } },
+                            funding_requested: { $sum: { $cond: [{ $eq: ['$status', 'funding_requested'] }, 1, 0] } }
                         }
                     },
                     { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
                 ]);
+                console.log('Chart data for ideas:', JSON.stringify(chartData, null, 2));
                 break;
 
             case 'ideathons':
                 chartData = await Ideathon.aggregate([
-                    { $match: dateFilter },
+                    { 
+                        $match: {
+                            ...dateFilter,
+                            createdAt: { $exists: true, $type: "date" }
+                        }
+                    },
                     {
                         $group: {
                             _id: {
@@ -518,7 +635,12 @@ exports.getChartData = async (req, res, next) => {
 
             case 'feedback':
                 chartData = await Feedback.aggregate([
-                    { $match: dateFilter },
+                    { 
+                        $match: {
+                            ...dateFilter,
+                            createdAt: { $exists: true, $type: "date" }
+                        }
+                    },
                     {
                         $group: {
                             _id: {
@@ -538,7 +660,12 @@ exports.getChartData = async (req, res, next) => {
 
             case 'sustainability':
                 chartData = await Sustainability.aggregate([
-                    { $match: dateFilter },
+                    { 
+                        $match: {
+                            ...dateFilter,
+                            createdAt: { $exists: true, $type: "date" }
+                        }
+                    },
                     {
                         $group: {
                             _id: {
@@ -561,8 +688,10 @@ exports.getChartData = async (req, res, next) => {
                 return res.status(400).json({ message: 'Invalid chart type' });
         }
 
+        console.log(`Chart data for ${type}:`, JSON.stringify(chartData, null, 2));
         res.json({ type, data: chartData });
     } catch (error) {
+        console.error('Chart data error:', error);
         next(error);
     }
 };
@@ -595,19 +724,29 @@ exports.generateReport = async (req, res, next) => {
             case 'users':
                 reportData = await User.find(dateFilter)
                     .select('-password')
+                    .populate('ideas', 'title status category')
                     .sort({ createdAt: -1 });
                 fileName = `users-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
             case 'ideas':
                 reportData = await Idea.find(dateFilter)
-                    .populate('owner', 'name email')
+                    .populate('owner', 'name email role')
+                    .populate('feedback', 'rating comments admin')
+                    .populate('sustainabilityAssessment', 'overallScore environmentalImpact')
                     .sort({ createdAt: -1 });
                 fileName = `ideas-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
             case 'ideathons':
                 reportData = await Ideathon.find(dateFilter)
+                    .populate({
+                        path: 'registrations',
+                        populate: {
+                            path: 'entrepreneur',
+                            select: 'name email'
+                        }
+                    })
                     .sort({ createdAt: -1 });
                 fileName = `ideathons-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -615,7 +754,8 @@ exports.generateReport = async (req, res, next) => {
             case 'feedback':
                 reportData = await Feedback.find(dateFilter)
                     .populate('idea', 'title')
-                    .populate('author', 'name email')
+                    .populate('admin', 'name email')
+                    .populate('investor', 'name email')
                     .sort({ createdAt: -1 });
                 fileName = `feedback-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -629,7 +769,9 @@ exports.generateReport = async (req, res, next) => {
                 break;
 
             case 'analytics':
-                reportData = await exports.getDashboardAnalytics(req, { json: () => {} }, () => {});
+                // Get analytics data directly instead of calling the controller
+                const analyticsData = await getAnalyticsData(dateFilter);
+                reportData = analyticsData;
                 fileName = `analytics-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 

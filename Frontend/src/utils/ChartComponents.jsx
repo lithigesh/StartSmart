@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Simple Chart Components for Analytics Dashboard
-export const SimpleBarChart = ({ data, title, height = 200 }) => {
+export const SimpleBarChart = ({ data, title, height = 300 }) => {
   if (!data || data.length === 0) {
     return (
       <div className="chart-container h-48 flex items-center justify-center">
@@ -11,36 +11,71 @@ export const SimpleBarChart = ({ data, title, height = 200 }) => {
   }
 
   const maxValue = Math.max(...data.map(item => item.value));
-  const chartHeight = height - 60; // Account for labels
+  const chartHeight = height - 80; // Account for labels
+
+  // Color gradient for bars
+  const barColors = [
+    'from-emerald-400 via-green-500 to-teal-600',
+    'from-blue-400 via-blue-500 to-cyan-600',
+    'from-purple-400 via-purple-500 to-indigo-600',
+    'from-pink-400 via-rose-500 to-red-600',
+    'from-orange-400 via-orange-500 to-amber-600',
+    'from-yellow-400 via-yellow-500 to-lime-600',
+    'from-teal-400 via-teal-500 to-emerald-600',
+    'from-indigo-400 via-indigo-500 to-purple-600'
+  ];
 
   return (
-    <div className="chart-container">
-      {title && <h3 className="text-lg font-semibold text-white mb-4">{title}</h3>}
-      <div className="flex items-end justify-between" style={{ height: chartHeight }}>
+    <div className="chart-container p-4">
+      {title && <h3 className="text-xl font-bold text-white mb-6 text-center">{title}</h3>}
+      <div className="flex items-end justify-center gap-3 px-4" style={{ height: chartHeight }}>
         {data.map((item, index) => {
-          const barHeight = (item.value / maxValue) * (chartHeight - 40);
-          const percentage = ((item.value / maxValue) * 100).toFixed(1);
+          const barHeight = maxValue > 0 ? (item.value / maxValue) * (chartHeight - 60) : 0;
+          const percentage = maxValue > 0 ? ((item.value / maxValue) * 100).toFixed(1) : 0;
+          const colorClass = barColors[index % barColors.length];
           
           return (
-            <div key={index} className="flex flex-col items-center flex-1 mx-1">
-              <div className="text-xs text-white/70 mb-1 text-center font-medium">
+            <div key={index} className="flex flex-col items-center flex-1 max-w-[80px] group">
+              {/* Value display */}
+              <div className="text-sm font-bold text-white mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 px-2 py-1 rounded-lg">
                 {item.value}
               </div>
+              
+              {/* Bar */}
               <div 
-                className="w-full bg-gradient-to-t from-blue-500/80 to-purple-500/80 rounded-t transition-all duration-500 hover:from-blue-400/90 hover:to-purple-400/90 relative group"
-                style={{ height: `${barHeight}px`, minHeight: '4px' }}
+                className={`w-full bg-gradient-to-t ${colorClass} rounded-t-lg shadow-lg transition-all duration-500 hover:shadow-xl hover:scale-105 relative group border border-white/10`}
+                style={{ 
+                  height: `${Math.max(barHeight, 8)}px`,
+                  minHeight: '8px'
+                }}
               >
-                {/* Hover tooltip */}
-                <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs py-1 px-2 rounded whitespace-nowrap transition-opacity duration-200">
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-white/40 rounded-t-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Percentage tooltip */}
+                <div className="opacity-0 group-hover:opacity-100 absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-800 to-gray-900 text-white text-xs py-2 px-3 rounded-lg whitespace-nowrap transition-all duration-300 shadow-xl border border-white/20">
                   {percentage}%
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-4 border-transparent border-t-gray-800"></div>
                 </div>
               </div>
-              <div className="text-xs text-white/60 mt-2 text-center max-w-full truncate">
-                {item.label}
+              
+              {/* Label */}
+              <div className="text-xs text-white/80 mt-3 text-center max-w-full font-medium">
+                <div className="truncate" title={item.label}>
+                  {item.label}
+                </div>
               </div>
             </div>
           );
         })}
+      </div>
+      
+      {/* Chart footer */}
+      <div className="mt-6 pt-4 border-t border-white/10">
+        <div className="flex justify-between items-center text-sm text-white/60">
+          <span>Total: {data.reduce((sum, item) => sum + item.value, 0)}</span>
+          <span>Peak: {maxValue}</span>
+        </div>
       </div>
     </div>
   );
@@ -55,18 +90,37 @@ export const SimpleLineChart = ({ data, title, height = 200 }) => {
     );
   }
 
-  const maxValue = Math.max(...data.map(item => item.value));
-  const minValue = Math.min(...data.map(item => item.value));
+  // Validate and clean data
+  const validData = data.filter(item => 
+    item && 
+    typeof item.value === 'number' && 
+    !isNaN(item.value) && 
+    isFinite(item.value)
+  );
+
+  if (validData.length === 0) {
+    return (
+      <div className="chart-container h-48 flex items-center justify-center">
+        <p className="text-white/50">No valid data available</p>
+      </div>
+    );
+  }
+
+  const values = validData.map(item => item.value);
+  const maxValue = Math.max(...values);
+  const minValue = Math.min(...values);
   const range = maxValue - minValue || 1;
   const chartHeight = height - 60;
   const chartWidth = 100;
 
-  // Calculate points for the line
-  const points = data.map((item, index) => {
-    const x = (index / (data.length - 1)) * chartWidth;
-    const y = chartHeight - (((item.value - minValue) / range) * (chartHeight - 40));
-    return `${x},${y}`;
-  }).join(' ');
+  // Calculate points for the line - handle single data point
+  const points = validData.length === 1 
+    ? `${chartWidth / 2},${chartHeight / 2}` 
+    : validData.map((item, index) => {
+        const x = validData.length > 1 ? (index / (validData.length - 1)) * chartWidth : chartWidth / 2;
+        const y = chartHeight - (((item.value - minValue) / range) * (chartHeight - 40));
+        return `${x},${y}`;
+      }).join(' ');
 
   return (
     <div className="chart-container">
@@ -87,24 +141,30 @@ export const SimpleLineChart = ({ data, title, height = 200 }) => {
           <rect width="100%" height="100%" fill="url(#grid)" />
           
           {/* Line */}
-          <polyline
-            fill="none"
-            stroke="url(#lineGradient)"
-            strokeWidth="2"
-            points={points}
-            className="drop-shadow-sm"
-          />
+          {validData.length > 1 && (
+            <polyline
+              fill="none"
+              stroke="url(#lineGradient)"
+              strokeWidth="3"
+              points={points}
+              className="drop-shadow-lg"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          )}
           
           {/* Area under line */}
-          <polygon
-            fill="url(#areaGradient)"
-            points={`0,${chartHeight} ${points} ${chartWidth},${chartHeight}`}
-            opacity="0.3"
-          />
+          {validData.length > 1 && (
+            <polygon
+              fill="url(#areaGradient)"
+              points={`0,${chartHeight} ${points} ${chartWidth},${chartHeight}`}
+              opacity="0.3"
+            />
+          )}
           
           {/* Data points */}
-          {data.map((item, index) => {
-            const x = (index / (data.length - 1)) * chartWidth;
+          {validData.map((item, index) => {
+            const x = validData.length > 1 ? (index / (validData.length - 1)) * chartWidth : chartWidth / 2;
             const y = chartHeight - (((item.value - minValue) / range) * (chartHeight - 40));
             
             return (
@@ -112,17 +172,18 @@ export const SimpleLineChart = ({ data, title, height = 200 }) => {
                 <circle
                   cx={x}
                   cy={y}
-                  r="3"
+                  r="4"
                   fill="white"
                   stroke="url(#lineGradient)"
-                  strokeWidth="2"
-                  className="hover:r-4 transition-all duration-200 cursor-pointer"
+                  strokeWidth="3"
+                  className="hover:r-6 transition-all duration-200 cursor-pointer drop-shadow-lg"
+                  filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))"
                 />
                 <text
                   x={x}
-                  y={y - 10}
+                  y={y - 12}
                   textAnchor="middle"
-                  className="text-xs fill-white/70 opacity-0 hover:opacity-100 transition-opacity duration-200"
+                  className="text-xs fill-white font-semibold opacity-0 hover:opacity-100 transition-opacity duration-200 drop-shadow-sm"
                 >
                   {item.value}
                 </text>
@@ -133,19 +194,21 @@ export const SimpleLineChart = ({ data, title, height = 200 }) => {
           {/* Gradients */}
           <defs>
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#3b82f6" />
+              <stop offset="0%" stopColor="#10b981" />
+              <stop offset="50%" stopColor="#3b82f6" />
               <stop offset="100%" stopColor="#8b5cf6" />
             </linearGradient>
             <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.2" />
+              <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.05" />
             </linearGradient>
           </defs>
         </svg>
         
         {/* X-axis labels */}
         <div className="flex justify-between mt-2">
-          {data.map((item, index) => (
+          {validData.map((item, index) => (
             <div key={index} className="text-xs text-white/60 text-center flex-1">
               {item.label}
             </div>
@@ -171,8 +234,19 @@ export const SimplePieChart = ({ data, title, height = 200 }) => {
   const centerY = radius + 40;
 
   const colors = [
-    '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', 
-    '#ef4444', '#06b6d4', '#84cc16', '#f97316'
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+    'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+    'linear-gradient(135deg, #ff8a80 0%, #ea4c89 100%)'
+  ];
+
+  const solidColors = [
+    '#667eea', '#f5576c', '#00f2fe', '#38f9d7',
+    '#fee140', '#fed6e3', '#fcb69f', '#ea4c89'
   ];
 
   let cumulativePercentage = 0;
@@ -204,42 +278,54 @@ export const SimplePieChart = ({ data, title, height = 200 }) => {
       ...item,
       pathData,
       percentage: percentage.toFixed(1),
-      color: colors[index % colors.length]
+      color: solidColors[index % solidColors.length],
+      gradient: colors[index % colors.length]
     };
   });
 
   return (
     <div className="chart-container">
       {title && <h3 className="text-lg font-semibold text-white mb-4">{title}</h3>}
-      <div className="flex items-center justify-between">
-        <svg width={radius * 2 + 80} height={radius * 2 + 80}>
-          {slices.map((slice, index) => (
-            <g key={index}>
-              <path
-                d={slice.pathData}
-                fill={slice.color}
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="1"
-                className="hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-                opacity="0.8"
-              />
-            </g>
-          ))}
-        </svg>
-        
-        <div className="flex-1 ml-6">
-          <div className="space-y-2">
+      <div className="flex items-center justify-center lg:justify-between flex-col lg:flex-row">
+        <div className="flex-shrink-0 mb-6 lg:mb-0">
+          <svg width={radius * 2 + 80} height={radius * 2 + 80} className="drop-shadow-lg">
+            <defs>
+              {slices.map((slice, index) => (
+                <linearGradient key={`gradient-${index}`} id={`pieGradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor={slice.color} stopOpacity="0.9" />
+                  <stop offset="100%" stopColor={slice.color} stopOpacity="0.7" />
+                </linearGradient>
+              ))}
+            </defs>
             {slices.map((slice, index) => (
-              <div key={index} className="flex items-center justify-between text-sm">
+              <g key={index}>
+                <path
+                  d={slice.pathData}
+                  fill={`url(#pieGradient-${index})`}
+                  stroke="rgba(255,255,255,0.3)"
+                  strokeWidth="2"
+                  className="hover:opacity-90 transition-all duration-300 cursor-pointer transform-gpu hover:scale-105"
+                  filter="drop-shadow(0 4px 8px rgba(0,0,0,0.2))"
+                />
+              </g>
+            ))}
+          </svg>
+        </div>
+        
+        <div className="flex-1 lg:ml-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {slices.map((slice, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-all duration-200">
                 <div className="flex items-center">
                   <div 
-                    className="w-3 h-3 rounded-full mr-2"
+                    className="w-4 h-4 rounded-full mr-3 shadow-lg"
                     style={{ backgroundColor: slice.color }}
                   />
-                  <span className="text-white/80">{slice.label}</span>
+                  <span className="text-white font-medium text-sm">{slice.label}</span>
                 </div>
-                <div className="text-white/60">
-                  {slice.percentage}% ({slice.value})
+                <div className="text-white/80 font-semibold text-sm">
+                  {slice.percentage}%
+                  <span className="text-white/60 ml-1">({slice.value})</span>
                 </div>
               </div>
             ))}
@@ -348,10 +434,15 @@ export const SimpleAreaChart = ({ data, title, height = 200 }) => {
 export const prepareChartData = (rawData, labelKey, valueKey) => {
   if (!rawData || !Array.isArray(rawData)) return [];
   
-  return rawData.map(item => ({
-    label: item[labelKey] || 'Unknown',
-    value: Number(item[valueKey]) || 0
-  }));
+  return rawData
+    .map(item => {
+      const value = Number(item[valueKey]);
+      return {
+        label: item[labelKey] || 'Unknown',
+        value: isNaN(value) || !isFinite(value) ? 0 : value
+      };
+    })
+    .filter(item => item.label && item.label !== 'Unknown' && item.value >= 0);
 };
 
 // Example usage data generators for testing

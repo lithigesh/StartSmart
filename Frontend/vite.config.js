@@ -18,6 +18,11 @@ export default defineConfig({
   },
   server: {
     historyApiFallback: true,
+    host: 'localhost',
+    port: 5173,
+    hmr: {
+      port: 24678, // Use a different port for HMR
+    },
   },
   preview: {
     port: 3000,
