@@ -722,10 +722,33 @@ exports.generateReport = async (req, res, next) => {
                 break;
 
             case 'ideathons':
-                reportData = await Ideathon.find(dateFilter)
+                const ideathons = await Ideathon.find(dateFilter)
                     .populate('createdBy', 'name email')
                     .populate('winners', 'name email')
                     .sort({ createdAt: -1 });
+                
+                // Get registrations for each ideathon
+                const ideathonsWithRegistrations = await Promise.all(
+                    ideathons.map(async (ideathon) => {
+                        const registrations = await IdeathonRegistration.find({ ideathon: ideathon._id })
+                            .populate('entrepreneur', 'name email role')
+                            .populate('idea', 'title category')
+                            .populate('registeredBy', 'name email');
+                        
+                        return {
+                            ...ideathon.toObject(),
+                            registrations,
+                            registrationCount: registrations.length,
+                            registrationsByStatus: {
+                                registered: registrations.filter(r => r.status === 'registered').length,
+                                shortlisted: registrations.filter(r => r.status === 'shortlisted').length,
+                                winner: registrations.filter(r => r.status === 'winner').length
+                            }
+                        };
+                    })
+                );
+                
+                reportData = ideathonsWithRegistrations;
                 fileName = `ideathons-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
