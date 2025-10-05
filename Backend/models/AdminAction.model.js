@@ -18,7 +18,13 @@ const AdminActionSchema = new mongoose.Schema({
             'failedAdminLogin',
             'adminVerification',
             'failedAdminVerification',
-            'generateReport'
+            'generateReport',
+            'createFeedback',
+            'updateFeedback',
+            'deleteFeedback',
+            'createSustainabilityAssessment',
+            'updateSustainabilityAssessment',
+            'deleteSustainabilityAssessment'
         ]
     },
     targetId: { // The ID of the document that was affected
@@ -28,7 +34,7 @@ const AdminActionSchema = new mongoose.Schema({
     targetModel: { // The model of the affected document
         type: String,
         required: false, // Made optional for login actions
-        enum: ['User', 'Idea']
+        enum: ['User', 'Idea', 'Feedback', 'Sustainability', 'Ideathon', 'Report']
     },
     details: { // Optional extra details, e.g., "Role changed from X to Y"
         type: String

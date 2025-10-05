@@ -548,15 +548,11 @@ exports.getChartData = async (req, res, next) => {
                         $lte: new Date(end)
                     }
                 };
-                console.log('Chart data dateFilter:', dateFilter);
             } catch (e) {
-                console.log('Date parsing error:', e);
                 // If date parsing fails, don't apply date filter
                 dateFilter = {};
             }
         }
-        
-        console.log('Fetching chart data for type:', type, 'with filter:', dateFilter);
 
         let chartData = {};
 
@@ -584,13 +580,6 @@ exports.getChartData = async (req, res, next) => {
                 break;
 
             case 'ideas':
-                // First, let's debug what ideas exist
-                const totalIdeasCount = await Idea.countDocuments();
-                console.log('Total ideas in database:', totalIdeasCount);
-                
-                const allIdeas = await Idea.find({}).select('_id title status createdAt');
-                console.log('All ideas from database:', JSON.stringify(allIdeas, null, 2));
-                
                 chartData = await Idea.aggregate([
                     // Since all ideas have valid createdAt dates, use them directly
                     {
@@ -609,7 +598,6 @@ exports.getChartData = async (req, res, next) => {
                     },
                     { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
                 ]);
-                console.log('Chart data for ideas:', JSON.stringify(chartData, null, 2));
                 break;
 
             case 'ideathons':
@@ -688,10 +676,8 @@ exports.getChartData = async (req, res, next) => {
                 return res.status(400).json({ message: 'Invalid chart type' });
         }
 
-        console.log(`Chart data for ${type}:`, JSON.stringify(chartData, null, 2));
         res.json({ type, data: chartData });
     } catch (error) {
-        console.error('Chart data error:', error);
         next(error);
     }
 };

@@ -16,28 +16,26 @@ const FeedbackFormsSection = () => {
 
     // Form state
     const [formData, setFormData] = useState({
-        idea: '',
+        ideaId: '',
         category: 'general',
         rating: 5,
-        title: '',
         comments: '',
         suggestions: '',
-        strengths: '',
-        improvements: '',
-        isFollowUpNeeded: false,
+        strengths: [],
+        improvements: [],
+        followUpRequired: false,
         followUpNotes: '',
-        visibility: 'admin_only'
+        visibility: 'entrepreneur_only'
     });
 
     const categories = [
-        'general', 'market_viability', 'technical_feasibility', 'innovation', 
-        'sustainability', 'team_capability', 'financial_projection', 'scalability'
+        'general', 'feasibility', 'innovation', 'market_potential', 'technical', 'presentation'
     ];
 
     const visibilityOptions = [
-        { value: 'admin_only', label: 'Admin Only' },
+        { value: 'entrepreneur_only', label: 'Entrepreneur Only' },
         { value: 'public', label: 'Public' },
-        { value: 'entrepreneur_only', label: 'Entrepreneur Only' }
+        { value: 'private', label: 'Private' }
     ];
 
     useEffect(() => {
@@ -82,9 +80,11 @@ const FeedbackFormsSection = () => {
             if (!response.ok) throw new Error('Failed to fetch ideas');
             
             const data = await response.json();
-            setIdeas(data.ideas || []);
+            setIdeas(Array.isArray(data) ? data : data.ideas || []);
+            console.log('Fetched ideas:', data);
         } catch (err) {
             console.error('Error fetching ideas:', err);
+            setError('Failed to load ideas. Please try again.');
         }
     };
 
@@ -132,17 +132,16 @@ const FeedbackFormsSection = () => {
     const handleEdit = (feedback) => {
         setEditingFeedback(feedback);
         setFormData({
-            idea: feedback.idea?._id || '',
+            ideaId: feedback.idea?._id || '',
             category: feedback.category || 'general',
             rating: feedback.rating || 5,
-            title: feedback.title || '',
-            comments: feedback.comments || '',
+            comments: feedback.comments || feedback.comment || '',
             suggestions: feedback.suggestions || '',
-            strengths: feedback.strengths || '',
-            improvements: feedback.improvements || '',
-            isFollowUpNeeded: feedback.isFollowUpNeeded || false,
+            strengths: Array.isArray(feedback.strengths) ? feedback.strengths : [],
+            improvements: Array.isArray(feedback.improvements) ? feedback.improvements : [],
+            followUpRequired: feedback.followUpRequired || false,
             followUpNotes: feedback.followUpNotes || '',
-            visibility: feedback.visibility || 'admin_only'
+            visibility: feedback.visibility || 'entrepreneur_only'
         });
         setShowForm(true);
     };
@@ -177,17 +176,16 @@ const FeedbackFormsSection = () => {
 
     const resetForm = () => {
         setFormData({
-            idea: '',
+            ideaId: '',
             category: 'general',
             rating: 5,
-            title: '',
             comments: '',
             suggestions: '',
-            strengths: '',
-            improvements: '',
-            isFollowUpNeeded: false,
+            strengths: [],
+            improvements: [],
+            followUpRequired: false,
             followUpNotes: '',
-            visibility: 'admin_only'
+            visibility: 'entrepreneur_only'
         });
     };
 
@@ -203,8 +201,9 @@ const FeedbackFormsSection = () => {
 
     const filteredFeedbacks = feedbacks.filter(feedback => {
         const matchesSearch = !searchTerm || 
-            feedback.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             feedback.comments?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            feedback.comment?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            feedback.suggestions?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             feedback.idea?.title?.toLowerCase().includes(searchTerm.toLowerCase());
         
         const matchesCategory = !categoryFilter || feedback.category === categoryFilter;
@@ -231,14 +230,14 @@ const FeedbackFormsSection = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="bg-gradient-to-br from-white/95 to-blue-50/90 backdrop-blur-sm rounded-xl shadow-lg border border-blue-100/50 p-6">
+            <div className="bg-gradient-to-br from-gray-900/95 to-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-700/50 p-6">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-                            <MessageSquare className="mr-3 text-blue-600" />
-                            Feedback Management
+                        <h2 className="text-2xl font-bold text-white flex items-center">
+                            <MessageSquare className="mr-3 text-blue-400" />
+                            Ideas Feedback
                         </h2>
-                        <p className="text-gray-600 mt-1">Collect and manage feedback for ideas</p>
+                        <p className="text-gray-300 mt-1">Provide comprehensive feedback for all submitted ideas</p>
                     </div>
                     <button
                         onClick={() => {
@@ -246,7 +245,7 @@ const FeedbackFormsSection = () => {
                             setEditingFeedback(null);
                             setShowForm(true);
                         }}
-                        className="enhanced-button bg-gradient-to-r from-blue-500/90 to-blue-600/90 text-white px-6 py-3 rounded-lg hover:from-blue-400/95 hover:to-blue-500/95 transition-all duration-300 flex items-center shadow-lg backdrop-blur-sm border border-blue-400/30"
+                        className="enhanced-button bg-gradient-to-r from-blue-600/90 to-blue-700/90 text-white px-6 py-3 rounded-lg hover:from-blue-500/95 hover:to-blue-600/95 transition-all duration-300 flex items-center shadow-lg backdrop-blur-sm border border-blue-500/30"
                     >
                         <Plus size={20} className="mr-2" />
                         Add Feedback
@@ -262,14 +261,14 @@ const FeedbackFormsSection = () => {
                             placeholder="Search feedback..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10 w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-white/70 backdrop-blur-sm transition-all duration-200"
+                            className="pl-10 w-full border border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-gray-800/70 backdrop-blur-sm transition-all duration-200 text-white placeholder-gray-400"
                         />
                     </div>
                     
                     <select
                         value={categoryFilter}
                         onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-white/70 backdrop-blur-sm transition-all duration-200"
+                        className="border border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-gray-800/70 backdrop-blur-sm transition-all duration-200 text-white"
                     >
                         <option value="">All Categories</option>
                         {categories.map(category => (
@@ -282,7 +281,7 @@ const FeedbackFormsSection = () => {
                     <select
                         value={ratingFilter}
                         onChange={(e) => setRatingFilter(e.target.value)}
-                        className="border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-white/70 backdrop-blur-sm transition-all duration-200"
+                        className="border border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 bg-gray-800/70 backdrop-blur-sm transition-all duration-200 text-white"
                     >
                         <option value="">All Ratings</option>
                         {[5, 4, 3, 2, 1].map(rating => (
@@ -292,21 +291,21 @@ const FeedbackFormsSection = () => {
                         ))}
                     </select>
 
-                    <div className="text-sm text-gray-600 flex items-center">
+                    <div className="text-sm text-gray-300 flex items-center">
                         <Filter size={16} className="mr-1" />
                         {filteredFeedbacks.length} of {feedbacks.length} feedback items
                     </div>
                 </div>
 
                 {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+                    <div className="bg-red-900/30 border border-red-700/50 text-red-300 px-4 py-3 rounded-lg mb-4 backdrop-blur-sm">
                         {error}
                     </div>
                 )}
 
                 {successMessage && (
-                    <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-3">
-                        <MessageSquare className="text-green-600" size={20} />
+                    <div className="bg-green-900/30 border border-green-700/50 text-green-300 px-4 py-3 rounded-lg mb-4 flex items-center gap-3 backdrop-blur-sm">
+                        <MessageSquare className="text-green-400" size={20} />
                         {successMessage}
                     </div>
                 )}
@@ -314,29 +313,29 @@ const FeedbackFormsSection = () => {
 
             {/* Feedback Form Modal */}
             {showForm && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-gradient-to-br from-white/95 to-blue-50/90 backdrop-blur-md rounded-xl shadow-2xl border border-blue-200/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-gradient-to-br from-gray-900/95 to-gray-800/90 backdrop-blur-md rounded-xl shadow-2xl border border-gray-700/50 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                         <div className="p-6">
-                            <h3 className="text-xl font-semibold mb-4">
+                            <h3 className="text-xl font-semibold mb-4 text-white">
                                 {editingFeedback ? 'Edit Feedback' : 'Add New Feedback'}
                             </h3>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 {/* Idea Selection */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Select Idea *
                                     </label>
                                     <select
-                                        value={formData.idea}
-                                        onChange={(e) => setFormData({...formData, idea: e.target.value})}
+                                        value={formData.ideaId}
+                                        onChange={(e) => setFormData({...formData, ideaId: e.target.value})}
                                         required
-                                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     >
                                         <option value="">Choose an idea...</option>
                                         {ideas.map(idea => (
                                             <option key={idea._id} value={idea._id}>
-                                                {idea.title} - {idea.owner?.name}
+                                                {idea.title} - {idea.owner?.name || 'Unknown Owner'}
                                             </option>
                                         ))}
                                     </select>
@@ -345,13 +344,13 @@ const FeedbackFormsSection = () => {
                                 {/* Category and Rating */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
                                             Category
                                         </label>
                                         <select
                                             value={formData.category}
                                             onChange={(e) => setFormData({...formData, category: e.target.value})}
-                                            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             {categories.map(category => (
                                                 <option key={category} value={category}>
@@ -362,13 +361,13 @@ const FeedbackFormsSection = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
                                             Rating (1-5)
                                         </label>
                                         <select
                                             value={formData.rating}
                                             onChange={(e) => setFormData({...formData, rating: parseInt(e.target.value)})}
-                                            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         >
                                             {[5, 4, 3, 2, 1].map(rating => (
                                                 <option key={rating} value={rating}>
@@ -379,23 +378,11 @@ const FeedbackFormsSection = () => {
                                     </div>
                                 </div>
 
-                                {/* Title */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Feedback Title
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.title}
-                                        onChange={(e) => setFormData({...formData, title: e.target.value})}
-                                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Brief title for this feedback..."
-                                    />
-                                </div>
+
 
                                 {/* Comments */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Comments *
                                     </label>
                                     <textarea
@@ -403,52 +390,52 @@ const FeedbackFormsSection = () => {
                                         onChange={(e) => setFormData({...formData, comments: e.target.value})}
                                         required
                                         rows={4}
-                                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
                                         placeholder="Detailed feedback comments..."
                                     />
                                 </div>
 
-                                {/* Suggestions and Strengths */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Suggestions
-                                        </label>
-                                        <textarea
-                                            value={formData.suggestions}
-                                            onChange={(e) => setFormData({...formData, suggestions: e.target.value})}
-                                            rows={3}
-                                            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            placeholder="Suggestions for improvement..."
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Strengths
-                                        </label>
-                                        <textarea
-                                            value={formData.strengths}
-                                            onChange={(e) => setFormData({...formData, strengths: e.target.value})}
-                                            rows={3}
-                                            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            placeholder="What works well..."
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Improvements */}
+                                {/* Suggestions */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Areas for Improvement
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Suggestions
                                     </label>
                                     <textarea
-                                        value={formData.improvements}
-                                        onChange={(e) => setFormData({...formData, improvements: e.target.value})}
+                                        value={formData.suggestions}
+                                        onChange={(e) => setFormData({...formData, suggestions: e.target.value})}
                                         rows={3}
-                                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        placeholder="Areas that need improvement..."
+                                        className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                                        placeholder="Suggestions for improvement..."
                                     />
+                                </div>
+
+                                {/* Strengths and Improvements */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Strengths (one per line)
+                                        </label>
+                                        <textarea
+                                            value={formData.strengths.join('\n')}
+                                            onChange={(e) => setFormData({...formData, strengths: e.target.value.split('\n').filter(s => s.trim())})}
+                                            rows={3}
+                                            className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                                            placeholder="What works well...\nGood market research\nStrong team"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Areas for Improvement (one per line)
+                                        </label>
+                                        <textarea
+                                            value={formData.improvements.join('\n')}
+                                            onChange={(e) => setFormData({...formData, improvements: e.target.value.split('\n').filter(s => s.trim())})}
+                                            rows={3}
+                                            className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                                            placeholder="Areas that need improvement...\nBetter financial projections\nMore detailed timeline"
+                                        />
+                                    </div>
                                 </div>
 
                                 {/* Follow-up */}
@@ -457,25 +444,25 @@ const FeedbackFormsSection = () => {
                                         <input
                                             type="checkbox"
                                             id="followUp"
-                                            checked={formData.isFollowUpNeeded}
-                                            onChange={(e) => setFormData({...formData, isFollowUpNeeded: e.target.checked})}
+                                            checked={formData.followUpRequired}
+                                            onChange={(e) => setFormData({...formData, followUpRequired: e.target.checked})}
                                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                         />
-                                        <label htmlFor="followUp" className="ml-2 text-sm font-medium text-gray-700">
-                                            Follow-up needed
+                                        <label htmlFor="followUp" className="ml-2 text-sm font-medium text-gray-300">
+                                            Follow-up required
                                         </label>
                                     </div>
 
-                                    {formData.isFollowUpNeeded && (
+                                    {formData.followUpRequired && (
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            <label className="block text-sm font-medium text-gray-300 mb-2">
                                                 Follow-up Notes
                                             </label>
                                             <textarea
                                                 value={formData.followUpNotes}
                                                 onChange={(e) => setFormData({...formData, followUpNotes: e.target.value})}
                                                 rows={2}
-                                                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
                                                 placeholder="Notes for follow-up actions..."
                                             />
                                         </div>
@@ -484,13 +471,13 @@ const FeedbackFormsSection = () => {
 
                                 {/* Visibility */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
                                         Visibility
                                     </label>
                                     <select
                                         value={formData.visibility}
                                         onChange={(e) => setFormData({...formData, visibility: e.target.value})}
-                                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full border border-gray-600 bg-gray-800 text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     >
                                         {visibilityOptions.map(option => (
                                             <option key={option.value} value={option.value}>
@@ -509,7 +496,7 @@ const FeedbackFormsSection = () => {
                                             setEditingFeedback(null);
                                             resetForm();
                                         }}
-                                        className="enhanced-button px-6 py-2 border border-gray-300/70 rounded-lg text-gray-700 hover:bg-gray-50/80 backdrop-blur-sm transition-all duration-200"
+                                        className="enhanced-button px-6 py-2 border border-gray-600/70 rounded-lg text-gray-300 hover:bg-gray-700/80 backdrop-blur-sm transition-all duration-200"
                                     >
                                         Cancel
                                     </button>
@@ -528,62 +515,87 @@ const FeedbackFormsSection = () => {
             )}
 
             {/* Feedback List */}
-            <div className="bg-gradient-to-br from-white/95 to-blue-50/30 backdrop-blur-sm rounded-xl shadow-lg border border-blue-100/50">
+            <div className="bg-gradient-to-br from-gray-900/95 to-gray-800/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-700/50">
                 <div className="p-6">
-                    <h3 className="text-lg font-semibold mb-4">Recent Feedback</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-white">Recent Feedback</h3>
                     
                     {filteredFeedbacks.length === 0 ? (
-                        <div className="text-center py-8 text-gray-500">
-                            <MessageSquare size={48} className="mx-auto mb-4 text-gray-300" />
-                            <p>No feedback found matching your criteria.</p>
+                        <div className="text-center py-12 text-gray-400">
+                            <MessageSquare size={48} className="mx-auto mb-4 text-gray-500" />
+                            <p className="text-lg mb-2 text-gray-300">No feedback available yet</p>
+                            <p className="text-sm text-gray-400">Click "Add Feedback" above to provide feedback for ideas</p>
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {filteredFeedbacks.map(feedback => (
-                                <div key={feedback._id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                <div key={feedback._id} className="border border-gray-700 bg-gray-800/50 rounded-lg p-4 hover:bg-gray-700/50 transition-colors">
                                     <div className="flex justify-between items-start mb-3">
                                         <div className="flex-1">
                                             <div className="flex items-center space-x-3 mb-2">
-                                                <h4 className="font-medium text-gray-900">
-                                                    {feedback.title || 'Untitled Feedback'}
+                                                <h4 className="font-medium text-white">
+                                                    Feedback for: {feedback.idea?.title || 'Unknown Idea'}
                                                 </h4>
                                                 <div className="flex items-center">
                                                     {renderStars(feedback.rating)}
-                                                    <span className="ml-1 text-sm text-gray-600">
+                                                    <span className="ml-1 text-sm text-gray-300">
                                                         ({feedback.rating}/5)
                                                     </span>
                                                 </div>
                                                 <span className={`px-2 py-1 rounded-full text-xs ${
                                                     feedback.visibility === 'public' ? 'bg-green-100 text-green-800' :
-                                                    feedback.visibility === 'admin_only' ? 'bg-blue-100 text-blue-800' :
+                                                    feedback.visibility === 'private' ? 'bg-blue-100 text-blue-800' :
                                                     'bg-orange-100 text-orange-800'
                                                 }`}>
-                                                    {feedback.visibility === 'admin_only' ? (
-                                                        <><EyeOff size={12} className="inline mr-1" />Admin Only</>
+                                                    {feedback.visibility === 'private' ? (
+                                                        <><EyeOff size={12} className="inline mr-1" />Private</>
+                                                    ) : feedback.visibility === 'public' ? (
+                                                        <><Eye size={12} className="inline mr-1" />Public</>
                                                     ) : (
-                                                        <><Eye size={12} className="inline mr-1" />{feedback.visibility.replace('_', ' ')}</>
+                                                        <><Eye size={12} className="inline mr-1" />Entrepreneur Only</>
                                                     )}
                                                 </span>
                                             </div>
                                             
-                                            <div className="text-sm text-gray-600 mb-2">
+                                            <div className="text-sm text-gray-400 mb-2">
                                                 <strong>Idea:</strong> {feedback.idea?.title || 'Unknown Idea'} |
                                                 <strong className="ml-2">Category:</strong> {feedback.category?.replace('_', ' ').toUpperCase()} |
                                                 <strong className="ml-2">Date:</strong> {new Date(feedback.createdAt).toLocaleDateString()}
                                             </div>
                                             
-                                            <p className="text-gray-700 mb-2">{feedback.comments}</p>
+                                            <p className="text-gray-200 mb-2">{feedback.comments || feedback.comment}</p>
                                             
                                             {feedback.suggestions && (
                                                 <div className="text-sm text-blue-700 bg-blue-50 p-2 rounded mb-2">
                                                     <strong>Suggestions:</strong> {feedback.suggestions}
                                                 </div>
                                             )}
+
+                                            {feedback.strengths && Array.isArray(feedback.strengths) && feedback.strengths.length > 0 && (
+                                                <div className="text-sm text-green-700 bg-green-50 p-2 rounded mb-2">
+                                                    <strong>Strengths:</strong>
+                                                    <ul className="list-disc list-inside mt-1">
+                                                        {feedback.strengths.map((strength, index) => (
+                                                            <li key={index}>{strength}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {feedback.improvements && Array.isArray(feedback.improvements) && feedback.improvements.length > 0 && (
+                                                <div className="text-sm text-orange-700 bg-orange-50 p-2 rounded mb-2">
+                                                    <strong>Areas for Improvement:</strong>
+                                                    <ul className="list-disc list-inside mt-1">
+                                                        {feedback.improvements.map((improvement, index) => (
+                                                            <li key={index}>{improvement}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
                                             
-                                            {feedback.isFollowUpNeeded && (
+                                            {feedback.followUpRequired && (
                                                 <div className="flex items-center text-sm text-orange-600 bg-orange-50 p-2 rounded">
                                                     <ThumbsUp size={16} className="mr-2" />
-                                                    Follow-up needed
+                                                    Follow-up required
                                                     {feedback.followUpNotes && (
                                                         <span className="ml-2">: {feedback.followUpNotes}</span>
                                                     )}
