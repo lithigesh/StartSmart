@@ -12,7 +12,14 @@ import InvestorDashboard from "./pages/InvestorDashboard.jsx";
 import EntrepreneurDashboardPage from "./pages/EntrepreneurDashboardPage.jsx";
 import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
 import AdminLoginPage from "./pages/AdminLoginPage.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminDashboardLayout from "./pages/AdminDashboardLayout.jsx";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage.jsx";
+import AdminUsersPage from "./pages/admin/AdminUsersPage.jsx";
+import AdminIdeasPage from "./pages/admin/AdminIdeasPage.jsx";
+import AdminIdeathonsPage from "./pages/admin/AdminIdeathonsPage.jsx";
+import AdminRegistrationMasterPage from "./pages/admin/AdminRegistrationMasterPage.jsx";
+import AdminFeedbackPage from "./pages/admin/AdminFeedbackPage.jsx";
+import AdminSustainabilityPage from "./pages/admin/AdminSustainabilityPage.jsx";
 
 import {
   NotFoundPage,
@@ -58,13 +65,22 @@ const App = () => {
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin" element={<AdminLoginPage />} />
               <Route
-                path="/admin/dashboard"
+                path="/admin"
                 element={
                   <RoleBasedRoute allowedRole="admin">
-                    <AdminDashboard />
+                    <AdminDashboardLayout />
                   </RoleBasedRoute>
                 }
-              />
+              >
+                <Route path="dashboard" element={<AdminDashboardPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="ideas" element={<AdminIdeasPage />} />
+                <Route path="ideathons" element={<AdminIdeathonsPage />} />
+                <Route path="registration-master" element={<AdminRegistrationMasterPage />} />
+                <Route path="feedback" element={<AdminFeedbackPage />} />
+                <Route path="sustainability" element={<AdminSustainabilityPage />} />
+                <Route index element={<AdminDashboardPage />} />
+              </Route>
               <Route
                 path="/admin/idea/:id"
                 element={

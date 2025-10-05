@@ -710,7 +710,6 @@ exports.generateReport = async (req, res, next) => {
             case 'users':
                 reportData = await User.find(dateFilter)
                     .select('-password')
-                    .populate('ideas', 'title status category')
                     .sort({ createdAt: -1 });
                 fileName = `users-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -718,21 +717,14 @@ exports.generateReport = async (req, res, next) => {
             case 'ideas':
                 reportData = await Idea.find(dateFilter)
                     .populate('owner', 'name email role')
-                    .populate('feedback', 'rating comments admin')
-                    .populate('sustainabilityAssessment', 'overallScore environmentalImpact')
                     .sort({ createdAt: -1 });
                 fileName = `ideas-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
             case 'ideathons':
                 reportData = await Ideathon.find(dateFilter)
-                    .populate({
-                        path: 'registrations',
-                        populate: {
-                            path: 'entrepreneur',
-                            select: 'name email'
-                        }
-                    })
+                    .populate('createdBy', 'name email')
+                    .populate('winners', 'name email')
                     .sort({ createdAt: -1 });
                 fileName = `ideathons-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -749,7 +741,7 @@ exports.generateReport = async (req, res, next) => {
             case 'sustainability':
                 reportData = await Sustainability.find(dateFilter)
                     .populate('idea', 'title')
-                    .populate('assessor', 'name email')
+                    .populate('admin', 'name email')
                     .sort({ createdAt: -1 });
                 fileName = `sustainability-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -1040,6 +1032,15 @@ exports.createSustainabilityAssessment = async (req, res, next) => {
         const idea = await Idea.findById(ideaId);
         if (!idea) {
             return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        // Check if assessment already exists for this idea
+        const existingAssessment = await Sustainability.findOne({ idea: ideaId });
+        if (existingAssessment) {
+            return res.status(409).json({ 
+                message: 'A sustainability assessment already exists for this idea. Please edit the existing assessment instead of creating a new one.',
+                existingAssessmentId: existingAssessment._id
+            });
         }
 
         const assessment = new Sustainability({

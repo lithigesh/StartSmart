@@ -277,6 +277,7 @@ const SustainabilitySchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
+SustainabilitySchema.index({ idea: 1 }, { unique: true }); // Unique index to prevent duplicate assessments
 SustainabilitySchema.index({ idea: 1, admin: 1 });
 SustainabilitySchema.index({ idea: 1, createdAt: -1 });
 SustainabilitySchema.index({ overallSustainabilityScore: -1 });

@@ -1,116 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, Routes, Route, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
 import '../styles/AdminEnhancements.css';
 import {
   FaUsers,
-  FaUserShield,
-  FaTrash,
   FaLightbulb,
   FaSignOutAlt,
   FaSpinner,
   FaChartBar,
   FaEdit,
   FaTrophy,
-  FaPlus,
   FaTachometerAlt,
   FaBars,
   FaTimes,
-  FaCalendarAlt,
-  FaListUl,
-  FaSort,
-  FaSortUp,
-  FaSortDown,
-  FaFilter,
-  FaSearch,
-  FaEye,
-  FaBuilding,
-  FaGavel,
-  FaEnvelope,
-  FaArrowLeft,
-  FaArrowRight,
-  FaCreditCard,
   FaLeaf,
 } from "react-icons/fa";
 import AnalyticsDashboard from '../components/admin/AnalyticsDashboard';
-import IdeathonRegistrationMaster from '../components/admin/IdeathonRegistrationMaster';
-import FeedbackFormsSection from '../components/admin/FeedbackFormsSection';
-import SustainabilityScoringSection from '../components/admin/SustainabilityScoringSection';
 
 const AdminDashboard = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Search and filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('all');
-  const [themeFilter, setThemeFilter] = useState('all');
-  const [filterOptions, setFilterOptions] = useState({
-    statusOptions: [],
-    locationOptions: [],
-    themeOptions: []
-  });
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [users, setUsers] = useState([]);
-  const [ideas, setIdeas] = useState([]);
-  const [ideathons, setIdeathons] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  // Get section from URL params, default to 'dashboard'
-  const urlParams = new URLSearchParams(location.search);
-  const initialSection = urlParams.get('section') || 'dashboard';
-  const [activeSection, setActiveSection] = useState(initialSection);
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalIdeas: 0,
-    recentSignups: 0,
-    totalIdeathons: 0,
-  });
 
-  const token = localStorage.getItem("token");
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
+  // Get current active path for sidebar highlighting
+  const currentPath = location.pathname;
 
-  // Sidebar navigation items
+  // Sidebar navigation items with routes
   const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt },
-    { id: 'users', label: 'Manage Users', icon: FaUsers },
-    { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb },
-    { id: 'ideathons', label: 'Ideathons', icon: FaTrophy },
-    { id: 'analytics', label: 'Analytics', icon: FaChartBar },
-    { id: 'registration-master', label: 'Registration Master', icon: FaTrophy },
-    { id: 'feedback', label: 'Ideas Feedback', icon: FaEdit },
-    { id: 'sustainability', label: 'Ideas Sustainability', icon: FaLeaf },
+    { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt, path: '/admin/dashboard' },
+    { id: 'users', label: 'Manage Users', icon: FaUsers, path: '/admin/users' },
+    { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb, path: '/admin/ideas' },
+    { id: 'ideathons', label: 'Ideathons', icon: FaTrophy, path: '/admin/ideathons' },
+    { id: 'registration-master', label: 'Registration Master', icon: FaTrophy, path: '/admin/registration-master' },
+    { id: 'feedback', label: 'Ideas Feedback', icon: FaEdit, path: '/admin/feedback' },
+    { id: 'sustainability', label: 'Ideas Sustainability', icon: FaLeaf, path: '/admin/sustainability' },
   ];
 
-  // Helper function to get ideathon status
-  const getIdeathonStatus = (ideathon) => {
-    const now = new Date();
-    const startDate = new Date(ideathon.startDate);
-    const endDate = new Date(ideathon.endDate);
-    
-    if (now < startDate) {
-      return { status: 'upcoming', label: 'Upcoming', color: 'gray' };
-    } else if (now >= startDate && now <= endDate) {
-      return { status: 'active', label: 'Active', color: 'green' };
-    } else {
-      return { status: 'expired', label: 'Expired', color: 'red' };
-    }
-  };
 
-  // Clear error after 5 seconds
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(null), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
