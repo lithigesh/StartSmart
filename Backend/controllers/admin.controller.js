@@ -548,15 +548,11 @@ exports.getChartData = async (req, res, next) => {
                         $lte: new Date(end)
                     }
                 };
-                console.log('Chart data dateFilter:', dateFilter);
             } catch (e) {
-                console.log('Date parsing error:', e);
                 // If date parsing fails, don't apply date filter
                 dateFilter = {};
             }
         }
-        
-        console.log('Fetching chart data for type:', type, 'with filter:', dateFilter);
 
         let chartData = {};
 
@@ -584,13 +580,6 @@ exports.getChartData = async (req, res, next) => {
                 break;
 
             case 'ideas':
-                // First, let's debug what ideas exist
-                const totalIdeasCount = await Idea.countDocuments();
-                console.log('Total ideas in database:', totalIdeasCount);
-                
-                const allIdeas = await Idea.find({}).select('_id title status createdAt');
-                console.log('All ideas from database:', JSON.stringify(allIdeas, null, 2));
-                
                 chartData = await Idea.aggregate([
                     // Since all ideas have valid createdAt dates, use them directly
                     {
@@ -609,7 +598,6 @@ exports.getChartData = async (req, res, next) => {
                     },
                     { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
                 ]);
-                console.log('Chart data for ideas:', JSON.stringify(chartData, null, 2));
                 break;
 
             case 'ideathons':
@@ -688,10 +676,8 @@ exports.getChartData = async (req, res, next) => {
                 return res.status(400).json({ message: 'Invalid chart type' });
         }
 
-        console.log(`Chart data for ${type}:`, JSON.stringify(chartData, null, 2));
         res.json({ type, data: chartData });
     } catch (error) {
-        console.error('Chart data error:', error);
         next(error);
     }
 };
@@ -724,7 +710,6 @@ exports.generateReport = async (req, res, next) => {
             case 'users':
                 reportData = await User.find(dateFilter)
                     .select('-password')
-                    .populate('ideas', 'title status category')
                     .sort({ createdAt: -1 });
                 fileName = `users-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -732,22 +717,38 @@ exports.generateReport = async (req, res, next) => {
             case 'ideas':
                 reportData = await Idea.find(dateFilter)
                     .populate('owner', 'name email role')
-                    .populate('feedback', 'rating comments admin')
-                    .populate('sustainabilityAssessment', 'overallScore environmentalImpact')
                     .sort({ createdAt: -1 });
                 fileName = `ideas-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
             case 'ideathons':
-                reportData = await Ideathon.find(dateFilter)
-                    .populate({
-                        path: 'registrations',
-                        populate: {
-                            path: 'entrepreneur',
-                            select: 'name email'
-                        }
-                    })
+                const ideathons = await Ideathon.find(dateFilter)
+                    .populate('createdBy', 'name email')
+                    .populate('winners', 'name email')
                     .sort({ createdAt: -1 });
+                
+                // Get registrations for each ideathon
+                const ideathonsWithRegistrations = await Promise.all(
+                    ideathons.map(async (ideathon) => {
+                        const registrations = await IdeathonRegistration.find({ ideathon: ideathon._id })
+                            .populate('entrepreneur', 'name email role')
+                            .populate('idea', 'title category')
+                            .populate('registeredBy', 'name email');
+                        
+                        return {
+                            ...ideathon.toObject(),
+                            registrations,
+                            registrationCount: registrations.length,
+                            registrationsByStatus: {
+                                registered: registrations.filter(r => r.status === 'registered').length,
+                                shortlisted: registrations.filter(r => r.status === 'shortlisted').length,
+                                winner: registrations.filter(r => r.status === 'winner').length
+                            }
+                        };
+                    })
+                );
+                
+                reportData = ideathonsWithRegistrations;
                 fileName = `ideathons-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
@@ -763,7 +764,7 @@ exports.generateReport = async (req, res, next) => {
             case 'sustainability':
                 reportData = await Sustainability.find(dateFilter)
                     .populate('idea', 'title')
-                    .populate('assessor', 'name email')
+                    .populate('admin', 'name email')
                     .sort({ createdAt: -1 });
                 fileName = `sustainability-report-${new Date().toISOString().split('T')[0]}`;
                 break;
@@ -1054,6 +1055,15 @@ exports.createSustainabilityAssessment = async (req, res, next) => {
         const idea = await Idea.findById(ideaId);
         if (!idea) {
             return res.status(404).json({ message: 'Idea not found' });
+        }
+
+        // Check if assessment already exists for this idea
+        const existingAssessment = await Sustainability.findOne({ idea: ideaId });
+        if (existingAssessment) {
+            return res.status(409).json({ 
+                message: 'A sustainability assessment already exists for this idea. Please edit the existing assessment instead of creating a new one.',
+                existingAssessmentId: existingAssessment._id
+            });
         }
 
         const assessment = new Sustainability({

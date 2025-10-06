@@ -51,12 +51,6 @@ export const SimpleBarChart = ({ data, title, height = 300 }) => {
               >
                 {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-white/40 rounded-t-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                {/* Percentage tooltip */}
-                <div className="opacity-0 group-hover:opacity-100 absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-800 to-gray-900 text-white text-xs py-2 px-3 rounded-lg whitespace-nowrap transition-all duration-300 shadow-xl border border-white/20">
-                  {percentage}%
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-4 border-transparent border-t-gray-800"></div>
-                </div>
               </div>
               
               {/* Label */}

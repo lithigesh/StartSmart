@@ -1,119 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, Routes, Route, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
 import '../styles/AdminEnhancements.css';
 import {
   FaUsers,
-  FaUserShield,
-  FaTrash,
   FaLightbulb,
   FaSignOutAlt,
   FaSpinner,
   FaChartBar,
   FaEdit,
   FaTrophy,
-  FaPlus,
   FaTachometerAlt,
   FaBars,
   FaTimes,
-  FaCalendarAlt,
-  FaListUl,
-  FaSort,
-  FaSortUp,
-  FaSortDown,
-  FaFilter,
-  FaSearch,
-  FaEye,
-  FaBuilding,
-  FaGavel,
-  FaEnvelope,
-  FaArrowLeft,
-  FaArrowRight,
-  FaCreditCard,
   FaLeaf,
 } from "react-icons/fa";
 import AnalyticsDashboard from '../components/admin/AnalyticsDashboard';
-import IdeathonRegistrationMaster from '../components/admin/IdeathonRegistrationMaster';
-import FeedbackFormsSection from '../components/admin/FeedbackFormsSection';
-import SustainabilityScoringSection from '../components/admin/SustainabilityScoringSection';
 
 const AdminDashboard = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Search and filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('all');
-  const [themeFilter, setThemeFilter] = useState('all');
-  const [filterOptions, setFilterOptions] = useState({
-    statusOptions: [],
-    locationOptions: [],
-    themeOptions: []
-  });
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const [users, setUsers] = useState([]);
-  const [ideas, setIdeas] = useState([]);
-  const [activities, setActivities] = useState([]);
-  const [ideathons, setIdeathons] = useState([]);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  // Get section from URL params, default to 'dashboard'
-  const urlParams = new URLSearchParams(location.search);
-  const initialSection = urlParams.get('section') || 'dashboard';
-  const [activeSection, setActiveSection] = useState(initialSection);
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalIdeas: 0,
-    totalActivities: 0,
-    recentSignups: 0,
-    totalIdeathons: 0,
-  });
 
-  const token = localStorage.getItem("token");
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
+  // Get current active path for sidebar highlighting
+  const currentPath = location.pathname;
 
-  // Sidebar navigation items
+  // Sidebar navigation items with routes
   const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt },
-    { id: 'users', label: 'Manage Users', icon: FaUsers },
-    { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb },
-    { id: 'ideathons', label: 'Ideathons', icon: FaTrophy },
-    { id: 'activities', label: 'Activities', icon: FaUserShield },
-    { id: 'analytics', label: 'Analytics', icon: FaChartBar },
-    { id: 'registration-master', label: 'Registration Master', icon: FaTrophy },
-    { id: 'feedback', label: 'Feedback Forms', icon: FaEdit },
-    { id: 'sustainability', label: 'Sustainability Scoring', icon: FaLeaf },
+    { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt, path: '/admin/dashboard' },
+    { id: 'users', label: 'Manage Users', icon: FaUsers, path: '/admin/users' },
+    { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb, path: '/admin/ideas' },
+    { id: 'ideathons', label: 'Ideathons', icon: FaTrophy, path: '/admin/ideathons' },
+    { id: 'registration-master', label: 'Registration Master', icon: FaTrophy, path: '/admin/registration-master' },
+    { id: 'feedback', label: 'Ideas Feedback', icon: FaEdit, path: '/admin/feedback' },
+    { id: 'sustainability', label: 'Ideas Sustainability', icon: FaLeaf, path: '/admin/sustainability' },
   ];
 
-  // Helper function to get ideathon status
-  const getIdeathonStatus = (ideathon) => {
-    const now = new Date();
-    const startDate = new Date(ideathon.startDate);
-    const endDate = new Date(ideathon.endDate);
-    
-    if (now < startDate) {
-      return { status: 'upcoming', label: 'Upcoming', color: 'gray' };
-    } else if (now >= startDate && now <= endDate) {
-      return { status: 'active', label: 'Active', color: 'green' };
-    } else {
-      return { status: 'expired', label: 'Expired', color: 'red' };
-    }
-  };
 
-  // Clear error after 5 seconds
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(null), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
@@ -336,7 +261,7 @@ const AdminDashboard = () => {
       
       if (response.success) {
         await fetchIdeathons();
-        await fetchActivities();
+
         setError(null);
       } else {
         throw new Error(response.message || 'Failed to delete ideathon');
@@ -349,32 +274,7 @@ const AdminDashboard = () => {
     }
   };
 
-  // Fetch activities with better error handling
-  const fetchActivities = async () => {
-    try {
-      setIsLoading(true);
-      const res = await fetch(`${API_BASE}/api/admin/activities`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) {
-        throw new Error(`Failed to load activities: ${res.status} ${res.statusText}`);
-      }
-      const data = await res.json();
-      const activitiesArray = Array.isArray(data) ? data : [];
-      setActivities(activitiesArray);
-      
-      // Update stats
-      setStats(prev => ({
-        ...prev,
-        totalActivities: activitiesArray.length,
-      }));
-    } catch (err) {
-      setError(`Error loading activities: ${err.message}`);
-      console.error("Fetch activities error:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   // Change role with confirmation
   const handleChangeRole = async (id, newRole) => {
@@ -398,7 +298,6 @@ const AdminDashboard = () => {
       }
       
       await fetchUsers();
-      await fetchActivities();
       setError(null);
     } catch (err) {
       setError(`Error changing role: ${err.message}`);
@@ -427,7 +326,6 @@ const AdminDashboard = () => {
       }
       
       await fetchUsers();
-      await fetchActivities();
       setError(null);
     } catch (err) {
       setError(`Error deleting user: ${err.message}`);
@@ -456,7 +354,6 @@ const AdminDashboard = () => {
       }
       
       setIdeas((prev) => prev.filter((idea) => idea._id !== id));
-      await fetchActivities();
       setError(null);
     } catch (err) {
       setError(`Error deleting idea: ${err.message}`);
@@ -473,7 +370,6 @@ const AdminDashboard = () => {
         fetchUsers(),
         fetchIdeas(),
         fetchIdeathons(),
-        fetchActivities(),
       ]);
     }
   }, [user]);
@@ -803,7 +699,7 @@ const AdminDashboard = () => {
   const DashboardOverview = () => (
     <>
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl animate-fade-in-up delay-100 hover:scale-105 hover:-translate-y-2">
           <div className="flex items-center justify-between">
             <div>
@@ -840,17 +736,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl animate-fade-in-up delay-400 hover:scale-105 hover:-translate-y-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white/70 text-sm font-manrope font-medium">Activities</p>
-              <p className="text-white text-2xl font-bold font-manrope group-hover:scale-110 transition-transform duration-300">{stats.totalActivities}</p>
-            </div>
-            <div className="p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-all duration-300">
-              <FaChartBar className="text-white text-2xl" />
-            </div>
-          </div>
-        </div>
+
 
         <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:from-white/[0.12] hover:to-white/[0.08] transition-all duration-300 group shadow-xl animate-fade-in-up delay-500 hover:scale-105 hover:-translate-y-2">
           <div className="flex items-center justify-between">
@@ -1772,48 +1658,7 @@ const AdminDashboard = () => {
     );
   };
 
-  const ActivitiesSection = () => (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl">
-        <div className="p-6 border-b border-white/10">
-          <div className="relative">
-            <h2 className="text-2xl font-semibold text-white flex items-center gap-3">
-              <FaUserShield className="text-white" /> Recent Admin Activities ({activities.length})
-            </h2>
-            {/* Floating particles */}
-            <div className="absolute top-2 right-4 w-1 h-1 bg-white/60 rounded-full animate-ping"></div>
-            <div className="absolute bottom-2 right-8 w-1 h-1 bg-white/50 rounded-full animate-bounce"></div>
-          </div>
-        </div>
-        
-        {activities.length === 0 ? (
-          <div className="p-12 text-center">
-            <FaUserShield className="text-6xl mb-4 mx-auto text-white/30" />
-            <p className="font-manrope text-white/70 text-lg">No activities found</p>
-          </div>
-        ) : (
-          <div className="p-6">
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {activities.map((a) => (
-                <div
-                  key={a._id}
-                  className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10 rounded-xl p-4 hover:from-white/[0.08] hover:to-white/[0.04] transition-all duration-300 shadow-lg hover:scale-105 hover:-translate-y-1 flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-semibold font-manrope text-white">{a.actionType || 'Unknown Action'}</p>
-                    <p className="text-sm text-white/70 font-manrope">{a.details || 'No details available'}</p>
-                  </div>
-                  <span className="text-xs text-white/60 font-manrope whitespace-nowrap ml-4">
-                    {a.createdAt ? new Date(a.createdAt).toLocaleString() : 'Unknown date'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+
 
   // Show loading screen while checking authentication
   if (loading) {
@@ -1951,7 +1796,6 @@ const AdminDashboard = () => {
             {activeSection === 'users' && <UsersSection />}
             {activeSection === 'ideas' && <IdeasSection />}
             {activeSection === 'ideathons' && <IdeathonsSection />}
-            {activeSection === 'activities' && <ActivitiesSection />}
             {activeSection === 'analytics' && <AnalyticsDashboard />}
             {activeSection === 'registration-master' && <IdeathonRegistrationMaster />}
             {activeSection === 'feedback' && <FeedbackFormsSection />}

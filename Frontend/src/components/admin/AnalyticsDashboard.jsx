@@ -168,7 +168,7 @@ const AnalyticsDashboard = () => {
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-          <FaChartBar className="text-blue-400" />
+          <FaChartBar className="text-white/80" />
           Analytics Dashboard
         </h2>
         <p className="text-white/60 mt-2">Monitor your platform's performance and growth metrics</p>
@@ -179,129 +179,93 @@ const AnalyticsDashboard = () => {
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Users Card */}
-            <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-200 text-sm font-medium">Total Users</p>
+                  <p className="text-white/70 text-sm font-medium">Total Users</p>
                   <p className="text-2xl font-bold text-white">{analytics.users.totalUsers.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
-                    <FaArrowUp className="text-green-400 text-sm mr-1" />
-                    <span className="text-green-400 text-sm">+12.5%</span>
+                    <FaArrowUp className="text-white/60 text-sm mr-1" />
+                    <span className="text-white/60 text-sm">+12.5%</span>
                   </div>
                 </div>
-                <div className="p-3 bg-blue-500/30 rounded-full">
-                  <FaUsers className="text-blue-300 text-xl" />
+                <div className="p-3 bg-white/[0.08] border border-white/20 rounded-full">
+                  <FaUsers className="text-white/80 text-xl" />
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-blue-500/20">
-                <div className="flex justify-between text-sm">
-                  <span className="text-blue-200">Entrepreneurs</span>
-                  <span className="text-white">{analytics.users.entrepreneurs}</span>
-                </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="text-blue-200">Investors</span>
-                  <span className="text-white">{analytics.users.investors}</span>
-                </div>
-              </div>
+
             </div>
 
             {/* Ideas Card */}
-            <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 backdrop-blur-xl border border-green-500/30 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-200 text-sm font-medium">Total Ideas</p>
+                  <p className="text-white/70 text-sm font-medium">Total Ideas</p>
                   <p className="text-2xl font-bold text-white">{analytics.ideas.totalIdeas.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
-                    <FaArrowUp className="text-green-400 text-sm mr-1" />
-                    <span className="text-green-400 text-sm">+8.3%</span>
+                    <FaArrowUp className="text-white/60 text-sm mr-1" />
+                    <span className="text-white/60 text-sm">+8.3%</span>
                   </div>
                 </div>
-                <div className="p-3 bg-green-500/30 rounded-full">
-                  <FaLightbulb className="text-green-300 text-xl" />
+                <div className="p-3 bg-white/[0.08] border border-white/20 rounded-full">
+                  <FaLightbulb className="text-white/80 text-xl" />
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-green-500/20">
-                <div className="flex justify-between text-sm">
-                  <span className="text-green-200">Approved</span>
-                  <span className="text-white">{analytics.ideas.approvedIdeas}</span>
-                </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="text-green-200">Pending</span>
-                  <span className="text-white">{analytics.ideas.pendingIdeas}</span>
-                </div>
-              </div>
+
             </div>
 
             {/* Ideathons Card */}
-            <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-200 text-sm font-medium">Total Ideathons</p>
+                  <p className="text-white/70 text-sm font-medium">Total Ideathons</p>
                   <p className="text-2xl font-bold text-white">{analytics.ideathons.totalIdeathons.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
-                    <FaArrowUp className="text-green-400 text-sm mr-1" />
-                    <span className="text-green-400 text-sm">+5.2%</span>
+                    <FaArrowUp className="text-white/60 text-sm mr-1" />
+                    <span className="text-white/60 text-sm">+5.2%</span>
                   </div>
                 </div>
-                <div className="p-3 bg-purple-500/30 rounded-full">
-                  <FaTrophy className="text-purple-300 text-xl" />
+                <div className="p-3 bg-white/[0.08] border border-white/20 rounded-full">
+                  <FaTrophy className="text-white/80 text-xl" />
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-purple-500/20">
-                <div className="flex justify-between text-sm">
-                  <span className="text-purple-200">Active</span>
-                  <span className="text-white">{analytics.ideathons.activeIdeathons}</span>
-                </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="text-purple-200">Upcoming</span>
-                  <span className="text-white">{analytics.ideathons.upcomingIdeathons || 0}</span>
-                </div>
-              </div>
+
             </div>
 
             {/* Feedback Card */}
-            <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/10 backdrop-blur-xl border border-orange-500/30 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-200 text-sm font-medium">Total Feedback</p>
+                  <p className="text-white/70 text-sm font-medium">Total Feedback</p>
                   <p className="text-2xl font-bold text-white">{analytics.feedback.totalFeedback.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
-                    <FaArrowUp className="text-green-400 text-sm mr-1" />
-                    <span className="text-green-400 text-sm">+15.8%</span>
+                    <FaArrowUp className="text-white/60 text-sm mr-1" />
+                    <span className="text-white/60 text-sm">+15.8%</span>
                   </div>
                 </div>
-                <div className="p-3 bg-orange-500/30 rounded-full">
-                  <FaDollarSign className="text-orange-300 text-xl" />
+                <div className="p-3 bg-white/[0.08] border border-white/20 rounded-full">
+                  <FaDollarSign className="text-white/80 text-xl" />
                 </div>
               </div>
-              <div className="mt-4 pt-4 border-t border-orange-500/20">
-                <div className="flex justify-between text-sm">
-                  <span className="text-orange-200">Avg Rating</span>
-                  <span className="text-white">{analytics.feedback.averageRating?.toFixed(1) || 0}/5</span>
-                </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <span className="text-orange-200">Positive</span>
-                  <span className="text-white">{analytics.feedback.positiveCount || 0}</span>
-                </div>
-              </div>
+
             </div>
           </div>
 
           {/* Charts Section */}
           <div className="space-y-6">
             {/* Ideas Growth Trends - Full Width */}
-            <div className="bg-gradient-to-br from-green-500/10 via-green-400/5 to-emerald-500/10 backdrop-blur-xl border border-green-500/20 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                  <FaLightbulb className="text-green-400" />
+                  <FaLightbulb className="text-white/80" />
                   Ideas Growth Trends
                 </h3>
-                <div className="text-sm text-green-300 bg-green-500/20 px-3 py-1 rounded-full">
+                <div className="text-sm text-white/70 bg-white/[0.08] border border-white/20 px-3 py-1 rounded-full">
                   Daily Submissions
                 </div>
               </div>
               
-              <div className="h-80">
+              <div className="h-96 w-full overflow-hidden">
                 <SimpleBarChart 
                   data={transformChartData(chartData.ideas || [])} 
                   title="Daily Ideas Submissions"
@@ -310,13 +274,13 @@ const AnalyticsDashboard = () => {
             </div>
 
             {/* Ideas by Category - Full Width */}
-            <div className="bg-gradient-to-br from-purple-500/10 via-purple-400/5 to-indigo-500/10 backdrop-blur-xl border border-purple-500/20 rounded-2xl p-6 shadow-xl">
+            <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
               <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                <FaChartPie className="text-purple-400" />
+                <FaChartPie className="text-white/80" />
                 Ideas by Category
               </h3>
               
-              <div className="h-80">
+              <div className="h-96 w-full overflow-hidden">
                 <SimplePieChart 
                   data={transformPieData(analytics.ideasByCategory || [])} 
                   title="Distribution of Ideas by Category"
@@ -328,14 +292,14 @@ const AnalyticsDashboard = () => {
           {/* Report Downloads */}
           <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-              <FaDownload className="text-purple-400" />
+              <FaDownload className="text-white/80" />
               Download Reports
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => downloadReport('users')}
-                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 backdrop-blur-sm border border-blue-400/30"
+                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-white/[0.08] text-white rounded-lg hover:bg-white/[0.12] transition-all duration-300 backdrop-blur-sm border border-white/20"
               >
                 <FaUsers />
                 <span>Users Report</span>
@@ -343,7 +307,7 @@ const AnalyticsDashboard = () => {
               
               <button
                 onClick={() => downloadReport('ideas')}
-                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-green-500/80 to-green-600/80 text-white rounded-lg hover:from-green-400/90 hover:to-green-500/90 transition-all duration-300 backdrop-blur-sm border border-green-400/30"
+                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-white/[0.08] text-white rounded-lg hover:bg-white/[0.12] transition-all duration-300 backdrop-blur-sm border border-white/20"
               >
                 <FaLightbulb />
                 <span>Ideas Report</span>
@@ -351,7 +315,7 @@ const AnalyticsDashboard = () => {
               
               <button
                 onClick={() => downloadReport('ideathons')}
-                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-purple-500/80 to-purple-600/80 text-white rounded-lg hover:from-purple-400/90 hover:to-purple-500/90 transition-all duration-300 backdrop-blur-sm border border-purple-400/30"
+                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-white/[0.08] text-white rounded-lg hover:bg-white/[0.12] transition-all duration-300 backdrop-blur-sm border border-white/20"
               >
                 <FaTrophy />
                 <span>Ideathons Report</span>
@@ -359,7 +323,7 @@ const AnalyticsDashboard = () => {
               
               <button
                 onClick={() => downloadReport('feedback')}
-                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-yellow-500/80 to-yellow-600/80 text-white rounded-lg hover:from-yellow-400/90 hover:to-yellow-500/90 transition-all duration-300 backdrop-blur-sm border border-yellow-400/30"
+                className="enhanced-button flex items-center justify-center space-x-2 px-4 py-3 bg-white/[0.08] text-white rounded-lg hover:bg-white/[0.12] transition-all duration-300 backdrop-blur-sm border border-white/20"
               >
                 <FaDollarSign />
                 <span>Feedback Report</span>
@@ -369,7 +333,7 @@ const AnalyticsDashboard = () => {
             <div className="mt-4 pt-4 border-t border-white/10">
               <button
                 onClick={() => downloadReport('analytics')}
-                className="enhanced-button w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-indigo-500/80 to-indigo-600/80 text-white rounded-lg hover:from-indigo-400/90 hover:to-indigo-500/90 transition-all duration-300 backdrop-blur-sm border border-indigo-400/30"
+                className="enhanced-button w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition-all duration-300 font-medium"
               >
                 <FaChartBar />
                 <span>Complete Analytics Report</span>
