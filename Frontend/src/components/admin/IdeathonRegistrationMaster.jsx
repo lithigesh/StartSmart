@@ -53,6 +53,7 @@ const IdeathonRegistrationMaster = () => {
   const [registrationFormData, setRegistrationFormData] = useState({
     ideathonId: '',
     userId: '',
+    ideaId: '',
     teamName: '',
     teamMembers: [],
     projectTitle: '',
@@ -210,12 +211,24 @@ const IdeathonRegistrationMaster = () => {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          ...registrationFormData,
-          registeredBy: registrationFormData.userId
+          ideaId: registrationFormData.ideaId || null, // Optional since admin can register without specific idea
+          teamName: registrationFormData.teamName,
+          projectTitle: registrationFormData.projectTitle,
+          projectDescription: registrationFormData.projectDescription,
+          pitchDetails: registrationFormData.projectDescription, // Use project description as pitch details
+          teamMembers: registrationFormData.teamMembers,
+          techStack: registrationFormData.techStack,
+          githubRepo: registrationFormData.githubRepo,
+          additionalInfo: registrationFormData.additionalInfo,
+          userId: registrationFormData.userId
         })
       });
 
-      if (!response.ok) throw new Error('Failed to create registration');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Registration error:', errorData);
+        throw new Error(errorData.message || 'Failed to create registration');
+      }
 
       await fetchRegistrations();
       setShowRegistrationModal(null);
@@ -226,6 +239,7 @@ const IdeathonRegistrationMaster = () => {
       setTimeout(() => setSuccessMessage(''), 5000); // Clear message after 5 seconds
       
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message);
     }
   };
@@ -251,6 +265,7 @@ const IdeathonRegistrationMaster = () => {
     setRegistrationFormData({
       ideathonId: '',
       userId: '',
+      ideaId: '',
       teamName: '',
       teamMembers: [],
       projectTitle: '',

@@ -27,6 +27,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
     selectedIdeaId: "",
     pitchDetails: "",
     teamName: "",
+    projectTitle: "",
     teamMembers: "",
     documents: []
   });
@@ -119,6 +120,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
         selectedIdeaId: "",
         pitchDetails: "",
         teamName: "",
+        projectTitle: "",
         teamMembers: "",
         documents: []
       });
@@ -167,16 +169,20 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
       setError("Please select an idea to register with.");
       return false;
     }
+    if (!formData.teamName.trim()) {
+      setError("Please provide a team name.");
+      return false;
+    }
+    if (!formData.projectTitle.trim()) {
+      setError("Please provide a project title.");
+      return false;
+    }
     if (!formData.pitchDetails.trim()) {
       setError("Please provide pitch details for your registration.");
       return false;
     }
     if (formData.pitchDetails.trim().length < 50) {
       setError("Pitch details must be at least 50 characters long.");
-      return false;
-    }
-    if (!formData.teamName.trim()) {
-      setError("Please provide a team name.");
       return false;
     }
     return true;
@@ -203,7 +209,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
         ideaId: formData.selectedIdeaId,
         pitchDetails: formData.pitchDetails,
         teamName: formData.teamName,
-        teamMembers: formData.teamMembers,
+        projectTitle: formData.projectTitle,
+        projectDescription: formData.pitchDetails, // Use pitch details as project description
+        teamMembers: formData.teamMembers, // This will be parsed by backend
         // In a real app, you'd upload documents to a file service first
         documents: formData.documents.map(file => file.name)
       };
@@ -367,6 +375,22 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
                 />
               </div>
 
+              {/* Project Title */}
+              <div>
+                <label className="block text-white font-medium mb-3">
+                  Project Title <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="projectTitle"
+                  value={formData.projectTitle}
+                  onChange={handleInputChange}
+                  placeholder="Enter your project title"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  required
+                />
+              </div>
+
               {/* Team Members */}
               <div>
                 <label className="block text-white font-medium mb-3">
@@ -478,7 +502,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
 
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting || !formData.selectedIdeaId || !formData.pitchDetails.trim() || !formData.teamName.trim()}
+              disabled={isSubmitting || !formData.selectedIdeaId || !formData.pitchDetails.trim() || !formData.teamName.trim() || !formData.projectTitle.trim()}
               className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               {isSubmitting ? (

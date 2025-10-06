@@ -291,7 +291,33 @@ exports.deleteIdeathon = async (req, res, next) => {
 // @route   POST /api/ideathons/:id/register
 exports.registerForIdeathon = async (req, res, next) => {
     try {
-        const { ideaId, pitchDetails, userId } = req.body;
+        const { 
+            ideaId, 
+            pitchDetails, 
+            teamName, 
+            teamMembers, 
+            projectTitle, 
+            projectDescription,
+            techStack,
+            githubRepo,
+            additionalInfo,
+            userId 
+        } = req.body;
+        
+        // Validate required fields
+        if (!teamName) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Team name is required' 
+            });
+        }
+        
+        if (!projectTitle) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Project title is required' 
+            });
+        }
         
         // Check if ideathon exists
         const ideathon = await Ideathon.findById(req.params.id);
@@ -319,11 +345,34 @@ exports.registerForIdeathon = async (req, res, next) => {
             });
         }
         
+        // Parse team members if it's a string (comma-separated names)
+        let parsedTeamMembers = [];
+        if (teamMembers) {
+            if (typeof teamMembers === 'string') {
+                // Split by comma and create basic team member objects
+                const memberNames = teamMembers.split(',').map(name => name.trim()).filter(name => name);
+                parsedTeamMembers = memberNames.map(name => ({
+                    name: name,
+                    email: '', // Will be empty for now
+                    role: 'Team Member'
+                }));
+            } else if (Array.isArray(teamMembers)) {
+                parsedTeamMembers = teamMembers;
+            }
+        }
+        
         const registration = await IdeathonRegistration.create({
             ideathon: req.params.id,
             entrepreneur: entrepreneurId,
-            idea: ideaId,
+            idea: ideaId || null, // Allow null/undefined idea for admin registrations
             pitchDetails,
+            teamName,
+            projectTitle: projectTitle || 'Project Title', // Use provided or default
+            projectDescription: projectDescription || pitchDetails,
+            techStack,
+            teamMembers: parsedTeamMembers,
+            githubRepo,
+            additionalInfo,
             registeredBy: req.user.id // Track who created the registration
         });
         

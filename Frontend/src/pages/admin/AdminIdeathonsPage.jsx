@@ -550,6 +550,538 @@ const AdminIdeathonsPage = () => {
           </div>
         )}
       </div>
+
+      {/* Ideathon Form Modal */}
+      {showForm && (
+        <IdeathonFormModal
+          isOpen={showForm}
+          onClose={() => {
+            setShowForm(false);
+            setEditingIdeathon(null);
+          }}
+          onSubmit={editingIdeathon ? 
+            (data) => handleEditIdeathon(editingIdeathon._id, data) : 
+            handleCreateIdeathon
+          }
+          editingIdeathon={editingIdeathon}
+          isLoading={isLoading}
+        />
+      )}
+    </div>
+  );
+};
+
+// Ideathon Form Modal Component
+const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoading }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    theme: '',
+    fundingPrizes: '',
+    startDate: '',
+    endDate: '',
+    description: '',
+    organizers: '',
+    submissionFormat: [],
+    eligibilityCriteria: '',
+    judgingCriteria: '',
+    location: '',
+    contactInformation: ''
+  });
+
+  const [formErrors, setFormErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState('');
+
+  // Initialize form data when editing
+  useEffect(() => {
+    if (editingIdeathon) {
+      setFormData({
+        title: editingIdeathon.title || '',
+        theme: editingIdeathon.theme || '',
+        fundingPrizes: editingIdeathon.fundingPrizes || '',
+        startDate: editingIdeathon.startDate ? new Date(editingIdeathon.startDate).toISOString().split('T')[0] : '',
+        endDate: editingIdeathon.endDate ? new Date(editingIdeathon.endDate).toISOString().split('T')[0] : '',
+        description: editingIdeathon.description || '',
+        organizers: editingIdeathon.organizers || '',
+        submissionFormat: editingIdeathon.submissionFormat || [],
+        eligibilityCriteria: editingIdeathon.eligibilityCriteria || '',
+        judgingCriteria: editingIdeathon.judgingCriteria || '',
+        location: editingIdeathon.location || '',
+        contactInformation: editingIdeathon.contactInformation || ''
+      });
+    } else {
+      // Pre-fill form with sample data for testing
+      const today = new Date();
+      const startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+      const endDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000); // 14 days from now
+      
+      setFormData({
+        title: 'AI Innovation Challenge 2025',
+        theme: 'Artificial Intelligence & Machine Learning',
+        fundingPrizes: '$50,000 Grand Prize + $25,000 Runner-up + $10,000 Best Innovation Award',
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: endDate.toISOString().split('T')[0],
+        description: 'Join us for an exciting 7-day ideathon focused on developing innovative AI solutions that can solve real-world problems. Participants will work in teams to create prototypes, business plans, and pitch their ideas to industry experts.',
+        organizers: 'StartSmart Team & Tech Innovation Hub',
+        submissionFormat: ['Pitch Deck', 'Prototype', 'Business Document'],
+        eligibilityCriteria: 'Open to students, professionals, and entrepreneurs aged 18+. Teams of 2-5 members. Basic programming knowledge recommended.',
+        judgingCriteria: 'Innovation (30%), Technical Implementation (25%), Market Potential (25%), Presentation (20%)',
+        location: 'Hybrid',
+        contactInformation: 'contact@startsmart.com | +1-555-INNOVATION'
+      });
+    }
+    setFormErrors({});
+    setSubmitError('');
+    setSubmitSuccess('');
+  }, [editingIdeathon, isOpen]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const handleSubmissionFormatChange = (format) => {
+    setFormData(prev => ({
+      ...prev,
+      submissionFormat: prev.submissionFormat.includes(format)
+        ? prev.submissionFormat.filter(f => f !== format)
+        : [...prev.submissionFormat, format]
+    }));
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!formData.title.trim()) errors.title = 'Title is required';
+    if (!formData.startDate) errors.startDate = 'Start date is required';
+    if (!formData.endDate) errors.endDate = 'End date is required';
+    if (!formData.description.trim()) errors.description = 'Description is required';
+    if (!formData.organizers.trim()) errors.organizers = 'Organizers is required';
+    if (formData.submissionFormat.length === 0) errors.submissionFormat = 'At least one submission format is required';
+    
+    // Validate dates
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      if (start >= end) {
+        errors.endDate = 'End date must be after start date';
+      }
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setSubmitError('');
+    setSubmitSuccess('');
+
+    try {
+      const success = await onSubmit(formData);
+      if (success) {
+        setSubmitSuccess(editingIdeathon ? 'Ideathon updated successfully!' : 'Ideathon created successfully!');
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+      }
+    } catch (error) {
+      setSubmitError(error.message || 'Failed to save ideathon. Please try again.');
+    }
+  };
+
+  const submissionFormatOptions = [
+    'Pitch Deck',
+    'Working Prototype',
+    'Business Plan',
+    'Video Presentation',
+    'Demo',
+    'Research Paper'
+  ];
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-gray-900/95 to-black/95 border border-white/20 rounded-2xl backdrop-blur-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-gradient-to-r from-gray-900/95 to-black/95 backdrop-blur-xl border-b border-white/10 p-6 rounded-t-2xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-1">
+                {editingIdeathon ? 'Edit Ideathon' : 'Create New Ideathon'}
+              </h2>
+              <p className="text-white/60 text-sm">
+                {editingIdeathon ? 'Update ideathon details' : 'Set up a new competition for entrepreneurs'}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200"
+            >
+              <FaTimes className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Success Message */}
+        {submitSuccess && (
+          <div className="mx-6 mt-4 p-4 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center gap-3">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <p className="text-green-400 font-medium">{submitSuccess}</p>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {submitError && (
+          <div className="mx-6 mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl flex items-center gap-3">
+            <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+            <p className="text-red-400 font-medium">{submitError}</p>
+          </div>
+        )}
+
+        {/* Form Content */}
+        <div className="p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Quick Action Buttons for Testing */}
+              {!editingIdeathon && (
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData({
+                        title: '',
+                        theme: '',
+                        fundingPrizes: '',
+                        startDate: '',
+                        endDate: '',
+                        description: '',
+                        organizers: '',
+                        submissionFormat: [],
+                        eligibilityCriteria: '',
+                        judgingCriteria: '',
+                        location: '',
+                        contactInformation: ''
+                      });
+                    }}
+                    className="px-4 py-2 bg-gray-600/20 border border-gray-400/30 text-gray-400 rounded-lg hover:bg-gray-600/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm"
+                  >
+                    🗑️ Clear Form
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const today = new Date();
+                      const startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+                      const endDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
+                      
+                      setFormData({
+                        title: 'Blockchain Innovation Summit 2025',
+                        theme: 'Blockchain & Web3 Technologies',
+                        fundingPrizes: '$75,000 Grand Prize + $35,000 Second Place + $15,000 Third Place',
+                        startDate: startDate.toISOString().split('T')[0],
+                        endDate: endDate.toISOString().split('T')[0],
+                        description: 'An intensive 7-day blockchain ideathon bringing together developers, designers, and entrepreneurs to build the next generation of decentralized applications. Participants will have access to mentors from leading blockchain companies and cutting-edge development tools.',
+                        organizers: 'StartSmart Platform, BlockchainHub, Web3 Foundation',
+                        submissionFormat: ['Pitch Deck', 'Prototype', 'Demo'],
+                        eligibilityCriteria: 'Open to all developers, designers, and entrepreneurs 18+. Previous blockchain experience helpful but not required. Teams of 1-4 members.',
+                        judgingCriteria: 'Technical Innovation (35%), User Experience (25%), Market Impact (25%), Presentation Quality (15%)',
+                        location: 'Online',
+                        contactInformation: 'blockchain@startsmart.com | Discord: StartSmart#2025'
+                      });
+                    }}
+                    className="px-4 py-2 bg-blue-600/20 border border-blue-400/30 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm"
+                  >
+                    🚀 Fill Sample Data
+                  </button>
+                </div>
+              )}
+
+              {/* Basic Information Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Title */}
+                <div className="md:col-span-2">
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Ideathon Title <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      formErrors.title ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                    }`}
+                    placeholder="AI Innovation Challenge 2025"
+                  />
+                  {formErrors.title && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                    {formErrors.title}
+                  </p>}
+                </div>
+
+                {/* Theme */}
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Theme
+                  </label>
+                  <input
+                    type="text"
+                    name="theme"
+                    value={formData.theme}
+                    onChange={handleInputChange}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                    placeholder="Artificial Intelligence & Machine Learning"
+                  />
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                    placeholder="Virtual / San Francisco, CA"
+                  />
+                </div>
+
+                {/* Start Date */}
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Start Date <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={formData.startDate}
+                    onChange={handleInputChange}
+                    className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      formErrors.startDate ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                    }`}
+                  />
+                  {formErrors.startDate && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                    {formErrors.startDate}
+                  </p>}
+                </div>
+
+                {/* End Date */}
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    End Date <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={formData.endDate}
+                    onChange={handleInputChange}
+                    className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      formErrors.endDate ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                    }`}
+                  />
+                  {formErrors.endDate && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                    {formErrors.endDate}
+                  </p>}
+                </div>
+
+                {/* Funding Prizes */}
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Prize Pool
+                  </label>
+                  <input
+                    type="text"
+                    name="fundingPrizes"
+                    value={formData.fundingPrizes}
+                    onChange={handleInputChange}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                    placeholder="$50,000 Grand Prize + $20,000 Runner-up"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-white/90 text-sm font-medium mb-2">
+                  Description <span className="text-red-400">*</span>
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  rows={4}
+                  className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 resize-none transition-all duration-200 ${
+                    formErrors.description ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                  }`}
+                  placeholder="Join us for an exciting 48-hour hackathon focused on building innovative AI solutions that solve real-world problems. Teams will compete to create groundbreaking applications..."
+                />
+                {formErrors.description && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                  {formErrors.description}
+                </p>}
+              </div>
+
+              {/* Organizers */}
+              <div>
+                <label className="block text-white/90 text-sm font-medium mb-2">
+                  Organizers <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="organizers"
+                  value={formData.organizers}
+                  onChange={handleInputChange}
+                  className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                    formErrors.organizers ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                  }`}
+                  placeholder="StartSmart Innovation Hub, TechVentures Inc."
+                />
+                {formErrors.organizers && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                  {formErrors.organizers}
+                </p>}
+              </div>
+
+              {/* Submission Format */}
+              <div>
+                <label className="block text-white/90 text-sm font-medium mb-3">
+                  Submission Format <span className="text-red-400">*</span>
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {submissionFormatOptions.map((format) => (
+                    <label key={format} className="flex items-center gap-3 cursor-pointer group">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={formData.submissionFormat.includes(format)}
+                          onChange={() => handleSubmissionFormatChange(format)}
+                          className="sr-only"
+                        />
+                        <div className={`w-5 h-5 rounded border-2 transition-all duration-200 ${
+                          formData.submissionFormat.includes(format)
+                            ? 'bg-blue-500 border-blue-400'
+                            : 'border-white/30 group-hover:border-white/50'
+                        }`}>
+                          {formData.submissionFormat.includes(format) && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-sm"></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-white/80 text-sm group-hover:text-white transition-colors">{format}</span>
+                    </label>
+                  ))}
+                </div>
+                {formErrors.submissionFormat && <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+                  <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                  {formErrors.submissionFormat}
+                </p>}
+              </div>
+
+              {/* Additional Information Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Eligibility Criteria
+                  </label>
+                  <textarea
+                    name="eligibilityCriteria"
+                    value={formData.eligibilityCriteria}
+                    onChange={handleInputChange}
+                    rows={3}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 resize-none transition-all duration-200"
+                    placeholder="Students and professionals with programming experience. Teams of 2-5 members..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-white/90 text-sm font-medium mb-2">
+                    Judging Criteria
+                  </label>
+                  <textarea
+                    name="judgingCriteria"
+                    value={formData.judgingCriteria}
+                    onChange={handleInputChange}
+                    rows={3}
+                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 resize-none transition-all duration-200"
+                    placeholder="Innovation (30%), Technical Implementation (25%), Business Viability (25%), Presentation (20%)"
+                  />
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div>
+                <label className="block text-white/90 text-sm font-medium mb-2">
+                  Contact Information
+                </label>
+                <input
+                  type="text"
+                  name="contactInformation"
+                  value={formData.contactInformation}
+                  onChange={handleInputChange}
+                  className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                  placeholder="contact@startsmart.com | +1 (555) 123-4567"
+                />
+              </div>
+
+            {/* Footer */}
+            <div className="flex gap-3 pt-6 border-t border-white/10">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={isLoading}
+                className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all duration-200 font-medium disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading || submitSuccess}
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white rounded-xl transition-all duration-200 font-medium disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
+              >
+                {isLoading ? (
+                  <>
+                    <FaSpinner className="animate-spin w-4 h-4" />
+                    {editingIdeathon ? 'Updating...' : 'Creating...'}
+                  </>
+                ) : submitSuccess ? (
+                  <>
+                    <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                    Success!
+                  </>
+                ) : (
+                  <>
+                    <FaTrophy className="w-4 h-4" />
+                    {editingIdeathon ? 'Update Ideathon' : 'Create Ideathon'}
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
