@@ -10,8 +10,50 @@ const errorHandler = require('./middlewares/errorHandler');
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration for production and development
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            'http://localhost:5173', // Local development
+            'http://localhost:3000', // Alternative local port
+            'https://startsmart-frontend.vercel.app', // Production frontend
+            'https://start-smart-frontend.vercel.app', // Alternative production URL
+        ];
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.log('CORS blocked origin:', origin);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: [
+        'Content-Type', 
+        'Authorization', 
+        'X-Requested-With',
+        'Accept',
+        'Origin'
+    ],
+    exposedHeaders: ['Content-Range', 'X-Content-Range']
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
+
+// Debug middleware for CORS issues
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path} - Origin: ${req.get('Origin')}`);
+    next();
+});
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
