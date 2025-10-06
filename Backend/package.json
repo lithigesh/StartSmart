@@ -6,8 +6,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build": "echo 'Build step complete'",
-    "vercel-build": "echo 'Vercel build complete'",
     "init-admin": "node scripts/initAdmin.js",
     "setup": "npm install && npm run init-admin"
   },
@@ -19,9 +17,10 @@
     "@google/generative-ai": "^0.24.1",
     "@sendgrid/mail": "^8.1.5",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "docx": "^9.5.1",
     "dotenv": "^17.2.1",
-    "express": "^4.18.2",
+    "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
