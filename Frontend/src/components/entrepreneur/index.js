@@ -10,3 +10,5 @@ export { default as RecentActivitySection } from './RecentActivitySection';
 export { default as SideBar } from './SideBar';
 export { default as IdeathonRegistrationForm } from './IdeathonRegistrationForm';
 export { default as FundingRequestForm } from './FundingRequestForm';
+export { default as FeedbackCard } from './FeedbackCard';
+export { default as InlineFeedbackForm } from './InlineFeedbackForm';

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import {
@@ -17,6 +18,7 @@ import {
   FaUser,
   FaChevronLeft,
   FaChevronRight,
+  FaComment,
 } from "react-icons/fa";
 
 const SideBar = ({
@@ -27,55 +29,72 @@ const SideBar = ({
 }) => {
   const { user, logout } = useAuth();
   const { unreadCount } = useNotifications();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const navigationItems = [
     {
       id: "overview",
       label: "Overview",
       icon: <FaHome className="w-5 h-5" />,
+      path: "/entrepreneur",
     },
     {
       id: "my-ideas",
       label: "My Ideas",
       icon: <FaLightbulb className="w-5 h-5" />,
       badge: "3",
+      path: "/entrepreneur/my-ideas",
     },
     {
       id: "funding",
       label: "Funding",
       icon: <FaDollarSign className="w-5 h-5" />,
+      path: "/entrepreneur/funding",
     },
     {
       id: "investors",
       label: "Investors",
       icon: <FaBriefcase className="w-5 h-5" />,
       badge: "8",
+      path: "/entrepreneur/investors",
     },
     {
       id: "analytics",
       label: "Analytics",
       icon: <FaChartBar className="w-5 h-5" />,
+      path: "/entrepreneur/analytics",
     },
     {
       id: "ideathons",
       label: "Ideathons",
       icon: <FaTrophy className="w-5 h-5" />,
+      path: "/entrepreneur/ideathons",
     },
     {
       id: "collaborations",
       label: "Collaborations",
       icon: <FaUsers className="w-5 h-5" />,
+      path: "/entrepreneur/collaborations",
     },
     {
       id: "notifications",
       label: "Notifications",
       icon: <FaBell className="w-5 h-5" />,
       badge: unreadCount > 0 ? unreadCount : null,
+      path: "/entrepreneur/notifications",
+    },
+    {
+      id: "feedback",
+      label: "App Feedback",
+      icon: <FaComment className="w-5 h-5" />,
+      path: "/entrepreneur/feedback",
     },
     {
       id: "settings",
       label: "Settings",
       icon: <FaCog className="w-5 h-5" />,
+      path: "/entrepreneur/settings",
     },
   ];
 
@@ -96,8 +115,9 @@ const SideBar = ({
   }, [setIsCollapsed]);
 
   // Helper function for mobile auto-collapse
-  const handleNavigation = (sectionId) => {
-    onSectionChange && onSectionChange(sectionId);
+  const handleNavigation = (item) => {
+    navigate(item.path);
+    onSectionChange && onSectionChange(item.id);
     // Auto-collapse on mobile after selection
     if (window.innerWidth < 1024) {
       setIsCollapsed && setIsCollapsed(true);
@@ -106,7 +126,7 @@ const SideBar = ({
 
   const SidebarItem = ({ item, isActive, onClick }) => (
     <button
-      onClick={() => onClick(item.id)}
+      onClick={() => onClick(item)}
       className={`
         w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative
         ${

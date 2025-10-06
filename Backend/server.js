@@ -35,6 +35,7 @@ app.use('/api/reports', require('./routes/report.routes'));
 app.use('/api/notifications', require('./routes/notification.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 app.use('/api/charts', require('./routes/chart.routes'));
+app.use('/api/app-feedback', require('./routes/appFeedback.routes'));
 
 app.use(errorHandler);
 
