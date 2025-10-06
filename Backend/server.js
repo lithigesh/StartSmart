@@ -11,26 +11,14 @@ connectDB();
 
 const app = express();
 
-// CORS configuration for production and development
+// CORS configuration - simplified for Vercel deployment
 const corsOptions = {
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        const allowedOrigins = [
-            'http://localhost:5173', // Local development
-            'http://localhost:3000', // Alternative local port
-            'https://startsmart-frontend.vercel.app', // Production frontend
-            'https://start-smart-frontend.vercel.app', // Alternative production URL
-        ];
-        
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.log('CORS blocked origin:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'https://startsmart-frontend.vercel.app',
+        'https://start-smart-frontend.vercel.app'
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: [
@@ -38,22 +26,44 @@ const corsOptions = {
         'Authorization', 
         'X-Requested-With',
         'Accept',
-        'Origin'
+        'Origin',
+        'Cache-Control'
     ],
-    exposedHeaders: ['Content-Range', 'X-Content-Range']
+    optionsSuccessStatus: 200 // For legacy browser support
 };
 
+// Apply CORS middleware first
 app.use(cors(corsOptions));
-app.use(express.json());
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
-
-// Debug middleware for CORS issues
+// Manual CORS headers for additional security
 app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path} - Origin: ${req.get('Origin')}`);
+    const origin = req.headers.origin;
+    const allowedOrigins = [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'https://startsmart-frontend.vercel.app',
+        'https://start-smart-frontend.vercel.app'
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+    
+    console.log(`${req.method} ${req.path} - Origin: ${origin}`);
     next();
 });
+
+app.use(express.json());
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -82,7 +92,21 @@ app.use(errorHandler);
 
 // Health Check Route
 app.get('/', (req, res) => {
-    res.send('StartSmart API is running...');
+    res.json({ 
+        message: 'StartSmart API is running...',
+        cors: 'enabled',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// CORS Test Route
+app.get('/api/cors-test', (req, res) => {
+    res.json({ 
+        message: 'CORS test successful',
+        origin: req.headers.origin,
+        method: req.method,
+        timestamp: new Date().toISOString()
+    });
 });
 
 const PORT = process.env.PORT || 5001;
