@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "build": "echo 'Build step complete'",
+    "vercel-build": "echo 'Vercel build complete'",
     "init-admin": "node scripts/initAdmin.js",
     "setup": "npm install && npm run init-admin"
   },

@@ -1,27 +1,12 @@
 // middlewares/upload.middleware.js
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, '../uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-}
+// For serverless deployment, use memory storage instead of disk storage
+// In production, you should use cloud storage like AWS S3, Cloudinary, etc.
 
-// Configure storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadsDir);
-    },
-    filename: (req, file, cb) => {
-        // Generate unique filename: timestamp-userId-originalname
-        const uniqueSuffix = Date.now() + '-' + req.user.id;
-        const ext = path.extname(file.originalname);
-        const name = path.basename(file.originalname, ext);
-        cb(null, `${uniqueSuffix}-${name}${ext}`);
-    }
-});
+// Configure storage - use memory storage for serverless
+const storage = multer.memoryStorage();
 
 // File filter - only allow specific file types
 const fileFilter = (req, file, cb) => {

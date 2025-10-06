@@ -5,19 +5,35 @@ const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorHandler');
 
-// Initialize database connection
-connectDB();
-
 const app = express();
 
-app.use(express.json());
+// Global connection state for serverless
+let isConnected = false;
 
-// Serve uploaded files statically
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const initDB = async () => {
+  if (!isConnected) {
+    try {
+      await connectDB();
+      isConnected = true;
+      console.log('Database connected in serverless function');
+    } catch (error) {
+      console.error('Database connection error:', error);
+      throw error;
+    }
+  }
+};
 
-// Serve the BusinessAims viewer page
+app.use(express.json({ limit: '10mb' }));
+
+// Note: Static file serving removed for serverless compatibility
+// In production, use cloud storage for file uploads
+
+// API endpoint for business aims (instead of serving static HTML)
 app.get('/admin/businessaims', (req, res) => {
-    res.sendFile(path.join(__dirname, 'businessaims-viewer.html'));
+    res.json({ 
+        message: 'Business Aims API endpoint',
+        note: 'Use frontend route for UI'
+    });
 });
 
 // API Routes
@@ -56,5 +72,27 @@ app.get('/api/cors-test', (req, res) => {
     });
 });
 
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Export for Vercel serverless functions
+module.exports = async (req, res) => {
+  try {
+    await initDB();
+    return app(req, res);
+  } catch (error) {
+    console.error('Serverless function error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message 
+    });
+  }
+};
+
+// For local development
+if (require.main === module) {
+  const PORT = process.env.PORT || 5001;
+  initDB().then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  }).catch(error => {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  });
+}
