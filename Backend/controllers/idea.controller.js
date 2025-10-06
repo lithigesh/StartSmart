@@ -385,14 +385,21 @@ exports.updateIdea = async (req, res, next) => {
             return res.status(403).json({ message: 'Not authorized to update this idea' });
         }
 
-        // Optional: Prevent editing after analysis has started
-        if (idea.status !== 'pending') {
+        // Allow editing for pending and submitted status, but not for analyzed or beyond
+        if (idea.status !== 'pending' && idea.status !== 'submitted') {
             return res.status(400).json({ message: 'Cannot update an idea that is being or has been analyzed.' });
         }
 
+        // Update all allowed fields
         idea.title = req.body.title || idea.title;
         idea.description = req.body.description || idea.description;
         idea.category = req.body.category || idea.category;
+        idea.stage = req.body.stage || idea.stage;
+        idea.fundingGoal = req.body.fundingGoal !== undefined ? req.body.fundingGoal : idea.fundingGoal;
+        idea.elevatorPitch = req.body.elevatorPitch || idea.elevatorPitch;
+        idea.targetAudience = req.body.targetAudience || idea.targetAudience;
+        idea.problemStatement = req.body.problemStatement || idea.problemStatement;
+        idea.solution = req.body.solution || idea.solution;
 
         const updatedIdea = await idea.save();
         res.json(updatedIdea);

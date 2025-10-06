@@ -8,10 +8,13 @@ export const API_BASE = API_URL;
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
-  return {
+  const headers = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
   };
+  console.log('Auth headers:', headers);
+  console.log('Token from localStorage:', token ? 'Present' : 'Missing');
+  return headers;
 };
 
 // Helper function to handle API responses
@@ -20,6 +23,9 @@ const handleResponse = async (response) => {
     const error = await response
       .json()
       .catch(() => ({ message: "Network error" }));
+    console.error('API Error Response:', error);
+    console.error('Response status:', response.status);
+    console.error('Response statusText:', response.statusText);
     throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
   return response.json();
@@ -66,13 +72,25 @@ export const ideasAPI = {
       return handleResponse(response);
     } else {
       // Use JSON for ideas without files
+      console.log('Submitting idea to:', `${API_URL}/api/ideas`);
+      console.log('Request payload:', ideaData);
+      
       const response = await fetch(`${API_URL}/api/ideas`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(ideaData),
       });
+      
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
       return handleResponse(response);
     }
+  },
+
+  // Create a new idea (alias for submitIdea for consistency)
+  createIdea: async (ideaData) => {
+    return ideasAPI.submitIdea(ideaData);
   },
 
   // Get a specific idea by ID
@@ -111,11 +129,7 @@ export const ideasAPI = {
       console.log("Token exists:", !!token); // Debug log
       
       if (!token) {
-        // Use the real test token for demonstration
-        const realTestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2FmZmE2YWM0Nzc3NTQxMmI2NDViNiIsImlhdCI6MTc1ODEzNDI0OSwiZXhwIjoxNzYwNzI2MjQ5fQ.aW8QwenhAs3Ow8yBcMso74vKfqYPIc3_GwktvMjaUds";
-        localStorage.setItem("token", realTestToken);
-        token = realTestToken;
-        console.log("Using real test token");
+        throw new Error('No authentication token found. Please log in.');
       }
       
       // Decode token to get user ID (simple base64 decode of JWT payload)
@@ -1275,6 +1289,202 @@ export const ideathonsAPI = {
   },
 };
 
+// Team Resource API
+export const teamResourceAPI = {
+  // Get team resources for current user
+  getUserTeamResources: async () => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/team`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 5000)
+        )
+      ]);
+      return handleResponse(response);
+    } catch (error) {
+      console.warn('Team resource API not available, using demo data');
+      return {
+        success: true,
+        data: []
+      };
+    }
+  },
+
+  // Get team resources for a specific idea
+  getTeamResourcesByIdea: async (ideaId) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/team/idea/${ideaId}`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 5000)
+        )
+      ]);
+      return handleResponse(response);
+    } catch (error) {
+      console.warn('Team resource API not available, using demo data');
+      return {
+        success: true,
+        data: null
+      };
+    }
+  },
+
+  // Create team resource
+  createTeamResource: async (teamResourceData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/team`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(teamResourceData),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Create team resource API error:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+
+  // Update team resource
+  updateTeamResource: async (resourceId, teamResourceData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/team/${resourceId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(teamResourceData),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Update team resource API error:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+
+  // Delete team resource
+  deleteTeamResource: async (resourceId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/team/${resourceId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Delete team resource API error:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+};
+
+// Business Aim API
+export const businessAimAPI = {
+  // Get business aims for current user
+  getUserBusinessAims: async () => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/aims`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 5000)
+        )
+      ]);
+      return handleResponse(response);
+    } catch (error) {
+      console.warn('Business aim API not available, using demo data');
+      return {
+        success: true,
+        data: []
+      };
+    }
+  },
+
+  // Get business aims for a specific idea
+  getBusinessAimsByIdea: async (ideaId) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/aims/idea/${ideaId}`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 5000)
+        )
+      ]);
+      return handleResponse(response);
+    } catch (error) {
+      console.warn('Business aim API not available, using demo data');
+      return {
+        success: true,
+        data: null
+      };
+    }
+  },
+
+  // Create business aim
+  createBusinessAim: async (businessAimData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/aims`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(businessAimData),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Create business aim API error:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+
+  // Update business aim
+  updateBusinessAim: async (aimId, businessAimData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/aims/${aimId}`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(businessAimData),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Update business aim API error:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+
+  // Delete business aim
+  deleteBusinessAim: async (aimId) => {
+    try {
+      const response = await fetch(`${API_URL}/api/aims/${aimId}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error('Delete business aim API error:', error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  },
+};
+
 // Collaborations API
 export const collaborationsAPI = {
   // Get all collaboration opportunities
@@ -1545,7 +1755,46 @@ const API_SERVICES = {
   investorInterestAPI,
   analyticsAPI,
   ideathonsAPI,
+  teamResourceAPI,
+  businessAimAPI,
   collaborationsAPI,
+};
+
+// General API object for making HTTP requests
+export const api = {
+  get: async (endpoint) => {
+    const response = await fetch(`${API_URL}/api${endpoint}`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+  
+  post: async (endpoint, data) => {
+    const response = await fetch(`${API_URL}/api${endpoint}`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+  
+  put: async (endpoint, data) => {
+    const response = await fetch(`${API_URL}/api${endpoint}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+    return handleResponse(response);
+  },
+  
+  delete: async (endpoint) => {
+    const response = await fetch(`${API_URL}/api${endpoint}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  }
 };
 
 // Default export for compatibility

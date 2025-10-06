@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusinessAims Data Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .business-aim {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .business-aim h3 {
+            color: #333;
+            margin-top: 0;
+        }
+        .field {
+            margin: 8px 0;
+        }
+        .field strong {
+            color: #555;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .error {
+            color: red;
+            background: #ffe6e6;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            color: green;
+            background: #e6ffe6;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .auth-section {
+            background: #e6f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #tokenInput {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .stats {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BusinessAims Data Viewer</h1>
+        
+        <!-- Authentication Section -->
+        <div class="auth-section">
+            <h3>Authentication (Required)</h3>
+            <p>Enter your authentication token to view BusinessAims data:</p>
+            <input type="text" id="tokenInput" placeholder="Enter JWT token here..." />
+            <button onclick="setToken()">Set Token</button>
+            <button onclick="useTestToken()">Use Test Token</button>
+            <div id="authStatus"></div>
+        </div>
+
+        <!-- Actions -->
+        <div>
+            <button onclick="loadBusinessAims()">Load BusinessAims</button>
+            <button onclick="loadAllData()">Load All Data (Raw)</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+
+        <!-- Results -->
+        <div id="results">
+            <p class="loading">Click "Load BusinessAims" to fetch data...</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001';
+        let authToken = '';
+
+        function setToken() {
+            authToken = document.getElementById('tokenInput').value.trim();
+            if (authToken) {
+                document.getElementById('authStatus').innerHTML = '<div class="success">Token set successfully!</div>';
+                localStorage.setItem('authToken', authToken);
+            } else {
+                document.getElementById('authStatus').innerHTML = '<div class="error">Please enter a valid token</div>';
+            }
+        }
+
+        function useTestToken() {
+            // Use the real test token
+            authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2FhMjEyMjU0M2M2NTFkM2FiYTBiMyIsImlhdCI6MTc1ODEzNDI0OSwiZXhwIjoxNzYwNzI2MjQ5fQ.aW8QwenhAs3Ow8yBcMso74vKfqYPIc3_GwktvMjaUds';
+            document.getElementById('tokenInput').value = authToken;
+            document.getElementById('authStatus').innerHTML = '<div class="success">Test token loaded!</div>';
+            localStorage.setItem('authToken', authToken);
+        }
+
+        async function loadBusinessAims() {
+            if (!authToken) {
+                document.getElementById('results').innerHTML = '<div class="error">Please set authentication token first</div>';
+                return;
+            }
+
+            document.getElementById('results').innerHTML = '<p class="loading">Loading BusinessAims data...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/aims`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayBusinessAims(data.data);
+                } else {
+                    document.getElementById('results').innerHTML = `<div class="error">Error: ${data.message}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('results').innerHTML = `<div class="error">Network Error: ${error.message}</div>`;
+            }
+        }
+
+        async function loadAllData() {
+            if (!authToken) {
+                document.getElementById('results').innerHTML = '<div class="error">Please set authentication token first</div>';
+                return;
+            }
+
+            document.getElementById('results').innerHTML = '<p class="loading">Loading raw data...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/aims`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                
+                document.getElementById('results').innerHTML = `
+                    <div class="stats">
+                        <h3>Raw API Response</h3>
+                        <pre style="background: #f0f0f0; padding: 10px; overflow-x: auto; font-size: 12px;">${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `<div class="error">Network Error: ${error.message}</div>`;
+            }
+        }
+
+        function displayBusinessAims(businessAims) {
+            if (!businessAims || businessAims.length === 0) {
+                document.getElementById('results').innerHTML = `
+                    <div class="stats">
+                        <h3>No BusinessAims Found</h3>
+                        <p>No BusinessAim documents found for this user.</p>
+                        <p>Try submitting a BusinessAim form first.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="stats">
+                    <h3>📊 BusinessAims Statistics</h3>
+                    <p><strong>Total BusinessAims:</strong> ${businessAims.length}</p>
+                    <p><strong>Last Updated:</strong> ${new Date().toLocaleString()}</p>
+                </div>
+            `;
+
+            businessAims.forEach((aim, index) => {
+                html += `
+                    <div class="business-aim">
+                        <h3>BusinessAim #${index + 1}</h3>
+                        <div class="field"><strong>ID:</strong> ${aim._id}</div>
+                        <div class="field"><strong>Created:</strong> ${new Date(aim.createdAt).toLocaleString()}</div>
+                        <div class="field"><strong>Updated:</strong> ${new Date(aim.updatedAt).toLocaleString()}</div>
+                        <div class="field"><strong>Status:</strong> ${aim.status}</div>
+                        <div class="field"><strong>Idea Title:</strong> ${aim.ideaId?.title || aim.ideaId?.problemTitle || 'No title'}</div>
+                        <div class="field"><strong>Business Model:</strong> ${aim.businessModel ? aim.businessModel.substring(0, 200) + '...' : 'Not provided'}</div>
+                        <div class="field"><strong>Target Market:</strong> ${aim.targetMarket ? aim.targetMarket.substring(0, 200) + '...' : 'Not provided'}</div>
+                        <div class="field"><strong>Revenue Streams:</strong> ${aim.revenueStreams ? aim.revenueStreams.join(', ') : 'None'}</div>
+                        <div class="field"><strong>Key Metrics:</strong> ${aim.keyMetrics ? aim.keyMetrics.join(', ') : 'None'}</div>
+                        <div class="field"><strong>Competition Analysis:</strong> ${aim.competitionAnalysis ? aim.competitionAnalysis.substring(0, 100) + '...' : 'Not provided'}</div>
+                        <div class="field"><strong>Risk Assessment:</strong> ${aim.riskAssessment ? aim.riskAssessment.substring(0, 100) + '...' : 'Not provided'}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '<p class="loading">Click "Load BusinessAims" to fetch data...</p>';
+        }
+
+        // Load saved token on page load
+        window.onload = function() {
+            const savedToken = localStorage.getItem('authToken');
+            if (savedToken) {
+                authToken = savedToken;
+                document.getElementById('tokenInput').value = savedToken;
+                document.getElementById('authStatus').innerHTML = '<div class="success">Token loaded from storage</div>';
+            }
+        };
+    </script>
+</body>
+</html>

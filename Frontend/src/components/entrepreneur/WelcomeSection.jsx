@@ -1,62 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FaPlus, FaChartLine, FaLightbulb } from "react-icons/fa";
-import IdeaSubmissionForm from "./IdeaSubmissionForm";
-import { ideasAPI } from "../../services/api";
 
 const WelcomeSection = () => {
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmitIdea = async (formData) => {
-    try {
-      // Now send all comprehensive form data to the updated backend
-      const ideaData = {
-        // Basic Information
-        title: formData.title,
-        elevatorPitch: formData.elevatorPitch,
-        description: formData.detailedDescription, // Maps to 'description' in backend
-        category: formData.category,
-        targetAudience: formData.targetAudience,
-
-        // Problem & Solution
-        problemStatement: formData.problemStatement,
-        solution: formData.solution,
-        competitors: formData.competitors,
-
-        // Business Model
-        revenueStreams: formData.revenueStreams,
-        pricingStrategy: formData.pricingStrategy,
-        keyPartnerships: formData.keyPartnerships,
-
-        // Market & Growth
-        marketSize: formData.marketSize,
-        goToMarketStrategy: formData.goToMarketStrategy,
-        scalabilityPlan: formData.scalabilityPlan,
-
-        // Technical Requirements
-        technologyStack: formData.technologyStack,
-        developmentRoadmap: formData.developmentRoadmap,
-        challengesAnticipated: formData.challengesAnticipated,
-
-        // Sustainability & Social Impact
-        ecoFriendlyPractices: formData.ecoFriendlyPractices,
-        socialImpact: formData.socialImpact,
-
-        // Funding & Investment
-        fundingRequirements: formData.fundingRequirements,
-        useOfFunds: formData.useOfFunds,
-        equityOffer: formData.equityOffer,
-
-        // Attachments
-        attachments: formData.attachments || []
-      };
-
-      await ideasAPI.submitIdea(ideaData);
-      alert("Idea submitted successfully!");
-      setIsFormOpen(false);
-    } catch (error) {
-      console.error("Error submitting idea:", error);
-      alert("Error submitting idea. Please try again.");
-    }
+  const handleSubmitIdea = () => {
+    // Navigate to the new 3-form idea submission system
+    navigate('/submit-idea');
   };
 
   return (
@@ -85,7 +36,7 @@ const WelcomeSection = () => {
 
         <div className="flex flex-col sm:flex-row gap-4">
           <button 
-            onClick={() => setIsFormOpen(true)}
+            onClick={handleSubmitIdea}
             className="inline-flex items-center gap-2 bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
             <FaPlus className="w-4 h-4" />
@@ -97,13 +48,6 @@ const WelcomeSection = () => {
           </button>
         </div>
       </div>
-
-      {/* Idea Submission Form Modal */}
-      <IdeaSubmissionForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onSubmit={handleSubmitIdea}
-      />
     </div>
   );
 };

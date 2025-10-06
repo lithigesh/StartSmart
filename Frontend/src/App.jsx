@@ -13,6 +13,7 @@ import EntrepreneurDashboardPage from "./pages/EntrepreneurDashboardPage.jsx";
 import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
 import AdminLoginPage from "./pages/AdminLoginPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import { IdeaSubmissionPage } from "./pages/IdeaSubmission";
 
 import {
   NotFoundPage,
@@ -51,6 +52,30 @@ const App = () => {
                 element={
                   <RoleBasedRoute allowedRole="entrepreneur">
                     <EntrepreneurDashboardPage />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/entrepreneur"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <EntrepreneurDashboardPage />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/submit-idea"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <IdeaSubmissionPage />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/idea/submit"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <IdeaSubmissionPage />
                   </RoleBasedRoute>
                 }
               />

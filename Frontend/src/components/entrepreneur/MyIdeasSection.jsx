@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import IdeaCard from "./IdeaCard";
-import { FaPlus, FaLightbulb, FaSpinner } from "react-icons/fa";
-import { ideasAPI } from "../../services/api";
+import IdeasListCharts from "../charts/IdeasListCharts";
+import { FaPlus, FaLightbulb, FaSpinner, FaChartBar } from "react-icons/fa";
+import { entrepreneurAPI, ideasAPI } from "../../services/api";
+import { useNotifications } from "../../hooks/useNotifications";
 
 const MyIdeasSection = ({ showTitle = true }) => {
+  const navigate = useNavigate();
   const [myIdeas, setMyIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingIdea, setEditingIdea] = useState(null);
+  const [showCharts, setShowCharts] = useState(false);
+  const [editIdea, setEditIdea] = useState({
+    title: "",
+    description: "",
+    category: "",
+    stage: "Planning",
+    fundingGoal: "",
+  });
+  
+  const { addNotification } = useNotifications();
 
   // Fetch user's ideas on component mount
   useEffect(() => {
@@ -69,6 +85,62 @@ const MyIdeasSection = ({ showTitle = true }) => {
     }
   };
 
+  // Handle edit idea
+  const handleEditIdea = (idea) => {
+    setEditingIdea(idea);
+    setEditIdea({
+      title: idea.title,
+      description: idea.description,
+      category: idea.category,
+      stage: idea.stage || "Planning",
+      fundingGoal: idea.fundingGoal || "",
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle update idea
+  const handleUpdateIdea = async (e) => {
+    e.preventDefault();
+    try {
+      const ideaData = {
+        ...editIdea,
+        fundingGoal: parseFloat(editIdea.fundingGoal) || 0,
+      };
+      
+      await ideasAPI.updateIdea(editingIdea.id, ideaData);
+      addNotification("Idea updated successfully!", "success");
+      setShowEditModal(false);
+      setEditingIdea(null);
+      setEditIdea({
+        title: "",
+        description: "",
+        category: "",
+        stage: "Planning",
+        fundingGoal: "",
+      });
+      fetchMyIdeas(); // Refresh the ideas list
+    } catch (error) {
+      console.error("Error updating idea:", error);
+      addNotification("Failed to update idea", "error");
+    }
+  };
+
+  // Handle delete idea
+  const handleDeleteIdea = async (ideaId, ideaTitle) => {
+    const confirmMessage = `Are you sure you want to delete "${ideaTitle}"?\n\nThis action cannot be undone and will permanently remove the idea from your portfolio.`;
+    
+    if (window.confirm(confirmMessage)) {
+      try {
+        await ideasAPI.deleteIdea(ideaId);
+        addNotification(`"${ideaTitle}" deleted successfully!`, "success");
+        fetchMyIdeas(); // Refresh the ideas list
+      } catch (error) {
+        console.error("Error deleting idea:", error);
+        addNotification(`Failed to delete "${ideaTitle}". Please try again.`, "error");
+      }
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Funded":
@@ -87,8 +159,8 @@ const MyIdeasSection = ({ showTitle = true }) => {
   };
 
   const handleAddNewIdea = () => {
-    // Navigate to idea submission page or open modal
-    window.location.href = '/submit-idea'; // This should be updated to use proper routing
+    // Navigate to idea submission page
+    navigate('/submit-idea');
   };
 
   return (
@@ -101,13 +173,59 @@ const MyIdeasSection = ({ showTitle = true }) => {
               My Ideas
             </h3>
           </div>
-          <button 
-            onClick={handleAddNewIdea}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200"
-          >
-            <FaPlus className="w-4 h-4" />
-            Add New Idea
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setShowCharts(!showCharts)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                showCharts 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              }`}
+            >
+              <FaChartBar className="w-4 h-4" />
+              {showCharts ? 'Hide Analytics' : 'Show Analytics'}
+            </button>
+            <button 
+              onClick={handleAddNewIdea}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200"
+            >
+              <FaPlus className="w-4 h-4" />
+              Add New Idea
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Analytics Controls when title is hidden */}
+      {!showTitle && (
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setShowCharts(!showCharts)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                showCharts 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              }`}
+            >
+              <FaChartBar className="w-4 h-4" />
+              {showCharts ? 'Hide Analytics' : 'Show Analytics'}
+            </button>
+            <button 
+              onClick={handleAddNewIdea}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200"
+            >
+              <FaPlus className="w-4 h-4" />
+              Add New Idea
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Analytics Charts */}
+      {showCharts && !loading && !error && myIdeas.length > 0 && (
+        <div className="mb-8">
+          <IdeasListCharts />
         </div>
       )}
 
@@ -150,7 +268,9 @@ const MyIdeasSection = ({ showTitle = true }) => {
               key={idea.id || index} 
               idea={idea} 
               index={index} 
-              getStatusColor={getStatusColor} 
+              getStatusColor={getStatusColor}
+              onEdit={handleEditIdea}
+              onDelete={handleDeleteIdea}
             />
           ))}
         </div>
@@ -173,6 +293,97 @@ const MyIdeasSection = ({ showTitle = true }) => {
             <FaPlus className="w-4 h-4" />
             Submit Your First Idea
           </button>
+        </div>
+      )}
+
+      {/* Edit Idea Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl max-w-md w-full mx-4 p-8">
+            <h2 className="text-2xl font-bold text-white mb-6">Edit Idea</h2>
+            <form onSubmit={handleUpdateIdea} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                <input
+                  type="text"
+                  value={editIdea.title}
+                  onChange={(e) => setEditIdea({ ...editIdea, title: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  placeholder="Enter idea title"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                <textarea
+                  value={editIdea.description}
+                  onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  placeholder="Describe your idea"
+                  rows="4"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                <input
+                  type="text"
+                  value={editIdea.category}
+                  onChange={(e) => setEditIdea({ ...editIdea, category: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  placeholder="e.g., Technology, Health, Education"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Stage</label>
+                <select
+                  value={editIdea.stage}
+                  onChange={(e) => setEditIdea({ ...editIdea, stage: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                >
+                  <option value="Planning">Planning</option>
+                  <option value="Development">Development</option>
+                  <option value="Testing">Testing</option>
+                  <option value="Launch">Launch</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Funding Goal ($)</label>
+                <input
+                  type="number"
+                  value={editIdea.fundingGoal}
+                  onChange={(e) => setEditIdea({ ...editIdea, fundingGoal: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  placeholder="Enter funding goal"
+                  min="0"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingIdea(null);
+                  }}
+                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg transition-all text-white"
+                >
+                  Update Idea
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -8,6 +8,5 @@ export { default as MyIdeasSection } from './MyIdeasSection';
 export { default as ActivityItem } from './ActivityItem';
 export { default as RecentActivitySection } from './RecentActivitySection';
 export { default as SideBar } from './SideBar';
-export { default as IdeaSubmissionForm } from './IdeaSubmissionForm';
 export { default as IdeathonRegistrationForm } from './IdeathonRegistrationForm';
 export { default as FundingRequestForm } from './FundingRequestForm';

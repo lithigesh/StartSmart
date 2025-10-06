@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { investorAPI } from "../services/api";
+import IdeaDetailCharts from "../components/charts/IdeaDetailCharts";
 import {
   FaArrowLeft,
   FaLightbulb,
@@ -20,6 +21,7 @@ import {
   FaExclamationTriangle,
   FaBullseye,
   FaRocket,
+  FaChartBar,
 } from "react-icons/fa";
 
 const IdeaDetailPage = () => {
@@ -35,6 +37,7 @@ const IdeaDetailPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isInterested, setIsInterested] = useState(false);
+  const [showCharts, setShowCharts] = useState(false);
 
   const token = localStorage.getItem("token");
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
@@ -185,36 +188,74 @@ const IdeaDetailPage = () => {
             </button>
 
             {isAdminView ? (
-              <button
-                onClick={handleDelete}
-                disabled={actionLoading}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
-              >
-                {actionLoading ? (
-                  <FaSpinner className="w-4 h-4 animate-spin" />
-                ) : (
-                  <FaTrash className="w-4 h-4" />
-                )}
-                Delete Idea
-              </button>
-            ) : user?.role === "investor" && (
-              <button
-                onClick={handleInterest}
-                disabled={actionLoading}
-                className={`btn rounded-lg px-6 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
-                  isInterested
-                    ? "bg-red-500 hover:bg-red-600 text-white"
-                    : "bg-pink-500 hover:bg-pink-600 text-white"
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowCharts(!showCharts)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    showCharts 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'bg-gray-700 hover:bg-gray-600 text-white/70'
+                  }`}
+                >
+                  <FaChartBar className="w-4 h-4" />
+                  {showCharts ? 'Hide Analytics' : 'Show Analytics'}
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={actionLoading}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {actionLoading ? (
+                    <FaSpinner className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <FaTrash className="w-4 h-4" />
+                  )}
+                  Delete Idea
+                </button>
+              </div>
+            ) : user?.role === "investor" ? (
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => setShowCharts(!showCharts)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    showCharts 
+                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                      : 'bg-gray-700 hover:bg-gray-600 text-white/70'
+                  }`}
+                >
+                  <FaChartBar className="w-4 h-4" />
+                  {showCharts ? 'Hide Analytics' : 'Show Analytics'}
+                </button>
+                <button
+                  onClick={handleInterest}
+                  disabled={actionLoading}
+                  className={`btn rounded-lg px-6 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
+                    isInterested
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "bg-pink-500 hover:bg-pink-600 text-white"
+                  }`}
+                >
+                  {actionLoading ? (
+                    <FaSpinner className="w-4 h-4 animate-spin" />
+                  ) : isInterested ? (
+                    <FaHeartBroken className="w-4 h-4" />
+                  ) : (
+                    <FaHeart className="w-4 h-4" />
+                  )}
+                  {isInterested ? "Remove Interest" : "Show Interest"}
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowCharts(!showCharts)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  showCharts 
+                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                    : 'bg-gray-700 hover:bg-gray-600 text-white/70'
                 }`}
               >
-                {actionLoading ? (
-                  <FaSpinner className="w-4 h-4 animate-spin" />
-                ) : isInterested ? (
-                  <FaHeartBroken className="w-4 h-4" />
-                ) : (
-                  <FaHeart className="w-4 h-4" />
-                )}
-                {isInterested ? "Remove Interest" : "Show Interest"}
+                <FaChartBar className="w-4 h-4" />
+                {showCharts ? 'Hide Analytics' : 'Show Analytics'}
               </button>
             )}
           </div>
@@ -282,6 +323,13 @@ const IdeaDetailPage = () => {
             </p>
           </div>
         </div>
+
+        {/* Analytics Charts */}
+        {showCharts && (
+          <div className="mb-8">
+            <IdeaDetailCharts ideaId={currentId} />
+          </div>
+        )}
 
         {/* Analysis Section */}
         {idea.analysis && (

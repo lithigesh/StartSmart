@@ -11,7 +11,16 @@ const IdeasPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingIdea, setEditingIdea] = useState(null);
   const [newIdea, setNewIdea] = useState({
+    title: "",
+    description: "",
+    category: "",
+    stage: "Planning",
+    fundingGoal: "",
+  });
+  const [editIdea, setEditIdea] = useState({
     title: "",
     description: "",
     category: "",
@@ -66,16 +75,56 @@ const IdeasPage = () => {
     }
   };
 
-  const handleDeleteIdea = async (ideaId) => {
-    if (window.confirm("Are you sure you want to delete this idea?")) {
+  const handleDeleteIdea = async (ideaId, ideaTitle) => {
+    const confirmMessage = `Are you sure you want to delete "${ideaTitle}"?\n\nThis action cannot be undone and will permanently remove the idea from your portfolio.`;
+    
+    if (window.confirm(confirmMessage)) {
       try {
         await ideasAPI.deleteIdea(ideaId);
-        addNotification("Idea deleted successfully!", "success");
+        addNotification(`"${ideaTitle}" deleted successfully!`, "success");
         loadIdeas();
       } catch (error) {
         console.error("Error deleting idea:", error);
-        addNotification("Failed to delete idea", "error");
+        addNotification(`Failed to delete "${ideaTitle}". Please try again.`, "error");
       }
+    }
+  };
+
+  const handleEditIdea = (idea) => {
+    setEditingIdea(idea);
+    setEditIdea({
+      title: idea.title,
+      description: idea.description,
+      category: idea.category,
+      stage: idea.stage,
+      fundingGoal: idea.fundingGoal || "",
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateIdea = async (e) => {
+    e.preventDefault();
+    try {
+      const ideaData = {
+        ...editIdea,
+        fundingGoal: parseFloat(editIdea.fundingGoal) || 0,
+      };
+      
+      await ideasAPI.updateIdea(editingIdea.id || editingIdea._id, ideaData);
+      addNotification("Idea updated successfully!", "success");
+      setShowEditModal(false);
+      setEditingIdea(null);
+      setEditIdea({
+        title: "",
+        description: "",
+        category: "",
+        stage: "Planning",
+        fundingGoal: "",
+      });
+      loadIdeas();
+    } catch (error) {
+      console.error("Error updating idea:", error);
+      addNotification("Failed to update idea", "error");
     }
   };
 
@@ -209,7 +258,14 @@ const IdeasPage = () => {
                           <FaEye className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteIdea(idea.id)}
+                          onClick={() => handleEditIdea(idea)}
+                          className="text-yellow-400 hover:text-yellow-300 transition-colors"
+                          title="Edit Idea"
+                        >
+                          <FaEdit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteIdea(idea.id, idea.title)}
                           className="text-red-400 hover:text-red-300 transition-colors"
                           title="Delete Idea"
                         >
@@ -340,6 +396,97 @@ const IdeasPage = () => {
                   className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg transition-all"
                 >
                   Create Idea
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Idea Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="glass-card p-8 rounded-xl max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold mb-6">Edit Idea</h2>
+            <form onSubmit={handleUpdateIdea} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Title</label>
+                <input
+                  type="text"
+                  value={editIdea.title}
+                  onChange={(e) => setEditIdea({ ...editIdea, title: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter idea title"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description</label>
+                <textarea
+                  value={editIdea.description}
+                  onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Describe your idea"
+                  rows="4"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Category</label>
+                <input
+                  type="text"
+                  value={editIdea.category}
+                  onChange={(e) => setEditIdea({ ...editIdea, category: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="e.g., Technology, Health, Education"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Stage</label>
+                <select
+                  value={editIdea.stage}
+                  onChange={(e) => setEditIdea({ ...editIdea, stage: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="Planning">Planning</option>
+                  <option value="Development">Development</option>
+                  <option value="Testing">Testing</option>
+                  <option value="Launch">Launch</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Funding Goal ($)</label>
+                <input
+                  type="number"
+                  value={editIdea.fundingGoal}
+                  onChange={(e) => setEditIdea({ ...editIdea, fundingGoal: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter funding goal"
+                  min="0"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditingIdea(null);
+                  }}
+                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg transition-all"
+                >
+                  Update Idea
                 </button>
               </div>
             </form>
