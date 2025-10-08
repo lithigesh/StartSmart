@@ -15,19 +15,13 @@ const checkInvestorAccess = (fundingRequest, investorId) => {
   // If accessType is not set (old requests), default to public access
   const accessType = fundingRequest.accessType || "public";
 
-  console.log(
-    `[Access Check] Investor: ${investorId}, Request: ${fundingRequest._id}, AccessType: ${accessType}`
-  );
-
   // Public requests are accessible to all
   if (accessType === "public") {
-    console.log("[Access Check] ✅ Public access granted");
     return true;
   }
 
   // Private requests are only for entrepreneurs
   if (accessType === "private") {
-    console.log("[Access Check] ❌ Private request - access denied");
     return false;
   }
 
@@ -36,15 +30,9 @@ const checkInvestorAccess = (fundingRequest, investorId) => {
     const isInvited = fundingRequest.invitedInvestors.some(
       (invited) => invited.investor.toString() === investorId.toString()
     );
-    console.log(
-      `[Access Check] ${isInvited ? "✅" : "❌"} Invited request - investor ${
-        isInvited ? "is" : "not"
-      } in list`
-    );
     return isInvited;
   }
 
-  console.log("[Access Check] ❌ Unknown access type - denied");
   return false;
 };
 
@@ -475,7 +463,8 @@ exports.getFundingRequestById = async (req, res, next) => {
     const request = await FundingRequest.findById(req.params.id)
       .populate("idea", "title description category stage owner")
       .populate("entrepreneur", "name email")
-      .populate("negotiationHistory.investor", "name email");
+      .populate("negotiationHistory.investor", "name email")
+      .populate("investorResponses.investor", "name email");
 
     if (!request) {
       return res.status(404).json({
@@ -715,25 +704,14 @@ exports.updateFundingRequestDetails = async (req, res, next) => {
 // @route   DELETE /api/funding/:id
 exports.withdrawFundingRequest = async (req, res, next) => {
   try {
-    console.log("Withdrawing funding request:", req.params.id);
-
     const request = await FundingRequest.findById(req.params.id);
 
     if (!request) {
-      console.log("Funding request not found:", req.params.id);
       return res.status(404).json({
         success: false,
         message: "Funding request not found",
       });
     }
-
-    console.log("Found request:", request._id, "Status:", request.status);
-    console.log(
-      "Entrepreneur:",
-      request.entrepreneur.toString(),
-      "User:",
-      req.user.id
-    );
 
     // Only entrepreneur can withdraw their own request
     if (request.entrepreneur.toString() !== req.user.id) {
@@ -756,22 +734,15 @@ exports.withdrawFundingRequest = async (req, res, next) => {
     const ideaId = request.idea;
     const requestId = request._id;
 
-    console.log("Deleting funding request:", requestId);
-
     // Delete the funding request permanently
     await FundingRequest.findByIdAndDelete(req.params.id);
-
-    console.log("Funding request deleted successfully");
 
     // Update idea status back to active if needed
     const idea = await Idea.findById(ideaId);
     if (idea && idea.status === "funding_requested") {
-      console.log("Updating idea status back to analyzed");
       idea.status = "analyzed"; // Changed from 'active' to 'analyzed' (valid status)
       await idea.save();
     }
-
-    console.log("Sending success response");
 
     res.json({
       success: true,
@@ -780,7 +751,6 @@ exports.withdrawFundingRequest = async (req, res, next) => {
     });
   } catch (error) {
     console.error("Error withdrawing funding request:", error);
-    console.error("Error stack:", error.stack);
     res.status(500).json({
       success: false,
       message: "Error withdrawing funding request",
@@ -1212,6 +1182,10 @@ exports.investorNegotiate = async (req, res, next) => {
 
     await request.save();
 
+    // Populate the request with investor details before sending response
+    await request.populate("negotiationHistory.investor", "name email");
+    await request.populate("investorResponses.investor", "name email");
+
     // Send notification to entrepreneur
     const NotificationService = require("../services/notification.service");
     await NotificationService.createNotification(
@@ -1341,6 +1315,10 @@ exports.entrepreneurRespond = async (req, res, next) => {
     }
 
     await request.save();
+
+    // Populate the request with investor details before sending response
+    await request.populate("negotiationHistory.investor", "name email");
+    await request.populate("investorResponses.investor", "name email");
 
     // Send notification to the investor (if specified) or all interested investors
     const NotificationService = require("../services/notification.service");

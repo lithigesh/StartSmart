@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../../hooks/useNotifications";
 import { investorAPI } from "../../services/api";
 import {
@@ -34,11 +35,27 @@ import {
 } from "react-icons/fa";
 
 const PortfolioDashboard = () => {
+  const navigate = useNavigate();
   const { addNotification, unreadCount } = useNotifications();
   const [loading, setLoading] = useState(true);
   const [portfolioData, setPortfolioData] = useState(null);
   const [error, setError] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Handle sidebar navigation
+  const handleSectionChange = (sectionId) => {
+    // When on Portfolio page, clicking other sections should navigate back to main dashboard
+    // Portfolio is a separate route, but other sections are internal to InvestorDashboard
+
+    if (sectionId === "portfolio") {
+      // Already on portfolio page, do nothing
+      return;
+    }
+
+    // Navigate back to main investor dashboard
+    // The InvestorDashboard component will handle the section via its activeSection state
+    navigate("/investor/dashboard", { state: { activeSection: sectionId } });
+  };
 
   // Color palette for charts
   const COLORS = {
@@ -148,7 +165,7 @@ const PortfolioDashboard = () => {
         {/* Sidebar */}
         <InvestorSidebar
           activeSection="portfolio"
-          setActiveSection={() => {}}
+          setActiveSection={handleSectionChange}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
         />
@@ -207,7 +224,7 @@ const PortfolioDashboard = () => {
         {/* Sidebar */}
         <InvestorSidebar
           activeSection="portfolio"
-          setActiveSection={() => {}}
+          setActiveSection={handleSectionChange}
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
         />
@@ -265,7 +282,7 @@ const PortfolioDashboard = () => {
       {/* Sidebar */}
       <InvestorSidebar
         activeSection="portfolio"
-        setActiveSection={() => {}}
+        setActiveSection={handleSectionChange}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
       />

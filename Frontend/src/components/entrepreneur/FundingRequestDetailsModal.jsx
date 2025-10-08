@@ -137,7 +137,25 @@ const FundingRequestDetailsModal = ({
     e.stopPropagation();
 
     if (!negotiationMessage.trim() && !proposalAmount && !proposalEquity) {
+      setError("Please enter a message or counter-proposal");
       return;
+    }
+
+    // Validate proposal amounts if provided
+    if (
+      proposalAmount &&
+      (isNaN(proposalAmount) || parseFloat(proposalAmount) <= 0)
+    ) {
+      setError("Proposed amount must be a valid positive number");
+      return;
+    }
+
+    if (proposalEquity) {
+      const equity = parseFloat(proposalEquity);
+      if (isNaN(equity) || equity <= 0 || equity > 100) {
+        setError("Proposed equity must be between 0 and 100 percent");
+        return;
+      }
     }
 
     try {
@@ -164,16 +182,22 @@ const FundingRequestDetailsModal = ({
         setProposalEquity("");
         setShowProposalForm(false);
 
+        // Show success message
+        setSuccess("Negotiation message sent successfully!");
+        setTimeout(() => setSuccess(""), 3000);
+
         // Call onUpdate to refresh the request data
         if (onUpdate) {
           await onUpdate(request._id || request.id);
         }
       } else {
         setError(response.message || "Failed to send message");
+        setTimeout(() => setError(""), 5000);
       }
     } catch (err) {
       console.error("Error sending negotiation:", err);
-      setError("Failed to send message. Please try again.");
+      setError(err.message || "Failed to send message. Please try again.");
+      setTimeout(() => setError(""), 5000);
     } finally {
       setSendingMessage(false);
     }
@@ -1051,6 +1075,78 @@ const FundingRequestDetailsModal = ({
                   </div>
                 )}
 
+                {/* Investor Interest Summary */}
+                {request.investorResponses &&
+                  request.investorResponses.length > 0 && (
+                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+                      <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                        <FaEye className="w-4 h-4 text-purple-400" />
+                        Investor Activity Summary
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                          <div className="text-2xl font-bold text-green-400 mb-1">
+                            {
+                              request.investorResponses.filter(
+                                (r) => r.status === "interested"
+                              ).length
+                            }
+                          </div>
+                          <div className="text-xs text-white/60">
+                            Interested Investors
+                          </div>
+                        </div>
+                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                          <div className="text-2xl font-bold text-blue-400 mb-1">
+                            {request.negotiationHistory
+                              ? request.negotiationHistory.filter(
+                                  (n) => n.investor
+                                ).length
+                              : 0}
+                          </div>
+                          <div className="text-xs text-white/60">
+                            Investor Messages
+                          </div>
+                        </div>
+                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                          <div className="text-2xl font-bold text-yellow-400 mb-1">
+                            {request.viewedBy ? request.viewedBy.length : 0}
+                          </div>
+                          <div className="text-xs text-white/60">
+                            Total Views
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* List of Interested Investors */}
+                      {request.investorResponses.filter(
+                        (r) => r.status === "interested"
+                      ).length > 0 && (
+                        <div className="mt-4 pt-4 border-t border-gray-700">
+                          <h5 className="text-white/80 text-sm font-medium mb-2">
+                            Interested Investors:
+                          </h5>
+                          <div className="flex flex-wrap gap-2">
+                            {request.investorResponses
+                              .filter((r) => r.status === "interested")
+                              .map((response, idx) => (
+                                <div
+                                  key={idx}
+                                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-900/20 border border-green-500/30 rounded-full"
+                                >
+                                  <FaUser className="w-3 h-3 text-green-400" />
+                                  <span className="text-xs text-green-400">
+                                    {response.investor?.name ||
+                                      "Investor " + (idx + 1)}
+                                  </span>
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                 {/* Request Status Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
@@ -1182,24 +1278,33 @@ const FundingRequestDetailsModal = ({
                           e.preventDefault();
                           setShowProposalForm(!showProposalForm);
                         }}
-                        className="mb-3 text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors"
+                        className="mb-3 text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors font-medium"
                       >
                         <FaDollarSign className="w-4 h-4" />
                         {showProposalForm
-                          ? "Hide Counter-Proposal"
-                          : "Send Counter-Proposal"}
+                          ? "Hide Counter-Proposal Form"
+                          : "📊 Send Counter-Proposal with New Terms"}
                       </button>
 
                       {/* Counter Proposal Form */}
                       {showProposalForm && (
-                        <div className="mb-4 p-4 bg-gray-900 border border-gray-700 rounded-lg space-y-3">
-                          <h4 className="text-white font-medium text-sm mb-3">
-                            Counter-Proposal Terms
-                          </h4>
+                        <div className="mb-4 p-4 bg-blue-900/10 border border-blue-500/30 rounded-lg space-y-3">
+                          <div className="flex items-start gap-2 mb-3">
+                            <FaLightbulb className="w-4 h-4 text-blue-400 mt-1 flex-shrink-0" />
+                            <div>
+                              <h4 className="text-white font-medium text-sm mb-1">
+                                Counter-Proposal Terms
+                              </h4>
+                              <p className="text-white/60 text-xs">
+                                Propose different funding terms. These values
+                                will be included in your message to investors.
+                              </p>
+                            </div>
+                          </div>
                           <div className="grid grid-cols-2 gap-3">
                             <div>
-                              <label className="block text-white/60 text-xs mb-1">
-                                Proposed Amount ($)
+                              <label className="block text-white/80 text-xs font-medium mb-2">
+                                💰 Proposed Amount ($)
                               </label>
                               <input
                                 type="number"
@@ -1207,13 +1312,17 @@ const FundingRequestDetailsModal = ({
                                 onChange={(e) =>
                                   setProposalAmount(e.target.value)
                                 }
-                                placeholder="500000"
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                                placeholder={`Current: ${formatCurrency(
+                                  request.amount
+                                )}`}
+                                min="0"
+                                step="1000"
+                                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                               />
                             </div>
                             <div>
-                              <label className="block text-white/60 text-xs mb-1">
-                                Proposed Equity (%)
+                              <label className="block text-white/80 text-xs font-medium mb-2">
+                                📈 Proposed Equity (%)
                               </label>
                               <input
                                 type="number"
@@ -1221,23 +1330,60 @@ const FundingRequestDetailsModal = ({
                                 onChange={(e) =>
                                   setProposalEquity(e.target.value)
                                 }
-                                placeholder="10"
+                                placeholder={`Current: ${request.equity}%`}
                                 min="0"
                                 max="100"
                                 step="0.1"
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+                                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                               />
                             </div>
                           </div>
                           {proposalAmount && proposalEquity && (
-                            <div className="text-white/60 text-xs mt-2 p-2 bg-gray-800 rounded">
-                              <span className="font-medium">
-                                Implied Valuation:
-                              </span>{" "}
-                              $
-                              {Math.round(
-                                (proposalAmount / proposalEquity) * 100
-                              ).toLocaleString()}
+                            <div className="bg-gray-800/50 border border-gray-700 rounded p-3 space-y-1">
+                              <div className="flex justify-between text-xs">
+                                <span className="text-white/60">
+                                  Original Valuation:
+                                </span>
+                                <span className="text-white font-medium">
+                                  {formatCurrency(
+                                    (request.amount / request.equity) * 100
+                                  )}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-xs">
+                                <span className="text-white/60">
+                                  Proposed Valuation:
+                                </span>
+                                <span className="text-blue-400 font-medium">
+                                  {formatCurrency(
+                                    Math.round(
+                                      (proposalAmount / proposalEquity) * 100
+                                    )
+                                  )}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-xs pt-1 border-t border-gray-700">
+                                <span className="text-white/60">
+                                  Valuation Change:
+                                </span>
+                                <span
+                                  className={`font-medium ${
+                                    (proposalAmount / proposalEquity) * 100 >
+                                    (request.amount / request.equity) * 100
+                                      ? "text-green-400"
+                                      : "text-red-400"
+                                  }`}
+                                >
+                                  {(
+                                    (((proposalAmount / proposalEquity) * 100) /
+                                      ((request.amount / request.equity) *
+                                        100) -
+                                      1) *
+                                    100
+                                  ).toFixed(1)}
+                                  %
+                                </span>
+                              </div>
                             </div>
                           )}
                         </div>

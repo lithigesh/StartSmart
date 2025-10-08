@@ -247,25 +247,30 @@ const FundingPage = () => {
     setShowEditModal(true);
   };
 
-  const handleUpdateFundingRequest = async (requestId, updateData) => {
+  const handleUpdateFundingRequest = async (requestId) => {
     try {
-      const result = await fundingAPI.updateFundingRequestDetails(
-        requestId,
-        updateData
-      );
+      // Refresh the specific funding request to get latest data
+      const result = await fundingAPI.getFundingRequestById(requestId);
 
       if (result.success) {
-        addNotification("Funding request updated successfully!", "success");
-        await loadDashboardData();
-        setShowEditModal(false);
-        setSelectedFundingRequest(null);
+        // Update the funding requests list
+        setFundingRequests((prevRequests) =>
+          prevRequests.map((req) =>
+            req._id === requestId || req.id === requestId ? result.data : req
+          )
+        );
+
+        // Update the selected request being viewed in the modal
+        setSelectedFundingRequest(result.data);
+
+        addNotification("Request updated successfully!", "success");
       } else {
-        throw new Error(result.message || "Failed to update funding request");
+        throw new Error(result.message || "Failed to refresh funding request");
       }
     } catch (err) {
-      console.error("Error updating funding request:", err);
+      console.error("Error refreshing funding request:", err);
       addNotification(
-        err.message || "Failed to update funding request",
+        err.message || "Failed to refresh funding request",
         "error"
       );
       throw err;

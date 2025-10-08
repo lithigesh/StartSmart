@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { investorAPI, fundingAPI } from "../services/api";
 import { useNotifications } from "../hooks/useNotifications";
 import {
@@ -15,12 +16,14 @@ import {
   ComparisonModal,
   SavedComparisonsSection,
   MarketResearchSection,
+  PortfolioSection,
 } from "../components/investor";
 import InvestorDealsPage from "./investor/InvestorDealsPage";
 import { FaLightbulb, FaHeart, FaBell } from "react-icons/fa";
 
 const InvestorDashboard = () => {
   const { unreadCount } = useNotifications();
+  const location = useLocation();
 
   // State management
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,15 @@ const InvestorDashboard = () => {
   // Sidebar state
   const [activeSection, setActiveSection] = useState("overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Handle navigation from external pages (like Portfolio)
+  useEffect(() => {
+    if (location.state?.activeSection) {
+      setActiveSection(location.state.activeSection);
+      // Clear the state so it doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   // Comparison state
   const [comparisonMode, setComparisonMode] = useState(false);
@@ -452,7 +464,8 @@ const InvestorDashboard = () => {
       case "deals":
         return <InvestorDealsPage />;
 
-      // analytics and portfolio removed
+      case "portfolio":
+        return <PortfolioSection />;
 
       case "notifications":
         return (

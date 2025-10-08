@@ -15,6 +15,7 @@ export { default as SavedComparisonsSection } from "./SavedComparisonsSection";
 export { default as MarketResearchSection } from "./MarketResearchSection";
 export { default as MarketResearchModal } from "./MarketResearchModal";
 export { default as MarketResearchDetailView } from "./MarketResearchDetailView";
+export { default as PortfolioSection } from "./PortfolioSection";
 
 // Deal Management Components
 export { default as DealCard } from "./DealCard";

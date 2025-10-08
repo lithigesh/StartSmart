@@ -22,9 +22,6 @@ class NotificationService {
       }));
 
       await Notification.insertMany(notifications);
-      console.log(
-        `Created ${notifications.length} new idea notifications for investors`
-      );
 
       // Also notify the entrepreneur that their idea was submitted
       await Notification.create({
@@ -71,8 +68,6 @@ class NotificationService {
         priority: "high",
         actionUrl,
       });
-
-      console.log(`Created welcome notification for user: ${user.email}`);
     } catch (error) {
       console.error("Error creating welcome notification:", error);
     }
@@ -111,10 +106,6 @@ class NotificationService {
         actionUrl: `/investor/ideas/${ideaId}`,
         priority: "medium",
       });
-
-      console.log(
-        `Created interest notifications for investor ${investorId} and entrepreneur ${entrepreneurId}`
-      );
     } catch (error) {
       console.error("Error creating investor interest notifications:", error);
       throw error;
@@ -135,8 +126,6 @@ class NotificationService {
         relatedUser: options.relatedUser,
         expiresAt: options.expiresAt,
       });
-
-      console.log(`Created system notification for user: ${userId}`);
     } catch (error) {
       console.error("Error creating system notification:", error);
     }
@@ -166,8 +155,6 @@ class NotificationService {
         relatedUser: options.relatedUser,
         expiresAt: options.expiresAt,
       });
-
-      console.log(`Created ${type} notification for user: ${userId}`);
     } catch (error) {
       console.error("Error creating notification:", error);
       // Don't throw - notifications should not break main flow
@@ -186,10 +173,6 @@ class NotificationService {
         actionUrl: `/entrepreneur/ideas/${idea._id}`,
         priority: "high",
       });
-
-      console.log(
-        `Created analysis complete notification for idea: ${idea.title}`
-      );
     } catch (error) {
       console.error("Error creating analysis complete notification:", error);
     }

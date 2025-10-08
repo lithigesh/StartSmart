@@ -1,5 +1,5 @@
 // services/aiAnalysis.service.js
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Initialize the Google Generative AI client with the API key from environment variables
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -11,19 +11,15 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
  * @returns {Promise<object>} A promise that resolves to an object containing the enhanced analysis.
  */
 async function generateSwotAndRoadmap(ideaData) {
-    console.log('=== Enhanced AI Analysis Started ===');
-    console.log('Idea Title:', ideaData.title);
-    console.log('Idea Category:', ideaData.category);
-    
-    try {
-        // --- MODEL SELECTION ---
-        // Using 'gemini-1.5-flash-latest' for fast, structured JSON output
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+  try {
+    // --- MODEL SELECTION ---
+    // Using 'gemini-1.5-flash-latest' for fast, structured JSON output
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash-latest",
+    });
 
-        console.log('Gemini model initialized successfully');
-
-        // --- ENHANCED COMPREHENSIVE PROMPT ---
-        const prompt = `
+    // --- ENHANCED COMPREHENSIVE PROMPT ---
+    const prompt = `
             As an expert startup analyst and venture capitalist, analyze this comprehensive startup idea and provide a detailed assessment.
 
             === STARTUP IDEA ANALYSIS ===
@@ -38,31 +34,41 @@ async function generateSwotAndRoadmap(ideaData) {
             🎯 PROBLEM & SOLUTION:
             - Problem Statement: "${ideaData.problemStatement}"
             - Solution: "${ideaData.solution}"
-            - Competitors: "${ideaData.competitors || 'Not specified'}"
+            - Competitors: "${ideaData.competitors || "Not specified"}"
 
             💼 BUSINESS MODEL:
-            - Revenue Streams: "${ideaData.revenueStreams || 'Not specified'}"
-            - Pricing Strategy: "${ideaData.pricingStrategy || 'Not specified'}"
-            - Key Partnerships: "${ideaData.keyPartnerships || 'Not specified'}"
+            - Revenue Streams: "${ideaData.revenueStreams || "Not specified"}"
+            - Pricing Strategy: "${ideaData.pricingStrategy || "Not specified"}"
+            - Key Partnerships: "${ideaData.keyPartnerships || "Not specified"}"
 
             📈 MARKET & GROWTH:
-            - Market Size: "${ideaData.marketSize || 'Not specified'}"
-            - Go-to-Market Strategy: "${ideaData.goToMarketStrategy || 'Not specified'}"
-            - Scalability Plan: "${ideaData.scalabilityPlan || 'Not specified'}"
+            - Market Size: "${ideaData.marketSize || "Not specified"}"
+            - Go-to-Market Strategy: "${
+              ideaData.goToMarketStrategy || "Not specified"
+            }"
+            - Scalability Plan: "${ideaData.scalabilityPlan || "Not specified"}"
 
             🔧 TECHNICAL REQUIREMENTS:
-            - Technology Stack: "${ideaData.technologyStack || 'Not specified'}"
-            - Development Roadmap: "${ideaData.developmentRoadmap || 'Not specified'}"
-            - Anticipated Challenges: "${ideaData.challengesAnticipated || 'Not specified'}"
+            - Technology Stack: "${ideaData.technologyStack || "Not specified"}"
+            - Development Roadmap: "${
+              ideaData.developmentRoadmap || "Not specified"
+            }"
+            - Anticipated Challenges: "${
+              ideaData.challengesAnticipated || "Not specified"
+            }"
 
             🌱 SUSTAINABILITY & IMPACT:
-            - Eco-Friendly Practices: "${ideaData.ecoFriendlyPractices || 'Not specified'}"
-            - Social Impact: "${ideaData.socialImpact || 'Not specified'}"
+            - Eco-Friendly Practices: "${
+              ideaData.ecoFriendlyPractices || "Not specified"
+            }"
+            - Social Impact: "${ideaData.socialImpact || "Not specified"}"
 
             💰 FUNDING & INVESTMENT:
-            - Funding Requirements: "${ideaData.fundingRequirements || 'Not specified'}"
-            - Use of Funds: "${ideaData.useOfFunds || 'Not specified'}"
-            - Equity Offer: "${ideaData.equityOffer || 'Not specified'}"
+            - Funding Requirements: "${
+              ideaData.fundingRequirements || "Not specified"
+            }"
+            - Use of Funds: "${ideaData.useOfFunds || "Not specified"}"
+            - Equity Offer: "${ideaData.equityOffer || "Not specified"}"
 
             === ANALYSIS REQUIREMENTS ===
 
@@ -105,97 +111,98 @@ async function generateSwotAndRoadmap(ideaData) {
             Return ONLY the JSON object, no additional text or formatting.
         `;
 
-        console.log('Sending comprehensive prompt to Gemini API...');
-        console.log('Prompt length:', prompt.length, 'characters');
+    // --- API CALL ---
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
 
-        // --- API CALL ---
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
-        
-        console.log('Gemini API response received');
-        console.log('Response length:', text.length, 'characters');
-        console.log('First 200 chars of response:', text.substring(0, 200));
-        
-        // --- RESPONSE CLEANING ---
-        const jsonString = text.replace(/```json/g, '').replace(/```/g, '').trim();
-        
-        console.log('Cleaned JSON string length:', jsonString.length);
-        console.log('First 200 chars of cleaned JSON:', jsonString.substring(0, 200));
-        
-        // --- PARSING AND VALIDATION ---
-        const analysis = JSON.parse(jsonString);
-        
-        console.log('Successfully parsed analysis object');
-        console.log('Analysis score:', analysis.score);
-        console.log('Analysis has SWOT:', !!analysis.swot);
-        console.log('Analysis has roadmap:', !!analysis.roadmap);
-        
-        // Validate required fields and provide defaults if missing
-        if (!analysis.score || analysis.score < 1 || analysis.score > 100) {
-            analysis.score = 50; // Default neutral score
-        }
-        
-        if (!analysis.swot) {
-            analysis.swot = {
-                strengths: "Analysis pending - insufficient data provided",
-                weaknesses: "Analysis pending - insufficient data provided", 
-                opportunities: "Analysis pending - insufficient data provided",
-                threats: "Analysis pending - insufficient data provided"
-            };
-        }
-        
-        if (!analysis.roadmap || !Array.isArray(analysis.roadmap)) {
-            analysis.roadmap = [
-                "Q1: Market research and MVP development",
-                "Q2: Beta testing and user feedback collection", 
-                "Q3: Product refinement and initial market launch",
-                "Q4: Customer acquisition and growth optimization"
-            ];
-        } else {
-            // Convert roadmap objects to strings if needed
-            analysis.roadmap = analysis.roadmap.map(item => {
-                if (typeof item === 'object' && item.milestone) {
-                    return `${item.timeframe || 'TBD'}: ${item.milestone}`;
-                }
-                return typeof item === 'string' ? item : String(item);
-            });
-        }
+    // --- RESPONSE CLEANING ---
+    const jsonString = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
 
-        return analysis;
+    // --- PARSING AND VALIDATION ---
+    const analysis = JSON.parse(jsonString);
 
-    } catch (error) {
-        console.error("Error calling Gemini API for comprehensive analysis:", error);
-        console.error("Raw response text:", error.message);
-        
-        // Return a structured fallback response
-        return {
-            score: 50,
-            swot: {
-                strengths: "AI analysis temporarily unavailable. Manual review recommended.",
-                weaknesses: "AI analysis temporarily unavailable. Manual review recommended.",
-                opportunities: "AI analysis temporarily unavailable. Manual review recommended.", 
-                threats: "AI analysis temporarily unavailable. Manual review recommended."
-            },
-            roadmap: [
-                "Q1: Conduct thorough market research and competitive analysis",
-                "Q2: Develop minimum viable product (MVP)",
-                "Q3: Test MVP with target customers and gather feedback",
-                "Q4: Refine product and prepare for market launch"
-            ],
-            recommendations: {
-                immediate_actions: "AI analysis unavailable - conduct manual business analysis",
-                risk_mitigation: "AI analysis unavailable - identify risks through market research",
-                growth_strategy: "AI analysis unavailable - develop strategy based on market feedback",
-                funding_advice: "AI analysis unavailable - consult with financial advisors"
-            },
-            market_assessment: {
-                market_size_evaluation: "AI analysis unavailable - conduct independent market sizing",
-                competitive_positioning: "AI analysis unavailable - perform competitive analysis",
-                customer_validation: "AI analysis unavailable - validate through customer interviews"
-            }
-        };
+    // Validate required fields and provide defaults if missing
+    if (!analysis.score || analysis.score < 1 || analysis.score > 100) {
+      analysis.score = 50; // Default neutral score
     }
+
+    if (!analysis.swot) {
+      analysis.swot = {
+        strengths: "Analysis pending - insufficient data provided",
+        weaknesses: "Analysis pending - insufficient data provided",
+        opportunities: "Analysis pending - insufficient data provided",
+        threats: "Analysis pending - insufficient data provided",
+      };
+    }
+
+    if (!analysis.roadmap || !Array.isArray(analysis.roadmap)) {
+      analysis.roadmap = [
+        "Q1: Market research and MVP development",
+        "Q2: Beta testing and user feedback collection",
+        "Q3: Product refinement and initial market launch",
+        "Q4: Customer acquisition and growth optimization",
+      ];
+    } else {
+      // Convert roadmap objects to strings if needed
+      analysis.roadmap = analysis.roadmap.map((item) => {
+        if (typeof item === "object" && item.milestone) {
+          return `${item.timeframe || "TBD"}: ${item.milestone}`;
+        }
+        return typeof item === "string" ? item : String(item);
+      });
+    }
+
+    return analysis;
+  } catch (error) {
+    console.error(
+      "Error calling Gemini API for comprehensive analysis:",
+      error
+    );
+    console.error("Raw response text:", error.message);
+
+    // Return a structured fallback response
+    return {
+      score: 50,
+      swot: {
+        strengths:
+          "AI analysis temporarily unavailable. Manual review recommended.",
+        weaknesses:
+          "AI analysis temporarily unavailable. Manual review recommended.",
+        opportunities:
+          "AI analysis temporarily unavailable. Manual review recommended.",
+        threats:
+          "AI analysis temporarily unavailable. Manual review recommended.",
+      },
+      roadmap: [
+        "Q1: Conduct thorough market research and competitive analysis",
+        "Q2: Develop minimum viable product (MVP)",
+        "Q3: Test MVP with target customers and gather feedback",
+        "Q4: Refine product and prepare for market launch",
+      ],
+      recommendations: {
+        immediate_actions:
+          "AI analysis unavailable - conduct manual business analysis",
+        risk_mitigation:
+          "AI analysis unavailable - identify risks through market research",
+        growth_strategy:
+          "AI analysis unavailable - develop strategy based on market feedback",
+        funding_advice:
+          "AI analysis unavailable - consult with financial advisors",
+      },
+      market_assessment: {
+        market_size_evaluation:
+          "AI analysis unavailable - conduct independent market sizing",
+        competitive_positioning:
+          "AI analysis unavailable - perform competitive analysis",
+        customer_validation:
+          "AI analysis unavailable - validate through customer interviews",
+      },
+    };
+  }
 }
 
 /**
@@ -205,14 +212,13 @@ async function generateSwotAndRoadmap(ideaData) {
  * @returns {Promise<Array<object>>} A promise that resolves to an array of trend data.
  */
 async function getMarketTrends(keyword) {
-    // This is a mock response for demonstration purposes.
-    // A real implementation would use a library like 'google-trends-api'.
-    console.log(`Fetching MOCK market trends for: ${keyword}`);
-    return Promise.resolve([
-        { year: 2021, popularity: Math.floor(Math.random() * 50) + 20 },
-        { year: 2022, popularity: Math.floor(Math.random() * 50) + 30 },
-        { year: 2023, popularity: Math.floor(Math.random() * 50) + 50 },
-    ]);
+  // This is a mock response for demonstration purposes.
+  // A real implementation would use a library like 'google-trends-api'.
+  return Promise.resolve([
+    { year: 2021, popularity: Math.floor(Math.random() * 50) + 20 },
+    { year: 2022, popularity: Math.floor(Math.random() * 50) + 30 },
+    { year: 2023, popularity: Math.floor(Math.random() * 50) + 50 },
+  ]);
 }
 
 // Export the functions to be used in other parts of the application

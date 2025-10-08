@@ -40,8 +40,6 @@ const InvestorSidebar = ({
       label: "Portfolio Analytics",
       icon: <FaBriefcase className="w-5 h-5" />,
       description: "View portfolio insights",
-      external: true,
-      path: "/investor/portfolio",
     },
     {
       id: "browse-ideas",
