@@ -11,6 +11,7 @@ import {
   FaCalendar,
   FaEye,
 } from "react-icons/fa";
+import ComparisonButton from "./investor/ComparisonButton";
 
 const IdeaCard = ({
   idea,
@@ -18,6 +19,10 @@ const IdeaCard = ({
   isInterested = false,
   onInterest,
   loading = false,
+  comparisonMode = false,
+  isSelectedForComparison = false,
+  onToggleComparison,
+  maxComparisonReached = false,
 }) => {
   const navigate = useNavigate();
 
@@ -30,7 +35,17 @@ const IdeaCard = ({
   };
 
   return (
-    <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 hover:bg-white/[0.05] transition-all duration-300 group">
+    <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 hover:bg-white/[0.05] transition-all duration-300 group relative">
+      {/* Comparison Checkbox */}
+      {comparisonMode && (
+        <ComparisonButton
+          isSelected={isSelectedForComparison}
+          onToggle={onToggleComparison}
+          disabled={maxComparisonReached && !isSelectedForComparison}
+          ideaId={idea._id}
+        />
+      )}
+
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">

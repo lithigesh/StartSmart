@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const IdeaSchema = new mongoose.Schema({
+const IdeaSchema = new mongoose.Schema(
+  {
     // Basic Information
     title: { type: String, required: true },
     elevatorPitch: { type: String, required: true },
@@ -38,35 +39,55 @@ const IdeaSchema = new mongoose.Schema({
     equityOffer: { type: String },
 
     // Attachments
-    attachments: [{
+    attachments: [
+      {
         filename: { type: String },
         originalname: { type: String },
         mimetype: { type: String },
         size: { type: Number },
         path: { type: String },
-        uploadedAt: { type: Date, default: Date.now }
-    }],
+        uploadedAt: { type: Date, default: Date.now },
+      },
+    ],
 
     // System fields
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    status: {
-        type: String,
-        enum: ['draft', 'submitted', 'analyzing', 'analyzed', 'funding_requested', 'closed'],
-        default: 'submitted',
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    
+    status: {
+      type: String,
+      enum: [
+        "draft",
+        "submitted",
+        "analyzing",
+        "analyzed",
+        "funding_requested",
+        "closed",
+      ],
+      default: "submitted",
+    },
+    fundingStatus: {
+      type: String,
+      enum: ["not_requested", "seeking", "funded", "rejected"],
+      default: "not_requested",
+    },
+
     // AI Analysis (existing structure)
     analysis: {
-        score: { type: Number, min: 0, max: 100 },
-        swot: {
-            strengths: String,
-            weaknesses: String,
-            opportunities: String,
-            threats: String,
-        },
-        roadmap: [String],
-        trends: [{ year: Number, popularity: Number }],
+      score: { type: Number, min: 0, max: 100 },
+      swot: {
+        strengths: String,
+        weaknesses: String,
+        opportunities: String,
+        threats: String,
+      },
+      roadmap: [String],
+      trends: [{ year: Number, popularity: Number }],
     },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model('Idea', IdeaSchema);
+module.exports = mongoose.model("Idea", IdeaSchema);

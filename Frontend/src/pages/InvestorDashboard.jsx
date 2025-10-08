@@ -11,7 +11,12 @@ import {
   IdeasSection,
   LoadingSpinner,
   SettingsSection,
+  ComparisonBar,
+  ComparisonModal,
+  SavedComparisonsSection,
+  MarketResearchSection,
 } from "../components/investor";
+import InvestorDealsPage from "./investor/InvestorDealsPage";
 import { FaLightbulb, FaHeart, FaBell } from "react-icons/fa";
 
 const InvestorDashboard = () => {
@@ -39,6 +44,13 @@ const InvestorDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  // Comparison state
+  const [comparisonMode, setComparisonMode] = useState(false);
+  const [selectedForComparison, setSelectedForComparison] = useState([]);
+  const [showComparisonModal, setShowComparisonModal] = useState(false);
+  const [savedComparisons, setSavedComparisons] = useState([]);
+  const [comparisonLoading, setComparisonLoading] = useState(false);
+
   // Handle responsive sidebar behavior
   useEffect(() => {
     const handleResize = () => {
@@ -51,7 +63,7 @@ const InvestorDashboard = () => {
 
     // Set initial state
     handleResize();
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -146,6 +158,51 @@ const InvestorDashboard = () => {
     } finally {
       setActionLoading((prev) => ({ ...prev, [ideaId]: false }));
     }
+  };
+
+  // Comparison handlers
+  const handleToggleComparison = (ideaId) => {
+    const idea = ideas.find((i) => i._id === ideaId);
+    if (!idea) return;
+
+    setSelectedForComparison((prev) => {
+      const isSelected = prev.some((selected) => selected._id === ideaId);
+      if (isSelected) {
+        // Remove from selection
+        return prev.filter((selected) => selected._id !== ideaId);
+      } else {
+        // Add to selection (max 4)
+        if (prev.length >= 4) {
+          setError("You can compare up to 4 ideas at a time");
+          setTimeout(() => setError(null), 3000);
+          return prev;
+        }
+        return [...prev, idea];
+      }
+    });
+  };
+
+  const handleClearComparison = () => {
+    setSelectedForComparison([]);
+    setComparisonMode(false);
+  };
+
+  const handleCompare = () => {
+    if (selectedForComparison.length < 2) {
+      setError("Please select at least 2 ideas to compare");
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+    setShowComparisonModal(true);
+  };
+
+  const handleSaveComparison = (savedComparison) => {
+    // Add to saved comparisons list
+    setSavedComparisons((prev) => [savedComparison, ...prev]);
+    // Clear selection and exit comparison mode
+    setSelectedForComparison([]);
+    setComparisonMode(false);
+    setShowComparisonModal(false);
   };
 
   // Scroll to section functions
@@ -349,6 +406,11 @@ const InvestorDashboard = () => {
             setStatusFilter={setStatusFilter}
             selectedTags={selectedTags}
             setSelectedTags={setSelectedTags}
+            // Comparison props
+            comparisonMode={comparisonMode}
+            setComparisonMode={setComparisonMode}
+            selectedForComparison={selectedForComparison}
+            onToggleComparison={handleToggleComparison}
             emptyStateType="search"
             emptyStateAction={() => {
               setSearchTerm("");
@@ -380,6 +442,15 @@ const InvestorDashboard = () => {
             sectionRef={interestedIdeasRef}
           />
         );
+
+      case "comparisons":
+        return <SavedComparisonsSection />;
+
+      case "market-research":
+        return <MarketResearchSection />;
+
+      case "deals":
+        return <InvestorDealsPage />;
 
       // analytics and portfolio removed
 
@@ -434,15 +505,39 @@ const InvestorDashboard = () => {
       />
 
       {/* Main Content */}
-      <div className="lg:ml-72 transition-all duration-300">
+      <div
+        className={`transition-all duration-300 ${
+          isSidebarCollapsed ? "lg:ml-20" : "lg:ml-72"
+        }`}
+      >
         {/* Header */}
-        <InvestorDashboardHeader />
+        <InvestorDashboardHeader
+          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
 
         {/* Page Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32">
           {renderSectionContent()}
         </div>
       </div>
+
+      {/* Comparison Bar */}
+      {comparisonMode && (
+        <ComparisonBar
+          selectedIdeas={selectedForComparison}
+          onRemove={handleToggleComparison}
+          onCompare={handleCompare}
+          onClearAll={handleClearComparison}
+        />
+      )}
+
+      {/* Comparison Modal */}
+      <ComparisonModal
+        isOpen={showComparisonModal}
+        onClose={() => setShowComparisonModal(false)}
+        ideas={selectedForComparison}
+        onSave={handleSaveComparison}
+      />
     </div>
   );
 };

@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { notificationsAPI } from '../services/api';
+import { useState, useEffect, useCallback } from "react";
+import { notificationsAPI } from "../services/api";
 
 export const useNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [toastNotifications, setToastNotifications] = useState([]);
 
   // Load notifications
   const loadNotifications = useCallback(async (params = {}) => {
@@ -13,7 +14,7 @@ export const useNotifications = () => {
       setLoading(true);
       setError(null);
       const response = await notificationsAPI.getNotifications(params);
-      
+
       if (response.notifications) {
         // New paginated format
         setNotifications(response.notifications);
@@ -22,11 +23,11 @@ export const useNotifications = () => {
         // Legacy format
         setNotifications(response);
         // Count unread notifications
-        const unread = response.filter(notif => !notif.read).length;
+        const unread = response.filter((notif) => !notif.read).length;
         setUnreadCount(unread);
       }
     } catch (err) {
-      console.error('Error loading notifications:', err);
+      console.error("Error loading notifications:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -39,7 +40,7 @@ export const useNotifications = () => {
       const response = await notificationsAPI.getUnreadCount();
       setUnreadCount(response.unreadCount || 0);
     } catch (err) {
-      console.error('Error loading unread count:', err);
+      console.error("Error loading unread count:", err);
     }
   }, []);
 
@@ -47,20 +48,18 @@ export const useNotifications = () => {
   const markAsRead = useCallback(async (notificationId) => {
     try {
       await notificationsAPI.markAsRead(notificationId);
-      
+
       // Update local state
-      setNotifications(prev => 
-        prev.map(notif => 
-          notif._id === notificationId 
-            ? { ...notif, read: true }
-            : notif
+      setNotifications((prev) =>
+        prev.map((notif) =>
+          notif._id === notificationId ? { ...notif, read: true } : notif
         )
       );
-      
+
       // Update unread count
-      setUnreadCount(prev => Math.max(0, prev - 1));
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (err) {
-      console.error('Error marking notification as read:', err);
+      console.error("Error marking notification as read:", err);
       setError(err.message);
       throw err;
     }
@@ -70,58 +69,86 @@ export const useNotifications = () => {
   const markAllAsRead = useCallback(async () => {
     try {
       await notificationsAPI.markAllAsRead();
-      
+
       // Update local state
-      setNotifications(prev => 
-        prev.map(notif => ({ ...notif, read: true }))
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, read: true }))
       );
-      
+
       setUnreadCount(0);
     } catch (err) {
-      console.error('Error marking all notifications as read:', err);
+      console.error("Error marking all notifications as read:", err);
       setError(err.message);
       throw err;
     }
   }, []);
 
   // Delete notification
-  const deleteNotification = useCallback(async (notificationId) => {
-    try {
-      await notificationsAPI.deleteNotification(notificationId);
-      
-      // Find the notification to check if it was unread
-      const notification = notifications.find(notif => notif._id === notificationId);
-      const wasUnread = notification && !notification.read;
-      
-      // Update local state
-      setNotifications(prev => 
-        prev.filter(notif => notif._id !== notificationId)
-      );
-      
-      // Update unread count if necessary
-      if (wasUnread) {
-        setUnreadCount(prev => Math.max(0, prev - 1));
+  const deleteNotification = useCallback(
+    async (notificationId) => {
+      try {
+        await notificationsAPI.deleteNotification(notificationId);
+
+        // Find the notification to check if it was unread
+        const notification = notifications.find(
+          (notif) => notif._id === notificationId
+        );
+        const wasUnread = notification && !notification.read;
+
+        // Update local state
+        setNotifications((prev) =>
+          prev.filter((notif) => notif._id !== notificationId)
+        );
+
+        // Update unread count if necessary
+        if (wasUnread) {
+          setUnreadCount((prev) => Math.max(0, prev - 1));
+        }
+      } catch (err) {
+        console.error("Error deleting notification:", err);
+        setError(err.message);
+        throw err;
       }
-    } catch (err) {
-      console.error('Error deleting notification:', err);
-      setError(err.message);
-      throw err;
-    }
-  }, [notifications]);
+    },
+    [notifications]
+  );
 
   // Clear all notifications
   const clearAllNotifications = useCallback(async () => {
     try {
       await notificationsAPI.clearAllNotifications();
-      
+
       // Update local state
       setNotifications([]);
       setUnreadCount(0);
     } catch (err) {
-      console.error('Error clearing all notifications:', err);
+      console.error("Error clearing all notifications:", err);
       setError(err.message);
       throw err;
     }
+  }, []);
+
+  // Add toast notification (client-side only)
+  const addNotification = useCallback((message, type = "info") => {
+    const id = Date.now() + Math.random();
+    const newNotification = {
+      id,
+      message,
+      type, // 'success', 'error', 'info', 'warning'
+      timestamp: new Date(),
+    };
+
+    setToastNotifications((prev) => [...prev, newNotification]);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      setToastNotifications((prev) => prev.filter((n) => n.id !== id));
+    }, 5000);
+  }, []);
+
+  // Remove toast notification manually
+  const removeToastNotification = useCallback((id) => {
+    setToastNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
   // Auto-load notifications on mount
@@ -149,6 +176,10 @@ export const useNotifications = () => {
     markAllAsRead,
     deleteNotification,
     clearAllNotifications,
-    clearError: () => setError(null)
+    clearError: () => setError(null),
+    // Toast notifications
+    toastNotifications,
+    addNotification,
+    removeToastNotification,
   };
 };

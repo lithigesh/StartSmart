@@ -8,3 +8,16 @@ export { default as ErrorMessage } from "./ErrorMessage";
 export { default as IdeasSection } from "./IdeasSection";
 export { default as LoadingSpinner } from "./LoadingSpinner";
 export { default as SettingsSection } from "./SettingsSection";
+export { default as ComparisonButton } from "./ComparisonButton";
+export { default as ComparisonBar } from "./ComparisonBar";
+export { default as ComparisonModal } from "./ComparisonModal";
+export { default as SavedComparisonsSection } from "./SavedComparisonsSection";
+export { default as MarketResearchSection } from "./MarketResearchSection";
+export { default as MarketResearchModal } from "./MarketResearchModal";
+export { default as MarketResearchDetailView } from "./MarketResearchDetailView";
+
+// Deal Management Components
+export { default as DealCard } from "./DealCard";
+export { default as NegotiationChat } from "./NegotiationChat";
+export { default as DealAcceptanceModal } from "./DealAcceptanceModal";
+export { default as InvestorFundingRequestModal } from "./InvestorFundingRequestModal";
