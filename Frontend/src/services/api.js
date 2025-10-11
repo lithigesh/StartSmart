@@ -12,8 +12,8 @@ const getAuthHeaders = () => {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
   };
-  console.log('Auth headers:', headers);
-  console.log('Token from localStorage:', token ? 'Present' : 'Missing');
+  console.log("Auth headers:", headers);
+  console.log("Token from localStorage:", token ? "Present" : "Missing");
   return headers;
 };
 
@@ -23,9 +23,9 @@ const handleResponse = async (response) => {
     const error = await response
       .json()
       .catch(() => ({ message: "Network error" }));
-    console.error('API Error Response:', error);
-    console.error('Response status:', response.status);
-    console.error('Response statusText:', response.statusText);
+    console.error("API Error Response:", error);
+    console.error("Response status:", response.status);
+    console.error("Response statusText:", response.statusText);
     throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
   return response.json();
@@ -46,21 +46,21 @@ export const ideasAPI = {
   submitIdea: async (ideaData) => {
     // Check if ideaData contains files (attachments)
     const hasFiles = ideaData.attachments && ideaData.attachments.length > 0;
-    
+
     if (hasFiles) {
       // Use FormData for file uploads
       const formData = new FormData();
-      
+
       // Append all form fields
-      Object.keys(ideaData).forEach(key => {
-        if (key === 'attachments') {
+      Object.keys(ideaData).forEach((key) => {
+        if (key === "attachments") {
           // Handle file attachments
-          ideaData.attachments.forEach(file => {
-            formData.append('attachments', file);
+          ideaData.attachments.forEach((file) => {
+            formData.append("attachments", file);
           });
         } else {
           // Append other fields
-          formData.append(key, ideaData[key] || '');
+          formData.append(key, ideaData[key] || "");
         }
       });
 
@@ -72,18 +72,18 @@ export const ideasAPI = {
       return handleResponse(response);
     } else {
       // Use JSON for ideas without files
-      console.log('Submitting idea to:', `${API_URL}/api/ideas`);
-      console.log('Request payload:', ideaData);
-      
+      console.log("Submitting idea to:", `${API_URL}/api/ideas`);
+      console.log("Request payload:", ideaData);
+
       const response = await fetch(`${API_URL}/api/ideas`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(ideaData),
       });
-      
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-      
+
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+
       return handleResponse(response);
     }
   },
@@ -100,13 +100,13 @@ export const ideasAPI = {
         fetch(`${API_URL}/api/ideas/${ideaId}`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Ideas API not available, using demo data');
+      console.warn("Ideas API not available, using demo data");
       return {
         success: true,
         data: {
@@ -114,8 +114,8 @@ export const ideasAPI = {
           title: "Demo Idea",
           description: "This is a demo idea",
           category: "Technology",
-          stage: "Concept"
-        }
+          stage: "Concept",
+        },
       };
     }
   },
@@ -127,103 +127,120 @@ export const ideasAPI = {
       // First get the current user info to get userId
       let token = localStorage.getItem("token");
       console.log("Token exists:", !!token); // Debug log
-      
+
       if (!token) {
-        throw new Error('No authentication token found. Please log in.');
+        throw new Error("No authentication token found. Please log in.");
       }
-      
+
       // Decode token to get user ID (simple base64 decode of JWT payload)
       let userId;
       try {
         console.log("Attempting to decode token..."); // Debug log
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const payload = JSON.parse(atob(token.split(".")[1]));
         console.log("Token payload:", payload); // Debug log
         userId = payload.id || payload.userId || payload.sub;
         console.log("Extracted userId:", userId); // Debug log
-        
+
         if (!userId) {
-          console.warn('No user ID found in token, using demo data');
-          throw new Error('Invalid token structure');
+          console.warn("No user ID found in token, using demo data");
+          throw new Error("Invalid token structure");
         }
       } catch (tokenError) {
-        console.warn('Token decoding failed, using demo data:', tokenError.message);
-        throw new Error('Invalid token format');
+        console.warn(
+          "Token decoding failed, using demo data:",
+          tokenError.message
+        );
+        throw new Error("Invalid token format");
       }
-      
-      console.log("Making API request to:", `${API_URL}/api/ideas/user/${userId}`); // Debug log
-      
+
+      console.log(
+        "Making API request to:",
+        `${API_URL}/api/ideas/user/${userId}`
+      ); // Debug log
+
       const response = await Promise.race([
         fetch(`${API_URL}/api/ideas/user/${userId}`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 10000) // Increased timeout
-        )
+        new Promise(
+          (_, reject) => setTimeout(() => reject(new Error("Timeout")), 10000) // Increased timeout
+        ),
       ]);
-      
+
       console.log("API response status:", response.status); // Debug log
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log("API data:", data); // Debug log
-      
+
       // Transform the data to include required fields
-      const transformedData = Array.isArray(data) ? data.map(idea => ({
-        ...idea,
-        id: idea._id, // Ensure id field exists
-        elevatorPitch: idea.elevatorPitch || idea.description,
-        targetAudience: idea.targetAudience || "General audience"
-      })) : [];
-      
+      const transformedData = Array.isArray(data)
+        ? data.map((idea) => ({
+            ...idea,
+            id: idea._id, // Ensure id field exists
+            elevatorPitch: idea.elevatorPitch || idea.description,
+            targetAudience: idea.targetAudience || "General audience",
+          }))
+        : [];
+
       return {
         success: true,
-        data: transformedData
+        data: transformedData,
       };
     } catch (error) {
-      console.warn('User ideas API not available, using demo data:', error.message);
+      console.warn(
+        "User ideas API not available, using demo data:",
+        error.message
+      );
       return {
         success: true,
         data: [
           {
             id: 1,
             title: "AI-Powered Marketing Platform",
-            description: "Revolutionary AI platform for automated marketing campaigns with machine learning algorithms",
+            description:
+              "Revolutionary AI platform for automated marketing campaigns with machine learning algorithms",
             category: "Technology",
             stage: "MVP",
             budget: 500000,
             tags: ["AI", "Marketing", "Automation"],
-            elevatorPitch: "Transform marketing with AI-driven automation that learns and adapts",
+            elevatorPitch:
+              "Transform marketing with AI-driven automation that learns and adapts",
             targetAudience: "Small to medium businesses",
-            createdAt: "2024-01-15T10:00:00Z"
+            createdAt: "2024-01-15T10:00:00Z",
           },
           {
             id: 2,
             title: "Smart Home Automation",
-            description: "IoT-based home automation system with AI integration for energy efficiency",
+            description:
+              "IoT-based home automation system with AI integration for energy efficiency",
             category: "IoT",
             stage: "Prototype",
             budget: 250000,
             tags: ["IoT", "Smart Home", "Energy"],
-            elevatorPitch: "Smart homes that learn and adapt to save energy automatically",
+            elevatorPitch:
+              "Smart homes that learn and adapt to save energy automatically",
             targetAudience: "Homeowners and property managers",
-            createdAt: "2024-01-10T14:30:00Z"
+            createdAt: "2024-01-10T14:30:00Z",
           },
           {
             id: 3,
             title: "Sustainable Fashion Marketplace",
-            description: "Online marketplace connecting eco-conscious consumers with sustainable fashion brands",
+            description:
+              "Online marketplace connecting eco-conscious consumers with sustainable fashion brands",
             category: "E-commerce",
             stage: "Concept",
             budget: 150000,
             tags: ["Fashion", "Sustainability", "Marketplace"],
-            elevatorPitch: "Connect conscious consumers with sustainable fashion effortlessly",
+            elevatorPitch:
+              "Connect conscious consumers with sustainable fashion effortlessly",
             targetAudience: "Eco-conscious millennials and Gen Z",
-            createdAt: "2024-01-05T16:45:00Z"
-          }
-        ]
+            createdAt: "2024-01-05T16:45:00Z",
+          },
+        ],
       };
     }
   },
@@ -236,11 +253,11 @@ export const entrepreneurAPI = {
     // First get the current user info to get userId
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No authentication token found");
-    
+
     // Decode token to get user ID (simple base64 decode of JWT payload)
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]));
     const userId = payload.id;
-    
+
     const response = await fetch(`${API_URL}/api/ideas/user/${userId}`, {
       headers: getAuthHeaders(),
     });
@@ -252,12 +269,12 @@ export const entrepreneurAPI = {
     try {
       // Get all user's ideas first
       const ideas = await entrepreneurAPI.getMyIdeas();
-      
+
       // Calculate metrics from the ideas
       const totalIdeas = ideas.length;
       let fundingReceived = 0;
       let interestedInvestors = 0;
-      
+
       // For each idea, we'd need to get funding and investor interest
       // For now, we'll return basic metrics
       for (const idea of ideas) {
@@ -269,20 +286,20 @@ export const entrepreneurAPI = {
           interestedInvestors += idea.interestedInvestors.length;
         }
       }
-      
+
       return {
         totalIdeas,
         fundingReceived,
         interestedInvestors,
-        ideas
+        ideas,
       };
     } catch (error) {
-      console.error('Error fetching dashboard metrics:', error);
+      console.error("Error fetching dashboard metrics:", error);
       return {
         totalIdeas: 0,
         fundingReceived: 0,
         interestedInvestors: 0,
-        ideas: []
+        ideas: [],
       };
     }
   },
@@ -293,15 +310,15 @@ export const entrepreneurAPI = {
       // This would typically come from a dedicated activity endpoint
       // For now, we'll derive it from other data sources
       const activities = [];
-      
+
       // You can implement this by calling multiple endpoints:
       // - Recent notifications
       // - Recent investor interests
       // - Recent funding updates
-      
+
       return activities;
     } catch (error) {
-      console.error('Error fetching recent activity:', error);
+      console.error("Error fetching recent activity:", error);
       return [];
     }
   },
@@ -361,6 +378,17 @@ export const investorAPI = {
     return handleResponse(response);
   },
 
+  // Get portfolio analytics
+  getPortfolioAnalytics: async () => {
+    const response = await fetch(
+      `${API_URL}/api/investors/portfolio/analytics`,
+      {
+        headers: getAuthHeaders(),
+      }
+    );
+    return handleResponse(response);
+  },
+
   // Mark interest through investor endpoint
   markInterest: async (ideaId) => {
     const response = await fetch(
@@ -405,6 +433,136 @@ export const investorAPI = {
     });
     return handleResponse(response);
   },
+
+  // Comparison API methods
+  comparisons: {
+    // Create a new comparison
+    create: async (comparisonData) => {
+      const response = await fetch(`${API_URL}/api/investor/comparisons`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(comparisonData),
+      });
+      return handleResponse(response);
+    },
+
+    // Get all comparisons for the logged-in investor
+    getAll: async () => {
+      const response = await fetch(`${API_URL}/api/investor/comparisons`, {
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    },
+
+    // Get a specific comparison by ID
+    getById: async (comparisonId) => {
+      const response = await fetch(
+        `${API_URL}/api/investor/comparisons/${comparisonId}`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
+      return handleResponse(response);
+    },
+
+    // Update comparison notes/leader
+    update: async (comparisonId, updates) => {
+      const response = await fetch(
+        `${API_URL}/api/investor/comparisons/${comparisonId}`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(updates),
+        }
+      );
+      return handleResponse(response);
+    },
+
+    // Delete a comparison
+    delete: async (comparisonId) => {
+      const response = await fetch(
+        `${API_URL}/api/investor/comparisons/${comparisonId}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
+      return handleResponse(response);
+    },
+  },
+
+  // Market Research API methods
+  marketResearch: {
+    // Create a new market research note
+    create: async (researchData) => {
+      const response = await fetch(`${API_URL}/api/investor/market-research`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(researchData),
+      });
+      return handleResponse(response);
+    },
+
+    // Get all market research notes for the logged-in investor
+    getAll: async (filters = {}) => {
+      const queryParams = new URLSearchParams(filters).toString();
+      const url = queryParams
+        ? `${API_URL}/api/investor/market-research?${queryParams}`
+        : `${API_URL}/api/investor/market-research`;
+
+      const response = await fetch(url, {
+        headers: getAuthHeaders(),
+      });
+      return handleResponse(response);
+    },
+
+    // Get a specific market research note by ID
+    getById: async (researchId) => {
+      const response = await fetch(
+        `${API_URL}/api/investor/market-research/${researchId}`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
+      return handleResponse(response);
+    },
+
+    // Update a market research note
+    update: async (researchId, updates) => {
+      const response = await fetch(
+        `${API_URL}/api/investor/market-research/${researchId}`,
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(updates),
+        }
+      );
+      return handleResponse(response);
+    },
+
+    // Delete a market research note
+    delete: async (researchId) => {
+      const response = await fetch(
+        `${API_URL}/api/investor/market-research/${researchId}`,
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
+      );
+      return handleResponse(response);
+    },
+
+    // Get all unique sectors
+    getSectors: async () => {
+      const response = await fetch(
+        `${API_URL}/api/investor/market-research/sectors/list`,
+        {
+          headers: getAuthHeaders(),
+        }
+      );
+      return handleResponse(response);
+    },
+  },
 };
 
 // Funding API
@@ -416,16 +574,15 @@ export const fundingAPI = {
         fetch(`${API_URL}/api/funding`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Funding API not available, using demo data');
+      console.warn("Funding API not available, using demo data");
       return {
         success: true,
-        
       };
     }
   },
@@ -437,71 +594,75 @@ export const fundingAPI = {
         fetch(`${API_URL}/api/funding/user`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 10000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
       ]);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const result = await response.json();
-      
+
       // Transform the data for frontend consumption
-      const transformedData = Array.isArray(result.data) ? result.data.map(request => ({
-        _id: request._id,
-        id: request._id,
-        ideaTitle: request.ideaId?.title || "Unknown Idea",
-        ideaId: {
-          _id: request.ideaId?._id || request.ideaId,
-          title: request.ideaId?.title || "Unknown Idea"
-        },
-        amount: request.amountRequested,
-        equity: request.equity || 0,
-        valuation: request.valuation || (request.amountRequested / (request.equity || 1)) * 100,
-        status: request.status,
-        message: request.description,
-        description: request.description || "No description available",
-        createdAt: request.createdAt,
-        updatedAt: request.updatedAt,
-        // Additional fields from expanded model
-        teamSize: request.teamSize,
-        businessPlan: request.businessPlan,
-        currentRevenue: request.currentRevenue,
-        projectedRevenue: request.projectedRevenue,
-        previousFunding: request.previousFunding,
-        revenueModel: request.revenueModel,
-        targetMarket: request.targetMarket,
-        competitiveAdvantage: request.competitiveAdvantage,
-        customerTraction: request.customerTraction,
-        financialProjections: request.financialProjections,
-        useOfFunds: request.useOfFunds,
-        timeline: request.timeline,
-        milestones: request.milestones,
-        keyTeamMembers: request.keyTeamMembers,
-        advisors: request.advisors,
-        existingInvestors: request.existingInvestors,
-        riskFactors: request.riskFactors,
-        exitStrategy: request.exitStrategy,
-        intellectualProperty: request.intellectualProperty,
-        contactPhone: request.contactPhone,
-        contactEmail: request.contactEmail,
-        companyWebsite: request.companyWebsite,
-        linkedinProfile: request.linkedinProfile,
-        additionalDocuments: request.additionalDocuments
-      })) : [];
-      
+      const transformedData = Array.isArray(result.data)
+        ? result.data.map((request) => ({
+            _id: request._id,
+            id: request._id,
+            ideaTitle: request.idea?.title || "Unknown Idea",
+            ideaId: {
+              _id: request.idea?._id || request.idea,
+              title: request.idea?.title || "Unknown Idea",
+            },
+            amount: request.amount,
+            equity: request.equity || 0,
+            valuation:
+              request.valuation ||
+              (request.amount / (request.equity || 1)) * 100,
+            status: request.status,
+            message: request.message,
+            description: request.message || "No description available",
+            createdAt: request.createdAt,
+            updatedAt: request.updatedAt,
+            // Additional fields from expanded model
+            teamSize: request.teamSize,
+            businessPlan: request.businessPlan,
+            currentRevenue: request.currentRevenue,
+            projectedRevenue: request.projectedRevenue,
+            previousFunding: request.previousFunding,
+            revenueModel: request.revenueModel,
+            targetMarket: request.targetMarket,
+            competitiveAdvantage: request.competitiveAdvantage,
+            customerTraction: request.customerTraction,
+            financialProjections: request.financialProjections,
+            useOfFunds: request.useOfFunds,
+            timeline: request.timeline,
+            milestones: request.milestones,
+            keyTeamMembers: request.keyTeamMembers,
+            advisors: request.advisors,
+            existingInvestors: request.existingInvestors,
+            riskFactors: request.riskFactors,
+            exitStrategy: request.exitStrategy,
+            intellectualProperty: request.intellectualProperty,
+            contactPhone: request.contactPhone,
+            contactEmail: request.contactEmail,
+            companyWebsite: request.companyWebsite,
+            linkedinProfile: request.linkedinProfile,
+            additionalDocuments: request.additionalDocuments,
+          }))
+        : [];
+
       return {
         success: true,
-        data: transformedData
+        data: transformedData,
       };
     } catch (error) {
-      console.warn('User funding API error:', error.message);
+      console.warn("User funding API error:", error.message);
       return {
         success: false,
         data: [],
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -510,79 +671,90 @@ export const fundingAPI = {
   createFundingRequest: async (requestData) => {
     console.log("=== createFundingRequest API call started ==="); // Debug log
     console.log("Request data:", requestData); // Debug log
-    
+
     try {
       const headers = getAuthHeaders();
       console.log("Headers:", headers); // Debug log
-      
+
       // Transform frontend data to match backend structure exactly
       const backendData = {
         ideaId: requestData.ideaId,
         amount: parseInt(requestData.amount),
         equity: parseFloat(requestData.equity),
-        message: requestData.message || '',
-        teamSize: requestData.teamSize ? parseInt(requestData.teamSize) : undefined,
-        businessPlan: requestData.businessPlan || '',
-        currentRevenue: requestData.currentRevenue ? parseInt(requestData.currentRevenue) : undefined,
-        previousFunding: requestData.previousFunding ? parseInt(requestData.previousFunding) : undefined,
-        revenueModel: requestData.revenueModel || '',
-        targetMarket: requestData.targetMarket || '',
-        competitiveAdvantage: requestData.competitiveAdvantage || '',
-        customerTraction: requestData.customerTraction || '',
-        financialProjections: requestData.financialProjections || '',
-        useOfFunds: requestData.useOfFunds || '',
-        timeline: requestData.timeline || '',
-        milestones: requestData.milestones || '',
-        riskFactors: requestData.riskFactors || '',
-        exitStrategy: requestData.exitStrategy || '',
-        intellectualProperty: requestData.intellectualProperty || '',
-        contactPhone: requestData.contactPhone || '',
-        contactEmail: requestData.contactEmail || '',
-        companyWebsite: requestData.companyWebsite || '',
-        linkedinProfile: requestData.linkedinProfile || '',
-        additionalDocuments: requestData.additionalDocuments || '',
-        fundingStage: requestData.fundingStage || 'seed',
-        investmentType: requestData.investmentType || 'equity'
+        message: requestData.message || "",
+        teamSize: requestData.teamSize
+          ? parseInt(requestData.teamSize)
+          : undefined,
+        businessPlan: requestData.businessPlan || "",
+        currentRevenue: requestData.currentRevenue
+          ? parseInt(requestData.currentRevenue)
+          : undefined,
+        previousFunding: requestData.previousFunding
+          ? parseInt(requestData.previousFunding)
+          : undefined,
+        revenueModel: requestData.revenueModel || "",
+        targetMarket: requestData.targetMarket || "",
+        competitiveAdvantage: requestData.competitiveAdvantage || "",
+        customerTraction: requestData.customerTraction || "",
+        financialProjections: requestData.financialProjections || "",
+        useOfFunds: requestData.useOfFunds || "",
+        timeline: requestData.timeline || "",
+        milestones: requestData.milestones || "",
+        riskFactors: requestData.riskFactors || "",
+        exitStrategy: requestData.exitStrategy || "",
+        intellectualProperty: requestData.intellectualProperty || "",
+        contactPhone: requestData.contactPhone || "",
+        contactEmail: requestData.contactEmail || "",
+        companyWebsite: requestData.companyWebsite || "",
+        linkedinProfile: requestData.linkedinProfile || "",
+        additionalDocuments: requestData.additionalDocuments || "",
+        fundingStage: requestData.fundingStage || "seed",
+        investmentType: requestData.investmentType || "equity",
+        // NEW: Targeting fields
+        accessType: requestData.accessType || "public",
+        targetedInvestors: requestData.targetedInvestors || [],
       };
-      
+
       // Remove undefined values
-      Object.keys(backendData).forEach(key => {
+      Object.keys(backendData).forEach((key) => {
         if (backendData[key] === undefined) {
           delete backendData[key];
         }
       });
-      
+
       const response = await fetch(`${API_URL}/api/funding`, {
-        method: 'POST',
+        method: "POST",
         headers: headers,
         body: JSON.stringify(backendData),
       });
-      
+
       console.log("Response status:", response.status); // Debug log
       console.log("Response OK:", response.ok); // Debug log
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error("API Error:", errorData); // Debug log
-        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
-      
+
       const result = await response.json();
       console.log("API result:", result); // Debug log
-      
+
       return {
         success: result.success !== false,
         data: result.data || result,
-        message: result.message || "Funding request created successfully"
+        message: result.message || "Funding request created successfully",
       };
     } catch (error) {
-      console.error('Create funding API error:', error.message);
-      
+      console.error("Create funding API error:", error.message);
+
       // Return the actual error for validation/auth issues
       return {
         success: false,
         message: error.message,
-        error: error.message
+        error: error.message,
       };
     }
   },
@@ -594,13 +766,13 @@ export const fundingAPI = {
         fetch(`${API_URL}/api/funding/${requestId}`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Funding request API not available, using demo data');
+      console.warn("Funding request API not available, using demo data");
       return {
         success: true,
         data: {
@@ -612,8 +784,8 @@ export const fundingAPI = {
           status: "pending",
           description: "Demo funding request data",
           createdAt: "2024-01-15T10:00:00Z",
-          updatedAt: "2024-01-15T10:00:00Z"
-        }
+          updatedAt: "2024-01-15T10:00:00Z",
+        },
       };
     }
   },
@@ -627,27 +799,27 @@ export const fundingAPI = {
           headers: getAuthHeaders(),
           body: JSON.stringify({ status, message }),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 10000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
       ]);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
-      console.warn('Update funding API error:', error.message);
+      console.warn("Update funding API error:", error.message);
       return {
         success: true,
         data: {
           id: requestId,
           status: status,
           message: message,
-          updatedAt: new Date().toISOString()
-        }
+          updatedAt: new Date().toISOString(),
+        },
       };
     }
   },
@@ -658,31 +830,35 @@ export const fundingAPI = {
       // Transform frontend data to match backend structure
       const backendData = {
         ideaId: detailsData.ideaId,
-        amountRequested: parseInt(detailsData.amount),
-        description: detailsData.message || '',
-        businessPlan: detailsData.businessPlan || '',
-        targetMarket: detailsData.targetMarket || '',
-        competitiveAdvantage: detailsData.competitiveAdvantage || '',
-        revenueModel: detailsData.revenueModel || '',
-        currentRevenue: detailsData.currentRevenue ? parseInt(detailsData.currentRevenue) : null,
-        projectedRevenue: detailsData.projectedRevenue ? parseInt(detailsData.projectedRevenue) : null,
-        financialProjections: detailsData.financialProjections || '',
-        useOfFunds: detailsData.useOfFunds || '',
-        timeline: detailsData.timeline || '',
-        milestones: detailsData.milestones || '',
+        amount: parseInt(detailsData.amount),
+        equity: parseFloat(detailsData.equity),
+        message: detailsData.message || "",
+        businessPlan: detailsData.businessPlan || "",
+        targetMarket: detailsData.targetMarket || "",
+        competitiveAdvantage: detailsData.competitiveAdvantage || "",
+        revenueModel: detailsData.revenueModel || "",
+        currentRevenue: detailsData.currentRevenue
+          ? parseInt(detailsData.currentRevenue)
+          : null,
+        previousFunding: detailsData.previousFunding
+          ? parseInt(detailsData.previousFunding)
+          : null,
+        financialProjections: detailsData.financialProjections || "",
+        useOfFunds: detailsData.useOfFunds || "",
+        timeline: detailsData.timeline || "",
+        milestones: detailsData.milestones || "",
         teamSize: detailsData.teamSize ? parseInt(detailsData.teamSize) : null,
-        keyTeamMembers: detailsData.keyTeamMembers || '',
-        advisors: detailsData.advisors || '',
-        previousFunding: detailsData.previousFunding ? parseInt(detailsData.previousFunding) : null,
-        existingInvestors: detailsData.existingInvestors || '',
-        customerTraction: detailsData.customerTraction || '',
-        riskFactors: detailsData.riskFactors || '',
-        exitStrategy: detailsData.exitStrategy || '',
-        intellectualProperty: detailsData.intellectualProperty || '',
-        contactPhone: detailsData.contactPhone || '',
-        contactEmail: detailsData.contactEmail || '',
-        companyWebsite: detailsData.companyWebsite || '',
-        linkedinProfile: detailsData.linkedinProfile || ''
+        customerTraction: detailsData.customerTraction || "",
+        riskFactors: detailsData.riskFactors || "",
+        exitStrategy: detailsData.exitStrategy || "",
+        intellectualProperty: detailsData.intellectualProperty || "",
+        contactPhone: detailsData.contactPhone || "",
+        contactEmail: detailsData.contactEmail || "",
+        companyWebsite: detailsData.companyWebsite || "",
+        linkedinProfile: detailsData.linkedinProfile || "",
+        additionalDocuments: detailsData.additionalDocuments || "",
+        fundingStage: detailsData.fundingStage || "seed",
+        investmentType: detailsData.investmentType || "equity",
       };
 
       const response = await Promise.race([
@@ -691,27 +867,29 @@ export const fundingAPI = {
           headers: getAuthHeaders(),
           body: JSON.stringify(backendData),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 10000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
       ]);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
-      
+
       const result = await response.json();
       return {
         success: true,
         data: result.data || result,
-        message: result.message || "Funding request updated successfully"
+        message: result.message || "Funding request updated successfully",
       };
     } catch (error) {
-      console.error('Update funding details API error:', error.message);
+      console.error("Update funding details API error:", error.message);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -720,31 +898,69 @@ export const fundingAPI = {
   withdrawFundingRequest: async (requestId) => {
     try {
       const response = await Promise.race([
-        fetch(`${API_URL}/api/funding/${requestId}/withdraw`, {
-          method: "PUT",
+        fetch(`${API_URL}/api/funding/${requestId}`, {
+          method: "DELETE",
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 10000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
       ]);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
       }
-      
+
       const result = await response.json();
       return {
         success: true,
         data: result.data || result,
-        message: result.message || "Funding request withdrawn successfully"
+        message: result.message || "Funding request withdrawn successfully",
       };
     } catch (error) {
-      console.error('Withdraw funding API error:', error.message);
+      console.error("Withdraw funding API error:", error.message);
       return {
         success: false,
-        message: error.message
+        message: error.message,
+      };
+    }
+  },
+
+  // Get interested investors for a specific idea (for targeting)
+  getInterestedInvestorsForIdea: async (ideaId) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/idea/${ideaId}/interested-investors`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return {
+        success: true,
+        data: result.data || [],
+        count: result.count || 0,
+        ideaTitle: result.ideaTitle || "",
+      };
+    } catch (error) {
+      console.error("Get interested investors API error:", error.message);
+      return {
+        success: false,
+        data: [],
+        message: error.message,
       };
     }
   },
@@ -756,19 +972,19 @@ export const fundingAPI = {
         fetch(`${API_URL}/api/funding/stats`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const result = await response.json();
       return result;
     } catch (error) {
-      console.warn('Funding stats API error:', error.message);
+      console.warn("Funding stats API error:", error.message);
       return {
         success: true,
         data: {
@@ -777,8 +993,247 @@ export const fundingAPI = {
           acceptedRequests: 1,
           totalAmountRequested: 900000,
           totalAmountReceived: 250000,
-          averageEquityOffered: 12.3
-        }
+          averageEquityOffered: 12.3,
+        },
+      };
+    }
+  },
+};
+
+// Investor Deal Management API
+export const investorDealAPI = {
+  // Get investor's deal pipeline
+  getInvestorPipeline: async (stage = null) => {
+    try {
+      const url = stage
+        ? `${API_URL}/api/funding/investor/pipeline?stage=${stage}`
+        : `${API_URL}/api/funding/investor/pipeline`;
+
+      const response = await Promise.race([
+        fetch(url, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Get investor pipeline API error:", error.message);
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  // Mark funding request as viewed
+  markAsViewed: async (requestId) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}/view`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Mark as viewed API error:", error.message);
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  // Investor negotiates terms
+  negotiateFundingRequest: async (requestId, negotiationData) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}/negotiate`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(negotiationData),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Negotiate funding API error:", error.message);
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  // Entrepreneur responds to negotiation
+  entrepreneurRespondToNegotiation: async (requestId, responseData) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}/entrepreneur-negotiate`, {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(responseData),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error(
+        "Entrepreneur negotiation response API error:",
+        error.message
+      );
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  // Investor responds to funding request (accept/decline/interested)
+  respondToFundingRequest: async (requestId, responseData) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}/investor-response`, {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: JSON.stringify(responseData),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Respond to funding API error:", error.message);
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  // Get all available funding requests (for browsing)
+  getAllFundingRequests: async (filters = {}) => {
+    try {
+      const queryParams = new URLSearchParams();
+
+      if (filters.status) queryParams.append("status", filters.status);
+      if (filters.fundingStage)
+        queryParams.append("fundingStage", filters.fundingStage);
+      if (filters.minAmount) queryParams.append("minAmount", filters.minAmount);
+      if (filters.maxAmount) queryParams.append("maxAmount", filters.maxAmount);
+      if (filters.page) queryParams.append("page", filters.page);
+      if (filters.limit) queryParams.append("limit", filters.limit);
+
+      const url = `${API_URL}/api/funding?${queryParams.toString()}`;
+
+      const response = await Promise.race([
+        fetch(url, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Get all funding requests API error:", error.message);
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+  },
+
+  // Get single funding request by ID
+  getFundingRequestById: async (requestId) => {
+    try {
+      const response = await Promise.race([
+        fetch(`${API_URL}/api/funding/${requestId}`, {
+          headers: getAuthHeaders(),
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error("Get funding request API error:", error.message);
+      return {
+        success: false,
+        message: error.message,
       };
     }
   },
@@ -790,7 +1245,7 @@ export const notificationsAPI = {
   getNotifications: async (params = {}) => {
     const query = new URLSearchParams(params).toString();
     const response = await fetch(
-      `${API_URL}/api/notifications${query ? `?${query}` : ''}`,
+      `${API_URL}/api/notifications${query ? `?${query}` : ""}`,
       {
         headers: getAuthHeaders(),
       }
@@ -820,13 +1275,10 @@ export const notificationsAPI = {
 
   // Mark all notifications as read
   markAllAsRead: async () => {
-    const response = await fetch(
-      `${API_URL}/api/notifications/mark-all-read`,
-      {
-        method: "PUT",
-        headers: getAuthHeaders(),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/notifications/mark-all-read`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+    });
     return handleResponse(response);
   },
 
@@ -844,13 +1296,10 @@ export const notificationsAPI = {
 
   // Clear all notifications
   clearAllNotifications: async () => {
-    const response = await fetch(
-      `${API_URL}/api/notifications/clear-all`,
-      {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/notifications/clear-all`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
     return handleResponse(response);
   },
 };
@@ -864,13 +1313,13 @@ export const investorInterestAPI = {
         fetch(`${API_URL}/api/investor-interest/user`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Investor interest API not available, using demo data');
+      console.warn("Investor interest API not available, using demo data");
       return {
         success: true,
         data: [
@@ -882,15 +1331,16 @@ export const investorInterestAPI = {
             ideaTitle: "AI-Powered Marketing Platform",
             ideaId: 1,
             interestLevel: "high",
-            message: "Very interested in your AI marketing platform. Would like to schedule a meeting to discuss investment opportunities.",
+            message:
+              "Very interested in your AI marketing platform. Would like to schedule a meeting to discuss investment opportunities.",
             investmentRange: "$500K - $1M",
             createdAt: "2024-01-15T10:00:00Z",
             status: "pending",
             investorProfile: {
               focus: ["AI", "SaaS", "Marketing"],
               stage: ["Series A", "Seed"],
-              location: "San Francisco, CA"
-            }
+              location: "San Francisco, CA",
+            },
           },
           {
             id: 2,
@@ -900,15 +1350,16 @@ export const investorInterestAPI = {
             ideaTitle: "Smart Home Automation",
             ideaId: 2,
             interestLevel: "medium",
-            message: "Interested in your IoT solution. Could you provide more details about the technology stack?",
+            message:
+              "Interested in your IoT solution. Could you provide more details about the technology stack?",
             investmentRange: "$250K - $500K",
             createdAt: "2024-01-12T14:30:00Z",
             status: "contacted",
             investorProfile: {
               focus: ["IoT", "Green Tech", "Hardware"],
               stage: ["Seed", "Pre-Series A"],
-              location: "Austin, TX"
-            }
+              location: "Austin, TX",
+            },
           },
           {
             id: 3,
@@ -918,17 +1369,18 @@ export const investorInterestAPI = {
             ideaTitle: "Sustainable Fashion Marketplace",
             ideaId: 3,
             interestLevel: "high",
-            message: "Love the sustainability angle. This aligns perfectly with our ESG investment thesis.",
+            message:
+              "Love the sustainability angle. This aligns perfectly with our ESG investment thesis.",
             investmentRange: "$100K - $300K",
             createdAt: "2024-01-08T09:15:00Z",
             status: "meeting_scheduled",
             investorProfile: {
               focus: ["Sustainability", "E-commerce", "Social Impact"],
               stage: ["Seed", "Angel"],
-              location: "New York, NY"
-            }
-          }
-        ]
+              location: "New York, NY",
+            },
+          },
+        ],
       };
     }
   },
@@ -938,24 +1390,26 @@ export const investorInterestAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/investor-interest/${interestId}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: getAuthHeaders(),
           body: JSON.stringify({ status }),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Update investor interest API not available, using demo response');
+      console.warn(
+        "Update investor interest API not available, using demo response"
+      );
       return {
         success: true,
         data: {
           id: interestId,
           status: status,
-          updatedAt: new Date().toISOString()
-        }
+          updatedAt: new Date().toISOString(),
+        },
       };
     }
   },
@@ -970,13 +1424,13 @@ export const analyticsAPI = {
         fetch(`${API_URL}/api/analytics/dashboard`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Analytics API not available, using demo data');
+      console.warn("Analytics API not available, using demo data");
       return {
         success: true,
         data: {
@@ -984,7 +1438,7 @@ export const analyticsAPI = {
             totalIdeas: 3,
             totalViews: 1247,
             totalInterest: 8,
-            conversionRate: 12.5
+            conversionRate: 12.5,
           },
           ideaPerformance: [
             {
@@ -995,7 +1449,7 @@ export const analyticsAPI = {
               funding: 500000,
               status: "active",
               conversionRate: 18.2,
-              trend: "up"
+              trend: "up",
             },
             {
               id: 2,
@@ -1005,7 +1459,7 @@ export const analyticsAPI = {
               funding: 250000,
               status: "active",
               conversionRate: 8.5,
-              trend: "stable"
+              trend: "stable",
             },
             {
               id: 3,
@@ -1015,44 +1469,44 @@ export const analyticsAPI = {
               funding: 0,
               status: "concept",
               conversionRate: 4.3,
-              trend: "down"
-            }
+              trend: "down",
+            },
           ],
           monthlyStats: [
             { month: "Jan", views: 145, interest: 2, funding: 0 },
             { month: "Feb", views: 289, interest: 3, funding: 150000 },
             { month: "Mar", views: 432, interest: 1, funding: 0 },
             { month: "Apr", views: 381, interest: 2, funding: 250000 },
-            { month: "May", views: 0, interest: 0, funding: 500000 }
+            { month: "May", views: 0, interest: 0, funding: 500000 },
           ],
           investorEngagement: {
             totalInvestors: 15,
             activeConversations: 3,
             meetings: 2,
-            proposals: 1
+            proposals: 1,
           },
           topCategories: [
             { category: "Technology", count: 2, percentage: 66.7 },
-            { category: "E-commerce", count: 1, percentage: 33.3 }
+            { category: "E-commerce", count: 1, percentage: 33.3 },
           ],
           recentActivity: [
             {
               type: "investor_interest",
               message: "TechVentures Capital showed interest in AI-Powered Marketing Platform",
-              timestamp: "2025-10-15T10:00:00Z"
+              timestamp: "2024-01-15T10:00:00Z"
             },
             {
               type: "funding_received",
               message: "Received $250K funding for Smart Home Automation",
-              timestamp: "2025-10-12T14:30:00Z"
+              timestamp: "2024-01-12T14:30:00Z"
             },
             {
               type: "meeting_scheduled",
               message: "Meeting scheduled with Impact Ventures",
-              timestamp: "2024-01-08T09:15:00Z"
-            }
-          ]
-        }
+              timestamp: "2024-01-08T09:15:00Z",
+            },
+          ],
+        },
       };
     }
   },
@@ -1064,13 +1518,13 @@ export const analyticsAPI = {
         fetch(`${API_URL}/api/analytics/idea/${ideaId}`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Idea analytics API not available, using demo data');
+      console.warn("Idea analytics API not available, using demo data");
       return {
         success: true,
         data: {
@@ -1084,9 +1538,9 @@ export const analyticsAPI = {
             { date: "2024-01-02", views: 25 },
             { date: "2024-01-03", views: 18 },
             { date: "2024-01-04", views: 34 },
-            { date: "2024-01-05", views: 45 }
-          ]
-        }
+            { date: "2024-01-05", views: 45 },
+          ],
+        },
       };
     }
   },
@@ -1101,20 +1555,21 @@ export const ideathonsAPI = {
         fetch(`${API_URL}/api/ideathons`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Ideathons API not available, using demo data');
+      console.warn("Ideathons API not available, using demo data");
       return {
         success: true,
         data: [
           {
             id: 1,
             title: "Global Innovation Challenge 2024",
-            description: "A worldwide competition for groundbreaking innovations that solve real-world problems",
+            description:
+              "A worldwide competition for groundbreaking innovations that solve real-world problems",
             category: "General Innovation",
             prize: 100000,
             deadline: "2024-03-15T23:59:59Z",
@@ -1122,17 +1577,22 @@ export const ideathonsAPI = {
             status: "active",
             participants: 2847,
             organizer: "Innovation Hub",
-            requirements: ["Minimum viable prototype", "Business plan", "Pitch deck"],
+            requirements: [
+              "Minimum viable prototype",
+              "Business plan",
+              "Pitch deck",
+            ],
             tags: ["Innovation", "Technology", "Global"],
             registrationFee: 0,
             maxTeamSize: 5,
             location: "Virtual & San Francisco",
-            website: "https://globalinnovation.com"
+            website: "https://globalinnovation.com",
           },
           {
             id: 2,
             title: "AI for Good Hackathon",
-            description: "Develop AI solutions that create positive social impact and address humanitarian challenges",
+            description:
+              "Develop AI solutions that create positive social impact and address humanitarian challenges",
             category: "Artificial Intelligence",
             prize: 50000,
             deadline: "2024-02-28T23:59:59Z",
@@ -1140,17 +1600,22 @@ export const ideathonsAPI = {
             status: "active",
             participants: 1456,
             organizer: "AI Foundation",
-            requirements: ["AI/ML solution", "Social impact focus", "Working demo"],
+            requirements: [
+              "AI/ML solution",
+              "Social impact focus",
+              "Working demo",
+            ],
             tags: ["AI", "Social Impact", "Technology"],
             registrationFee: 25,
             maxTeamSize: 4,
             location: "Boston, MA",
-            website: "https://aiforgood.org"
+            website: "https://aiforgood.org",
           },
           {
             id: 3,
             title: "Green Tech Innovation Awards",
-            description: "Showcase sustainable technology solutions for environmental challenges",
+            description:
+              "Showcase sustainable technology solutions for environmental challenges",
             category: "Sustainability",
             prize: 75000,
             deadline: "2024-04-30T23:59:59Z",
@@ -1158,17 +1623,22 @@ export const ideathonsAPI = {
             status: "upcoming",
             participants: 892,
             organizer: "EcoTech Alliance",
-            requirements: ["Environmental focus", "Scalable solution", "Impact measurement"],
+            requirements: [
+              "Environmental focus",
+              "Scalable solution",
+              "Impact measurement",
+            ],
             tags: ["Sustainability", "CleanTech", "Environment"],
             registrationFee: 50,
             maxTeamSize: 6,
             location: "Austin, TX",
-            website: "https://greentech-awards.com"
+            website: "https://greentech-awards.com",
           },
           {
             id: 4,
             title: "FinTech Future Competition",
-            description: "Revolutionary financial technology solutions for the next generation",
+            description:
+              "Revolutionary financial technology solutions for the next generation",
             category: "Financial Technology",
             prize: 80000,
             deadline: "2024-01-20T23:59:59Z",
@@ -1176,14 +1646,18 @@ export const ideathonsAPI = {
             status: "ended",
             participants: 3241,
             organizer: "FinTech Ventures",
-            requirements: ["Financial services focus", "Security compliance", "User testing"],
+            requirements: [
+              "Financial services focus",
+              "Security compliance",
+              "User testing",
+            ],
             tags: ["FinTech", "Banking", "Payments"],
             registrationFee: 100,
             maxTeamSize: 5,
             location: "New York, NY",
-            website: "https://fintech-future.com"
-          }
-        ]
+            website: "https://fintech-future.com",
+          },
+        ],
       };
     }
   },
@@ -1195,13 +1669,13 @@ export const ideathonsAPI = {
         fetch(`${API_URL}/api/ideathons/user/registrations`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('User registrations API not available, using demo data');
+      console.warn("User registrations API not available, using demo data");
       return {
         success: true,
         data: [
@@ -1213,7 +1687,7 @@ export const ideathonsAPI = {
             status: "registered",
             teamName: "InnovatorsUnited",
             teamMembers: 3,
-            submissionStatus: "pending"
+            submissionStatus: "pending",
           },
           {
             id: 2,
@@ -1223,9 +1697,9 @@ export const ideathonsAPI = {
             status: "registered",
             teamName: "AI Impact",
             teamMembers: 4,
-            submissionStatus: "submitted"
-          }
-        ]
+            submissionStatus: "submitted",
+          },
+        ],
       };
     }
   },
@@ -1235,17 +1709,17 @@ export const ideathonsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/ideathons/${ideathonId}/register`, {
-          method: 'POST',
+          method: "POST",
           headers: getAuthHeaders(),
           body: JSON.stringify(registrationData),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Registration API not available, using demo response');
+      console.warn("Registration API not available, using demo response");
       return {
         success: true,
         data: {
@@ -1253,8 +1727,8 @@ export const ideathonsAPI = {
           ideathonId: ideathonId,
           registrationDate: new Date().toISOString(),
           status: "registered",
-          ...registrationData
-        }
+          ...registrationData,
+        },
       };
     }
   },
@@ -1264,17 +1738,17 @@ export const ideathonsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/ideathons/${ideathonId}/submit`, {
-          method: 'POST',
+          method: "POST",
           headers: getAuthHeaders(),
           body: JSON.stringify(submissionData),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Submission API not available, using demo response');
+      console.warn("Submission API not available, using demo response");
       return {
         success: true,
         data: {
@@ -1282,8 +1756,8 @@ export const ideathonsAPI = {
           ideathonId: ideathonId,
           submissionDate: new Date().toISOString(),
           status: "submitted",
-          ...submissionData
-        }
+          ...submissionData,
+        },
       };
     }
   },
@@ -1298,16 +1772,16 @@ export const teamResourceAPI = {
         fetch(`${API_URL}/api/team`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Team resource API not available, using demo data');
+      console.warn("Team resource API not available, using demo data");
       return {
         success: true,
-        data: []
+        data: [],
       };
     }
   },
@@ -1319,16 +1793,16 @@ export const teamResourceAPI = {
         fetch(`${API_URL}/api/team/idea/${ideaId}`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Team resource API not available, using demo data');
+      console.warn("Team resource API not available, using demo data");
       return {
         success: true,
-        data: null
+        data: null,
       };
     }
   },
@@ -1337,16 +1811,16 @@ export const teamResourceAPI = {
   createTeamResource: async (teamResourceData) => {
     try {
       const response = await fetch(`${API_URL}/api/team`, {
-        method: 'POST',
+        method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(teamResourceData),
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Create team resource API error:', error);
+      console.error("Create team resource API error:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -1355,16 +1829,16 @@ export const teamResourceAPI = {
   updateTeamResource: async (resourceId, teamResourceData) => {
     try {
       const response = await fetch(`${API_URL}/api/team/${resourceId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: getAuthHeaders(),
         body: JSON.stringify(teamResourceData),
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Update team resource API error:', error);
+      console.error("Update team resource API error:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -1373,15 +1847,15 @@ export const teamResourceAPI = {
   deleteTeamResource: async (resourceId) => {
     try {
       const response = await fetch(`${API_URL}/api/team/${resourceId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: getAuthHeaders(),
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Delete team resource API error:', error);
+      console.error("Delete team resource API error:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -1396,16 +1870,16 @@ export const businessAimAPI = {
         fetch(`${API_URL}/api/aims`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Business aim API not available, using demo data');
+      console.warn("Business aim API not available, using demo data");
       return {
         success: true,
-        data: []
+        data: [],
       };
     }
   },
@@ -1417,16 +1891,16 @@ export const businessAimAPI = {
         fetch(`${API_URL}/api/aims/idea/${ideaId}`, {
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Business aim API not available, using demo data');
+      console.warn("Business aim API not available, using demo data");
       return {
         success: true,
-        data: null
+        data: null,
       };
     }
   },
@@ -1435,16 +1909,16 @@ export const businessAimAPI = {
   createBusinessAim: async (businessAimData) => {
     try {
       const response = await fetch(`${API_URL}/api/aims`, {
-        method: 'POST',
+        method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(businessAimData),
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Create business aim API error:', error);
+      console.error("Create business aim API error:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -1453,16 +1927,16 @@ export const businessAimAPI = {
   updateBusinessAim: async (aimId, businessAimData) => {
     try {
       const response = await fetch(`${API_URL}/api/aims/${aimId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: getAuthHeaders(),
         body: JSON.stringify(businessAimData),
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Update business aim API error:', error);
+      console.error("Update business aim API error:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -1471,15 +1945,15 @@ export const businessAimAPI = {
   deleteBusinessAim: async (aimId) => {
     try {
       const response = await fetch(`${API_URL}/api/aims/${aimId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: getAuthHeaders(),
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Delete business aim API error:', error);
+      console.error("Delete business aim API error:", error);
       return {
         success: false,
-        message: error.message
+        message: error.message,
       };
     }
   },
@@ -1492,16 +1966,16 @@ export const collaborationsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/collaborations`, {
-          method: 'GET',
+          method: "GET",
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Collaborations API not available, using demo data');
+      console.warn("Collaborations API not available, using demo data");
       return {
         success: true,
         data: [
@@ -1511,8 +1985,14 @@ export const collaborationsAPI = {
             company: "MedTech Innovations",
             type: "Partnership",
             industry: "Healthcare",
-            description: "Looking for AI/ML experts to develop predictive healthcare analytics platform",
-            requirements: ["Machine Learning", "Python", "Healthcare Domain", "Data Science"],
+            description:
+              "Looking for AI/ML experts to develop predictive healthcare analytics platform",
+            requirements: [
+              "Machine Learning",
+              "Python",
+              "Healthcare Domain",
+              "Data Science",
+            ],
             budget: "$75,000 - $150,000",
             duration: "6-8 months",
             remote: true,
@@ -1521,9 +2001,10 @@ export const collaborationsAPI = {
             deadline: "2024-03-15T23:59:59Z",
             status: "Open",
             contactEmail: "partnerships@medtech.com",
-            companyLogo: "https://via.placeholder.com/50x50/3B82F6/ffffff?text=MT",
+            companyLogo:
+              "https://via.placeholder.com/50x50/3B82F6/ffffff?text=MT",
             applicants: 23,
-            match: 92
+            match: 92,
           },
           {
             id: 2,
@@ -1531,8 +2012,14 @@ export const collaborationsAPI = {
             company: "GreenTech Solutions",
             type: "Joint Venture",
             industry: "Clean Energy",
-            description: "Collaborate on IoT sensors for smart grid optimization and renewable energy management",
-            requirements: ["IoT Development", "Embedded Systems", "React", "Node.js"],
+            description:
+              "Collaborate on IoT sensors for smart grid optimization and renewable energy management",
+            requirements: [
+              "IoT Development",
+              "Embedded Systems",
+              "React",
+              "Node.js",
+            ],
             budget: "$50,000 - $100,000",
             duration: "4-6 months",
             remote: false,
@@ -1541,9 +2028,10 @@ export const collaborationsAPI = {
             deadline: "2024-02-28T23:59:59Z",
             status: "Open",
             contactEmail: "collab@greentech.com",
-            companyLogo: "https://via.placeholder.com/50x50/10B981/ffffff?text=GT",
+            companyLogo:
+              "https://via.placeholder.com/50x50/10B981/ffffff?text=GT",
             applicants: 18,
-            match: 87
+            match: 87,
           },
           {
             id: 3,
@@ -1551,8 +2039,14 @@ export const collaborationsAPI = {
             company: "RetailNext",
             type: "Subcontract",
             industry: "E-commerce",
-            description: "Need mobile app developers for next-gen shopping experience with AR features",
-            requirements: ["React Native", "AR/VR", "Mobile Development", "E-commerce"],
+            description:
+              "Need mobile app developers for next-gen shopping experience with AR features",
+            requirements: [
+              "React Native",
+              "AR/VR",
+              "Mobile Development",
+              "E-commerce",
+            ],
             budget: "$30,000 - $60,000",
             duration: "3-4 months",
             remote: true,
@@ -1561,9 +2055,10 @@ export const collaborationsAPI = {
             deadline: "2024-02-15T23:59:59Z",
             status: "Open",
             contactEmail: "dev@retailnext.com",
-            companyLogo: "https://via.placeholder.com/50x50/8B5CF6/ffffff?text=RN",
+            companyLogo:
+              "https://via.placeholder.com/50x50/8B5CF6/ffffff?text=RN",
             applicants: 31,
-            match: 78
+            match: 78,
           },
           {
             id: 4,
@@ -1571,8 +2066,14 @@ export const collaborationsAPI = {
             company: "SecureBank",
             type: "Partnership",
             industry: "Fintech",
-            description: "Partner to develop blockchain-based security solutions for digital banking",
-            requirements: ["Blockchain", "Cybersecurity", "Fintech", "Smart Contracts"],
+            description:
+              "Partner to develop blockchain-based security solutions for digital banking",
+            requirements: [
+              "Blockchain",
+              "Cybersecurity",
+              "Fintech",
+              "Smart Contracts",
+            ],
             budget: "$100,000 - $200,000",
             duration: "8-12 months",
             remote: true,
@@ -1581,9 +2082,10 @@ export const collaborationsAPI = {
             deadline: "2024-04-30T23:59:59Z",
             status: "Open",
             contactEmail: "partnerships@securebank.com",
-            companyLogo: "https://via.placeholder.com/50x50/F59E0B/ffffff?text=SB",
+            companyLogo:
+              "https://via.placeholder.com/50x50/F59E0B/ffffff?text=SB",
             applicants: 12,
-            match: 95
+            match: 95,
           },
           {
             id: 5,
@@ -1591,8 +2093,14 @@ export const collaborationsAPI = {
             company: "EduInnovate",
             type: "Joint Venture",
             industry: "Education",
-            description: "Collaborate on AI-powered personalized learning platform for K-12 education",
-            requirements: ["React", "AI/ML", "Education Technology", "Backend Development"],
+            description:
+              "Collaborate on AI-powered personalized learning platform for K-12 education",
+            requirements: [
+              "React",
+              "AI/ML",
+              "Education Technology",
+              "Backend Development",
+            ],
             budget: "$40,000 - $80,000",
             duration: "5-7 months",
             remote: true,
@@ -1601,11 +2109,12 @@ export const collaborationsAPI = {
             deadline: "2024-03-01T23:59:59Z",
             status: "Open",
             contactEmail: "collab@eduinnovate.com",
-            companyLogo: "https://via.placeholder.com/50x50/EF4444/ffffff?text=EI",
+            companyLogo:
+              "https://via.placeholder.com/50x50/EF4444/ffffff?text=EI",
             applicants: 27,
-            match: 83
-          }
-        ]
+            match: 83,
+          },
+        ],
       };
     }
   },
@@ -1615,16 +2124,16 @@ export const collaborationsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/collaborations/applications`, {
-          method: 'GET',
+          method: "GET",
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('User applications API not available, using demo data');
+      console.warn("User applications API not available, using demo data");
       return {
         success: true,
         data: [
@@ -1635,8 +2144,9 @@ export const collaborationsAPI = {
             company: "MedTech Innovations",
             status: "pending",
             appliedDate: "2024-01-16T10:00:00Z",
-            message: "I have extensive experience in healthcare AI and would love to contribute to this innovative platform.",
-            response: null
+            message:
+              "I have extensive experience in healthcare AI and would love to contribute to this innovative platform.",
+            response: null,
           },
           {
             id: 2,
@@ -1645,20 +2155,24 @@ export const collaborationsAPI = {
             company: "SecureBank",
             status: "accepted",
             appliedDate: "2024-01-09T14:30:00Z",
-            message: "Our blockchain expertise aligns perfectly with your security requirements.",
-            response: "Great! We're excited to work with you. Please schedule a call with our team."
+            message:
+              "Our blockchain expertise aligns perfectly with your security requirements.",
+            response:
+              "Great! We're excited to work with you. Please schedule a call with our team.",
           },
           {
             id: 3,
             collaborationId: 5,
-            title: "EdTech Learning Platform", 
+            title: "EdTech Learning Platform",
             company: "EduInnovate",
             status: "rejected",
             appliedDate: "2024-01-06T09:15:00Z",
-            message: "We specialize in educational technology and AI-powered learning solutions.",
-            response: "Thank you for your interest. We've decided to go with another partner."
-          }
-        ]
+            message:
+              "We specialize in educational technology and AI-powered learning solutions.",
+            response:
+              "Thank you for your interest. We've decided to go with another partner.",
+          },
+        ],
       };
     }
   },
@@ -1668,17 +2182,19 @@ export const collaborationsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/collaborations/${collaborationId}/apply`, {
-          method: 'POST',
+          method: "POST",
           headers: getAuthHeaders(),
           body: JSON.stringify(applicationData),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Apply collaboration API not available, using demo response');
+      console.warn(
+        "Apply collaboration API not available, using demo response"
+      );
       return {
         success: true,
         data: {
@@ -1686,8 +2202,8 @@ export const collaborationsAPI = {
           collaborationId: collaborationId,
           appliedDate: new Date().toISOString(),
           status: "pending",
-          ...applicationData
-        }
+          ...applicationData,
+        },
       };
     }
   },
@@ -1697,21 +2213,23 @@ export const collaborationsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/collaborations/${id}`, {
-          method: 'GET',
+          method: "GET",
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Collaboration details API not available, using demo data');
+      console.warn("Collaboration details API not available, using demo data");
       const allCollaborations = await this.getAllCollaborations();
-      const collaboration = allCollaborations.data.find(c => c.id === parseInt(id));
+      const collaboration = allCollaborations.data.find(
+        (c) => c.id === parseInt(id)
+      );
       return {
         success: true,
-        data: collaboration || null
+        data: collaboration || null,
       };
     }
   },
@@ -1721,16 +2239,16 @@ export const collaborationsAPI = {
     try {
       const response = await Promise.race([
         fetch(`${API_URL}/api/collaborations/stats`, {
-          method: 'GET',
+          method: "GET",
           headers: getAuthHeaders(),
         }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 5000)
-        )
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn('Collaboration stats API not available, using demo data');
+      console.warn("Collaboration stats API not available, using demo data");
       return {
         success: true,
         data: {
@@ -1739,11 +2257,11 @@ export const collaborationsAPI = {
           acceptedApplications: 1,
           pendingApplications: 1,
           averageMatch: 87,
-          totalBudget: "$395K - $690K"
-        }
+          totalBudget: "$395K - $690K",
+        },
       };
     }
-  }
+  },
 };
 
 const API_SERVICES = {
@@ -1764,37 +2282,37 @@ const API_SERVICES = {
 export const api = {
   get: async (endpoint) => {
     const response = await fetch(`${API_URL}/api${endpoint}`, {
-      method: 'GET',
+      method: "GET",
       headers: getAuthHeaders(),
     });
     return handleResponse(response);
   },
-  
+
   post: async (endpoint, data) => {
     const response = await fetch(`${API_URL}/api${endpoint}`, {
-      method: 'POST',
+      method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
     return handleResponse(response);
   },
-  
+
   put: async (endpoint, data) => {
     const response = await fetch(`${API_URL}/api${endpoint}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
     return handleResponse(response);
   },
-  
+
   delete: async (endpoint) => {
     const response = await fetch(`${API_URL}/api${endpoint}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: getAuthHeaders(),
     });
     return handleResponse(response);
-  }
+  },
 };
 
 // Default export for compatibility

@@ -36,6 +36,9 @@ import NotificationsPage from "./pages/entrepreneur/NotificationsPage.jsx";
 import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
 import FeedbackPage from "./pages/entrepreneur/FeedbackPage.jsx";
 
+// Investor Pages
+import InvestorDealsPage from "./pages/investor/InvestorDealsPage.jsx";
+
 import {
   NotFoundPage,
   ServerErrorPage,
@@ -65,6 +68,14 @@ const App = () => {
                 element={
                   <RoleBasedRoute allowedRole="investor">
                     <InvestorDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/investor/deals"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorDealsPage />
                   </RoleBasedRoute>
                 }
               />
@@ -136,9 +147,15 @@ const App = () => {
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="ideas" element={<AdminIdeasPage />} />
                 <Route path="ideathons" element={<AdminIdeathonsPage />} />
-                <Route path="registration-master" element={<AdminRegistrationMasterPage />} />
+                <Route
+                  path="registration-master"
+                  element={<AdminRegistrationMasterPage />}
+                />
                 <Route path="feedback" element={<AdminFeedbackPage />} />
-                <Route path="sustainability" element={<AdminSustainabilityPage />} />
+                <Route
+                  path="sustainability"
+                  element={<AdminSustainabilityPage />}
+                />
                 <Route index element={<AdminDashboardPage />} />
               </Route>
               <Route

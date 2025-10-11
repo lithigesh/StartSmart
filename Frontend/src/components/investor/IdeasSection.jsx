@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { FaSearch, FaFilter, FaTimes } from "react-icons/fa";
+import {
+  FaSearch,
+  FaFilter,
+  FaTimes,
+  FaBalanceScale,
+  FaCheck,
+} from "react-icons/fa";
 import IdeaCard from "../IdeaCard";
 import EmptyState from "../EmptyState";
 
@@ -35,6 +41,11 @@ const IdeasSection = ({
   selectedTags = [],
   setSelectedTags,
   showAdvancedFilters = false,
+  // Comparison props
+  comparisonMode = false,
+  setComparisonMode,
+  selectedForComparison = [],
+  onToggleComparison,
 }) => {
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
@@ -106,9 +117,43 @@ const IdeasSection = ({
 
       <div className="relative z-10">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-manrope font-bold text-white">
-            {title} ({filteredIdeas.length} of {ideas.length})
-          </h3>
+          <div className="flex items-center gap-4">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-manrope font-bold text-white">
+              {title} ({filteredIdeas.length} of {ideas.length})
+            </h3>
+
+            {/* Comparison Mode Toggle */}
+            {setComparisonMode && (
+              <button
+                onClick={() => setComparisonMode(!comparisonMode)}
+                className={`
+                  flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-manrope font-medium min-h-[44px] touch-manipulation
+                  ${
+                    comparisonMode
+                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                      : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
+                  }
+                `}
+                title={
+                  comparisonMode
+                    ? "Exit comparison mode"
+                    : "Enter comparison mode"
+                }
+              >
+                {comparisonMode ? (
+                  <>
+                    <FaCheck className="w-4 h-4" />
+                    <span className="hidden sm:inline">Comparing</span>
+                  </>
+                ) : (
+                  <>
+                    <FaBalanceScale className="w-4 h-4" />
+                    <span className="hidden sm:inline">Compare</span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
 
           {/* Filter Controls */}
           {showFilters && (
@@ -211,27 +256,33 @@ const IdeasSection = ({
                       </label>
                       <div className="space-y-3">
                         <div>
-                          <label className="text-xs text-white/60 mb-1 block">Min: {minScore}%</label>
+                          <label className="text-xs text-white/60 mb-1 block">
+                            Min: {minScore}%
+                          </label>
                           <input
                             type="range"
                             min="0"
                             max="100"
                             value={minScore}
                             onChange={(e) =>
-                              setMinScore && setMinScore(parseInt(e.target.value))
+                              setMinScore &&
+                              setMinScore(parseInt(e.target.value))
                             }
                             className="w-full accent-green-500 h-2"
                           />
                         </div>
                         <div>
-                          <label className="text-xs text-white/60 mb-1 block">Max: {maxScore}%</label>
+                          <label className="text-xs text-white/60 mb-1 block">
+                            Max: {maxScore}%
+                          </label>
                           <input
                             type="range"
                             min="0"
                             max="100"
                             value={maxScore}
                             onChange={(e) =>
-                              setMaxScore && setMaxScore(parseInt(e.target.value))
+                              setMaxScore &&
+                              setMaxScore(parseInt(e.target.value))
                             }
                             className="w-full accent-green-500 h-2"
                           />
@@ -356,6 +407,12 @@ const IdeasSection = ({
                     )}
                     onInterest={onInterest}
                     loading={actionLoading[idea._id]}
+                    comparisonMode={comparisonMode}
+                    isSelectedForComparison={selectedForComparison.some(
+                      (selected) => selected._id === idea._id
+                    )}
+                    onToggleComparison={onToggleComparison}
+                    maxComparisonReached={selectedForComparison.length >= 4}
                   />
                 ))}
               </div>

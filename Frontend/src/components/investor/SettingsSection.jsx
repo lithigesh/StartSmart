@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import {
   FaUser,
-  FaBell,
   FaLock,
   FaEye,
   FaEyeSlash,
@@ -16,7 +15,6 @@ const SettingsSection = () => {
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState({
     profile: false,
-    notifications: false,
     security: false,
   });
 
@@ -28,10 +26,6 @@ const SettingsSection = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-    emailNotifications: true,
-    pushNotifications: true,
-    investmentAlerts: true,
-    weeklyDigest: false,
   });
 
   const [showPasswords, setShowPasswords] = useState({
@@ -204,73 +198,6 @@ const SettingsSection = () => {
               </p>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* Notification Settings */}
-      <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/10">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-            <FaBell className="w-5 h-5 text-green-400" />
-          </div>
-          <div>
-            <h3 className="text-white font-semibold text-lg font-manrope">
-              Notification Preferences
-            </h3>
-            <p className="text-white/60 text-sm font-manrope">
-              Customize how you receive notifications
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {[
-            {
-              key: "emailNotifications",
-              label: "Email Notifications",
-              description: "Receive notifications via email",
-            },
-            {
-              key: "pushNotifications",
-              label: "Push Notifications",
-              description: "Receive real-time push notifications",
-            },
-            {
-              key: "investmentAlerts",
-              label: "Investment Alerts",
-              description: "Get notified about new investment opportunities",
-            },
-            {
-              key: "weeklyDigest",
-              label: "Weekly Digest",
-              description: "Receive a weekly summary of activities",
-            },
-          ].map((setting) => (
-            <div
-              key={setting.key}
-              className="flex items-center justify-between p-4 bg-white/[0.03] rounded-lg hover:bg-white/[0.05] transition-all duration-300"
-            >
-              <div>
-                <h4 className="text-white font-medium font-manrope">
-                  {setting.label}
-                </h4>
-                <p className="text-white/60 text-sm font-manrope">
-                  {setting.description}
-                </p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData[setting.key]}
-                  onChange={(e) =>
-                    handleInputChange(setting.key, e.target.checked)
-                  }
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
-              </label>
-            </div>
-          ))}
         </div>
       </div>
 
