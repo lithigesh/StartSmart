@@ -317,7 +317,7 @@ const EntrepreneurDashboard = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <FaCalendarAlt className="w-3 h-3" />
-                            Jan 15, 2024
+                            Oct 15, 2025
                           </span>
                         </div>
                       </div>
@@ -349,7 +349,7 @@ const EntrepreneurDashboard = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <FaCalendarAlt className="w-3 h-3" />
-                            Jan 10, 2024
+                            Oct 10, 2025
                           </span>
                         </div>
                       </div>
@@ -758,14 +758,14 @@ const EntrepreneurDashboard = () => {
                       <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
                       <div className="flex-1">
                         <p className="text-white text-sm">TechVentures Capital showed interest in AI-Powered Marketing Platform</p>
-                        <p className="text-white/50 text-xs mt-1">Jan 15, 2024 at 10:00 AM</p>
+                        <p className="text-white/50 text-xs mt-1">Oct 15, 2025 at 10:00 AM</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 p-3 bg-gray-900 rounded-lg">
                       <div className="w-2 h-2 bg-gray-400 rounded-full mt-2 flex-shrink-0" />
                       <div className="flex-1">
                         <p className="text-white text-sm">Received $250K funding for Smart Home Automation</p>
-                        <p className="text-white/50 text-xs mt-1">Jan 12, 2024 at 2:30 PM</p>
+                        <p className="text-white/50 text-xs mt-1">Oct 12, 2025 at 2:30 PM</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 p-3 bg-gray-900 rounded-lg">
@@ -868,10 +868,10 @@ const EntrepreneurDashboard = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-white/50 flex items-center gap-1">
                             <FaRegClock className="w-3 h-3" />
-                            Deadline: Mar 15, 2024
+                            Deadline: Oct 15, 2025
                           </span>
                           <button 
-                            onClick={() => handleOpenRegistration(1, "Global Innovation Challenge 2024")}
+                            onClick={() => handleOpenRegistration(1, "Global Innovation Challenge 2025")}
                             className="bg-black hover:bg-gray-900 border border-white/10 hover:border-white/20 text-white px-3 py-1 rounded text-sm transition-all duration-300"
                           >
                             Register
@@ -904,7 +904,7 @@ const EntrepreneurDashboard = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-white/50 flex items-center gap-1">
                             <FaRegClock className="w-3 h-3" />
-                            Deadline: Feb 28, 2024
+                            Deadline: Oct 28, 2025
                           </span>
                           <button className="bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white px-3 py-1 rounded text-sm transition-all duration-300">
                             Registered
@@ -937,7 +937,7 @@ const EntrepreneurDashboard = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-white/50 flex items-center gap-1">
                             <FaRegClock className="w-3 h-3" />
-                            Deadline: Apr 30, 2024
+                            Deadline: Oct 30, 2025
                           </span>
                           <button 
                             onClick={() => handleOpenRegistration(3, "Green Tech Innovation Awards")}
@@ -963,7 +963,7 @@ const EntrepreneurDashboard = () => {
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
-                              <h4 className="text-white font-medium">Global Innovation Challenge 2024</h4>
+                              <h4 className="text-white font-medium">Global Innovation Challenge 2025</h4>
                               <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium border text-white bg-gray-800 border-gray-600">
                                 Registered
                               </span>

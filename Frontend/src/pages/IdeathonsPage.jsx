@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ideathonAPI } from "../services/api";
+import { ideathonsAPI } from "../services/api";
 import { useNotifications } from "../hooks/useNotifications";
 import { 
   FaTrophy, 
@@ -44,21 +44,55 @@ const IdeathonsPage = () => {
       setError(null);
       
       // Load ideathons and user registrations
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
       const [ideathonsResponse, registrationsResponse] = await Promise.all([
-        ideathonAPI.getAllIdeathons().catch(() => ({ data: [] })),
-        ideathonAPI.getUserRegistrations().catch(() => ({ data: [] }))
+        fetch(`${API_URL}/api/ideathons`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(res => res.json()),
+        fetch(`${API_URL}/api/ideathons/registrations/user`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then(res => res.json())
       ]);
       
       const ideathonsData = ideathonsResponse.data || [];
+      const registrationsData = registrationsResponse.data || [];
+      
+      console.log('Loaded ideathons:', ideathonsData.length);
+      console.log('Loaded registrations:', registrationsData);
       
       // If no real data, show demo ideathons
       if (ideathonsData.length === 0) {
-        setIdeathons(generateDemoIdeathons());
+        const demoData = generateDemoIdeathons();
+        setIdeathons(demoData);
+        // Add some demo registrations for testing
+        setRegistrations([
+          { 
+            ideathonId: "1", 
+            status: "registered",
+            ideathon: demoData[0],
+            createdAt: new Date().toISOString()
+          },
+          { 
+            ideathonId: "3", 
+            status: "registered",
+            ideathon: demoData[2],
+            createdAt: new Date().toISOString()
+          }
+        ]);
       } else {
         setIdeathons(ideathonsData);
+        setRegistrations(registrationsData);
       }
       
-      setRegistrations(registrationsResponse.data || []);
+      console.log('Data loaded successfully');
     } catch (err) {
       console.error("Error loading ideathons data:", err);
       setError(err.message);
@@ -173,7 +207,7 @@ const IdeathonsPage = () => {
     try {
       setActionLoading({ [ideathonId]: true });
       
-      await ideathonAPI.registerForIdeathon(ideathonId);
+  await ideathonsAPI.registerForIdeathon(ideathonId);
       
       setRegistrations(prev => [...prev, { ideathon: ideathonId }]);
       addNotification("Successfully registered for ideathon!", "success");
@@ -185,11 +219,15 @@ const IdeathonsPage = () => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status, isRegistered = false) => {
+    if (isRegistered) {
+      return 'text-purple-400 bg-purple-400/20 border-purple-400/30';
+    }
     switch (status) {
       case 'upcoming': return 'text-blue-400 bg-blue-400/20 border-blue-400/30';
       case 'ongoing': return 'text-green-400 bg-green-400/20 border-green-400/30';
       case 'past': return 'text-red-400 bg-red-400/20 border-red-400/30';
+      case 'registered': return 'text-purple-400 bg-purple-400/20 border-purple-400/30';
       default: return 'text-gray-400 bg-gray-400/10 border-gray-400/20';
     }
   };
@@ -221,7 +259,11 @@ const IdeathonsPage = () => {
   };
 
   const isRegistered = (ideathonId) => {
-    return registrations.some(reg => reg.ideathon === ideathonId);
+    const isRegistered = registrations.some(reg => 
+      reg.ideathonId === ideathonId || reg.ideathon === ideathonId
+    );
+    console.log('Checking registration for:', ideathonId, 'Result:', isRegistered);
+    return isRegistered;
   };
 
   const isRegistrationOpen = (ideathon) => {
@@ -232,11 +274,28 @@ const IdeathonsPage = () => {
 
   // Filter ideathons
   const filteredIdeathons = ideathons.filter(ideathon => {
-    const matchesSearch = ideathon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         ideathon.theme.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         ideathon.description.toLowerCase().includes(searchTerm.toLowerCase());
+    // Text search matching
+    const matchesSearch = searchTerm.trim() === '' || 
+                         ideathon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (ideathon.theme || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (ideathon.description || '').toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = statusFilter === "all" || ideathon.status === statusFilter;
+    // Registration check
+    const isIdeathonRegistered = registrations.some(reg => 
+      reg.ideathonId === ideathon._id || 
+      reg.ideathon === ideathon._id ||
+      reg.ideathon?._id === ideathon._id
+    );
+
+    // Status matching
+    let matchesStatus = false;
+    if (statusFilter === "registered") {
+      matchesStatus = isIdeathonRegistered;
+    } else if (statusFilter === "all") {
+      matchesStatus = true;
+    } else {
+      matchesStatus = ideathon.status === statusFilter;
+    }
     
     return matchesSearch && matchesStatus;
   });
@@ -293,18 +352,43 @@ const IdeathonsPage = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full bg-white/[0.05] border border-white/20 rounded-lg pl-12 pr-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none focus:bg-white/[0.08] transition-all duration-300"
                 />
+                {/* Debug info */}
+                <div className="absolute top-full mt-1 text-xs text-white/50">
+                  {`${filteredIdeathons.length} ideathons shown | ${registrations.length} registrations | Filter: ${statusFilter}`}
+                </div>
               </div>
               
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white/[0.05] border border-white/20 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none focus:bg-white/[0.08] transition-all duration-300"
-              >
-                <option value="all">All Events</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="ongoing">Ongoing</option>
-                <option value="past">Past Events</option>
-              </select>
+              <div className="flex gap-4">
+                {/* Status Filter */}
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="bg-white/[0.05] border border-white/20 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none focus:bg-white/[0.08] transition-all duration-300"
+                >
+                  <option value="all">All Events</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="ongoing">Active Now</option>
+                  <option value="past">Past Events</option>
+                </select>
+
+                {/* Registration Filter Button */}
+                <button
+                  onClick={() => setStatusFilter(statusFilter === 'registered' ? 'all' : 'registered')}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-colors ${
+                    statusFilter === 'registered'
+                      ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                      : 'bg-white/[0.05] text-white/70 border border-white/20 hover:bg-white/[0.08] hover:text-white'
+                  }`}
+                >
+                  <FaFilter className="w-4 h-4" />
+                  My Registrations
+                  {registrations.length > 0 && (
+                    <span className="ml-2 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs">
+                      {registrations.length}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -385,9 +469,16 @@ const IdeathonsPage = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="text-xl font-semibold text-white line-clamp-2 pr-2 leading-tight">{ideathon.title}</h3>
-                          <span className={`px-3 py-1 rounded-full text-sm border whitespace-nowrap ${getStatusColor(ideathon.status)}`}>
-                            {ideathon.status}
-                          </span>
+                          <div className="flex gap-2">
+                            {isRegistered(ideathon._id) && (
+                              <span className="px-3 py-1 rounded-full text-sm border whitespace-nowrap text-purple-400 bg-purple-400/20 border-purple-400/30">
+                                Registered
+                              </span>
+                            )}
+                            <span className={`px-3 py-1 rounded-full text-sm border whitespace-nowrap ${getStatusColor(ideathon.status)}`}>
+                              {ideathon.status}
+                            </span>
+                          </div>
                         </div>
                         <p className="text-white/70 text-sm mb-1 truncate">{ideathon.theme}</p>
                         <p className="text-white/60 text-sm truncate">{ideathon.organizer}</p>

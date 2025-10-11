@@ -1039,12 +1039,12 @@ export const analyticsAPI = {
             {
               type: "investor_interest",
               message: "TechVentures Capital showed interest in AI-Powered Marketing Platform",
-              timestamp: "2024-01-15T10:00:00Z"
+              timestamp: "2025-10-15T10:00:00Z"
             },
             {
               type: "funding_received",
               message: "Received $250K funding for Smart Home Automation",
-              timestamp: "2024-01-12T14:30:00Z"
+              timestamp: "2025-10-12T14:30:00Z"
             },
             {
               type: "meeting_scheduled",

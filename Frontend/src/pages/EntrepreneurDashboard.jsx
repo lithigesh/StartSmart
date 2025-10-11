@@ -10,6 +10,7 @@ import RecentActivitySection from "../components/entrepreneur/RecentActivitySect
 import NotificationsPopup from "../components/entrepreneur/NotificationsPopup";
 import FeedbackCard from "../components/entrepreneur/FeedbackCard";
 import InlineFeedbackForm from "../components/entrepreneur/InlineFeedbackForm";
+import IdeathonRegistrationForm from "../components/entrepreneur/IdeathonRegistrationForm";
 import {
   FaLightbulb,
   FaDollarSign,
@@ -38,6 +39,7 @@ import {
   FaComment,
   FaClock
 } from "react-icons/fa";
+import IdeathonsPage from "./IdeathonsPage";
 
 const EntrepreneurDashboard = () => {
   const { user } = useAuth();
@@ -752,22 +754,16 @@ const EntrepreneurDashboard = () => {
         return (
           <div className="space-y-6">
             <div>
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  Ideathons & Competitions
-                </h2>
-                <p className="text-white/60">
-                  Participate in startup competitions and showcase your ideas
-                </p>
-              </div>
-              <div className="text-center py-12">
-                <FaTrophy className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  Ideathons Coming Soon
-                </h3>
-                <p className="text-white/60">
-                  Join competitions, win prizes, and gain recognition for your innovative ideas
-                </p>
+              {/* Render the actual IdeathonsPage component for ideathon registration */}
+              <h2 className="text-2xl font-bold text-white mb-2">
+                Ideathons & Competitions
+              </h2>
+              <p className="text-white/60 mb-6">
+                Participate in startup competitions and showcase your ideas
+              </p>
+              <div>
+                {/* Import and render IdeathonsPage */}
+                <IdeathonsPage />
               </div>
             </div>
           </div>

@@ -277,7 +277,7 @@ exports.deleteIdeathon = async (req, res, next) => {
         
         await Ideathon.findByIdAndDelete(req.params.id);
         
-        res.status(200).json({ 
+        res.status(200).json({
             success: true,
             message: 'Ideathon deleted successfully' 
         });
@@ -287,7 +287,198 @@ exports.deleteIdeathon = async (req, res, next) => {
     }
 };
 
-// @desc    Entrepreneur registers for an ideathon
+// @desc    Submit final submission for ideathon
+// @route   POST /api/ideathons/registrations/:registrationId/final-submission
+exports.submitFinalSubmission = async (req, res, next) => {
+    try {
+        const {
+            projectSummary,
+            technicalImplementation,
+            challenges,
+            futureEnhancements,
+            teamContributions,
+            demoVideo,
+            githubFinalRepo,
+            liveDemoLink,
+            additionalMaterials
+        } = req.body;
+
+        // Find the registration
+        let registration = await IdeathonRegistration.findById(req.params.registrationId)
+            .populate('ideathon', 'endDate');
+
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify that the registration belongs to the current user
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to submit for this registration'
+            });
+        }
+
+        // Check if the ideathon deadline has passed
+        if (new Date() > registration.ideathon.endDate) {
+            return res.status(400).json({
+                success: false,
+                message: 'Submission deadline has passed'
+            });
+        }
+
+        // Validate required fields
+        if (!projectSummary || !technicalImplementation) {
+            return res.status(400).json({
+                success: false,
+                message: 'Project summary and technical implementation are required'
+            });
+        }
+
+        // Update the registration with final submission
+        registration = await IdeathonRegistration.findByIdAndUpdate(
+            req.params.registrationId,
+            {
+                finalSubmission: {
+                    submittedAt: Date.now(),
+                    projectSummary,
+                    technicalImplementation,
+                    challenges,
+                    futureEnhancements,
+                    teamContributions,
+                    demoVideo,
+                    githubFinalRepo,
+                    liveDemoLink,
+                    additionalMaterials,
+                    status: 'submitted'
+                },
+                progressStatus: 'Ready for Submission',
+                currentProgress: 100
+            },
+            { new: true }
+        ).populate('ideathon', 'title theme description startDate endDate status fundingPrizes');
+
+        res.status(200).json({
+            success: true,
+            message: 'Final submission successfully submitted',
+            data: registration
+        });
+    } catch (error) {
+        console.error('Final submission error:', error);
+        next(error);
+    }
+};
+
+// @desc    Get final submission details
+// @route   GET /api/ideathons/registrations/:registrationId/final-submission
+exports.getFinalSubmission = async (req, res, next) => {
+    try {
+        const registration = await IdeathonRegistration.findById(req.params.registrationId)
+            .populate('ideathon', 'title theme description startDate endDate status fundingPrizes')
+            .populate('entrepreneur', 'name email')
+            .select('finalSubmission progressStatus currentProgress teamName projectTitle');
+
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Check if user is authorized to view this submission
+        if (registration.entrepreneur._id.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to view this submission'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: registration
+        });
+    } catch (error) {
+        console.error('Get final submission error:', error);
+        next(error);
+    }
+};
+
+// @desc    Update final submission draft
+// @route   PUT /api/ideathons/registrations/:registrationId/final-submission
+exports.updateFinalSubmission = async (req, res, next) => {
+    try {
+        const {
+            projectSummary,
+            technicalImplementation,
+            challenges,
+            futureEnhancements,
+            teamContributions,
+            demoVideo,
+            githubFinalRepo,
+            liveDemoLink,
+            additionalMaterials
+        } = req.body;
+
+        // Find the registration
+        let registration = await IdeathonRegistration.findById(req.params.registrationId)
+            .populate('ideathon', 'endDate');
+
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify that the registration belongs to the current user
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this submission'
+            });
+        }
+
+        // Check if the submission is already submitted and locked
+        if (registration.finalSubmission?.status === 'submitted') {
+            return res.status(400).json({
+                success: false,
+                message: 'Cannot update after final submission'
+            });
+        }
+
+        // Update the registration with draft submission
+        registration = await IdeathonRegistration.findByIdAndUpdate(
+            req.params.registrationId,
+            {
+                finalSubmission: {
+                    projectSummary,
+                    technicalImplementation,
+                    challenges,
+                    futureEnhancements,
+                    teamContributions,
+                    demoVideo,
+                    githubFinalRepo,
+                    liveDemoLink,
+                    additionalMaterials,
+                    status: 'draft'
+                }
+            },
+            { new: true }
+        ).populate('ideathon', 'title theme description startDate endDate status fundingPrizes');
+
+        res.status(200).json({
+            success: true,
+            message: 'Final submission draft updated',
+            data: registration
+        });
+    } catch (error) {
+        console.error('Update final submission error:', error);
+        next(error);
+    }
+};// @desc    Entrepreneur registers for an ideathon
 // @route   POST /api/ideathons/:id/register
 exports.registerForIdeathon = async (req, res, next) => {
     try {
@@ -301,7 +492,8 @@ exports.registerForIdeathon = async (req, res, next) => {
             techStack,
             githubRepo,
             additionalInfo,
-            userId 
+            userId,
+            deadlineDate 
         } = req.body;
         
         // Validate required fields
@@ -361,6 +553,18 @@ exports.registerForIdeathon = async (req, res, next) => {
             }
         }
         
+        // Get the ideathon to fetch its end date if no deadline is provided
+        const ideathonDetails = await Ideathon.findById(req.params.id);
+        if (!ideathonDetails) {
+            return res.status(404).json({
+                success: false,
+                message: 'Ideathon not found'
+            });
+        }
+
+        // Use provided deadline or default to ideathon end date
+        const finalDeadlineDate = deadlineDate ? new Date(deadlineDate) : ideathonDetails.endDate;
+
         const registration = await IdeathonRegistration.create({
             ideathon: req.params.id,
             entrepreneur: entrepreneurId,
@@ -373,6 +577,7 @@ exports.registerForIdeathon = async (req, res, next) => {
             teamMembers: parsedTeamMembers,
             githubRepo,
             additionalInfo,
+            deadlineDate: finalDeadlineDate,
             registeredBy: req.user.id // Track who created the registration
         });
         
@@ -402,14 +607,112 @@ exports.getIdeathonRegistrations = async (req, res, next) => {
         .populate('idea', 'title description category')
         .populate('ideathon', 'title startDate endDate')
         .sort({ createdAt: -1 });
+
+        // Add deadline status and remaining time for each registration
+        const registrationsWithDeadlineInfo = registrations.map(registration => {
+            const now = new Date();
+            const deadline = new Date(registration.deadlineDate);
+            const daysRemaining = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
+            
+            return {
+                ...registration.toObject(),
+                deadlineStatus: {
+                    isOverdue: now > deadline,
+                    daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
+                    deadlineFormatted: deadline.toLocaleDateString(),
+                    urgencyLevel: daysRemaining <= 3 ? 'urgent' : 
+                                daysRemaining <= 7 ? 'approaching' : 
+                                'normal'
+                }
+            };
+        });
         
         res.status(200).json({ 
             success: true,
             count: registrations.length,
-            data: registrations 
+            data: registrationsWithDeadlineInfo 
         });
     } catch (error) {
         console.error('Get ideathon registrations error:', error);
+        next(error);
+    }
+};
+
+// @desc    Update ideathon registration
+// @route   PUT /api/ideathons/:id/registrations/:registrationId
+exports.updateRegistration = async (req, res, next) => {
+    try {
+        const {
+            teamName,
+            projectTitle,
+            projectDescription,
+            techStack,
+            teamMembers,
+            githubRepo,
+            pitchDetails,
+            additionalInfo,
+            deadlineDate
+        } = req.body;
+
+        // Find the registration
+        let registration = await IdeathonRegistration.findById(req.params.registrationId);
+        
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify that the registration belongs to the current user
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this registration'
+            });
+        }
+
+        // Get the ideathon to validate deadline date
+        const ideathonDetails = await Ideathon.findById(req.params.id);
+        if (!ideathonDetails) {
+            return res.status(404).json({
+                success: false,
+                message: 'Ideathon not found'
+            });
+        }
+
+        // Validate deadline date is not after ideathon end date
+        if (deadlineDate && new Date(deadlineDate) > ideathonDetails.endDate) {
+            return res.status(400).json({
+                success: false,
+                message: 'Deadline date cannot be after ideathon end date'
+            });
+        }
+
+        // Update the registration
+        registration = await IdeathonRegistration.findByIdAndUpdate(
+            req.params.registrationId,
+            {
+                teamName,
+                projectTitle,
+                projectDescription,
+                techStack,
+                teamMembers,
+                githubRepo,
+                pitchDetails,
+                additionalInfo,
+                deadlineDate: deadlineDate ? new Date(deadlineDate) : undefined,
+                updatedAt: Date.now()
+            },
+            { new: true, runValidators: true }
+        ).populate('ideathon', 'title theme description startDate endDate status fundingPrizes');
+
+        res.status(200).json({
+            success: true,
+            data: registration
+        });
+    } catch (error) {
+        console.error('Update registration error:', error);
         next(error);
     }
 };
@@ -439,6 +742,242 @@ exports.postIdeathonWinners = async (req, res, next) => {
         });
     } catch (error) {
         console.error('Post ideathon winners error:', error);
+        next(error);
+    }
+};
+
+// @desc    Get ideathons registered by current user
+// @route   GET /api/ideathons/my-registrations
+exports.getMyRegisteredIdeathons = async (req, res, next) => {
+    try {
+        const registrations = await IdeathonRegistration.find({ entrepreneur: req.user.id })
+            .populate('ideathon', 'title theme description startDate endDate status fundingPrizes')
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            count: registrations.length,
+            data: registrations
+        });
+    } catch (error) {
+        console.error('Get my registered ideathons error:', error);
+        next(error);
+    }
+};
+
+// @desc    Update ideathon registration progress
+// @route   PUT /api/ideathons/registrations/:registrationId/progress
+exports.updateRegistrationProgress = async (req, res, next) => {
+    try {
+        const { 
+            progressStatus, 
+            currentProgress, 
+            milestones,
+            projectUpdates,
+            challengesFaced,
+            nextSteps,
+            resourcesNeeded,
+            feedback
+        } = req.body;
+
+        // Find the registration
+        let registration = await IdeathonRegistration.findById(req.params.registrationId);
+        
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify that the registration belongs to the current user
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this registration'
+            });
+        }
+
+        // Validate progress status
+        const validProgressStatuses = [
+            'Not Started',
+            'Planning Phase',
+            'Initial Development',
+            'Advanced Development',
+            'Testing & Refinement',
+            'Ready for Submission'
+        ];
+
+        if (progressStatus && !validProgressStatuses.includes(progressStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid progress status'
+            });
+        }
+
+        // Validate current progress percentage
+        if (currentProgress !== undefined && (currentProgress < 0 || currentProgress > 100)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Progress percentage must be between 0 and 100'
+            });
+        }
+
+        // Create progress update entry
+        const progressUpdate = {
+            date: Date.now(),
+            status: progressStatus,
+            progress: currentProgress,
+            projectUpdates,
+            challengesFaced,
+            nextSteps,
+            resourcesNeeded,
+            feedback
+        };
+
+        // Prepare update object
+        const updateData = {
+            lastUpdated: Date.now(),
+            $push: { progressHistory: progressUpdate }
+        };
+
+        if (progressStatus) updateData.progressStatus = progressStatus;
+        if (currentProgress !== undefined) updateData.currentProgress = currentProgress;
+        if (milestones) updateData.milestones = milestones;
+        
+        // Add other fields if they exist
+        if (projectUpdates) updateData.projectUpdates = projectUpdates;
+        if (challengesFaced) updateData.challengesFaced = challengesFaced;
+        if (nextSteps) updateData.nextSteps = nextSteps;
+        if (resourcesNeeded) updateData.resourcesNeeded = resourcesNeeded;
+        if (feedback) updateData.feedback = feedback;
+
+        // Update the registration
+        registration = await IdeathonRegistration.findByIdAndUpdate(
+            req.params.registrationId,
+            updateData,
+            { new: true, runValidators: true }
+        ).populate('ideathon', 'title theme description startDate endDate status fundingPrizes')
+         .populate('entrepreneur', 'name email');
+
+        // Calculate new progress metrics
+        const completedMilestones = registration.milestones.filter(m => m.completed).length;
+        const totalMilestones = registration.milestones.length;
+        const milestoneProgress = totalMilestones > 0 
+            ? Math.round((completedMilestones / totalMilestones) * 100) 
+            : 0;
+
+        // Add metrics to response
+        const responseData = {
+            ...registration.toObject(),
+            metrics: {
+                completedMilestones,
+                totalMilestones,
+                milestoneProgress,
+                lastUpdated: registration.lastUpdated
+            }
+        };
+
+        res.status(200).json({
+            success: true,
+            data: responseData,
+            message: 'Progress updated successfully'
+        });
+    } catch (error) {
+        console.error('Update registration progress error:', error);
+        next(error);
+    }
+};
+
+// @desc    Add milestone to registration
+// @route   POST /api/ideathons/registrations/:registrationId/milestones
+exports.addMilestone = async (req, res, next) => {
+    try {
+        const { title } = req.body;
+
+        // Find the registration
+        let registration = await IdeathonRegistration.findById(req.params.registrationId);
+        
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify that the registration belongs to the current user
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this registration'
+            });
+        }
+
+        // Add the new milestone
+        registration.milestones.push({
+            title,
+            completed: false
+        });
+
+        // Save the updated registration
+        await registration.save();
+
+        res.status(200).json({
+            success: true,
+            data: registration
+        });
+    } catch (error) {
+        console.error('Add milestone error:', error);
+        next(error);
+    }
+};
+
+// @desc    Update milestone status
+// @route   PUT /api/ideathons/registrations/:registrationId/milestones/:milestoneId
+exports.updateMilestone = async (req, res, next) => {
+    try {
+        const { completed } = req.body;
+        const { registrationId, milestoneId } = req.params;
+
+        // Find the registration
+        let registration = await IdeathonRegistration.findById(registrationId);
+        
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify that the registration belongs to the current user
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update this registration'
+            });
+        }
+
+        // Find and update the milestone
+        const milestone = registration.milestones.id(milestoneId);
+        if (!milestone) {
+            return res.status(404).json({
+                success: false,
+                message: 'Milestone not found'
+            });
+        }
+
+        milestone.completed = completed;
+        milestone.completedDate = completed ? Date.now() : undefined;
+
+        // Save the updated registration
+        await registration.save();
+
+        res.status(200).json({
+            success: true,
+            data: registration
+        });
+    } catch (error) {
+        console.error('Update milestone error:', error);
         next(error);
     }
 };

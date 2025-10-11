@@ -9,7 +9,10 @@ import {
   FaCheck,
   FaPlus
 } from "react-icons/fa";
-import { ideasAPI, ideathonsAPI } from "../../services/api";
+import RegistrationSuccessScreen from "./RegistrationSuccessScreen";
+import { ideasAPI } from "../../services/ideas.api";
+import { API_URL } from "../../config/config";
+import { ideathonRegistrationAPI } from "../../services/ideathonRegistration";
 
 /**
  * IdeathonRegistrationForm Component
@@ -21,16 +24,24 @@ import { ideasAPI, ideathonsAPI } from "../../services/api";
  * - ideathonId: ID of the ideathon to register for
  * - ideathonTitle: Title of the ideathon for display
  */
-const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }) => {
+const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, onSuccess }) => {
   // State for form data
-  const [formData, setFormData] = useState({
+  const defaultFormData = {
     selectedIdeaId: "",
-    pitchDetails: "",
     teamName: "",
+    email: "",
+    phoneNumber: "",
+    githubUrl: "",
     projectTitle: "",
     teamMembers: "",
-    documents: []
-  });
+    abstractDetails: "",
+    problemStatement: "",
+    pitchDetails: "",
+    documents: [],
+    confirmation: false
+  };
+
+  const [formData, setFormData] = useState(defaultFormData);
 
   // State for managing data and UI
   const [userIdeas, setUserIdeas] = useState([]); // User's existing ideas from database
@@ -38,6 +49,8 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
   const [isSubmitting, setIsSubmitting] = useState(false); // Loading state for form submission
   const [error, setError] = useState(""); // Error message display
   const [success, setSuccess] = useState(""); // Success message display
+  const [registrationSuccess, setRegistrationSuccess] = useState(false); // Track registration success
+  const [registrationData, setRegistrationData] = useState(null); // Store registration data for success screen
 
   /**
    * Fetch user's existing ideas from the database
@@ -116,16 +129,11 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
     if (isOpen) {
       fetchUserIdeas();
       // Reset form when modal opens
-      setFormData({
-        selectedIdeaId: "",
-        pitchDetails: "",
-        teamName: "",
-        projectTitle: "",
-        teamMembers: "",
-        documents: []
-      });
+      setFormData(defaultFormData);
       setError("");
       setSuccess("");
+      setRegistrationSuccess(false);
+      setRegistrationData(null);
     }
   }, [isOpen, ideathonId]);
 
@@ -165,24 +173,83 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
    * Validate form data before submission
    */
   const validateForm = () => {
-    if (!formData.selectedIdeaId) {
+    const {
+      selectedIdeaId,
+      teamName,
+      email,
+      phoneNumber,
+      githubUrl,
+      projectTitle,
+      abstractDetails,
+      problemStatement,
+      pitchDetails,
+      confirmation
+    } = formData;
+
+    // Clear any previous error
+    setError("");
+
+    // Helper function to safely trim strings
+    const safeTrim = (str) => str?.trim() || '';
+
+    if (!selectedIdeaId) {
       setError("Please select an idea to register with.");
       return false;
     }
-    if (!formData.teamName.trim()) {
+    if (!safeTrim(teamName)) {
       setError("Please provide a team name.");
       return false;
     }
-    if (!formData.projectTitle.trim()) {
+    if (!safeTrim(email)) {
+      setError("Please provide a contact email.");
+      return false;
+    }
+    if (!email?.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      setError("Please provide a valid email address.");
+      return false;
+    }
+    if (!safeTrim(phoneNumber)) {
+      setError("Please provide a contact phone number.");
+      return false;
+    }
+    if (!phoneNumber?.match(/^\d{10}$/)) {
+      setError("Please provide a valid 10-digit phone number.");
+      return false;
+    }
+    if (githubUrl && !githubUrl.match(/^https:\/\/github\.com\/[\w-]+\/[\w-]+$/)) {
+      setError("Please provide a valid GitHub repository URL or leave it empty.");
+      return false;
+    }
+    if (!safeTrim(projectTitle)) {
       setError("Please provide a project title.");
       return false;
     }
-    if (!formData.pitchDetails.trim()) {
+    if (!safeTrim(abstractDetails)) {
+      setError("Please provide a project abstract.");
+      return false;
+    }
+    if (safeTrim(abstractDetails).length < 100) {
+      setError("Project abstract must be at least 100 characters long.");
+      return false;
+    }
+    if (!safeTrim(problemStatement)) {
+      setError("Please provide a problem statement.");
+      return false;
+    }
+    if (safeTrim(problemStatement).length < 50) {
+      setError("Problem statement must be at least 50 characters long.");
+      return false;
+    }
+    if (!safeTrim(pitchDetails)) {
       setError("Please provide pitch details for your registration.");
       return false;
     }
-    if (formData.pitchDetails.trim().length < 50) {
+    if (safeTrim(pitchDetails).length < 50) {
       setError("Pitch details must be at least 50 characters long.");
+      return false;
+    }
+    if (!confirmation) {
+      setError("Please confirm that you agree to the ideathon rules and guidelines.");
       return false;
     }
     return true;
@@ -194,42 +261,112 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate form data
-    if (!validateForm()) {
-      return;
-    }
+    console.log("Form submission started");
 
     try {
       setIsSubmitting(true);
       setError("");
+      setSuccess("");
+
+      // Perform full form validation
+      if (!validateForm()) {
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Get JWT token
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("Please login to register");
+        setIsSubmitting(false);
+        return;
+      }
 
       // Prepare registration data
       const registrationData = {
-        ideaId: formData.selectedIdeaId,
-        pitchDetails: formData.pitchDetails,
-        teamName: formData.teamName,
-        projectTitle: formData.projectTitle,
-        projectDescription: formData.pitchDetails, // Use pitch details as project description
-        teamMembers: formData.teamMembers, // This will be parsed by backend
-        // In a real app, you'd upload documents to a file service first
-        documents: formData.documents.map(file => file.name)
+        idea: formData.selectedIdeaId,  // Changed from ideaId to idea to match backend schema
+        teamName: formData.teamName.trim(),
+        email: formData.email.trim(),
+        phoneNumber: formData.phoneNumber.trim(),
+        githubUrl: formData.githubUrl.trim(),
+        projectTitle: formData.projectTitle.trim(),
+        abstractDetails: formData.abstractDetails.trim(),
+        problemStatement: formData.problemStatement.trim(),
+        pitchDetails: formData.pitchDetails.trim(),
+        teamMembers: formData.teamMembers ? formData.teamMembers.split(',').map(name => ({
+          name: name.trim(),
+          email: formData.email.trim(),
+          role: 'Team Member'
+        })) : []
       };
 
-      // API call to register for ideathon (POST /api/ideathons/:id/register)
-      const response = await ideathonsAPI.registerForIdeathon(ideathonId, registrationData);
+      console.log("Sending registration with data:", registrationData);
 
-      if (response.success) {
-        setSuccess("Successfully registered for the ideathon! Good luck!");
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      } else {
-        setError(response.message || "Failed to register for ideathon. Please try again.");
+      let response;
+      try {
+        response = await fetch(`${API_URL}/api/ideathons/${ideathonId}/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(registrationData),
+          credentials: 'include' // Include cookies if needed
+        });
+      } catch (networkError) {
+        console.error("Network error:", networkError);
+        throw new Error('Unable to connect to server. Please check your internet connection and try again.');
       }
-    } catch (err) {
-      console.error("Error registering for ideathon:", err);
-      setError("Failed to register. Please check your connection and try again.");
+
+      let responseData;
+      try {
+        const text = await response.text();
+        try {
+          responseData = JSON.parse(text);
+        } catch (e) {
+          console.error("Invalid JSON response:", text);
+          throw new Error('Server returned an invalid response. Please try again.');
+        }
+      } catch (parseError) {
+        console.error("Response parsing error:", parseError);
+        throw new Error('Error processing server response. Please try again.');
+      }
+
+      if (!response.ok) {
+        const errorMessage = responseData?.message || response.statusText || 'Registration failed';
+        throw new Error(errorMessage);
+      }
+
+      // Handle success
+      const successData = {
+        teamName: formData.teamName,
+        teamMembers: formData.teamMembers || "",
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        pitchDetails: formData.pitchDetails,
+        githubUrl: formData.githubUrl || "",
+        projectTitle: formData.projectTitle,
+        abstractDetails: formData.abstractDetails,
+        problemStatement: formData.problemStatement,
+        selectedIdea: userIdeas.find(idea => idea.id === parseInt(formData.selectedIdeaId)),
+        registrationId: responseData.data?._id
+      };
+
+      console.log("Registration successful!", successData);
+      
+      setSuccess("Successfully registered for the ideathon!");
+      setRegistrationData(successData);
+      setRegistrationSuccess(true);
+      setFormData(defaultFormData);
+      
+      // Notify parent component of success
+      if (onSuccess) {
+        console.log("Calling onSuccess callback");
+        onSuccess(successData);
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      setError(error.message || "Registration failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -248,16 +385,26 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
   // Don't render if modal is not open
   if (!isOpen) return null;
 
+  // Show success screen if registration is successful
+  if (registrationSuccess && registrationData) {
+    return (
+      <RegistrationSuccessScreen 
+        registrationData={registrationData}
+        ideathonTitle={ideathonTitle}
+        onClose={() => {
+          onClose();
+          setRegistrationSuccess(false);
+          setRegistrationData(null);
+          setFormData(defaultFormData);
+        }}
+      />
+    );
+  }
+
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
-      {/* Backdrop with blur */}
-      <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-xl" 
-        onClick={onClose}
-      ></div>
-      
-      {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[70]">
+    <div className="w-full">
+      {/* Modal Content */}
+      <div className="w-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div>
@@ -297,7 +444,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
               <span className="ml-3 text-white">Loading your ideas...</span>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form className="space-y-6">
               {/* Idea Selection */}
               <div>
                 <label className="block text-white font-medium mb-3">
@@ -332,7 +479,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
                   >
                     <option value="">Choose an idea...</option>
                     {userIdeas.map((idea) => (
-                      <option key={idea.id} value={idea.id}>
+                      <option key={idea._id} value={idea._id}>
                         {idea.title} - {idea.category}
                       </option>
                     ))}
@@ -344,7 +491,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
               {formData.selectedIdeaId && (
                 <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
                   {(() => {
-                    const selectedIdea = userIdeas.find(idea => idea.id === parseInt(formData.selectedIdeaId));
+                    const selectedIdea = userIdeas.find(idea => idea._id === formData.selectedIdeaId);
                     return selectedIdea ? (
                       <div>
                         <h4 className="text-white font-medium mb-2">{selectedIdea.title}</h4>
@@ -373,6 +520,56 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
                   className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                   required
                 />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-white font-medium mb-3">
+                  Email <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter team lead's email"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  required
+                />
+              </div>
+
+              {/* Phone Number */}
+              <div>
+                <label className="block text-white font-medium mb-3">
+                  Phone Number <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  placeholder="Enter contact number"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  required
+                />
+              </div>
+
+              {/* GitHub URL */}
+              <div>
+                <label className="block text-white font-medium mb-3">
+                  GitHub Repository URL
+                </label>
+                <input
+                  type="url"
+                  name="githubUrl"
+                  value={formData.githubUrl}
+                  onChange={handleInputChange}
+                  placeholder="https://github.com/username/repository"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                />
+                <p className="text-white/50 text-sm mt-2">
+                  Add your project repository URL (if available)
+                </p>
               </div>
 
               {/* Project Title */}
@@ -406,6 +603,44 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
                 />
                 <p className="text-white/50 text-sm mt-2">
                   List team member names separated by commas (optional)
+                </p>
+              </div>
+
+              {/* Abstract */}
+              <div>
+                <label className="block text-white font-medium mb-3">
+                  Project Abstract <span className="text-red-400">*</span>
+                </label>
+                <textarea
+                  name="abstractDetails"
+                  value={formData.abstractDetails}
+                  onChange={handleInputChange}
+                  placeholder="Provide a brief overview of your project..."
+                  rows={4}
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none"
+                  required
+                />
+                <p className="text-white/50 text-sm mt-2">
+                  A brief summary of your project idea (100-200 words)
+                </p>
+              </div>
+
+              {/* Problem Statement */}
+              <div>
+                <label className="block text-white font-medium mb-3">
+                  Problem Statement <span className="text-red-400">*</span>
+                </label>
+                <textarea
+                  name="problemStatement"
+                  value={formData.problemStatement}
+                  onChange={handleInputChange}
+                  placeholder="Describe the problem your project aims to solve..."
+                  rows={4}
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none"
+                  required
+                />
+                <p className="text-white/50 text-sm mt-2">
+                  Clearly state the problem you're addressing
                 </p>
               </div>
 
@@ -486,6 +721,36 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
                   </div>
                 )}
               </div>
+
+              {/* Confirmation Checkbox */}
+              <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <div className="pt-1">
+                    <input
+                      type="checkbox"
+                      id="confirmation"
+                      name="confirmation"
+                      checked={formData.confirmation}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        confirmation: e.target.checked
+                      }))}
+                      className="w-4 h-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-900 bg-gray-900"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="confirmation" className="block text-white font-medium mb-2">
+                      Confirmation <span className="text-red-400">*</span>
+                    </label>
+                    <p className="text-white/70 text-sm leading-relaxed">
+                      I confirm that all the information provided above is accurate and complete. 
+                      I understand and agree to the ideathon rules and guidelines. 
+                      I acknowledge that my team is committed to participating in this event.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </form>
           )}
         </div>
@@ -494,6 +759,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
         {!isLoadingIdeas && userIdeas.length > 0 && (
           <div className="flex items-center justify-between p-6 border-t border-white/10 bg-black relative z-[75]">
             <button
+              type="button"
               onClick={onClose}
               className="px-6 py-3 text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/10"
             >
@@ -501,9 +767,14 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle }
             </button>
 
             <button
+              type="submit"
               onClick={handleSubmit}
-              disabled={isSubmitting || !formData.selectedIdeaId || !formData.pitchDetails.trim() || !formData.teamName.trim() || !formData.projectTitle.trim()}
-              className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
+              disabled={isSubmitting}
+              className={`px-8 py-3 font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2
+                ${isSubmitting 
+                  ? 'bg-blue-500/50 text-white cursor-not-allowed'
+                  : 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
+                }`}
             >
               {isSubmitting ? (
                 <>

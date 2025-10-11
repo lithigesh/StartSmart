@@ -1,5 +1,57 @@
 // Backend chart controller for idea analytics
 const Idea = require('../models/Idea.model');
+const IdeathonRegistration = require('../models/IdeathonRegistration.model');
+
+// Get tech stack distribution data
+const getTechStackDistribution = async (req, res) => {
+  try {
+    // Get all registrations with techStack field
+    const registrations = await IdeathonRegistration.find({ techStack: { $exists: true } });
+    
+    // Initialize tech stack counter
+    const techStackCounter = {};
+    
+    // Count occurrences of each technology
+    registrations.forEach(registration => {
+      if (registration.techStack && Array.isArray(registration.techStack)) {
+        registration.techStack.forEach(tech => {
+          const cleanTech = tech.trim();
+          techStackCounter[cleanTech] = (techStackCounter[cleanTech] || 0) + 1;
+        });
+      } else if (typeof registration.techStack === 'string') {
+        // If techStack is a comma-separated string
+        const techArray = registration.techStack.split(',');
+        techArray.forEach(tech => {
+          const cleanTech = tech.trim();
+          if (cleanTech) {
+            techStackCounter[cleanTech] = (techStackCounter[cleanTech] || 0) + 1;
+          }
+        });
+      }
+    });
+    
+    // Convert to array format suitable for pie chart
+    const techStackData = Object.entries(techStackCounter).map(([name, value]) => ({
+      name,
+      value
+    }));
+    
+    // Sort by value in descending order
+    techStackData.sort((a, b) => b.value - a.value);
+    
+    res.json({
+      success: true,
+      data: techStackData
+    });
+  } catch (error) {
+    console.error('Error fetching tech stack distribution:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error fetching tech stack distribution',
+      data: [] // Empty array as fallback
+    });
+  }
+};
 
 // Get aggregated chart data for ideas overview
 const getIdeasChartData = async (req, res) => {
@@ -175,5 +227,6 @@ const getIdeaAnalytics = async (req, res) => {
 
 module.exports = {
   getIdeasChartData,
-  getIdeaAnalytics
+  getIdeaAnalytics,
+  getTechStackDistribution
 };

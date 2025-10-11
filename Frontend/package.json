@@ -5,8 +5,9 @@
   "name": "startsmart",
   "description": "StartSmart - An AI-Powered Startup Evaluation & Funding Ecosystem",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build"
+    "dev": "vite --force",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.0",
@@ -28,13 +29,35 @@
     "tailwindcss-animate": "1.0.7"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "4.3.4",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.16",
     "esbuild": "^0.25.9",
     "globals": "15.12.0",
+    "postcss": "^8.4.31",
     "tailwindcss": "3.4.16",
     "vite": "^6.3.5"
   },
-  "alias": {
-    "@/*": "./src/components/ui/$1"
+  "paths": {
+    "@": [
+      "./src"
+    ],
+    "@/components": [
+      "./src/components"
+    ],
+    "@/pages": [
+      "./src/pages"
+    ],
+    "@/services": [
+      "./src/services"
+    ],
+    "@/context": [
+      "./src/context"
+    ],
+    "@/hooks": [
+      "./src/hooks"
+    ]
   }
 }

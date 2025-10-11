@@ -6,11 +6,37 @@ const path = require('path');
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorHandler');
 
-// Initialize database connection
-connectDB();
-
 const app = express();
-app.use(cors());
+
+// Initialize database connection with retries
+const initializeDB = async () => {
+    let retries = 5;
+    while (retries > 0) {
+        try {
+            await connectDB();
+            console.log('Database connection successful');
+            return;
+        } catch (error) {
+            console.error(`Database connection failed. Retries left: ${retries-1}`);
+            retries--;
+            if (retries === 0) {
+                console.error('Could not connect to the database after multiple attempts');
+                process.exit(1);
+            }
+            // Wait for 5 seconds before retrying
+            await new Promise(resolve => setTimeout(resolve, 5000));
+        }
+    }
+};
+
+initializeDB();
+// Configure CORS
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+}));
 app.use(express.json());
 
 // Serve uploaded files statically

@@ -23,9 +23,11 @@ const IdeathonSchema = new mongoose.Schema({
         required: [true, 'Start date is required'],
         validate: {
             validator: function(value) {
-                return value > new Date();
+                const now = new Date();
+                const oct2025End = new Date('2025-10-31T23:59:59');
+                return value > now && value <= oct2025End;
             },
-            message: 'Start date must be in the future'
+            message: 'Start date must be between now and October 2025'
         }
     },
     endDate: { 
@@ -33,9 +35,10 @@ const IdeathonSchema = new mongoose.Schema({
         required: [true, 'End date is required'],
         validate: {
             validator: function(value) {
-                return this.startDate && value > this.startDate;
+                const oct2025End = new Date('2025-10-31T23:59:59');
+                return this.startDate && value > this.startDate && value <= oct2025End;
             },
-            message: 'End date must be after start date'
+            message: 'End date must be between start date and October 2025'
         }
     },
     

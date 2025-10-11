@@ -20,9 +20,10 @@ export default defineConfig({
     historyApiFallback: true,
     host: 'localhost',
     port: 5173,
-    hmr: {
-      port: 24678, // Use a different port for HMR
-    },
+    hmr: true, // Let Vite handle port allocation dynamically
+    watch: {
+      usePolling: true
+    }
   },
   preview: {
     port: 3000,
@@ -38,6 +39,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@/components": path.resolve(__dirname, "./src/components"),
       "@/pages": path.resolve(__dirname, "./src/pages"),
+      "@/services": path.resolve(__dirname, "./src/services"),
+      "@/context": path.resolve(__dirname, "./src/context"),
+      "@/hooks": path.resolve(__dirname, "./src/hooks")
     },
   },
 });
