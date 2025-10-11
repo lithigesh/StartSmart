@@ -60,22 +60,10 @@ const SideBar = ({
       path: "/entrepreneur/investors",
     },
     {
-      id: "analytics",
-      label: "Analytics",
-      icon: <FaChartBar className="w-5 h-5" />,
-      path: "/entrepreneur/analytics",
-    },
-    {
       id: "ideathons",
       label: "Ideathons",
       icon: <FaTrophy className="w-5 h-5" />,
       path: "/entrepreneur/ideathons",
-    },
-    {
-      id: "collaborations",
-      label: "Collaborations",
-      icon: <FaUsers className="w-5 h-5" />,
-      path: "/entrepreneur/collaborations",
     },
     {
       id: "notifications",
@@ -89,12 +77,6 @@ const SideBar = ({
       label: "App Feedback",
       icon: <FaComment className="w-5 h-5" />,
       path: "/entrepreneur/feedback",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: <FaCog className="w-5 h-5" />,
-      path: "/entrepreneur/settings",
     },
   ];
 

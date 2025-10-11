@@ -2,23 +2,64 @@ import React, { useState, useEffect } from 'react';
 import { ideasAPI } from '../../../services/api';
 
 const IdeaMasterForm = ({ onDataChange, onSuccess, onError, initialData = {}, isEditMode = false }) => {
+  // Sample data for quick testing and demonstration
+  const sampleData = {
+    title: 'FamryEasy - AI-Powered Vertical Farming Solution',
+    description: 'EcoSmart Urban Gardens revolutionizes urban agriculture through AI-powered vertical farming systems that maximize food production in minimal space. Our innovative solution combines IoT sensors, machine learning algorithms, and sustainable growing techniques to enable anyone to grow fresh, organic produce year-round in urban environments. The system automatically monitors and adjusts lighting, watering, nutrients, and environmental conditions to optimize plant growth while minimizing resource consumption. Perfect for apartments, offices, schools, and community spaces, our solution addresses food security, reduces carbon footprint, and promotes sustainable living in cities.',
+    category: 'Agriculture',
+    stage: 'Prototype',
+    targetAudience: 'Urban dwellers, apartment owners, office buildings, schools, restaurants, and community organizations looking for sustainable food production solutions',
+    problemStatement: 'Urban populations face limited access to fresh, locally-grown produce due to space constraints, high costs, and long supply chains. Traditional farming requires large land areas and is often located far from cities, leading to environmental impact from transportation, food waste, and reduced nutritional value. Many people want to grow their own food but lack the space, knowledge, or time to maintain traditional gardens.',
+    solution: 'Our AI-powered vertical farming system provides an automated, space-efficient solution that uses 95% less water and 90% less space than traditional farming. The system includes smart sensors that monitor soil moisture, pH levels, light exposure, and plant health, automatically adjusting conditions for optimal growth. Users can monitor and control their gardens through a mobile app, receive notifications, and access personalized growing guides. The modular design allows for easy scaling from small personal units to large commercial installations.',
+    uniqueValueProposition: 'EcoSmart Urban Gardens is the only vertical farming solution that combines AI optimization, plug-and-play setup, and mobile app integration at an affordable price point. Our proprietary algorithms learn from each garden to continuously improve growing conditions, while our subscription service provides seeds, nutrients, and expert support, making urban farming accessible to everyone regardless of experience level.',
+    marketSize: '$4.2B vertical farming market growing at 24% CAGR, with 5.2B urban population globally',
+    competitiveAdvantage: 'Our competitive advantages include proprietary AI algorithms trained on 50,000+ growing cycles, 60% lower cost than existing solutions, plug-and-play setup requiring no technical expertise, partnerships with seed suppliers and urban planning organizations, and a sustainable business model combining hardware sales with recurring subscription revenue.'
+  };
+
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    stage: 'Concept',
-    targetAudience: '',
-    problemStatement: '',
-    solution: '',
-    uniqueValueProposition: '',
-    marketSize: '',
-    competitiveAdvantage: '',
-    attachments: null,
+    title: initialData.title || sampleData.title,
+    description: initialData.description || sampleData.description,
+    category: initialData.category || sampleData.category,
+    stage: initialData.stage || sampleData.stage,
+    targetAudience: initialData.targetAudience || sampleData.targetAudience,
+    problemStatement: initialData.problemStatement || sampleData.problemStatement,
+    solution: initialData.solution || sampleData.solution,
+    uniqueValueProposition: initialData.uniqueValueProposition || sampleData.uniqueValueProposition,
+    marketSize: initialData.marketSize || sampleData.marketSize,
+    competitiveAdvantage: initialData.competitiveAdvantage || sampleData.competitiveAdvantage,
+    attachments: initialData.attachments || null,
     ...initialData
   });
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Function to clear form data
+  const clearForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      category: '',
+      stage: 'Concept',
+      targetAudience: '',
+      problemStatement: '',
+      solution: '',
+      uniqueValueProposition: '',
+      marketSize: '',
+      competitiveAdvantage: '',
+      attachments: null
+    });
+    setErrors({});
+  };
+
+  // Function to load fresh sample data
+  const loadSampleData = () => {
+    setFormData({
+      ...sampleData,
+      attachments: null
+    });
+    setErrors({});
+  };
 
   const categories = [
     'Technology',
@@ -266,12 +307,43 @@ const IdeaMasterForm = ({ onDataChange, onSuccess, onError, initialData = {}, is
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">
-          {isEditMode ? 'Edit Idea Master' : 'Idea Master'}
-        </h2>
-        <p className="text-gray-400">
-          Define the core concept, problem, and solution for your innovative idea.
-        </p>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              {isEditMode ? 'Edit Idea Master' : 'Idea Master'}
+            </h2>
+            <p className="text-gray-400">
+              Define the core concept, problem, and solution for your innovative idea.
+            </p>
+            {!isEditMode && (
+              <div className="mt-3 p-3 bg-blue-900/30 border border-blue-500/30 rounded-lg">
+                <p className="text-blue-300 text-sm">
+                  💡 <strong>Sample data has been pre-loaded</strong> to help you get started quickly. You can modify any field or use the "Clear Form" button to start fresh.
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {/* Quick Action Buttons */}
+          {!isEditMode && (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={clearForm}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg transition-colors duration-200 border border-gray-600"
+              >
+                🗑️ Clear Form
+              </button>
+              <button
+                type="button"
+                onClick={loadSampleData}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition-colors duration-200"
+              >
+                🚀 Load Sample Data
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
