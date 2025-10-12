@@ -56,34 +56,252 @@ StartSmart follows a modern full-stack architecture:
 - Backend: Node.js hosting platform
 - Database: MongoDB Atlas
 
-## 📁 Project Structure
+## 📁 Detailed Project Structure
+
+### 🎯 Frontend Structure (`/Frontend`)
 
 ```
-StartSmart/
-├── Frontend/              # React frontend application
-│   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Page components
-│   │   ├── context/       # React context providers
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── services/      # API service functions
-│   │   └── utils/         # Utility functions
-│   ├── public/            # Static assets
-│   └── package.json       # Frontend dependencies
-├── Backend/               # Node.js backend application
-│   ├── controllers/       # Request handlers
-│   ├── models/            # Database schemas
-│   ├── routes/            # API routes
-│   ├── middlewares/       # Custom middleware
-│   ├── services/          # Business logic services
-│   ├── validators/        # Input validation
-│   ├── utils/             # Utility functions
-│   ├── config/            # Configuration files
-│   └── package.json       # Backend dependencies
-└── README.md              # This file
+Frontend/
+├── public/                           # Static assets served directly
+│   ├── ico_icon.ico                 # Favicon for browser tabs
+│   ├── svg_icon.svg                 # SVG logo for scalable graphics
+│   └── w_startSmart_icon.png        # PNG logo for various uses
+├── src/                             # Source code directory
+│   ├── components/                  # Reusable React components
+│   │   ├── ui/                      # Base UI components (buttons, inputs, cards)
+│   │   ├── entrepreneur/            # Entrepreneur-specific components
+│   │   │   ├── SideBar.jsx          # Navigation sidebar for entrepreneur dashboard
+│   │   │   ├── DashboardCard.jsx    # Metric display cards
+│   │   │   ├── IdeaCard.jsx         # Individual idea display component
+│   │   │   ├── NotificationsPopup.jsx # Real-time notification popup
+│   │   │   └── index.js             # Component exports
+│   │   ├── investor/                # Investor-specific components
+│   │   │   ├── IdeasSection.jsx     # Ideas browsing interface
+│   │   │   ├── ErrorMessage.jsx     # Error display component
+│   │   │   └── index.js             # Component exports
+│   │   ├── EmptyState.jsx           # Empty data state component
+│   │   ├── ErrorBoundary.jsx        # React error boundary wrapper
+│   │   ├── Footer.jsx               # Site footer component
+│   │   ├── Header.jsx               # Site header and navigation
+│   │   ├── HeroSection.jsx          # Landing page hero section
+│   │   ├── IdeaCard.jsx             # General idea display card
+│   │   ├── MainContentSection.jsx   # Landing page main content
+│   │   ├── ProtectedRoute.jsx       # Authentication route guard
+│   │   └── RoleBasedRoute.jsx       # Role-specific route protection
+│   ├── pages/                       # Page-level components
+│   │   ├── entrepreneur/            # Entrepreneur dashboard pages
+│   │   │   ├── EntrepreneurDashboard.jsx      # Main entrepreneur dashboard
+│   │   │   ├── EntrepreneurDashboardPage.jsx  # Enhanced dashboard view
+│   │   │   ├── CollaborationsPage.jsx         # Team collaboration interface
+│   │   │   └── IdeathonsPage.jsx              # Competition participation
+│   │   ├── investor/                # Investor dashboard pages
+│   │   │   └── InvestorDashboard.jsx # Main investor dashboard
+│   │   ├── admin/                   # Admin dashboard pages
+│   │   │   ├── AdminDashboardPage.jsx        # Admin overview dashboard
+│   │   │   ├── AdminIdeasPage.jsx            # Idea management interface
+│   │   │   ├── AdminIdeathonsPage.jsx        # Competition management
+│   │   │   ├── AdminUsersPage.jsx            # User account management
+│   │   │   ├── AdminFeedbackPage.jsx         # Feedback collection
+│   │   │   └── AdminSustainabilityPage.jsx   # Sustainability tracking
+│   │   ├── IdeaSubmission/          # Multi-step idea submission
+│   │   │   ├── IdeaSubmissionPage.jsx        # Main submission workflow
+│   │   │   └── components/                   # Form components
+│   │   │       ├── IdeaMasterForm.jsx        # Core idea details form
+│   │   │       ├── TeamResourceForm.jsx     # Team and resource planning
+│   │   │       └── BusinessAimForm.jsx      # Business strategy form
+│   │   ├── errors/                  # Error page components
+│   │   ├── LandingPage.jsx          # Public homepage
+│   │   ├── LoginPage.jsx            # User authentication
+│   │   ├── RegisterPage.jsx         # User registration
+│   │   ├── IdeaDetailPage.jsx       # Individual idea view
+│   │   ├── IdeasPage.jsx            # Ideas listing
+│   │   ├── FundingPage.jsx          # Funding requests
+│   │   ├── IdeathonsPage.jsx        # Competition listing
+│   │   ├── NotificationsPage.jsx    # Notification center
+│   │   └── SettingsPage.jsx         # User preferences
+│   ├── context/                     # React Context providers
+│   │   └── AuthContext.jsx          # Authentication state management
+│   ├── hooks/                       # Custom React hooks
+│   │   └── useNotifications.js      # Notification management hook
+│   ├── services/                    # API integration layer
+│   │   └── api.js                   # HTTP client and API endpoints
+│   ├── utils/                       # Utility functions
+│   │   └── errorHandler.js          # Error processing utilities
+│   ├── App.jsx                      # Root application component
+│   └── main.jsx                     # Application entry point
+├── index.html                       # HTML template
+├── package.json                     # Dependencies and scripts
+├── tailwind.config.js               # Tailwind CSS configuration
+├── tailwind.css                     # Global CSS styles
+├── vite.config.js                   # Vite build configuration
+└── vercel.json                      # Vercel deployment settings
 ```
 
-## 🚀 Quick Start
+### ⚙️ Backend Structure (`/Backend`)
+
+```
+Backend/
+├── config/                          # Configuration files
+│   └── db.js                        # MongoDB connection setup
+├── controllers/                     # Request handlers and business logic
+│   ├── admin.controller.js          # Admin dashboard operations
+│   ├── auth.controller.js           # User authentication logic
+│   ├── feedback.controller.js       # Feedback management
+│   ├── funding.controller.js        # Funding request processing
+│   ├── idea.controller.js           # Idea CRUD operations
+│   ├── ideathon.controller.js       # Competition management
+│   ├── investor.controller.js       # Investor-specific operations
+│   ├── notification.controller.js   # Notification system
+│   ├── report.controller.js         # Report generation
+│   └── sustainability.controller.js # Environmental impact tracking
+├── middlewares/                     # Express middleware functions
+│   ├── auth.middleware.js           # JWT token validation
+│   ├── errorHandler.js              # Global error handling
+│   └── role.middleware.js           # Role-based access control
+├── models/                          # MongoDB schema definitions
+│   ├── AdminAction.model.js         # Admin activity logging
+│   ├── Feedback.model.js            # User feedback schema
+│   ├── FundingRequest.model.js      # Funding application schema
+│   ├── Idea.model.js                # Business idea schema
+│   ├── Ideathon.model.js            # Competition schema
+│   ├── IdeathonRegistration.model.js # Competition registration
+│   ├── InvestorInterest.model.js    # Investor engagement tracking
+│   ├── Notification.model.js        # Notification schema
+│   ├── Report.model.js              # Generated report schema
+│   ├── Sustainability.model.js      # Environmental assessment
+│   └── User.model.js                # User account schema
+├── routes/                          # API endpoint definitions
+│   ├── admin.routes.js              # Admin API endpoints
+│   ├── auth.routes.js               # Authentication endpoints
+│   ├── feedback.routes.js           # Feedback API routes
+│   ├── funding.routes.js            # Funding management APIs
+│   ├── idea.routes.js               # Idea CRUD endpoints
+│   ├── ideathon.routes.js           # Competition APIs
+│   ├── investor.routes.js           # Investor-specific endpoints
+│   ├── notification.routes.js       # Notification APIs
+│   ├── report.routes.js             # Report generation endpoints
+│   └── sustainability.routes.js     # Sustainability APIs
+├── services/                        # External service integrations
+│   ├── aiAnalysis.service.js        # Google Generative AI integration
+│   ├── email.services.js            # SendGrid email service
+│   ├── notification.service.js      # Notification delivery
+│   └── pdf.service.js               # PDF report generation
+├── utils/                           # Utility functions
+│   └── generateToken.js             # JWT token creation
+├── validators/                      # Input validation rules
+│   └── idea.validator.js            # Idea submission validation
+├── server.js                        # Express server entry point
+└── package.json                     # Dependencies and scripts
+```
+
+## � File Execution Procedures
+
+### 📋 Key Files and Their Purposes
+
+**Frontend Entry Points:**
+- `main.jsx` - React application entry point, renders App component
+- `App.jsx` - Root component with routing and authentication context
+- `index.html` - HTML template that loads the React application
+
+**Backend Entry Points:**
+- `server.js` - Express server startup, middleware setup, and route mounting
+- `config/db.js` - MongoDB connection establishment and configuration
+
+**Critical Configuration Files:**
+- `Frontend/vite.config.js` - Vite build tool configuration for development and production
+- `Frontend/tailwind.config.js` - Tailwind CSS framework customization
+- `Backend/.env` - Environment variables for API keys, database URLs, and secrets
+- `Frontend/.env` - Frontend environment variables for API endpoints
+
+### 🚀 Step-by-Step Execution Guide
+
+#### 1. Initial Setup
+```bash
+# Clone the repository
+git clone https://github.com/lithigesh/StartSmart.git
+cd StartSmart
+```
+
+#### 2. Backend Setup & Execution
+```bash
+# Navigate to backend directory
+cd Backend
+
+# Install all dependencies
+npm install
+
+# Create environment file from template
+cp .env.example .env
+
+# Edit .env file with your configuration:
+# - MongoDB connection string
+# - JWT secret key
+# - Google Generative AI API key
+# - SendGrid API key for emails
+
+# Initialize admin account and start development server
+npm run setup    # Installs dependencies and creates admin user
+npm run dev      # Starts server with nodemon for auto-restart
+
+# Alternative commands:
+npm start        # Production server
+npm run init-admin  # Create admin account only
+```
+
+#### 3. Frontend Setup & Execution
+```bash
+# Open new terminal and navigate to frontend
+cd Frontend
+
+# Install all dependencies
+npm install
+
+# Create environment file
+echo "VITE_API_URL=http://localhost:5001" > .env
+
+# Start development server
+npm run dev      # Starts Vite dev server on http://localhost:5173
+
+# Alternative commands:
+npm run build    # Build for production
+npm run preview  # Preview production build
+```
+
+#### 4. Database Setup
+```bash
+# If using local MongoDB:
+mongod --dbpath /path/to/your/db
+
+# If using MongoDB Atlas:
+# 1. Create cluster on MongoDB Atlas
+# 2. Get connection string
+# 3. Add to Backend/.env file
+```
+
+#### 5. Verification Steps
+1. **Backend**: Visit `http://localhost:5001/api/health` (if health endpoint exists)
+2. **Frontend**: Visit `http://localhost:5173` to see the landing page
+3. **Database**: Check MongoDB connection in backend console logs
+4. **Admin Access**: Login with admin credentials created during setup
+
+### 📁 Important File Relationships
+
+**Authentication Flow:**
+- `AuthContext.jsx` ↔ `auth.controller.js` ↔ `User.model.js`
+- JWT tokens managed by `generateToken.js` and validated by `auth.middleware.js`
+
+**Idea Submission Flow:**
+- `IdeaSubmissionPage.jsx` → `IdeaMasterForm.jsx` → `api.js` → `idea.routes.js` → `idea.controller.js` → `Idea.model.js`
+
+**Admin Dashboard Flow:**
+- `AdminDashboardPage.jsx` → `admin.routes.js` → `admin.controller.js` → Various models
+
+**API Integration:**
+- All frontend components use `services/api.js` for HTTP requests
+- Backend routes are organized by feature in `routes/` directory
+- Controllers handle business logic and interact with models
+
+## �🚀 Quick Start
 
 ### Prerequisites
 
