@@ -4,6 +4,7 @@ import SideBar from "../components/entrepreneur/SideBar";
 import Header from "../components/Header";
 import FundingRequestForm from "../components/entrepreneur/FundingRequestForm";
 import FundingRequestDetailsModal from "../components/entrepreneur/FundingRequestDetailsModal";
+import FundingAnalyticsCharts from "../components/charts/FundingAnalyticsCharts";
 import {
   FaDollarSign,
   FaPlus,
@@ -393,6 +394,17 @@ const FundingDashboardPage = () => {
                 </p>
               </div>
             </div>
+
+            {/* Funding Analytics Charts */}
+            {fundingRequests.length > 0 && (
+              <div className="mb-8">
+                <FundingAnalyticsCharts
+                  fundingRequests={fundingRequests}
+                  loading={loading}
+                  userRole="entrepreneur"
+                />
+              </div>
+            )}
 
             {/* Filters and Search */}
             <div className="bg-black border border-white/10 rounded-2xl p-6 mb-6">

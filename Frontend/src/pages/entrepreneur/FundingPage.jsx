@@ -5,6 +5,7 @@ import { useNotifications } from "../../hooks/useNotifications";
 import { entrepreneurAPI, fundingAPI, ideasAPI } from "../../services/api";
 import FundingRequestDetailsModal from "../../components/entrepreneur/FundingRequestDetailsModal";
 import InvestorSelector from "../../components/entrepreneur/InvestorSelector";
+import FundingAnalyticsCharts from "../../components/charts/FundingAnalyticsCharts";
 import {
   FaDollarSign,
   FaFileAlt,
@@ -400,6 +401,17 @@ const FundingPage = () => {
             </p>
           </div>
         </div>
+
+        {/* Funding Analytics Charts */}
+        {fundingRequests.length > 0 && (
+          <div className="mb-8">
+            <FundingAnalyticsCharts
+              fundingRequests={fundingRequests}
+              loading={loading}
+              userRole="entrepreneur"
+            />
+          </div>
+        )}
 
         {/* Create Funding Request Button */}
         <div className="mb-6">

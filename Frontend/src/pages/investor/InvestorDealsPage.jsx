@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import DealCard from "../../components/investor/DealCard";
 import InvestorFundingRequestModal from "../../components/investor/InvestorFundingRequestModal";
+import FundingAnalyticsCharts from "../../components/charts/FundingAnalyticsCharts";
 import { investorDealAPI } from "../../services/api";
 import { useNotifications } from "../../hooks/useNotifications";
 
@@ -292,6 +293,23 @@ const InvestorDealsPage = () => {
             color="purple"
           />
         </div>
+
+        {/* Funding Analytics */}
+        {stats.total > 0 && (
+          <div className="mb-6">
+            <FundingAnalyticsCharts
+              fundingRequests={[
+                ...pipeline.new,
+                ...pipeline.viewed,
+                ...pipeline.negotiating,
+                ...pipeline.accepted,
+                ...pipeline.declined,
+              ]}
+              loading={isLoading}
+              userRole="investor"
+            />
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3 bg-gray-900 border border-gray-800 rounded-lg p-4">

@@ -15,6 +15,7 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 import { investorAPI } from "../../services/api";
+import IdeaComparisonCharts from "../charts/IdeaComparisonCharts";
 
 const ComparisonModal = ({
   isOpen,
@@ -379,6 +380,17 @@ const ComparisonModal = ({
               ))}
             </div>
           </div>
+
+          {/* Visual Comparison Charts */}
+          <IdeaComparisonCharts
+            ideas={ideas}
+            loading={false}
+            comparisonData={{
+              notes,
+              rationale,
+              chosenLeader,
+            }}
+          />
 
           {/* Notes Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
