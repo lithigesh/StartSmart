@@ -11,40 +11,80 @@ The StartSmart frontend is a modern React application built with Vite, featuring
 ## 🏗️ Architecture
 
 ```
-src/
-├── components/           # Reusable UI components
-│   ├── ui/              # Base UI components
-│   ├── entrepreneur/    # Entrepreneur-specific components
-│   ├── investor/        # Investor-specific components
-│   └── admin/           # Admin-specific components
-├── pages/               # Page components and routing
-│   ├── entrepreneur/    # Entrepreneur dashboard pages
-│   ├── investor/        # Investor dashboard pages
-│   ├── admin/           # Admin dashboard pages
-│   └── errors/          # Error pages
-├── context/             # React context providers
-├── hooks/               # Custom React hooks
-├── services/            # API service functions
-└── utils/               # Utility functions
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 8.0.0
-
-### Installation
-```bash
-cd Frontend
-npm install
-npm run dev
-```
-
-### Environment Variables
-Create a `.env` file:
-```env
-VITE_API_URL=http://localhost:5001
+Frontend/
+├── public/                           # Static assets served directly
+│   ├── ico_icon.ico                 # Favicon for browser tabs
+│   ├── svg_icon.svg                 # SVG logo for scalable graphics
+│   └── w_startSmart_icon.png        # PNG logo for various uses
+├── src/                             # Source code directory
+│   ├── components/                  # Reusable React components
+│   │   ├── ui/                      # Base UI components (buttons, inputs, cards)
+│   │   ├── entrepreneur/            # Entrepreneur-specific components
+│   │   │   ├── SideBar.jsx          # Navigation sidebar for entrepreneur dashboard
+│   │   │   ├── DashboardCard.jsx    # Metric display cards
+│   │   │   ├── IdeaCard.jsx         # Individual idea display component
+│   │   │   ├── NotificationsPopup.jsx # Real-time notification popup
+│   │   │   └── index.js             # Component exports
+│   │   ├── investor/                # Investor-specific components
+│   │   │   ├── IdeasSection.jsx     # Ideas browsing interface
+│   │   │   ├── ErrorMessage.jsx     # Error display component
+│   │   │   └── index.js             # Component exports
+│   │   ├── EmptyState.jsx           # Empty data state component
+│   │   ├── ErrorBoundary.jsx        # React error boundary wrapper
+│   │   ├── Footer.jsx               # Site footer component
+│   │   ├── Header.jsx               # Site header and navigation
+│   │   ├── HeroSection.jsx          # Landing page hero section
+│   │   ├── IdeaCard.jsx             # General idea display card
+│   │   ├── MainContentSection.jsx   # Landing page main content
+│   │   ├── ProtectedRoute.jsx       # Authentication route guard
+│   │   └── RoleBasedRoute.jsx       # Role-specific route protection
+│   ├── pages/                       # Page-level components
+│   │   ├── entrepreneur/            # Entrepreneur dashboard pages
+│   │   │   ├── EntrepreneurDashboard.jsx      # Main entrepreneur dashboard
+│   │   │   ├── EntrepreneurDashboardPage.jsx  # Enhanced dashboard view
+│   │   │   ├── CollaborationsPage.jsx         # Team collaboration interface
+│   │   │   └── IdeathonsPage.jsx              # Competition participation
+│   │   ├── investor/                # Investor dashboard pages
+│   │   │   └── InvestorDashboard.jsx # Main investor dashboard
+│   │   ├── admin/                   # Admin dashboard pages
+│   │   │   ├── AdminDashboardPage.jsx        # Admin overview dashboard
+│   │   │   ├── AdminIdeasPage.jsx            # Idea management interface
+│   │   │   ├── AdminIdeathonsPage.jsx        # Competition management
+│   │   │   ├── AdminUsersPage.jsx            # User account management
+│   │   │   ├── AdminFeedbackPage.jsx         # Feedback collection
+│   │   │   └── AdminSustainabilityPage.jsx   # Sustainability tracking
+│   │   ├── IdeaSubmission/          # Multi-step idea submission
+│   │   │   ├── IdeaSubmissionPage.jsx        # Main submission workflow
+│   │   │   └── components/                   # Form components
+│   │   │       ├── IdeaMasterForm.jsx        # Core idea details form
+│   │   │       ├── TeamResourceForm.jsx     # Team and resource planning
+│   │   │       └── BusinessAimForm.jsx      # Business strategy form
+│   │   ├── errors/                  # Error page components
+│   │   ├── LandingPage.jsx          # Public homepage
+│   │   ├── LoginPage.jsx            # User authentication
+│   │   ├── RegisterPage.jsx         # User registration
+│   │   ├── IdeaDetailPage.jsx       # Individual idea view
+│   │   ├── IdeasPage.jsx            # Ideas listing
+│   │   ├── FundingPage.jsx          # Funding requests
+│   │   ├── IdeathonsPage.jsx        # Competition listing
+│   │   ├── NotificationsPage.jsx    # Notification center
+│   │   └── SettingsPage.jsx         # User preferences
+│   ├── context/                     # React Context providers
+│   │   └── AuthContext.jsx          # Authentication state management
+│   ├── hooks/                       # Custom React hooks
+│   │   └── useNotifications.js      # Notification management hook
+│   ├── services/                    # API integration layer
+│   │   └── api.js                   # HTTP client and API endpoints
+│   ├── utils/                       # Utility functions
+│   │   └── errorHandler.js          # Error processing utilities
+│   ├── App.jsx                      # Root application component
+│   └── main.jsx                     # Application entry point
+├── index.html                       # HTML template
+├── package.json                     # Dependencies and scripts
+├── tailwind.config.js               # Tailwind CSS configuration
+├── tailwind.css                     # Global CSS styles
+├── vite.config.js                   # Vite build configuration
+└── vercel.json                      # Vercel deployment settings
 ```
 
 ## 📱 Pages & Workflows
@@ -333,183 +373,3 @@ VITE_API_URL=http://localhost:5001
 - `500Page.jsx` - Server error
 - `UnauthorizedPage.jsx` - Access denied
 - `MaintenancePage.jsx` - System maintenance
-
-## 🎨 Design System
-
-### Theme & Styling
-- **Primary Colors**: Black backgrounds with white text
-- **Accent Colors**: Blue gradients for interactive elements
-- **Glassmorphism**: Translucent panels with backdrop blur
-- **Typography**: Manrope font family for clean readability
-- **Animations**: Smooth transitions and hover effects
-
-### Component Architecture
-```jsx
-// Example component structure
-const DashboardCard = ({ icon, title, value, trend, onClick }) => {
-  return (
-    <div className="glassmorphism-card hover-effect">
-      <div className="card-header">
-        <Icon className="accent-color" />
-        <h3 className="card-title">{title}</h3>
-      </div>
-      <div className="card-content">
-        <span className="primary-metric">{value}</span>
-        <TrendIndicator trend={trend} />
-      </div>
-    </div>
-  );
-};
-```
-
-### Responsive Design
-- **Mobile First**: Starting with mobile layouts
-- **Breakpoints**: sm (640px), md (768px), lg (1024px), xl (1280px)
-- **Grid System**: CSS Grid and Flexbox for layouts
-- **Touch Friendly**: Large touch targets for mobile devices
-
-## 🔄 State Management
-
-### Context Providers
-- `AuthContext`: User authentication and role management
-- `NotificationContext`: Real-time notification system
-- `ThemeContext`: Theme and preference management
-
-### Custom Hooks
-- `useNotifications`: Notification handling
-- `useAuth`: Authentication utilities
-- `useLocalStorage`: Persistent storage management
-- `useFetch`: API request handling with caching
-
-## 🌐 API Integration
-
-### Service Layer (`services/api.js`)
-```javascript
-// API service structure
-export const ideaAPI = {
-  submitIdea: (data) => post('/api/ideas', data),
-  getUserIdeas: (userId) => get(`/api/ideas/user/${userId}`),
-  analyzeIdea: (ideaId) => post(`/api/ideas/${ideaId}/analysis`),
-  markInterest: (ideaId) => post(`/api/ideas/${ideaId}/interest`)
-};
-
-export const fundingAPI = {
-  createRequest: (data) => post('/api/funding', data),
-  getRequests: () => get('/api/funding'),
-  updateStatus: (id, status) => put(`/api/funding/${id}`, { status })
-};
-```
-
-### Error Handling
-- Global error boundary for React errors
-- API error interception and user-friendly messages
-- Retry mechanisms for failed requests
-- Loading states and skeleton screens
-
-## 🔒 Security Features
-
-### Authentication
-- JWT token storage and validation
-- Automatic token refresh
-- Role-based route protection
-- Session timeout management
-
-### Data Protection
-- Input sanitization and validation
-- XSS protection
-- CSRF token implementation
-- Secure file upload handling
-
-## 📱 Performance Optimization
-
-### Code Splitting
-```javascript
-const LazyDashboard = lazy(() => import('./pages/EntrepreneurDashboard'));
-const LazyIdeasPage = lazy(() => import('./pages/IdeasPage'));
-```
-
-### Caching Strategy
-- API response caching
-- Image optimization and lazy loading
-- Bundle optimization with Vite
-- Service worker for offline functionality
-
-### Monitoring
-- Performance metrics tracking
-- Error logging and reporting
-- User experience analytics
-- Core Web Vitals monitoring
-
-## 🚀 Build & Deployment
-
-### Development
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-```
-
-### Production Deployment
-```bash
-npm run build        # Create production build
-vercel --prod        # Deploy to Vercel
-```
-
-### Environment Configuration
-```javascript
-// vite.config.js
-export default defineConfig({
-  plugins: [react()],
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          charts: ['chart.js', 'react-chartjs-2']
-        }
-      }
-    }
-  }
-});
-```
-
-## 🧪 Testing Strategy
-
-### Unit Testing
-- Component testing with React Testing Library
-- Hook testing with custom utilities
-- Service layer testing with mocked APIs
-- Utility function testing
-
-### Integration Testing
-- User workflow testing
-- API integration testing
-- Cross-component interaction testing
-- Authentication flow testing
-
-### E2E Testing
-- Critical user journey testing
-- Cross-browser compatibility
-- Mobile device testing
-- Performance testing
-
-## 📈 Future Enhancements
-
-### Planned Features
-- **Progressive Web App (PWA)**: Offline functionality and app-like experience
-- **Real-time Chat**: Direct communication between entrepreneurs and investors
-- **Video Conferencing**: Integrated video calls for pitch presentations
-- **AI Chatbot**: Intelligent assistant for user guidance
-- **Advanced Analytics**: Machine learning-powered insights
-- **Mobile App**: Native iOS and Android applications
-
-### Technical Improvements
-- **Micro-frontends**: Modular architecture for better scalability
-- **GraphQL**: More efficient data fetching
-- **WebSockets**: Real-time updates and notifications
-- **Edge Computing**: Improved performance with CDN integration
-- **Accessibility**: Enhanced WCAG compliance and screen reader support
-
----
-
-**StartSmart Frontend** - Crafting Exceptional User Experiences 🎨
