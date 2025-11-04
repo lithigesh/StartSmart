@@ -13,53 +13,60 @@ The StartSmart backend is a robust Node.js API server built with Express.js and 
 
 ```
 Backend/
-├── controllers/         # Request handlers and business logic
-├── models/             # MongoDB schemas and data models
-├── routes/             # API route definitions
-├── middlewares/        # Custom middleware functions
-├── services/           # External service integrations
-├── validators/         # Input validation rules
-├── utils/              # Utility functions and helpers
-├── config/             # Configuration files
-└── server.js          # Application entry point
+├── config/                          # Configuration files
+│   └── db.js                        # MongoDB connection setup
+├── controllers/                     # Request handlers and business logic
+│   ├── admin.controller.js          # Admin dashboard operations
+│   ├── auth.controller.js           # User authentication logic
+│   ├── feedback.controller.js       # Feedback management
+│   ├── funding.controller.js        # Funding request processing
+│   ├── idea.controller.js           # Idea CRUD operations
+│   ├── ideathon.controller.js       # Competition management
+│   ├── investor.controller.js       # Investor-specific operations
+│   ├── notification.controller.js   # Notification system
+│   ├── report.controller.js         # Report generation
+│   └── sustainability.controller.js # Environmental impact tracking
+├── middlewares/                     # Express middleware functions
+│   ├── auth.middleware.js           # JWT token validation
+│   ├── errorHandler.js              # Global error handling
+│   └── role.middleware.js           # Role-based access control
+├── models/                          # MongoDB schema definitions
+│   ├── AdminAction.model.js         # Admin activity logging
+│   ├── Feedback.model.js            # User feedback schema
+│   ├── FundingRequest.model.js      # Funding application schema
+│   ├── Idea.model.js                # Business idea schema
+│   ├── Ideathon.model.js            # Competition schema
+│   ├── IdeathonRegistration.model.js # Competition registration
+│   ├── InvestorInterest.model.js    # Investor engagement tracking
+│   ├── Notification.model.js        # Notification schema
+│   ├── Report.model.js              # Generated report schema
+│   ├── Sustainability.model.js      # Environmental assessment
+│   └── User.model.js                # User account schema
+├── routes/                          # API endpoint definitions
+│   ├── admin.routes.js              # Admin API endpoints
+│   ├── auth.routes.js               # Authentication endpoints
+│   ├── feedback.routes.js           # Feedback API routes
+│   ├── funding.routes.js            # Funding management APIs
+│   ├── idea.routes.js               # Idea CRUD endpoints
+│   ├── ideathon.routes.js           # Competition APIs
+│   ├── investor.routes.js           # Investor-specific endpoints
+│   ├── notification.routes.js       # Notification APIs
+│   ├── report.routes.js             # Report generation endpoints
+│   └── sustainability.routes.js     # Sustainability APIs
+├── services/                        # External service integrations
+│   ├── aiAnalysis.service.js        # Google Generative AI integration
+│   ├── email.services.js            # SendGrid email service
+│   ├── notification.service.js      # Notification delivery
+│   └── pdf.service.js               # PDF report generation
+├── utils/                           # Utility functions
+│   └── generateToken.js             # JWT token creation
+├── validators/                      # Input validation rules
+│   └── idea.validator.js            # Idea submission validation
+├── server.js                        # Express server entry point
+└── package.json                     # Dependencies and scripts
 ```
 
 ## 🚀 Getting Started
-
-### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 8.0.0
-- MongoDB (local or Atlas)
-
-### Installation
-```bash
-cd Backend
-npm install
-cp .env.example .env
-# Configure your environment variables
-npm run setup
-npm run dev
-```
-
-### Environment Variables
-```env
-NODE_ENV=development
-PORT=5001
-JWT_SECRET=your_jwt_secret_here
-MONGODB_URI=mongodb://localhost:27017/startsmart
-GEMINI_API_KEY=your_gemini_api_key
-SENDGRID_API_KEY=your_sendgrid_api_key
-ADMIN_EMAIL=admin@startsmart.com
-ADMIN_PASSWORD=secure_admin_password
-```
-
-### Scripts
-```bash
-npm start          # Start production server
-npm run dev        # Start development server with nodemon
-npm run init-admin # Initialize admin account
-npm run setup      # Install dependencies and initialize admin
-```
 
 ## 📡 API Routes & Endpoints
 
