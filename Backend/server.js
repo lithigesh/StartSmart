@@ -50,7 +50,7 @@ app.get('/admin/businessaims', (req, res) => {
 // API Routes
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/ideas', require('./routes/idea.routes'));
-app.use('/api/investors', require('./routes/investor.routes'));
+app.use('/api/investor', require('./routes/investor.routes'));
 app.use('/api/funding', require('./routes/funding.routes'));
 app.use('/api/team', require('./routes/teamResource.routes'));
 app.use('/api/aims', require('./routes/businessAim.routes'));
@@ -60,7 +60,9 @@ app.use('/api/ideathons', require('./routes/ideathon.routes'));
 app.use('/api/reports', require('./routes/report.routes'));
 app.use('/api/notifications', require('./routes/notification.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
-app.use('/api/charts', require('./routes/chart.routes'));
+app.use('/api/chart', require('./routes/chart.routes'));
+app.use('/api/comparison', require('./routes/comparison.routes'));
+app.use('/api/marketResearch', require('./routes/marketResearch.routes'));
 app.use('/api/app-feedback', require('./routes/appFeedback.routes'));
 
 app.use(errorHandler);
