@@ -1,5 +1,6 @@
 // controllers/idea.controller.js
 const Idea = require("../models/Idea.model");
+const User = require("../models/User.model");
 const Notification = require("../models/Notification.model");
 const NotificationService = require("../services/notification.service");
 const aiService = require("../services/aiAnalysis.service");
@@ -296,34 +297,6 @@ exports.getIdeaDetailsForInvestor = async (req, res, next) => {
   }
 };
 
-// @desc    Mark interest in an idea
-// @route   POST /api/ideas/:id/interest
-exports.markInterest = async (req, res, next) => {
-  try {
-    const idea = await Idea.findById(req.params.id);
-    if (!idea) return res.status(404).json({ message: "Idea not found" });
-
-    const alreadyInterested = idea.investorsInterested.includes(req.user.id);
-
-    if (alreadyInterested) {
-      // Optional: allow un-marking interest
-      idea.investorsInterested.pull(req.user.id);
-    } else {
-      idea.investorsInterested.push(req.user.id);
-      // Create a notification for the entrepreneur
-      await Notification.create({
-        user: idea.owner,
-        message: `Investor ${req.user.name} is interested in your idea: "${idea.title}"`,
-        relatedIdea: idea._id,
-      });
-    }
-    await idea.save();
-    res.json({ message: "Interest updated successfully." });
-  } catch (error) {
-    next(error);
-  }
-};
-
 // Shared controller (can be used by Entrepreneur to see who is interested)
 // @desc    Get investors interested in an idea
 // @route   GET /api/ideas/:id/investors
@@ -466,15 +439,36 @@ exports.markInterest = async (req, res, next) => {
     const idea = await Idea.findById(req.params.id);
     if (!idea) return res.status(404).json({ message: "Idea not found" });
 
+    // Check if already interested
+    const alreadyInterested = idea.investorsInterested.some(
+      (investorId) => investorId.toString() === req.user.id
+    );
+
+    if (alreadyInterested) {
+      return res
+        .status(400)
+        .json({ message: "Already marked interest in this idea" });
+    }
+
     // Using $addToSet to prevent duplicate entries
     await Idea.updateOne(
       { _id: req.params.id },
       { $addToSet: { investorsInterested: req.user.id } }
     );
 
-    // Find entrepreneur and send notification only if it was a new interest
+    // Find entrepreneur and send notification
     const entrepreneur = await User.findById(idea.owner);
-    // ... (email sending logic remains the same)
+    if (entrepreneur) {
+      await Notification.create({
+        user: idea.owner,
+        title: "New Investor Interest",
+        message: `Investor ${req.user.name} is interested in your idea: "${idea.title}"`,
+        type: "interest_confirmation",
+        relatedIdea: idea._id,
+        relatedUser: req.user.id,
+        actionUrl: `/ideas/${idea._id}`,
+      });
+    }
 
     res.status(201).json({ message: "Interest marked successfully." });
   } catch (error) {

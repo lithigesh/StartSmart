@@ -85,7 +85,26 @@ const IdeaSchema = new mongoose.Schema(
       },
       roadmap: [String],
       trends: [{ year: Number, popularity: Number }],
+      recommendations: {
+        immediate_actions: String,
+        risk_mitigation: String,
+        growth_strategy: String,
+        funding_advice: String,
+      },
+      marketAssessment: {
+        market_size_evaluation: String,
+        competitive_positioning: String,
+        customer_validation: String,
+      },
     },
+
+    // Investor Interest Tracking
+    investorsInterested: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

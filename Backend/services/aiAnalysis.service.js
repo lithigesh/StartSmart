@@ -13,9 +13,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 async function generateSwotAndRoadmap(ideaData) {
   try {
     // --- MODEL SELECTION ---
-    // Using 'gemini-1.5-flash-latest' for fast, structured JSON output
+    // Using 'gemini-2.0-flash-thinking-exp' for enhanced reasoning and JSON output
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
+      model: "gemini-2.0-flash-thinking-exp",
     });
 
     // --- ENHANCED COMPREHENSIVE PROMPT ---
