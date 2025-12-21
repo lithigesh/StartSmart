@@ -81,7 +81,7 @@ const OverviewPage = () => {
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
-      <div>
+      <div className="animate-fade-in">
         <WelcomeSection />
       </div>
 
@@ -91,43 +91,55 @@ const OverviewPage = () => {
           <div
             key={index}
             onClick={card.onClick}
-            className="bg-gray-900 rounded-lg border border-gray-800 p-6 hover:bg-gray-800 hover:border-gray-700 transition-all duration-200 cursor-pointer group"
+            style={{ animationDelay: `${index * 100}ms` }}
+            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/[0.05] transition-all duration-500 ease-out cursor-pointer group relative overflow-hidden animate-slide-up"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-gray-400 group-hover:text-white transition-colors">
-                {card.icon}
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-white/70 group-hover:text-white transition-all duration-500 group-hover:scale-110 transform">
+                  {card.icon}
+                </div>
+                <span className="text-3xl font-bold text-white font-manrope group-hover:scale-110 transition-transform duration-500">
+                  {card.count}
+                </span>
               </div>
-              <span className="text-2xl font-bold text-white">
-                {card.count}
-              </span>
+              <h3 className="text-white font-manrope font-semibold text-lg mb-2 group-hover:text-white transition-colors duration-300">
+                {card.title}
+              </h3>
+              <p className="text-white/60 text-sm font-manrope group-hover:text-white/80 transition-colors duration-300">
+                {card.description}
+              </p>
             </div>
-            <h3 className="text-white font-semibold text-lg mb-2">
-              {card.title}
-            </h3>
-            <p className="text-white/60 text-sm">
-              {card.description}
-            </p>
           </div>
         ))}
       </div>
 
       {/* Recent Activity Section */}
-      <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
-        <RecentActivitySection />
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up" style={{ animationDelay: '400ms' }}>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10">
+          <RecentActivitySection />
+        </div>
       </div>
 
       {/* App Feedback Section */}
-      <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
-        <h3 className="text-xl font-semibold text-white mb-4">
-          Share Your Feedback
-        </h3>
-        <FeedbackCard />
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up" style={{ animationDelay: '500ms' }}>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10">
+          <h3 className="text-xl font-manrope font-semibold text-white mb-4">
+            Share Your Feedback
+          </h3>
+          <FeedbackCard />
+        </div>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
-          <p className="text-red-200">{error}</p>
+        <div className="bg-red-900/20 border border-red-700/50 rounded-2xl p-4 backdrop-blur-xl animate-shake">
+          <p className="text-red-200 font-manrope">{error}</p>
         </div>
       )}
     </div>

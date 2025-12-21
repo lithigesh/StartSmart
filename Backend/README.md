@@ -586,4 +586,4 @@ CMD ["npm", "start"]
 
 ---
 
-**StartSmart Backend** - Powering Innovation Through Robust APIs 🚀
+**StartSmart Backend** - Powering Innovation Through Robust APIs

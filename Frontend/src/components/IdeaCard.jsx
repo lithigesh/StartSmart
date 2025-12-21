@@ -10,6 +10,8 @@ import {
   FaTag,
   FaCalendar,
   FaEye,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 import ComparisonButton from "./investor/ComparisonButton";
 
@@ -23,6 +25,8 @@ const IdeaCard = ({
   isSelectedForComparison = false,
   onToggleComparison,
   maxComparisonReached = false,
+  onEdit,
+  onDelete,
 }) => {
   const navigate = useNavigate();
 
@@ -33,6 +37,9 @@ const IdeaCard = ({
       day: "numeric",
     });
   };
+
+  // Determine if this is entrepreneur's own idea (show edit/delete instead of interest)
+  const isOwnIdea = onEdit && onDelete;
 
   return (
     <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 hover:bg-white/[0.05] transition-all duration-300 group relative">
@@ -57,7 +64,7 @@ const IdeaCard = ({
           </p>
         </div>
 
-        {showInterestButton && (
+        {showInterestButton && !isOwnIdea && (
           <div className="flex items-center gap-2 ml-4">
             <button
               onClick={() => navigate(`/idea/${idea._id}`)}
@@ -85,6 +92,32 @@ const IdeaCard = ({
                 <FaHeart className="w-3 h-3" />
               )}
               {isInterested ? "Remove" : "Interest"}
+            </button>
+          </div>
+        )}
+
+        {isOwnIdea && (
+          <div className="flex items-center gap-2 ml-4">
+            <button
+              onClick={() => navigate(`/idea/${idea._id || idea.id}`)}
+              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+            >
+              <FaEye className="w-3 h-3" />
+              View
+            </button>
+            <button
+              onClick={() => navigate(`/submit-idea?edit=${idea._id || idea.id}`)}
+              className="btn btn-sm bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+            >
+              <FaEdit className="w-3 h-3" />
+              Edit
+            </button>
+            <button
+              onClick={() => onDelete(idea._id || idea.id, idea.title)}
+              className="btn btn-sm bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+            >
+              <FaTrash className="w-3 h-3" />
+              Delete
             </button>
           </div>
         )}

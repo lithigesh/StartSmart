@@ -271,6 +271,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
               getStatusColor={getStatusColor}
               onEdit={handleEditIdea}
               onDelete={handleDeleteIdea}
+              showInterestButton={false}
             />
           ))}
         </div>

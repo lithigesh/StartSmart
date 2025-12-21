@@ -1,68 +1,56 @@
 import React from "react";
 import { useAuth } from "../../context/AuthContext";
-import { FaLightbulb, FaSignOutAlt, FaCog, FaBell } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaSignOutAlt, FaBars } from "react-icons/fa";
 
-const DashboardHeader = ({ onSectionChange }) => {
-  const { user, logout } = useAuth();
+const DashboardHeader = ({ onToggleSidebar }) => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
   };
 
-  const handleNotificationClick = () => {
-    if (onSectionChange) {
-      onSectionChange('notifications');
-    }
-  };
-
-  const handleSettingsClick = () => {
-    if (onSectionChange) {
-      onSectionChange('settings');
-    }
+  const handleLogoClick = () => {
+    navigate("/");
   };
 
   return (
-    <div className="bg-black border-b border-gray-800 shadow-sm">
+    <div className="bg-black/95 backdrop-blur-xl border-b border-white/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-yellow-500">
-              <FaLightbulb className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-white font-semibold text-lg">
-                Welcome, {user?.name}
-              </h1>
-              <p className="text-gray-400 text-sm">
-                Entrepreneur Dashboard
-              </p>
-            </div>
+            {/* Mobile sidebar toggle */}
+            <button
+              onClick={onToggleSidebar}
+              className="lg:hidden p-3 text-white/70 hover:text-white transition-all duration-300 hover:bg-white/20 rounded-lg hover:scale-105 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+            >
+              <FaBars className="w-5 h-5" />
+            </button>
+
+            {/* Logo */}
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-300"
+            >
+              <img
+                src="/w_startSmart_icon.png"
+                alt="StartSmart Logo"
+                className="h-8 w-auto"
+              />
+              <span className="text-white font-bold text-xl font-manrope hidden sm:block">
+                StartSmart
+              </span>
+            </button>
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Notification Bell */}
-            <button 
-              onClick={handleNotificationClick}
-              className="p-2 text-gray-400 hover:text-white transition-colors duration-200 hover:bg-gray-900 rounded-lg"
-            >
-              <FaBell className="w-5 h-5" />
-            </button>
-            
-            {/* Settings */}
-            <button 
-              onClick={handleSettingsClick}
-              className="p-2 text-gray-400 hover:text-white transition-colors duration-200 hover:bg-gray-900 rounded-lg"
-            >
-              <FaCog className="w-5 h-5" />
-            </button>
-            
-            {/* Logout */}
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-200 text-black rounded-lg transition-all duration-200"
+              className="flex items-center gap-2 px-4 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope min-h-[44px] touch-manipulation"
             >
               <FaSignOutAlt className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
+              Logout
             </button>
           </div>
         </div>

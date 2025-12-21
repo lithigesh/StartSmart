@@ -341,64 +341,73 @@ const FundingPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div>
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white mb-2">
+          <h2 className="text-2xl font-manrope font-bold text-white mb-2">
             Funding Overview
           </h2>
-          <p className="text-white/60">
+          <p className="text-white/60 font-manrope">
             Track your funding progress and investor relationships
           </p>
         </div>
 
         {/* Funding Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-gray-400">
-                <FaDollarSign className="w-6 h-6" />
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '0ms' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-white/70">
+                  <FaDollarSign className="w-6 h-6" />
+                </div>
+                <span className="text-2xl font-bold text-green-400 font-manrope">
+                  {formatCurrency(dashboardData.fundingReceived)}
+                </span>
               </div>
-              <span className="text-2xl font-bold text-green-400">
-                {formatCurrency(dashboardData.fundingReceived)}
-              </span>
+              <h3 className="text-white font-manrope font-semibold text-lg mb-2">
+                Total Funding
+              </h3>
+              <p className="text-white/60 text-sm font-manrope">Received from investors</p>
             </div>
-            <h3 className="text-white font-semibold text-lg mb-2">
-              Total Funding
-            </h3>
-            <p className="text-white/60 text-sm">Received from investors</p>
           </div>
 
-          <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-gray-400">
-                <FaFileAlt className="w-6 h-6" />
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '100ms' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-white/70">
+                  <FaFileAlt className="w-6 h-6" />
+                </div>
+                <span className="text-2xl font-bold text-blue-400 font-manrope">
+                  {fundingRequests.length}
+                </span>
               </div>
-              <span className="text-2xl font-bold text-blue-400">
-                {fundingRequests.length}
-              </span>
-            </div>
-            <h3 className="text-white font-semibold text-lg mb-2">
+            <h3 className="text-white font-manrope font-semibold text-lg mb-2">
               Funding Requests
             </h3>
-            <p className="text-white/60 text-sm">Total submitted requests</p>
+            <p className="text-white/60 text-sm font-manrope">Total submitted requests</p>
+            </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-gray-400">
-                <FaUsers className="w-6 h-6" />
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-white/70">
+                  <FaUsers className="w-6 h-6" />
+                </div>
+                <span className="text-2xl font-bold text-purple-400 font-manrope">
+                  {dashboardData.interestedInvestors}
+                </span>
               </div>
-              <span className="text-2xl font-bold text-purple-400">
-                {dashboardData.interestedInvestors}
-              </span>
-            </div>
-            <h3 className="text-white font-semibold text-lg mb-2">
+            <h3 className="text-white font-manrope font-semibold text-lg mb-2">
               Interested Investors
             </h3>
-            <p className="text-white/60 text-sm">
+            <p className="text-white/60 text-sm font-manrope">
               Showing interest in your ideas
             </p>
+            </div>
           </div>
         </div>
 

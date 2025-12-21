@@ -16,8 +16,6 @@ import {
   FaBars,
   FaTimes,
   FaUser,
-  FaChevronLeft,
-  FaChevronRight,
   FaComment,
 } from "react-icons/fa";
 
@@ -37,46 +35,75 @@ const SideBar = ({
       id: "overview",
       label: "Overview",
       icon: <FaHome className="w-5 h-5" />,
+      description: "Dashboard overview",
       path: "/entrepreneur",
     },
     {
       id: "my-ideas",
       label: "My Ideas",
       icon: <FaLightbulb className="w-5 h-5" />,
-      badge: "3",
+      description: "Manage your ideas",
       path: "/entrepreneur/my-ideas",
     },
     {
       id: "funding",
       label: "Funding",
       icon: <FaDollarSign className="w-5 h-5" />,
+      description: "Track funding requests",
       path: "/entrepreneur/funding",
     },
     {
       id: "investors",
       label: "Investors",
       icon: <FaBriefcase className="w-5 h-5" />,
-      badge: "8",
+      description: "Connect with investors",
       path: "/entrepreneur/investors",
+    },
+    {
+      id: "analytics",
+      label: "Analytics",
+      icon: <FaChartBar className="w-5 h-5" />,
+      description: "Performance insights",
+      path: "/entrepreneur/analytics",
     },
     {
       id: "ideathons",
       label: "Ideathons",
       icon: <FaTrophy className="w-5 h-5" />,
+      description: "Join competitions",
       path: "/entrepreneur/ideathons",
     },
+    {
+      id: "collaborations",
+      label: "Collaborations",
+      icon: <FaUsers className="w-5 h-5" />,
+      description: "Network & collaborate",
+      path: "/entrepreneur/collaborations",
+    },
+  ];
+
+  const bottomItems = [
     {
       id: "notifications",
       label: "Notifications",
       icon: <FaBell className="w-5 h-5" />,
       badge: unreadCount > 0 ? unreadCount : null,
+      description: "Your notifications",
       path: "/entrepreneur/notifications",
     },
     {
       id: "feedback",
       label: "App Feedback",
       icon: <FaComment className="w-5 h-5" />,
+      description: "Share feedback",
       path: "/entrepreneur/feedback",
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: <FaCog className="w-5 h-5" />,
+      description: "Account settings",
+      path: "/entrepreneur/settings",
     },
   ];
 
@@ -89,8 +116,13 @@ const SideBar = ({
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setIsCollapsed && setIsCollapsed(true);
+      } else {
+        setIsCollapsed && setIsCollapsed(false);
       }
     };
+
+    // Set initial state
+    handleResize();
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -100,142 +132,133 @@ const SideBar = ({
   const handleNavigation = (item) => {
     navigate(item.path);
     onSectionChange && onSectionChange(item.id);
+    
     // Auto-collapse on mobile after selection
     if (window.innerWidth < 1024) {
       setIsCollapsed && setIsCollapsed(true);
     }
   };
 
-  const SidebarItem = ({ item, isActive, onClick }) => (
-    <button
-      onClick={() => onClick(item)}
-      className={`
-        w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative
-        ${
-          isActive
-            ? "bg-white text-black shadow-sm"
-            : "text-white/70 hover:text-white hover:bg-white/20"
-        }
-        ${isCollapsed ? "justify-center" : "justify-start"}
-      `}
-      title={isCollapsed ? item.label : ""}
-    >
-      <div className="flex-shrink-0 relative">
-        {item.icon}
-        {item.badge && (
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
-            {item.badge > 9 ? "9+" : item.badge}
-          </span>
+  const SidebarItem = ({ item, isActive, onClick }) => {
+    const showCollapsedView = isCollapsed && window.innerWidth >= 1024;
+
+    return (
+      <button
+        onClick={() => onClick(item)}
+        className={`
+          w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
+          ${
+            isActive
+              ? "bg-white/20 border-l-4 border-white text-white"
+              : "text-white/70 hover:text-white hover:bg-white/10 hover:scale-105"
+          }
+        `}
+        title={showCollapsedView ? item.label : ""}
+      >
+        {/* Glass morphism hover effect */}
+        {!isActive && (
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
         )}
-      </div>
 
-      {!isCollapsed && (
-        <span className="font-medium text-sm">
-          {item.label}
-        </span>
-      )}
-
-      {/* Tooltip for collapsed state */}
-      {isCollapsed && (
-        <div className="absolute left-full ml-2 bg-white text-black px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 whitespace-nowrap">
-          {item.label}
+        <div className="flex-shrink-0 relative z-10">
+          {item.icon}
+          {item.badge && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold font-manrope">
+              {item.badge > 9 ? "9+" : item.badge}
+            </span>
+          )}
         </div>
-      )}
-    </button>
-  );
+
+        {!showCollapsedView && (
+          <div className="flex-1 text-left relative z-10">
+            <div className="font-manrope font-medium">{item.label}</div>
+            <div className="text-xs text-white/50 font-manrope">
+              {item.description}
+            </div>
+          </div>
+        )}
+
+        {showCollapsedView && (
+          <div className="absolute left-full ml-2 bg-black/90 backdrop-blur-xl border border-white/20 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 font-manrope whitespace-nowrap">
+            {item.label}
+          </div>
+        )}
+      </button>
+    );
+  };
 
   return (
     <>
-      {/* Mobile Menu Button - Show when sidebar is collapsed on mobile */}
-      {isCollapsed && (
-        <button
-          onClick={() => setIsCollapsed && setIsCollapsed(false)}
-          className="lg:hidden fixed top-4 left-4 z-50 bg-white text-black p-2 rounded-lg shadow-lg"
-        >
-          <FaBars className="w-5 h-5" />
-        </button>
-      )}
-
       {/* Mobile overlay */}
-      {!isCollapsed && (
+      {!isCollapsed && window.innerWidth < 1024 && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setIsCollapsed && setIsCollapsed(true)}
+          onClick={() => setIsCollapsed(true)}
         />
       )}
 
       {/* Sidebar */}
       <div
         className={`
-        fixed left-0 top-0 h-full bg-black border-r border-white/10 z-50 transition-all duration-300 flex flex-col
-        ${isCollapsed ? "w-16" : "w-72"}
-        lg:translate-x-0
-        ${isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0"}
+        fixed left-0 top-0 h-full bg-white/[0.03] backdrop-blur-xl border-r border-white/10 z-50 transition-all duration-300 flex flex-col
+        w-72
+        ${
+          isCollapsed
+            ? "-translate-x-full lg:translate-x-0 lg:w-20"
+            : "translate-x-0"
+        }
       `}
       >
+        {/* Glass morphism overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] pointer-events-none"></div>
+        
         {/* Header */}
-        <div className="flex items-center h-16 px-4 border-b border-white/10">
+        <div className="flex items-center h-16 px-4 border-b border-white/10 relative z-10">
           <div className="flex items-center justify-between w-full">
-            {!isCollapsed && (
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-black">
-                  <span className="font-bold text-sm">SS</span>
-                </div>
-                <div>
-                  <h2 className="text-white font-semibold text-sm">
-                    StartSmart
-                  </h2>
-                  <p className="text-white/50 text-xs">Entrepreneur</p>
-                </div>
-              </div>
-            )}
-
-            {/* Desktop collapse/expand button */}
-            <button
-              onClick={() => setIsCollapsed && setIsCollapsed(!isCollapsed)}
-              className="hidden lg:block p-1.5 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
-            >
-              {isCollapsed ? (
-                <FaChevronRight className="w-4 h-4" />
-              ) : (
-                <FaChevronLeft className="w-4 h-4" />
+            <div className="flex items-center gap-3">
+              {!isCollapsed && (
+                <>
+                  <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white">
+                    <FaUser className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-white font-manrope font-semibold text-sm">
+                      {user?.name}
+                    </h2>
+                    <p className="text-white/60 text-xs font-manrope">
+                      Entrepreneur
+                    </p>
+                  </div>
+                </>
               )}
-            </button>
+              {isCollapsed && (
+                <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-white">
+                  <FaUser className="w-5 h-5" />
+                </div>
+              )}
+            </div>
 
-            {/* Mobile close button */}
+            {/* Close button (mobile only, shown when sidebar is open) */}
             <button
-              onClick={() => setIsCollapsed && setIsCollapsed(true)}
-              className="lg:hidden p-2 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-200"
+              onClick={() => setIsCollapsed(true)}
+              className="p-3 text-white/70 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-300 hover:scale-105 min-h-[44px] min-w-[44px] flex items-center justify-center lg:hidden"
             >
               <FaTimes className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* User Profile - Show when not collapsed */}
-        {!isCollapsed && (
-          <div className="p-4 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white">
-                <span className="font-semibold text-sm">
-                  {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-white font-semibold text-sm truncate">
-                  {user?.name || "Entrepreneur"}
-                </h3>
-                <p className="text-white/60 text-xs truncate">
-                  {user?.email}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-4">
+        <div className="flex-1 overflow-y-auto py-4 relative z-10">
           <div className="px-4">
+            {!isCollapsed && (
+              <h3 className="text-white/50 text-xs font-manrope font-semibold uppercase tracking-wider mb-3">
+                Navigation
+              </h3>
+            )}
+            {isCollapsed && window.innerWidth >= 1024 && (
+              <div className="h-6 mb-3"></div>
+            )}
             <div className="space-y-2">
               {navigationItems.map((item) => (
                 <SidebarItem
@@ -247,35 +270,45 @@ const SideBar = ({
               ))}
             </div>
           </div>
+
+          <div className="px-4 mt-8">
+            {!isCollapsed && (
+              <h3 className="text-white/50 text-xs font-manrope font-semibold uppercase tracking-wider mb-3">
+                Tools
+              </h3>
+            )}
+            {isCollapsed && window.innerWidth >= 1024 && (
+              <div className="h-6 mb-3"></div>
+            )}
+            <div className="space-y-2">
+              {bottomItems.map((item) => (
+                <SidebarItem
+                  key={item.id}
+                  item={item}
+                  isActive={activeSection === item.id}
+                  onClick={handleNavigation}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Logout Button */}
-        <div className="p-4 border-t border-white/10">
+        {/* Logout Section */}
+        <div className="p-4 border-t border-white/10 relative z-10">
           <button
             onClick={handleLogout}
             className={`
-              w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
-              text-red-400 hover:text-red-300 hover:bg-red-900/20
-              ${isCollapsed ? "justify-center" : "justify-start"}
+              w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
+              text-red-400 hover:text-red-300 hover:bg-red-900/20 hover:scale-105
+              ${isCollapsed && window.innerWidth >= 1024 ? "justify-center" : ""}
             `}
           >
             <FaSignOutAlt className="w-5 h-5" />
-            {!isCollapsed && (
-              <span className="font-medium text-sm">Logout</span>
+            {(!isCollapsed || window.innerWidth < 1024) && (
+              <span className="font-manrope font-medium">Logout</span>
             )}
           </button>
         </div>
-
-        {/* Collapsed User Profile */}
-        {isCollapsed && (
-          <div className="p-4 border-t border-white/10">
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white mx-auto">
-              <span className="font-semibold text-xs">
-                {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
-              </span>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );

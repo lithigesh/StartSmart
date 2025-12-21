@@ -22,6 +22,13 @@ import {
   FaBullseye,
   FaRocket,
   FaChartBar,
+  FaMoneyBill,
+  FaDollarSign,
+  FaCogs,
+  FaLeaf,
+  FaPaperclip,
+  FaFileAlt,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 
 const IdeaDetailPage = () => {
@@ -328,6 +335,339 @@ const IdeaDetailPage = () => {
         {showCharts && (
           <div className="mb-8">
             <IdeaDetailCharts ideaId={currentId} />
+          </div>
+        )}
+
+        {/* Elevator Pitch */}
+        {idea.elevatorPitch && (
+          <div className="bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-4 flex items-center gap-2">
+                <FaBullseye className="w-6 h-6 text-blue-400" />
+                Elevator Pitch
+              </h2>
+              <p className="text-white/90 font-manrope text-lg leading-relaxed italic">
+                "{idea.elevatorPitch}"
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Basic Information Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* Target Audience */}
+          {idea.targetAudience && (
+            <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+              <div className="relative z-10">
+                <h3 className="text-xl font-manrope font-bold text-white mb-3 flex items-center gap-2">
+                  <FaUser className="w-5 h-5 text-green-400" />
+                  Target Audience
+                </h3>
+                <p className="text-white/80 font-manrope leading-relaxed">
+                  {idea.targetAudience}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Funding Status */}
+          {idea.fundingStatus && (
+            <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+              <div className="relative z-10">
+                <h3 className="text-xl font-manrope font-bold text-white mb-3 flex items-center gap-2">
+                  <FaMoneyBill className="w-5 h-5 text-yellow-400" />
+                  Funding Status
+                </h3>
+                <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium font-manrope ${
+                  idea.fundingStatus === "funded" ? "bg-green-100 text-green-800" :
+                  idea.fundingStatus === "seeking" ? "bg-blue-100 text-blue-800" :
+                  idea.fundingStatus === "rejected" ? "bg-red-100 text-red-800" :
+                  "bg-gray-100 text-gray-800"
+                }`}>
+                  {idea.fundingStatus.replace('_', ' ').charAt(0).toUpperCase() + idea.fundingStatus.replace('_', ' ').slice(1)}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Problem & Solution Section */}
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+          <div className="relative z-10">
+            <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+              <FaLightbulb className="w-6 h-6 text-yellow-400" />
+              Problem & Solution
+            </h2>
+            
+            <div className="space-y-6">
+              {idea.problemStatement && (
+                <div>
+                  <h3 className="text-lg font-manrope font-semibold text-red-400 mb-2">Problem Statement</h3>
+                  <p className="text-white/80 font-manrope leading-relaxed">
+                    {idea.problemStatement}
+                  </p>
+                </div>
+              )}
+              
+              {idea.solution && (
+                <div>
+                  <h3 className="text-lg font-manrope font-semibold text-green-400 mb-2">Our Solution</h3>
+                  <p className="text-white/80 font-manrope leading-relaxed">
+                    {idea.solution}
+                  </p>
+                </div>
+              )}
+              
+              {idea.competitors && (
+                <div>
+                  <h3 className="text-lg font-manrope font-semibold text-orange-400 mb-2">Competitive Landscape</h3>
+                  <p className="text-white/80 font-manrope leading-relaxed">
+                    {idea.competitors}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Business Model Section */}
+        {(idea.revenueStreams || idea.pricingStrategy || idea.keyPartnerships) && (
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+                <FaMoneyBill className="w-6 h-6 text-green-400" />
+                Business Model
+              </h2>
+              
+              <div className="space-y-6">
+                {idea.revenueStreams && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-green-400 mb-2">Revenue Streams</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.revenueStreams}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.pricingStrategy && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-blue-400 mb-2">Pricing Strategy</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.pricingStrategy}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.keyPartnerships && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-purple-400 mb-2">Key Partnerships</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.keyPartnerships}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Market & Growth Section */}
+        {(idea.marketSize || idea.goToMarketStrategy || idea.scalabilityPlan) && (
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+                <FaChartLine className="w-6 h-6 text-blue-400" />
+                Market & Growth Strategy
+              </h2>
+              
+              <div className="space-y-6">
+                {idea.marketSize && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-blue-400 mb-2">Market Size & Opportunity</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.marketSize}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.goToMarketStrategy && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-cyan-400 mb-2">Go-to-Market Strategy</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.goToMarketStrategy}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.scalabilityPlan && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-purple-400 mb-2">Scalability Plan</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.scalabilityPlan}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Technical Requirements Section */}
+        {(idea.technologyStack || idea.developmentRoadmap || idea.challengesAnticipated) && (
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+                <FaCogs className="w-6 h-6 text-purple-400" />
+                Technical Details
+              </h2>
+              
+              <div className="space-y-6">
+                {idea.technologyStack && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-purple-400 mb-2">Technology Stack</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.technologyStack}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.developmentRoadmap && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-blue-400 mb-2">Development Roadmap</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.developmentRoadmap}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.challengesAnticipated && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-orange-400 mb-2">Challenges & Mitigation</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.challengesAnticipated}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Sustainability & Impact Section */}
+        {(idea.ecoFriendlyPractices || idea.socialImpact) && (
+          <div className="bg-gradient-to-br from-green-900/20 via-emerald-900/20 to-teal-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+                <FaLeaf className="w-6 h-6 text-green-400" />
+                Sustainability & Social Impact
+              </h2>
+              
+              <div className="space-y-6">
+                {idea.ecoFriendlyPractices && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-green-400 mb-2">Environmental Practices</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.ecoFriendlyPractices}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.socialImpact && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-teal-400 mb-2">Social Impact</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.socialImpact}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Funding & Investment Section */}
+        {(idea.fundingRequirements || idea.useOfFunds || idea.equityOffer) && (
+          <div className="bg-gradient-to-br from-yellow-900/20 via-amber-900/20 to-orange-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+                <FaDollarSign className="w-6 h-6 text-yellow-400" />
+                Funding & Investment
+              </h2>
+              
+              <div className="space-y-6">
+                {idea.fundingRequirements && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-yellow-400 mb-2">Funding Requirements</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.fundingRequirements}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.useOfFunds && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-orange-400 mb-2">Use of Funds</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.useOfFunds}
+                    </p>
+                  </div>
+                )}
+                
+                {idea.equityOffer && (
+                  <div>
+                    <h3 className="text-lg font-manrope font-semibold text-amber-400 mb-2">Equity Offer</h3>
+                    <p className="text-white/80 font-manrope leading-relaxed">
+                      {idea.equityOffer}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Attachments Section */}
+        {idea.attachments && idea.attachments.length > 0 && (
+          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
+                <FaPaperclip className="w-6 h-6 text-gray-400" />
+                Attachments ({idea.attachments.length})
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {idea.attachments.map((attachment, index) => (
+                  <a
+                    key={index}
+                    href={attachment.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 bg-white/[0.02] border border-white/10 rounded-lg hover:bg-white/[0.05] transition-colors"
+                  >
+                    <FaFileAlt className="w-5 h-5 text-blue-400" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-white font-manrope font-medium truncate">
+                        {attachment.originalname}
+                      </p>
+                      <p className="text-white/60 text-sm font-manrope">
+                        {(attachment.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+                    <FaExternalLinkAlt className="w-4 h-4 text-white/40" />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
