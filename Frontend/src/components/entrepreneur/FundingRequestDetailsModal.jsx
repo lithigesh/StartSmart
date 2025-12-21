@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaTimes,
   FaSpinner,
@@ -24,10 +24,9 @@ import {
   FaEye,
   FaComments,
   FaHistory,
-  FaPaperPlane,
-  FaClock,
 } from "react-icons/fa";
 import { fundingAPI } from "../../services/api";
+import ChatInterface from "../chat/ChatInterface";
 
 /**
  * FundingRequestDetailsModal Component
@@ -53,13 +52,8 @@ const FundingRequestDetailsModal = ({
   const [success, setSuccess] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Negotiation chat states
-  const [negotiationMessage, setNegotiationMessage] = useState("");
-  const [showProposalForm, setShowProposalForm] = useState(false);
-  const [proposalAmount, setProposalAmount] = useState("");
-  const [proposalEquity, setProposalEquity] = useState("");
+  // Negotiation chat state (minimal for compatibility)
   const [sendingMessage, setSendingMessage] = useState(false);
-  const messagesEndRef = useRef(null);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -126,35 +120,31 @@ const FundingRequestDetailsModal = ({
     }
   }, [request]);
 
-  // Scroll to bottom of negotiation messages
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [request?.negotiationHistory]);
-
   // Handler for sending negotiation messages
-  const handleSendNegotiation = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleSendNegotiation = async (messageData) => {
+    const { content, proposalData } = messageData;
 
-    if (!negotiationMessage.trim() && !proposalAmount && !proposalEquity) {
+    if (!content.trim() && !proposalData) {
       setError("Please enter a message or counter-proposal");
       return;
     }
 
     // Validate proposal amounts if provided
-    if (
-      proposalAmount &&
-      (isNaN(proposalAmount) || parseFloat(proposalAmount) <= 0)
-    ) {
-      setError("Proposed amount must be a valid positive number");
-      return;
-    }
-
-    if (proposalEquity) {
-      const equity = parseFloat(proposalEquity);
-      if (isNaN(equity) || equity <= 0 || equity > 100) {
-        setError("Proposed equity must be between 0 and 100 percent");
+    if (proposalData) {
+      if (
+        proposalData.amount &&
+        (isNaN(proposalData.amount) || parseFloat(proposalData.amount) <= 0)
+      ) {
+        setError("Proposed amount must be a valid positive number");
         return;
+      }
+
+      if (proposalData.equity) {
+        const equity = parseFloat(proposalData.equity);
+        if (isNaN(equity) || equity <= 0 || equity > 100) {
+          setError("Proposed equity must be between 0 and 100 percent");
+          return;
+        }
       }
     }
 
@@ -165,23 +155,17 @@ const FundingRequestDetailsModal = ({
       const response = await fundingAPI.entrepreneurRespondToNegotiation(
         request._id || request.id,
         {
-          message: negotiationMessage,
-          proposedAmount: proposalAmount
-            ? parseFloat(proposalAmount)
+          message: content,
+          proposedAmount: proposalData?.amount
+            ? parseFloat(proposalData.amount)
             : undefined,
-          proposedEquity: proposalEquity
-            ? parseFloat(proposalEquity)
+          proposedEquity: proposalData?.equity
+            ? parseFloat(proposalData.equity)
             : undefined,
         }
       );
 
       if (response.success) {
-        // Clear input and proposal fields
-        setNegotiationMessage("");
-        setProposalAmount("");
-        setProposalEquity("");
-        setShowProposalForm(false);
-
         // Show success message
         setSuccess("Negotiation message sent successfully!");
         setTimeout(() => setSuccess(""), 3000);
@@ -1186,7 +1170,6 @@ const FundingRequestDetailsModal = ({
 
                 {/* Negotiation Chat Interface */}
                 <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-                  {/* Chat Header */}
                   <div className="bg-gray-800 border-b border-gray-700 p-4">
                     <h3 className="text-white font-semibold flex items-center gap-2">
                       <FaComments className="w-5 h-5" />
@@ -1196,237 +1179,18 @@ const FundingRequestDetailsModal = ({
                       Communicate with investors and send counter-proposals
                     </p>
                   </div>
-
-                  {/* Messages Container */}
-                  <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
-                    {request.negotiationHistory &&
-                    request.negotiationHistory.length > 0 ? (
-                      <>
-                        {request.negotiationHistory.map((entry, index) => {
-                          const isEntrepreneur = !entry.investor;
-                          return (
-                            <div
-                              key={index}
-                              className={`flex ${
-                                isEntrepreneur ? "justify-end" : "justify-start"
-                              }`}
-                            >
-                              <div
-                                className={`max-w-[70%] rounded-lg p-4 ${
-                                  isEntrepreneur
-                                    ? "bg-blue-600/20 border border-blue-500/30"
-                                    : "bg-gray-800 border border-gray-700"
-                                }`}
-                              >
-                                <div className="flex items-start justify-between mb-2">
-                                  <div className="flex items-center gap-2">
-                                    <FaUser
-                                      className={`w-4 h-4 ${
-                                        isEntrepreneur
-                                          ? "text-blue-400"
-                                          : "text-green-400"
-                                      }`}
-                                    />
-                                    <span className="text-white font-medium text-sm">
-                                      {isEntrepreneur
-                                        ? "You"
-                                        : entry.investor?.name || "Investor"}
-                                    </span>
-                                  </div>
-                                  <span className="text-white/40 text-xs">
-                                    {new Date(
-                                      entry.timestamp
-                                    ).toLocaleDateString()}{" "}
-                                    {new Date(
-                                      entry.timestamp
-                                    ).toLocaleTimeString([], {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    })}
-                                  </span>
-                                </div>
-                                <p className="text-white/90 whitespace-pre-wrap text-sm">
-                                  {entry.message}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                        <div ref={messagesEndRef} />
-                      </>
-                    ) : (
-                      <div className="text-center py-12">
-                        <FaComments className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                        <p className="text-white/60">
-                          No negotiation messages yet
-                        </p>
-                        <p className="text-white/40 text-sm mt-1">
-                          Investor responses will appear here
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Message Input Area */}
-                  {(request.status === "pending" ||
-                    request.status === "negotiated") && (
-                    <div className="border-t border-gray-700 p-4 bg-gray-800/50">
-                      {/* Proposal Form Toggle */}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShowProposalForm(!showProposalForm);
-                        }}
-                        className="mb-3 text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 transition-colors font-medium"
-                      >
-                        <FaDollarSign className="w-4 h-4" />
-                        {showProposalForm
-                          ? "Hide Counter-Proposal Form"
-                          : "📊 Send Counter-Proposal with New Terms"}
-                      </button>
-
-                      {/* Counter Proposal Form */}
-                      {showProposalForm && (
-                        <div className="mb-4 p-4 bg-blue-900/10 border border-blue-500/30 rounded-lg space-y-3">
-                          <div className="flex items-start gap-2 mb-3">
-                            <FaLightbulb className="w-4 h-4 text-blue-400 mt-1 flex-shrink-0" />
-                            <div>
-                              <h4 className="text-white font-medium text-sm mb-1">
-                                Counter-Proposal Terms
-                              </h4>
-                              <p className="text-white/60 text-xs">
-                                Propose different funding terms. These values
-                                will be included in your message to investors.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <div>
-                              <label className="block text-white/80 text-xs font-medium mb-2">
-                                💰 Proposed Amount ($)
-                              </label>
-                              <input
-                                type="number"
-                                value={proposalAmount}
-                                onChange={(e) =>
-                                  setProposalAmount(e.target.value)
-                                }
-                                placeholder={`Current: ${formatCurrency(
-                                  request.amount
-                                )}`}
-                                min="0"
-                                step="1000"
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                              />
-                            </div>
-                            <div>
-                              <label className="block text-white/80 text-xs font-medium mb-2">
-                                📈 Proposed Equity (%)
-                              </label>
-                              <input
-                                type="number"
-                                value={proposalEquity}
-                                onChange={(e) =>
-                                  setProposalEquity(e.target.value)
-                                }
-                                placeholder={`Current: ${request.equity}%`}
-                                min="0"
-                                max="100"
-                                step="0.1"
-                                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                              />
-                            </div>
-                          </div>
-                          {proposalAmount && proposalEquity && (
-                            <div className="bg-gray-800/50 border border-gray-700 rounded p-3 space-y-1">
-                              <div className="flex justify-between text-xs">
-                                <span className="text-white/60">
-                                  Original Valuation:
-                                </span>
-                                <span className="text-white font-medium">
-                                  {formatCurrency(
-                                    (request.amount / request.equity) * 100
-                                  )}
-                                </span>
-                              </div>
-                              <div className="flex justify-between text-xs">
-                                <span className="text-white/60">
-                                  Proposed Valuation:
-                                </span>
-                                <span className="text-blue-400 font-medium">
-                                  {formatCurrency(
-                                    Math.round(
-                                      (proposalAmount / proposalEquity) * 100
-                                    )
-                                  )}
-                                </span>
-                              </div>
-                              <div className="flex justify-between text-xs pt-1 border-t border-gray-700">
-                                <span className="text-white/60">
-                                  Valuation Change:
-                                </span>
-                                <span
-                                  className={`font-medium ${
-                                    (proposalAmount / proposalEquity) * 100 >
-                                    (request.amount / request.equity) * 100
-                                      ? "text-green-400"
-                                      : "text-red-400"
-                                  }`}
-                                >
-                                  {(
-                                    (((proposalAmount / proposalEquity) * 100) /
-                                      ((request.amount / request.equity) *
-                                        100) -
-                                      1) *
-                                    100
-                                  ).toFixed(1)}
-                                  %
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Message Input */}
-                      <form onSubmit={handleSendNegotiation}>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={negotiationMessage}
-                            onChange={(e) =>
-                              setNegotiationMessage(e.target.value)
-                            }
-                            placeholder="Type your message or counter-proposal..."
-                            className="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500 placeholder-gray-500"
-                          />
-                          <button
-                            type="submit"
-                            disabled={
-                              sendingMessage ||
-                              (!negotiationMessage.trim() &&
-                                !proposalAmount &&
-                                !proposalEquity)
-                            }
-                            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                          >
-                            {sendingMessage ? (
-                              <>
-                                <FaSpinner className="w-4 h-4 animate-spin" />
-                                <span className="text-sm">Sending...</span>
-                              </>
-                            ) : (
-                              <>
-                                <FaPaperPlane className="w-4 h-4" />
-                                <span className="text-sm">Send</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  )}
+                  
+                  <ChatInterface
+                    messages={request.negotiationHistory || []}
+                    currentUserId={user?.id}
+                    currentUserRole="entrepreneur"
+                    onSendMessage={handleSendNegotiation}
+                    disabled={
+                      !["pending", "negotiated"].includes(request.status)
+                    }
+                    canPropose={true}
+                    height="500px"
+                  />
                 </div>
 
                 {/* Response Deadline */}

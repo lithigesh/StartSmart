@@ -14,7 +14,7 @@ import {
   FaComments,
   FaEye,
 } from "react-icons/fa";
-import NegotiationChat from "./NegotiationChat";
+import ChatInterface from "../chat/ChatInterface";
 import DealAcceptanceModal from "./DealAcceptanceModal";
 import { investorDealAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -201,11 +201,17 @@ const InvestorFundingRequestModal = ({
             {activeTab === "financials" && <FinancialsTab request={request} />}
             {activeTab === "team" && <TeamTab request={request} />}
             {activeTab === "negotiation" && (
-              <NegotiationTab
-                request={request}
-                currentUserId={user?.id}
-                onSendMessage={handleNegotiate}
-              />
+              <div className="h-[500px]">
+                <ChatInterface
+                  messages={request.negotiationHistory || []}
+                  currentUserId={user?.id}
+                  currentUserRole="investor"
+                  onSendMessage={handleNegotiate}
+                  disabled={!["pending", "negotiated"].includes(request.status)}
+                  canPropose={true}
+                  height="500px"
+                />
+              </div>
             )}
           </div>
 
@@ -461,19 +467,6 @@ const TeamTab = ({ request }) => (
         />
       </Section>
     )}
-  </div>
-);
-
-// Negotiation Tab Component
-const NegotiationTab = ({ request, currentUserId, onSendMessage }) => (
-  <div className="h-[500px]">
-    <NegotiationChat
-      negotiationHistory={request.negotiationHistory || []}
-      onSendMessage={onSendMessage}
-      currentUserId={currentUserId}
-      isInvestor={true}
-      disabled={!["pending", "negotiated"].includes(request.status)}
-    />
   </div>
 );
 

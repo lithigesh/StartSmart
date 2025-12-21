@@ -33,7 +33,7 @@ initializeDB();
 // Configure CORS
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-edentials: true,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
@@ -64,6 +64,7 @@ app.use('/api/chart', require('./routes/chart.routes'));
 app.use('/api/comparison', require('./routes/comparison.routes'));
 app.use('/api/marketResearch', require('./routes/marketResearch.routes'));
 app.use('/api/app-feedback', require('./routes/appFeedback.routes'));
+app.use('/api/messages', require('./routes/negotiationMessage.routes'));
 
 app.use(errorHandler);
 // Health Check Route

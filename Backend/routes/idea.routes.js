@@ -47,11 +47,12 @@ router.get('/interested/list', protect, isInvestor, getInterestedIdeasForInvesto
 
 // --- Entrepreneur's Idea History Route: /api/ideas/user/:userId ---
 // Fetches all ideas submitted by a specific entrepreneur.
+// IMPORTANT: Must be before /:id route to avoid "user" being treated as an ID
 router.get('/user/:userId', protect, isEntrepreneur, getUserIdeas);
-
 
 // --- Specific Idea Routes: /api/ideas/:id ---
 // Handles CRUD operations on a single idea by its ID.
+// IMPORTANT: This catch-all route must come AFTER specific routes like /user/:userId
 router.route('/:id')
     .get(protect, getIdeaById) // Accessible by both roles, controller checks ownership.
     .put(protect, isEntrepreneur, updateIdea)
