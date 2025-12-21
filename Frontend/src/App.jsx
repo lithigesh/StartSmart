@@ -9,7 +9,6 @@ import LandingPage from "./pages/LandingPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import InvestorDashboard from "./pages/InvestorDashboard.jsx";
-import EntrepreneurDashboardPage from "./pages/EntrepreneurDashboardPage.jsx";
 import IdeaDetailPage from "./pages/IdeaDetailPage.jsx";
 import AdminLoginPage from "./pages/AdminLoginPage.jsx";
 import AdminDashboardLayout from "./pages/AdminDashboardLayout.jsx";

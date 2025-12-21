@@ -68,7 +68,7 @@ const EntrepreneurLayout = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black overflow-x-hidden">
       {/* Sidebar */}
       <SideBar 
         activeSection={activeSection} 
@@ -78,12 +78,16 @@ const EntrepreneurLayout = () => {
       />
 
       {/* Main Content */}
-      <div className="lg:ml-72">
+      <div
+        className={`transition-all duration-300 ${
+          isSidebarCollapsed ? "lg:ml-20" : "lg:ml-72"
+        }`}
+      >
         {/* Header */}
         <DashboardHeader onSectionChange={handleSectionChange} />
 
         {/* Page Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-32">
           <Outlet />
         </div>
       </div>

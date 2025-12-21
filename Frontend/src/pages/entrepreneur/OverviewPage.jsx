@@ -91,7 +91,7 @@ const OverviewPage = () => {
           <div
             key={index}
             onClick={card.onClick}
-            className="bg-gray-900 rounded-lg border border-gray-800 p-6 hover:bg-gray-800 transition-all duration-200 cursor-pointer group"
+            className="bg-gray-900 rounded-lg border border-gray-800 p-6 hover:bg-gray-800 hover:border-gray-700 transition-all duration-200 cursor-pointer group"
           >
             <div className="flex items-center justify-between mb-4">
               <div className="text-gray-400 group-hover:text-white transition-colors">
@@ -112,18 +112,21 @@ const OverviewPage = () => {
       </div>
 
       {/* Recent Activity Section */}
-      <div>
+      <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
         <RecentActivitySection />
       </div>
 
       {/* App Feedback Section */}
-      <div>
+      <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Share Your Feedback
+        </h3>
         <FeedbackCard />
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-900 border border-red-700 rounded-lg p-4">
+        <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
           <p className="text-red-200">{error}</p>
         </div>
       )}

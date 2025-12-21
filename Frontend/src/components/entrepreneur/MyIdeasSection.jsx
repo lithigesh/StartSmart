@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import IdeaCard from "./IdeaCard";
+import IdeaCard from "../IdeaCard";
 import IdeasListCharts from "../charts/IdeasListCharts";
 import { FaPlus, FaLightbulb, FaSpinner, FaChartBar } from "react-icons/fa";
 import { entrepreneurAPI, ideasAPI } from "../../services/api";
