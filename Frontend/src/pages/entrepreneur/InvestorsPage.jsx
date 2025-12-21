@@ -113,7 +113,7 @@ const InvestorsPage = () => {
       case 'accepted': return 'text-green-400 bg-green-400/10';
       case 'declined': return 'text-red-400 bg-red-400/10';
       case 'negotiating': return 'text-yellow-400 bg-yellow-400/10';
-      default: return 'text-gray-400 bg-gray-400/10';
+      default: return 'text-white/60 bg-white/10';
     }
   };
 
@@ -145,24 +145,25 @@ const InvestorsPage = () => {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-gray-900 rounded-lg border border-gray-800 p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+          <div className="relative z-10 flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
               <input
                 type="text"
                 placeholder="Search investors or ideas..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
+                className="w-full pl-10 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-lg text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
               />
             </div>
             <div className="relative">
-              <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="pl-10 pr-8 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:border-white/40 focus:outline-none appearance-none"
+                className="pl-10 pr-8 py-3 bg-white/[0.05] border border-white/10 rounded-lg text-white focus:border-white/40 focus:outline-none appearance-none backdrop-blur-sm"
               >
                 <option value="all">All Status</option>
                 <option value="interested">Interested</option>
@@ -176,28 +177,33 @@ const InvestorsPage = () => {
 
         {/* Investors List */}
         {filteredInvestors.length === 0 ? (
-          <div className="text-center py-12 bg-gray-900 rounded-lg border border-gray-800">
-            <FaBriefcase className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">
-              {interestedInvestors.length === 0 ? "No Investor Interest Yet" : "No Results Found"}
-            </h3>
-            <p className="text-white/60">
-              {interestedInvestors.length === 0 
-                ? "Keep sharing your ideas to attract investor attention" 
-                : "Try adjusting your search or filter criteria"}
-            </p>
+          <div className="text-center py-12 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <FaBriefcase className="w-16 h-16 text-white/30 mx-auto mb-4" />
+              <h3 className="text-xl font-manrope font-semibold text-white mb-2">
+                {interestedInvestors.length === 0 ? "No Investor Interest Yet" : "No Results Found"}
+              </h3>
+              <p className="text-white/60 font-manrope">
+                {interestedInvestors.length === 0 
+                  ? "Keep sharing your ideas to attract investor attention" 
+                  : "Try adjusting your search or filter criteria"}
+              </p>
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
             {filteredInvestors.map((investor) => (
               <div 
                 key={investor._id} 
-                className="bg-gray-900 rounded-lg border border-gray-800 p-6 hover:border-gray-700 transition-colors"
+                className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/[0.05] transition-all duration-300 relative overflow-hidden"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <FaUser className="text-blue-400" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <FaUser className="text-blue-400" />
                       <h4 className="text-white font-semibold text-lg">
                         {investor.investorName}
                       </h4>
@@ -221,21 +227,21 @@ const InvestorsPage = () => {
                 </div>
 
                 {investor.message && (
-                  <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
-                    <p className="text-white/80 text-sm">{investor.message}</p>
+                  <div className="bg-white/[0.05] backdrop-blur-sm rounded-lg p-4 mb-4 border border-white/10">
+                    <p className="text-white/80 text-sm font-manrope">{investor.message}</p>
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-800">
+                <div className="flex items-center justify-between pt-4 border-t border-white/10">
                   <div className="flex items-center gap-4">
                     {investor.contactInfo?.email && (
-                      <div className="flex items-center gap-2 text-white/60 text-sm">
+                      <div className="flex items-center gap-2 text-white/60 text-sm font-manrope">
                         <FaEnvelope />
                         <span>{investor.contactInfo.email}</span>
                       </div>
                     )}
                     {investor.contactInfo?.phone && (
-                      <div className="flex items-center gap-2 text-white/60 text-sm">
+                      <div className="flex items-center gap-2 text-white/60 text-sm font-manrope">
                         <FaPhone />
                         <span>{investor.contactInfo.phone}</span>
                       </div>
@@ -278,6 +284,7 @@ const InvestorsPage = () => {
                     )}
                   </div>
                 </div>
+                </div>
               </div>
             ))}
           </div>
@@ -287,11 +294,13 @@ const InvestorsPage = () => {
       {/* Investor Details Modal */}
       {showDetails && selectedInvestor && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-white">Investor Details</h2>
-              <button
-                onClick={() => setShowDetails(false)}
+          <div className="bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-manrope font-semibold text-white">Investor Details</h2>
+                <button
+                  onClick={() => setShowDetails(false)}
                 className="text-white/70 hover:text-white transition-colors hover:bg-white/10 rounded-lg p-2"
               >
                 <FaTimes />
@@ -307,7 +316,7 @@ const InvestorsPage = () => {
               {selectedInvestor.message && (
                 <div>
                   <h4 className="text-white font-medium mb-2">Message:</h4>
-                  <p className="text-white/80 bg-gray-800/50 rounded-lg p-4">{selectedInvestor.message}</p>
+                  <p className="text-white/80 bg-white/[0.05] rounded-lg p-4 border border-white/10">{selectedInvestor.message}</p>
                 </div>
               )}
               
@@ -338,10 +347,10 @@ const InvestorsPage = () => {
                 </div>
               </div>
               
-              <div className="flex gap-3 pt-4 border-t border-gray-700">
+              <div className="flex gap-3 pt-4 border-t border-white/10">
                 <button
                   onClick={() => setShowDetails(false)}
-                  className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] text-white rounded-lg transition-colors border border-white/10"
                 >
                   Close
                 </button>
@@ -369,11 +378,14 @@ const InvestorsPage = () => {
                 )}
               </div>
             </div>
+            </div>
           </div>
         </div>
       )}
+     
     </div>
   );
 };
+
 
 export default InvestorsPage;

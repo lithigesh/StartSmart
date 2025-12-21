@@ -2264,6 +2264,23 @@ export const collaborationsAPI = {
   },
 };
 
+// App Feedback API
+export const appFeedbackAPI = {
+  submitFeedback: async (feedbackData) => {
+    try {
+      const response = await fetch(`${API_URL}/api/app-feedback`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(feedbackData),
+      });
+      return handleResponse(response);
+    } catch (error) {
+      console.error("Error submitting app feedback:", error);
+      throw error;
+    }
+  },
+};
+
 const API_SERVICES = {
   ideasAPI,
   entrepreneurAPI,
@@ -2276,6 +2293,7 @@ const API_SERVICES = {
   teamResourceAPI,
   businessAimAPI,
   collaborationsAPI,
+  appFeedbackAPI,
 };
 
 // General API object for making HTTP requests

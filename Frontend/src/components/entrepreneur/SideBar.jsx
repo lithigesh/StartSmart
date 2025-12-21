@@ -60,25 +60,11 @@ const SideBar = ({
       path: "/entrepreneur/investors",
     },
     {
-      id: "analytics",
-      label: "Analytics",
-      icon: <FaChartBar className="w-5 h-5" />,
-      description: "Performance insights",
-      path: "/entrepreneur/analytics",
-    },
-    {
       id: "ideathons",
       label: "Ideathons",
       icon: <FaTrophy className="w-5 h-5" />,
       description: "Join competitions",
       path: "/entrepreneur/ideathons",
-    },
-    {
-      id: "collaborations",
-      label: "Collaborations",
-      icon: <FaUsers className="w-5 h-5" />,
-      description: "Network & collaborate",
-      path: "/entrepreneur/collaborations",
     },
   ];
 
@@ -97,13 +83,6 @@ const SideBar = ({
       icon: <FaComment className="w-5 h-5" />,
       description: "Share feedback",
       path: "/entrepreneur/feedback",
-    },
-    {
-      id: "settings",
-      label: "Settings",
-      icon: <FaCog className="w-5 h-5" />,
-      description: "Account settings",
-      path: "/entrepreneur/settings",
     },
   ];
 
@@ -251,14 +230,6 @@ const SideBar = ({
         {/* Navigation */}
         <div className="flex-1 overflow-y-auto py-4 relative z-10">
           <div className="px-4">
-            {!isCollapsed && (
-              <h3 className="text-white/50 text-xs font-manrope font-semibold uppercase tracking-wider mb-3">
-                Navigation
-              </h3>
-            )}
-            {isCollapsed && window.innerWidth >= 1024 && (
-              <div className="h-6 mb-3"></div>
-            )}
             <div className="space-y-2">
               {navigationItems.map((item) => (
                 <SidebarItem
@@ -272,14 +243,6 @@ const SideBar = ({
           </div>
 
           <div className="px-4 mt-8">
-            {!isCollapsed && (
-              <h3 className="text-white/50 text-xs font-manrope font-semibold uppercase tracking-wider mb-3">
-                Tools
-              </h3>
-            )}
-            {isCollapsed && window.innerWidth >= 1024 && (
-              <div className="h-6 mb-3"></div>
-            )}
             <div className="space-y-2">
               {bottomItems.map((item) => (
                 <SidebarItem

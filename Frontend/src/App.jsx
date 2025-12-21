@@ -28,11 +28,8 @@ import OverviewPage from "./pages/entrepreneur/OverviewPage.jsx";
 import MyIdeasPage from "./pages/entrepreneur/MyIdeasPage.jsx";
 import FundingPage from "./pages/entrepreneur/FundingPage.jsx";
 import InvestorsPage from "./pages/entrepreneur/InvestorsPage.jsx";
-import AnalyticsPage from "./pages/entrepreneur/AnalyticsPage.jsx";
 import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
-import CollaborationsPage from "./pages/entrepreneur/CollaborationsPage.jsx";
 import NotificationsPage from "./pages/entrepreneur/NotificationsPage.jsx";
-import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
 import FeedbackPage from "./pages/entrepreneur/FeedbackPage.jsx";
 
 // Investor Pages
@@ -92,42 +89,15 @@ const App = () => {
                 <Route path="my-ideas" element={<MyIdeasPage />} />
                 <Route path="funding" element={<FundingPage />} />
                 <Route path="investors" element={<InvestorsPage />} />
-                <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="ideathons" element={<IdeathonsPage />} />
-                <Route path="collaborations" element={<CollaborationsPage />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="feedback" element={<FeedbackPage />} />
-                <Route path="settings" element={<SettingsPage />} />
               </Route>
               <Route
                 path="/submit-idea"
                 element={
                   <RoleBasedRoute allowedRole="entrepreneur">
                     <IdeaSubmissionPage />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path="/idea/submit"
-                element={
-                  <RoleBasedRoute allowedRole="entrepreneur">
-                    <IdeaSubmissionPage />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path="/entrepreneur/feedback"
-                element={
-                  <RoleBasedRoute allowedRole="entrepreneur">
-                    <AppFeedbackPage />
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path="/feedback"
-                element={
-                  <RoleBasedRoute allowedRole="entrepreneur">
-                    <AppFeedbackPage />
                   </RoleBasedRoute>
                 }
               />

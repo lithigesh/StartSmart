@@ -51,6 +51,8 @@ const IdeaDetailPage = () => {
 
   const getDashboardUrl = () => {
     if (isAdminView) return '/admin/dashboard?section=ideas';
+    if (user?.role === 'entrepreneur') return '/entrepreneur/my-ideas';
+    if (user?.role === 'investor') return '/investor/dashboard';
     return user ? getRoleDashboardUrl(user) : "/";
   };
 
@@ -173,7 +175,7 @@ const IdeaDetailPage = () => {
             onClick={() => navigate(getDashboardUrl())}
             className="btn bg-white text-black hover:bg-gray-100 rounded-lg px-6 py-2 font-manrope"
           >
-            Back to Dashboard
+            {user?.role === 'entrepreneur' ? 'Back to My Ideas' : 'Back to Dashboard'}
           </button>
         </div>
       </div>
@@ -191,7 +193,7 @@ const IdeaDetailPage = () => {
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <FaArrowLeft className="w-4 h-4" />
-              <span className="font-manrope">{isAdminView ? 'Back to All Ideas' : 'Back to Dashboard'}</span>
+              <span className="font-manrope">{isAdminView ? 'Back to All Ideas' : user?.role === 'entrepreneur' ? 'Back to My Ideas' : 'Back to Dashboard'}</span>
             </button>
 
             {isAdminView ? (

@@ -487,7 +487,7 @@ function IdeathonRegistrationForm({
                 return `${completedFields.length}/${requiredFields.length} required fields`;
               })()}</span>
             </div>
-            <div className="h-2 bg-gray-900 rounded-full overflow-hidden">
+            <div className="h-2 bg-white/[0.08] rounded-full overflow-hidden border border-white/10">
               <div 
                 className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
                 style={{
@@ -536,8 +536,10 @@ function IdeathonRegistrationForm({
                 
                 {userIdeas.length === 0 ? (
                   // No ideas available - show message and link to Ideas page
-                  <div className="p-6 bg-gray-900 border border-gray-800 rounded-lg text-center">
-                    <FaLightbulb className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                  <div className="p-6 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-lg text-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-lg pointer-events-none"></div>
+                    <div className="relative z-10">
+                    <FaLightbulb className="w-12 h-12 text-white/30 mx-auto mb-4" />
                     <h3 className="text-white font-medium mb-2">No Ideas Found</h3>
                     <p className="text-white/60 mb-4">
                       You need to create at least one idea before registering for ideathons.
@@ -550,6 +552,7 @@ function IdeathonRegistrationForm({
                       <FaPlus className="w-4 h-4" />
                       Create Your First Idea
                     </button>
+                    </div>
                   </div>
                 ) : (
                   // Ideas available - show dropdown
@@ -557,7 +560,7 @@ function IdeathonRegistrationForm({
                     name="selectedIdeaId"
                     value={formData.selectedIdeaId}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                    className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                     required
                   >
                     <option value="">Choose an idea...</option>
@@ -572,7 +575,7 @@ function IdeathonRegistrationForm({
 
               {/* Show selected idea details */}
               {formData.selectedIdeaId && (
-                <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+                <div className="p-4 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg">
                   {(() => {
                     const selectedIdea = userIdeas.find(idea => idea.id === parseInt(formData.selectedIdeaId));
                     return selectedIdea ? (
@@ -600,7 +603,7 @@ function IdeathonRegistrationForm({
                   value={formData.teamName}
                   onChange={handleInputChange}
                   placeholder="Enter your team name"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                   required
                 />
               </div>
@@ -638,7 +641,7 @@ function IdeathonRegistrationForm({
                   value={formData.teamMembers}
                   onChange={handleInputChange}
                   placeholder="e.g., John Doe, Jane Smith (optional)"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                 />
                 <p className="text-white/50 text-sm mt-2">
                   List team member names separated by commas (optional)
@@ -658,7 +661,7 @@ function IdeathonRegistrationForm({
                   placeholder="Enter your age"
                   min={ideathonDetails?.eligibilityCriteria?.minAge || 18}
                   max={ideathonDetails?.eligibilityCriteria?.maxAge || 35}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                   required
                 />
                 <p className="text-white/50 text-sm mt-2">
@@ -680,7 +683,7 @@ function IdeathonRegistrationForm({
                   placeholder="Enter team size"
                   min={ideathonDetails?.eligibilityCriteria?.minTeamSize || 1}
                   max={ideathonDetails?.eligibilityCriteria?.maxTeamSize || 5}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                   required
                 />
                 <p className="text-white/50 text-sm mt-2">
@@ -708,7 +711,7 @@ function IdeathonRegistrationForm({
                     }));
                   }}
                   placeholder="Enter 10-digit mobile number"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                   maxLength="10"
                   required
                 />
@@ -728,7 +731,7 @@ function IdeathonRegistrationForm({
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="Enter your email address (must end with .com)"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                   required
                 />
                 <p className="text-white/50 text-sm mt-2">
@@ -747,7 +750,7 @@ function IdeathonRegistrationForm({
                   value={formData.githubUrl}
                   onChange={handleInputChange}
                   placeholder="https://github.com/username/repository"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                 />
                 <p className="text-white/50 text-sm mt-2">
                   Add your project's GitHub repository URL (optional)
@@ -765,7 +768,7 @@ function IdeathonRegistrationForm({
                   onChange={handleInputChange}
                   placeholder="Describe how your idea fits this ideathon, your approach, expected outcomes, and why you should win..."
                   rows={6}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none"
+                  className="w-full px-4 py-3 bg-white/[0.05] backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none"
                   required
                 />
                 <div className="flex justify-between items-center mt-2">
@@ -783,7 +786,7 @@ function IdeathonRegistrationForm({
                 <label className="block text-white font-medium mb-3">
                   Supporting Documents
                 </label>
-                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center hover:border-gray-600 transition-colors">
+                <div className="border-2 border-dashed border-white/20 rounded-lg p-6 text-center hover:border-white/30 transition-colors bg-white/[0.02]">
                   <input
                     type="file"
                     multiple
@@ -796,7 +799,7 @@ function IdeathonRegistrationForm({
                     htmlFor="document-upload"
                     className="cursor-pointer flex flex-col items-center"
                   >
-                    <FaUpload className="w-8 h-8 text-gray-500 mb-2" />
+                    <FaUpload className="w-8 h-8 text-white/30 mb-2" />
                     <span className="text-white/60">Click to upload documents</span>
                     <span className="text-white/40 text-sm mt-1">
                       PDF, DOC, PPT, or images (optional)
@@ -810,7 +813,7 @@ function IdeathonRegistrationForm({
                     {formData.documents.map((file, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-3 bg-gray-900 border border-gray-800 rounded-lg"
+                        className="flex items-center justify-between p-3 bg-white/[0.05] border border-white/10 rounded-lg backdrop-blur-sm"
                       >
                         <div className="flex items-center gap-3">
                           <FaFileAlt className="w-4 h-4 text-white/60" />
@@ -843,7 +846,7 @@ function IdeathonRegistrationForm({
                       ...prev,
                       acceptedTerms: e.target.checked
                     }))}
-                    className="mt-1 h-4 w-4 rounded border-gray-700 bg-gray-900 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                    className="mt-1 h-4 w-4 rounded border-white/20 bg-white/[0.05] text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
                     required
                   />
                   <span className="text-sm text-white/70 group-hover:text-white/90">

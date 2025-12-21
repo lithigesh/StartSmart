@@ -160,8 +160,8 @@ const IdeathonsPage = () => {
     switch (statusInfo.color) {
       case 'green': return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'blue': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'gray': return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+      case 'gray': return 'bg-white/10 text-white/60 border-white/20';
+      default: return 'bg-white/10 text-white/60 border-white/20';
     }
   };
 
@@ -243,9 +243,9 @@ const IdeathonsPage = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50 transition-all duration-300 cursor-pointer"
             >
-              <option value="all" className="bg-gray-800">All Status</option>
-              <option value="upcoming" className="bg-gray-800">Upcoming</option>
-              <option value="active" className="bg-gray-800">Active Now</option>
+              <option value="all" className="bg-black">All Status</option>
+              <option value="upcoming" className="bg-black">Upcoming</option>
+              <option value="active" className="bg-black">Active Now</option>
             </select>
           </div>
         </div>
@@ -372,7 +372,7 @@ const IdeathonsPage = () => {
                       registered
                         ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-not-allowed'
                         : statusInfo.status === 'expired'
-                        ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30 cursor-not-allowed'
+                        ? 'bg-white/10 text-white/60 border border-white/20 cursor-not-allowed'
                         : 'bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white border border-blue-400/30 hover:from-blue-400/90 hover:to-blue-500/90'
                     }`}
                   >

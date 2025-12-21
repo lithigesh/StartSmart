@@ -91,9 +91,10 @@ const NotificationsPopup = ({
       isFullPage 
         ? "w-full" 
         : "absolute right-0 top-full mt-2 w-96 z-50"
-    } bg-gray-900 border border-gray-800 rounded-lg shadow-lg overflow-hidden`}>
+    } bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-lg shadow-lg overflow-hidden relative`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-lg pointer-events-none"></div>
       {/* Header */}
-      <div className="p-4 border-b border-gray-800">
+      <div className="p-4 border-b border-white/10 relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <FaBell className="w-5 h-5 text-white" />
@@ -126,7 +127,7 @@ const NotificationsPopup = ({
                 className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
                   filter === filterType
                     ? "bg-white text-black"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800"
+                    : "text-white/50 hover:text-white hover:bg-white/[0.08] border border-white/10"
                 }`}
               >
                 {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
@@ -156,9 +157,9 @@ const NotificationsPopup = ({
       {/* Notifications List */}
       <div className={`${isFullPage ? "max-h-[calc(100vh-300px)]" : "max-h-96"} overflow-y-auto`}>
         {filteredNotifications.length === 0 ? (
-          <div className="p-8 text-center">
-            <FaBell className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">
+          <div className="p-8 text-center relative z-10">
+            <FaBell className="w-12 h-12 text-white/30 mx-auto mb-4" />
+            <p className="text-white/50">
               {filter === "unread" 
                 ? "No unread notifications" 
                 : filter === "read" 
@@ -167,12 +168,12 @@ const NotificationsPopup = ({
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-800">
+          <div className="divide-y divide-white/10 relative z-10">
             {filteredNotifications.map((notification) => (
               <div
                 key={notification._id}
-                className={`p-4 hover:bg-gray-800/50 transition-colors cursor-pointer ${
-                  !notification.read ? "bg-gray-800/30" : ""
+                className={`p-4 hover:bg-white/[0.05] transition-colors cursor-pointer ${
+                  !notification.read ? "bg-white/[0.03]" : ""
                 }`}
                 onClick={() => handleNotificationClick(notification)}
               >
@@ -183,7 +184,7 @@ const NotificationsPopup = ({
                       checked={selectedNotifications.includes(notification._id)}
                       onChange={() => toggleSelectNotification(notification._id)}
                       onClick={(e) => e.stopPropagation()}
-                      className="rounded border-gray-600 text-white focus:ring-purple-500 bg-gray-700"
+                      className="rounded border-white/20 text-white focus:ring-purple-500 bg-white/[0.05]"
                     />
                   </div>
 
@@ -194,7 +195,7 @@ const NotificationsPopup = ({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <h4 className={`font-medium ${
-                        notification.read ? "text-gray-400" : "text-white"
+                        notification.read ? "text-white/50" : "text-white"
                       }`}>
                         {notification.title}
                       </h4>

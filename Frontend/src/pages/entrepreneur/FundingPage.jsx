@@ -334,14 +334,14 @@ const FundingPage = () => {
       case "negotiated":
         return "text-blue-400 bg-blue-400/10";
       case "withdrawn":
-        return "text-gray-400 bg-gray-400/10";
+        return "text-white/60 bg-white/10";
       default:
-        return "text-gray-400 bg-gray-400/10";
+        return "text-white/60 bg-white/10";
     }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in" key="funding-page">
       <div>
         <div className="mb-6">
           <h2 className="text-2xl font-manrope font-bold text-white mb-2">
@@ -354,7 +354,7 @@ const FundingPage = () => {
 
         {/* Funding Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '0ms' }}>
+          <div key="stat-total-funding" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '0ms' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -372,7 +372,7 @@ const FundingPage = () => {
             </div>
           </div>
 
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <div key="stat-funding-requests" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '100ms' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -390,7 +390,7 @@ const FundingPage = () => {
             </div>
           </div>
 
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <div key="stat-investors" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '200ms' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -426,7 +426,7 @@ const FundingPage = () => {
         <div className="mb-6">
           <button
             onClick={handleCreateFundingRequest}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200 font-medium"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200 font-medium"
           >
             <FaPlus className="w-4 h-4" />
             Request Funding
@@ -440,8 +440,10 @@ const FundingPage = () => {
           </h3>
 
           {fundingRequests.length === 0 ? (
-            <div className="text-center py-12 bg-gray-900 rounded-lg border border-gray-800">
-              <FaDollarSign className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <div className="text-center py-12 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+              <div className="relative z-10">
+              <FaDollarSign className="w-16 h-16 text-white/30 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
                 No Funding Requests Yet
               </h3>
@@ -450,19 +452,22 @@ const FundingPage = () => {
               </p>
               <button
                 onClick={handleCreateFundingRequest}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200 font-medium"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200 font-medium"
               >
                 <FaPlus className="w-4 h-4" />
                 Create First Request
               </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
               {fundingRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="bg-gray-900 rounded-lg border border-gray-800 p-6 hover:border-gray-700 transition-colors"
+                  className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/[0.05] transition-all duration-300 relative overflow-hidden group"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+                  <div className="relative z-10">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h4 className="text-white font-semibold text-lg mb-2">
@@ -512,7 +517,7 @@ const FundingPage = () => {
                   )}
 
                   {/* Action buttons */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-gray-800">
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/10">
                     {request.status === "pending" && (
                       <>
                         <button
@@ -546,11 +551,12 @@ const FundingPage = () => {
                       </span>
                     )}
                     {request.status === "withdrawn" && (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600/20 text-gray-400 rounded-lg text-sm font-medium">
+                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] text-white/50 rounded-lg text-sm font-medium border border-white/10">
                         <FaMinusCircle className="w-4 h-4" />
                         Withdrawn
                       </span>
                     )}
+                  </div>
                   </div>
                 </div>
               ))}
@@ -562,7 +568,9 @@ const FundingPage = () => {
       {/* Funding Request Modal */}
       {showFundingModal && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-semibold text-white">
                 Request Funding
@@ -586,7 +594,7 @@ const FundingPage = () => {
                     onChange={(e) =>
                       handleFundingFormChange("ideaId", e.target.value)
                     }
-                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none"
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none backdrop-blur-sm"
                     required
                   >
                     <option value="">Choose an idea...</option>
@@ -609,7 +617,7 @@ const FundingPage = () => {
                       handleFundingFormChange("amount", e.target.value)
                     }
                     placeholder="Enter amount in USD"
-                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
                     required
                   />
                 </div>
@@ -629,7 +637,7 @@ const FundingPage = () => {
                   min="0"
                   max="100"
                   step="0.1"
-                  className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none"
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
                   required
                 />
                 <p className="text-white/50 text-xs mt-1">
@@ -648,13 +656,13 @@ const FundingPage = () => {
                   }
                   placeholder="Tell investors why you need funding and what you plan to achieve..."
                   rows={4}
-                  className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none resize-none"
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none resize-none backdrop-blur-sm"
                 />
               </div>
 
               {/* Investor Targeting Section */}
               {fundingFormData.ideaId && (
-                <div className="space-y-4 p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
+                <div className="space-y-4 p-4 bg-white/[0.05] border border-white/10 rounded-lg backdrop-blur-sm">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-white font-semibold flex items-center gap-2">
@@ -685,7 +693,7 @@ const FundingPage = () => {
                       Request Visibility
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <label className="relative flex items-center p-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:border-gray-600 transition-colors">
+                      <label className="relative flex items-center p-3 bg-white/[0.05] border border-white/10 rounded-lg cursor-pointer hover:bg-white/[0.08] transition-colors backdrop-blur-sm">
                         <input
                           type="radio"
                           name="accessType"
@@ -705,7 +713,7 @@ const FundingPage = () => {
                       </label>
 
                       <label
-                        className={`relative flex items-center p-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:border-gray-600 transition-colors ${
+                        className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
                           interestedInvestors.length === 0
                             ? "opacity-50 cursor-not-allowed"
                             : ""
@@ -731,7 +739,7 @@ const FundingPage = () => {
                       </label>
 
                       <label
-                        className={`relative flex items-center p-3 bg-gray-800 border border-gray-700 rounded-lg cursor-pointer hover:border-gray-600 transition-colors ${
+                        className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
                           interestedInvestors.length === 0
                             ? "opacity-50 cursor-not-allowed"
                             : ""
@@ -773,11 +781,11 @@ const FundingPage = () => {
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t border-gray-700">
+              <div className="flex gap-3 pt-4 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setShowFundingModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] text-white rounded-lg transition-colors border border-white/10"
                 >
                   Cancel
                 </button>
@@ -785,7 +793,7 @@ const FundingPage = () => {
                 <button
                   type="submit"
                   disabled={submittingFunding}
-                  className="flex-1 px-4 py-3 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                  className="flex-1 px-4 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
                 >
                   {submittingFunding ? (
                     <>
@@ -800,8 +808,7 @@ const FundingPage = () => {
                   )}
                 </button>
               </div>
-            </form>
-          </div>
+            </form>            </div>          </div>
         </div>
       )}
 

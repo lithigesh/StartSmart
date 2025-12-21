@@ -154,7 +154,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
       case "Active":
         return "text-cyan-400 bg-cyan-900/20";
       default:
-        return "text-gray-400 bg-gray-900/20";
+        return "text-white/40 bg-white/[0.05] border border-white/10";
     }
   };
 
@@ -179,7 +179,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
                 showCharts 
                   ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  : 'bg-white/[0.05] hover:bg-white/[0.08] text-white/70 border border-white/10'
               }`}
             >
               <FaChartBar className="w-4 h-4" />
@@ -187,7 +187,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
             </button>
             <button 
               onClick={handleAddNewIdea}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200"
             >
               <FaPlus className="w-4 h-4" />
               Add New Idea
@@ -205,7 +205,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
                 showCharts 
                   ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                  : 'bg-white/[0.05] hover:bg-white/[0.08] text-white/70 border border-white/10'
               }`}
             >
               <FaChartBar className="w-4 h-4" />
@@ -213,7 +213,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
             </button>
             <button 
               onClick={handleAddNewIdea}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-lg transition-colors duration-200"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200"
             >
               <FaPlus className="w-4 h-4" />
               Add New Idea
@@ -300,27 +300,29 @@ const MyIdeasSection = ({ showTitle = true }) => {
       {/* Edit Idea Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl max-w-md w-full mx-4 p-8">
+          <div className="bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl max-w-md w-full mx-4 p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
             <h2 className="text-2xl font-bold text-white mb-6">Edit Idea</h2>
             <form onSubmit={handleUpdateIdea} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Title</label>
                 <input
                   type="text"
                   value={editIdea.title}
                   onChange={(e) => setEditIdea({ ...editIdea, title: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
                   placeholder="Enter idea title"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Description</label>
                 <textarea
                   value={editIdea.description}
                   onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
                   placeholder="Describe your idea"
                   rows="4"
                   required
@@ -328,23 +330,23 @@ const MyIdeasSection = ({ showTitle = true }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Category</label>
                 <input
                   type="text"
                   value={editIdea.category}
                   onChange={(e) => setEditIdea({ ...editIdea, category: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
                   placeholder="e.g., Technology, Health, Education"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Stage</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Stage</label>
                 <select
                   value={editIdea.stage}
                   onChange={(e) => setEditIdea({ ...editIdea, stage: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
                 >
                   <option value="Planning">Planning</option>
                   <option value="Development">Development</option>
@@ -354,12 +356,12 @@ const MyIdeasSection = ({ showTitle = true }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Funding Goal ($)</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Funding Goal ($)</label>
                 <input
                   type="number"
                   value={editIdea.fundingGoal}
                   onChange={(e) => setEditIdea({ ...editIdea, fundingGoal: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white"
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
                   placeholder="Enter funding goal"
                   min="0"
                 />
@@ -372,7 +374,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
                     setShowEditModal(false);
                     setEditingIdea(null);
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors text-white"
+                  className="flex-1 px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-colors text-white border border-white/10"
                 >
                   Cancel
                 </button>
@@ -384,6 +386,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

@@ -37,12 +37,12 @@ const WelcomeSection = () => {
         <div className="flex flex-col sm:flex-row gap-4">
           <button 
             onClick={handleSubmitIdea}
-            className="inline-flex items-center gap-2 bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+            className="inline-flex items-center gap-2 bg-white text-black hover:bg-white/90 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >
             <FaPlus className="w-4 h-4" />
             Submit New Idea
           </button>
-          <button className="inline-flex items-center gap-2 border border-gray-600 text-gray-400 hover:text-white hover:border-gray-400 px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+          <button className="inline-flex items-center gap-2 border border-white/20 text-white/70 hover:text-white hover:border-white/40 px-6 py-3 rounded-lg font-medium transition-colors duration-200 bg-white/[0.05] hover:bg-white/[0.08]">
             <FaChartLine className="w-4 h-4" />
             View Analytics
           </button>

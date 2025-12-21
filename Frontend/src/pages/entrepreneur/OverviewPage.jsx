@@ -125,17 +125,6 @@ const OverviewPage = () => {
         </div>
       </div>
 
-      {/* App Feedback Section */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up" style={{ animationDelay: '500ms' }}>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-        <div className="relative z-10">
-          <h3 className="text-xl font-manrope font-semibold text-white mb-4">
-            Share Your Feedback
-          </h3>
-          <FeedbackCard />
-        </div>
-      </div>
-
       {/* Error Message */}
       {error && (
         <div className="bg-red-900/20 border border-red-700/50 rounded-2xl p-4 backdrop-blur-xl animate-shake">
