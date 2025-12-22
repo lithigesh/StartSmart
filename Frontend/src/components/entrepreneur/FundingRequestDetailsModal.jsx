@@ -24,9 +24,11 @@ import {
   FaEye,
   FaComments,
   FaHistory,
+  FaClock,
 } from "react-icons/fa";
 import { fundingAPI } from "../../services/api";
 import ChatInterface from "../chat/ChatInterface";
+import { useAuth } from "../../context/AuthContext";
 
 /**
  * FundingRequestDetailsModal Component
@@ -46,6 +48,7 @@ const FundingRequestDetailsModal = ({
   onUpdate,
   onWithdraw,
 }) => {
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -117,6 +120,11 @@ const FundingRequestDetailsModal = ({
       setIsEditing(false);
       setError("");
       setSuccess("");
+      
+      // Auto-switch to negotiation tab if there are messages
+      if (request.negotiationHistory && request.negotiationHistory.length > 0) {
+        setActiveTab("negotiation");
+      }
     }
   }, [request]);
 
@@ -170,7 +178,13 @@ const FundingRequestDetailsModal = ({
         setSuccess("Negotiation message sent successfully!");
         setTimeout(() => setSuccess(""), 3000);
 
-        // Call onUpdate to refresh the request data
+        // Update the request directly if we got the updated data
+        if (response.data) {
+          // Update the local request state with the new data
+          Object.assign(request, response.data);
+        }
+        
+        // Call onUpdate to refresh the request data in parent component
         if (onUpdate) {
           await onUpdate(request._id || request.id);
         }
@@ -261,6 +275,11 @@ const FundingRequestDetailsModal = ({
     setIsEditing(false);
     setError("");
     setSuccess("");
+    
+    // Auto-switch to negotiation tab if there are messages
+    if (request.negotiationHistory && request.negotiationHistory.length > 0) {
+      setActiveTab("negotiation");
+    }
   };
 
   const formatCurrency = (amount) => {
@@ -332,9 +351,9 @@ const FundingRequestDetailsModal = ({
       ></div>
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-5xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[70]">
+      <div className="relative w-full max-w-5xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[70] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-4">
             <div>
               <h2 className="text-2xl font-bold text-white">
@@ -388,13 +407,13 @@ const FundingRequestDetailsModal = ({
         )}
 
         {/* Tabs */}
-        <div className="border-b border-white/10">
+        <div className="border-b border-white/10 flex-shrink-0">
           <div className="flex overflow-x-auto">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-all duration-200 ${
+                className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-all duration-200 relative ${
                   activeTab === tab.id
                     ? "border-b-2 border-white text-white"
                     : "text-white/60 hover:text-white"
@@ -402,13 +421,112 @@ const FundingRequestDetailsModal = ({
               >
                 {tab.icon}
                 {tab.label}
+                {/* Show badge for negotiation tab when there are messages */}
+                {tab.id === "negotiation" && request.negotiationHistory && request.negotiationHistory.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
+                    {request.negotiationHistory.length}
+                  </span>
+                )}
               </button>
             ))}
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[50vh] overflow-y-auto">
+        <div className="p-6 flex-1 overflow-y-auto">
+          {/* Negotiation Tab - Outside form for better layout */}
+          {activeTab === "negotiation" && (
+            <div className="space-y-6 h-full">
+              {/* Negotiation Status Banner */}
+              {request.status === "negotiated" && (
+                <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FaComments className="w-5 h-5 text-blue-400" />
+                    <span className="text-blue-400 font-semibold">
+                      Active Negotiation
+                    </span>
+                  </div>
+                  <p className="text-white/80 text-sm">
+                    You have ongoing negotiations with interested investors.
+                    Respond to their proposals below.
+                  </p>
+                </div>
+              )}
+
+              {/* Investor Interest Summary */}
+              {request.investorResponses &&
+                request.investorResponses.length > 0 && (
+                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
+                    <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                      <FaEye className="w-4 h-4 text-purple-400" />
+                      Investor Activity Summary
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                        <div className="text-2xl font-bold text-green-400 mb-1">
+                          {
+                            request.investorResponses.filter(
+                              (r) => r.status === "interested"
+                            ).length
+                          }
+                        </div>
+                        <div className="text-xs text-white/60">
+                          Interested Investors
+                        </div>
+                      </div>
+                      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                        <div className="text-2xl font-bold text-blue-400 mb-1">
+                          {request.negotiationHistory
+                            ? request.negotiationHistory.filter(
+                                (n) => n.investor
+                              ).length
+                            : 0}
+                        </div>
+                        <div className="text-xs text-white/60">
+                          Investor Messages
+                        </div>
+                      </div>
+                      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                        <div className="text-2xl font-bold text-yellow-400 mb-1">
+                          {request.viewedBy ? request.viewedBy.length : 0}
+                        </div>
+                        <div className="text-xs text-white/60">
+                          Total Views
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              {/* Negotiation Chat Interface */}
+              <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex-1">
+                <div className="bg-gray-800 border-b border-gray-700 p-4">
+                  <h3 className="text-white font-semibold flex items-center gap-2">
+                    <FaComments className="w-5 h-5" />
+                    Negotiation Messages
+                  </h3>
+                  <p className="text-white/60 text-sm mt-1">
+                    Communicate with investors and send counter-proposals
+                  </p>
+                </div>
+                
+                <ChatInterface
+                  messages={request.negotiationHistory || []}
+                  currentUserId={user?.id}
+                  currentUserRole="entrepreneur"
+                  entrepreneurName={request.entrepreneur?.name || user?.name || "Entrepreneur"}
+                  onSendMessage={handleSendNegotiation}
+                  disabled={
+                    !["pending", "negotiated"].includes(request.status)
+                  }
+                  canPropose={true}
+                  height="500px"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Form tabs - Only for editable content */}
           <form onSubmit={handleSave}>
             {/* Overview Tab */}
             {activeTab === "overview" && (
@@ -1037,176 +1155,6 @@ const FundingRequestDetailsModal = ({
                     </div>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* Negotiation Tab */}
-            {activeTab === "negotiation" && (
-              <div className="space-y-6">
-                {/* Negotiation Status Banner */}
-                {request.status === "negotiated" && (
-                  <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FaComments className="w-5 h-5 text-blue-400" />
-                      <span className="text-blue-400 font-semibold">
-                        Active Negotiation
-                      </span>
-                    </div>
-                    <p className="text-white/80 text-sm">
-                      You have ongoing negotiations with interested investors.
-                      Respond to their proposals below.
-                    </p>
-                  </div>
-                )}
-
-                {/* Investor Interest Summary */}
-                {request.investorResponses &&
-                  request.investorResponses.length > 0 && (
-                    <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                      <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                        <FaEye className="w-4 h-4 text-purple-400" />
-                        Investor Activity Summary
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
-                          <div className="text-2xl font-bold text-green-400 mb-1">
-                            {
-                              request.investorResponses.filter(
-                                (r) => r.status === "interested"
-                              ).length
-                            }
-                          </div>
-                          <div className="text-xs text-white/60">
-                            Interested Investors
-                          </div>
-                        </div>
-                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
-                          <div className="text-2xl font-bold text-blue-400 mb-1">
-                            {request.negotiationHistory
-                              ? request.negotiationHistory.filter(
-                                  (n) => n.investor
-                                ).length
-                              : 0}
-                          </div>
-                          <div className="text-xs text-white/60">
-                            Investor Messages
-                          </div>
-                        </div>
-                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
-                          <div className="text-2xl font-bold text-yellow-400 mb-1">
-                            {request.viewedBy ? request.viewedBy.length : 0}
-                          </div>
-                          <div className="text-xs text-white/60">
-                            Total Views
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* List of Interested Investors */}
-                      {request.investorResponses.filter(
-                        (r) => r.status === "interested"
-                      ).length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-gray-700">
-                          <h5 className="text-white/80 text-sm font-medium mb-2">
-                            Interested Investors:
-                          </h5>
-                          <div className="flex flex-wrap gap-2">
-                            {request.investorResponses
-                              .filter((r) => r.status === "interested")
-                              .map((response, idx) => (
-                                <div
-                                  key={idx}
-                                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-900/20 border border-green-500/30 rounded-full"
-                                >
-                                  <FaUser className="w-3 h-3 text-green-400" />
-                                  <span className="text-xs text-green-400">
-                                    {response.investor?.name ||
-                                      "Investor " + (idx + 1)}
-                                  </span>
-                                </div>
-                              ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                {/* Request Status Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FaCalendarAlt className="w-4 h-4 text-blue-400" />
-                      <span className="text-white font-medium">Created</span>
-                    </div>
-                    <p className="text-white/80">
-                      {new Date(request.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-
-                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FaEye className="w-4 h-4 text-green-400" />
-                      <span className="text-white font-medium">Views</span>
-                    </div>
-                    <p className="text-white/80">
-                      {request.viewedBy?.length || 0} investors
-                    </p>
-                  </div>
-
-                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FaHistory className="w-4 h-4 text-purple-400" />
-                      <span className="text-white font-medium">
-                        Last Updated
-                      </span>
-                    </div>
-                    <p className="text-white/80">
-                      {new Date(
-                        request.updatedAt || request.createdAt
-                      ).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Negotiation Chat Interface */}
-                <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-                  <div className="bg-gray-800 border-b border-gray-700 p-4">
-                    <h3 className="text-white font-semibold flex items-center gap-2">
-                      <FaComments className="w-5 h-5" />
-                      Negotiation Messages
-                    </h3>
-                    <p className="text-white/60 text-sm mt-1">
-                      Communicate with investors and send counter-proposals
-                    </p>
-                  </div>
-                  
-                  <ChatInterface
-                    messages={request.negotiationHistory || []}
-                    currentUserId={user?.id}
-                    currentUserRole="entrepreneur"
-                    onSendMessage={handleSendNegotiation}
-                    disabled={
-                      !["pending", "negotiated"].includes(request.status)
-                    }
-                    canPropose={true}
-                    height="500px"
-                  />
-                </div>
-
-                {/* Response Deadline */}
-                {request.responseDeadline && (
-                  <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FaClock className="w-4 h-4 text-yellow-400" />
-                      <span className="text-yellow-400 font-medium">
-                        Response Deadline
-                      </span>
-                    </div>
-                    <p className="text-white/80">
-                      {new Date(request.responseDeadline).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
               </div>
             )}
           </form>

@@ -9,6 +9,7 @@ import {
   FaCheck,
   FaExclamationTriangle,
   FaRedo,
+  FaClock,
 } from "react-icons/fa";
 
 /**
@@ -24,6 +25,7 @@ const ChatInterface = ({
   canPropose = true,
   onRetryMessage,
   height = "500px",
+  entrepreneurName = "Entrepreneur", // Name of the entrepreneur for this request
 }) => {
   const [message, setMessage] = useState("");
   const [proposedAmount, setProposedAmount] = useState("");
@@ -117,21 +119,33 @@ const ChatInterface = ({
   };
 
   const isOwnMessage = (msg) => {
-    // Check by sender ID and role
+    // Check by sender ID and role (new format)
     if (msg.sender && msg.sender._id) {
       return msg.sender._id.toString() === currentUserId;
     }
     if (msg.sender && typeof msg.sender === "string") {
       return msg.sender.toString() === currentUserId;
     }
-    // Legacy check for investor field
-    if (currentUserRole === "investor" && msg.investor) {
-      return msg.investor.toString() === currentUserId;
+    
+    // Legacy format: negotiationHistory uses 'investor' field
+    // If investor field exists and has a value, it's an investor's message
+    if (msg.investor) {
+      // Check if investor is an object with _id or a string ID
+      const investorId = msg.investor._id || msg.investor;
+      if (currentUserRole === "investor" && investorId.toString() === currentUserId) {
+        return true;
+      }
+      // If current user is entrepreneur and message has investor, it's NOT their message
+      if (currentUserRole === "entrepreneur") {
+        return false;
+      }
     }
-    // Legacy check for entrepreneur (investor === null)
-    if (currentUserRole === "entrepreneur" && !msg.investor && !msg.sender) {
+    
+    // Legacy format: If investor is null/undefined, it's an entrepreneur's message
+    if (!msg.investor && !msg.sender && currentUserRole === "entrepreneur") {
       return true;
     }
+    
     return false;
   };
 
@@ -182,8 +196,25 @@ const ChatInterface = ({
                 );
               }
 
-              const senderName = msg.sender?.name || msg.senderName || "Unknown";
-              const senderRole = msg.senderRole || (msg.investor ? "investor" : "entrepreneur");
+              // Determine sender name and role from message
+              let senderName = "Unknown";
+              let senderRole = "entrepreneur";
+              
+              // New format: has sender field
+              if (msg.sender) {
+                senderName = msg.sender.name || msg.senderName || "Unknown";
+                senderRole = msg.senderRole || "entrepreneur";
+              }
+              // Legacy format: has investor field
+              else if (msg.investor) {
+                senderName = msg.investor.name || "Investor";
+                senderRole = "investor";
+              }
+              // Legacy format: no investor field means entrepreneur
+              else {
+                senderName = entrepreneurName;
+                senderRole = "entrepreneur";
+              }
 
               return (
                 <div

@@ -248,6 +248,11 @@ const FundingPage = () => {
     setShowEditModal(true);
   };
 
+  const handleViewFundingRequest = (request) => {
+    setSelectedFundingRequest(request);
+    setShowEditModal(true);
+  };
+
   const handleUpdateFundingRequest = async (requestId) => {
     try {
       // Refresh the specific funding request to get latest data
@@ -444,7 +449,8 @@ const FundingPage = () => {
               {fundingRequests.map((request) => (
                 <div
                   key={request._id}
-                  className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/[0.05] transition-all duration-300 relative overflow-hidden group"
+                  onClick={() => handleViewFundingRequest(request)}
+                  className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 relative overflow-hidden group cursor-pointer"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
                   <div className="relative z-10">
@@ -582,16 +588,20 @@ const FundingPage = () => {
                     {request.status === "pending" && (
                       <>
                         <button
-                          onClick={() => handleEditFundingRequest(request)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditFundingRequest(request);
+                          }}
                           className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                         >
                           <FaEdit className="w-4 h-4" />
                           Edit
                         </button>
                         <button
-                          onClick={() =>
-                            handleWithdrawFundingRequest(request._id)
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWithdrawFundingRequest(request._id);
+                          }}
                           className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                         >
                           <FaTrash className="w-4 h-4" />
@@ -617,6 +627,16 @@ const FundingPage = () => {
                         Withdrawn
                       </span>
                     )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewFundingRequest(request);
+                      }}
+                      className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/10 text-white rounded-lg transition-colors duration-200 text-sm font-medium border border-white/10"
+                    >
+                      <FaFileAlt className="w-4 h-4" />
+                      View Details
+                    </button>
                   </div>
                   </div>
                 </div>

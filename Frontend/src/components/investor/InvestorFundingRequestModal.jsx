@@ -63,7 +63,8 @@ const InvestorFundingRequestModal = ({
       if (response.success) {
         setRequest(response.data);
         addNotification("Negotiation message sent successfully", "success");
-        if (onRequestUpdate) onRequestUpdate();
+        // Don't call onRequestUpdate to prevent modal from resetting
+        // if (onRequestUpdate) onRequestUpdate();
       } else {
         addNotification(response.message || "Failed to send message", "error");
       }
@@ -176,7 +177,7 @@ const InvestorFundingRequestModal = ({
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap ${
+                  className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap relative ${
                     activeTab === tab.id
                       ? "text-blue-400 border-b-2 border-blue-400 bg-blue-600/10"
                       : "text-gray-400 hover:text-white hover:bg-gray-800/50"
@@ -184,6 +185,12 @@ const InvestorFundingRequestModal = ({
                 >
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
+                  {/* Show badge for negotiation tab when there are messages */}
+                  {tab.id === "negotiation" && request.negotiationHistory && request.negotiationHistory.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {request.negotiationHistory.length}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -206,6 +213,7 @@ const InvestorFundingRequestModal = ({
                   messages={request.negotiationHistory || []}
                   currentUserId={user?.id}
                   currentUserRole="investor"
+                  entrepreneurName={request.entrepreneur?.name || "Entrepreneur"}
                   onSendMessage={handleNegotiate}
                   disabled={!["pending", "negotiated"].includes(request.status)}
                   canPropose={true}
