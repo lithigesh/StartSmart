@@ -11,6 +11,24 @@ const {
   getPortfolioAnalytics,
 } = require("../controllers/investor.controller");
 
+// TEMPORARY: Test route without auth to debug
+router.get("/ideas/test", async (req, res) => {
+  try {
+    const Idea = require("../models/Idea.model");
+    const allIdeas = await Idea.find({});
+    const analyzedIdeas = await Idea.find({ status: { $in: ["analyzed", "submitted"] } });
+    res.json({
+      message: "Test route working",
+      totalIdeas: allIdeas.length,
+      analyzedIdeas: analyzedIdeas.length,
+      ideas: analyzedIdeas,
+      allStatuses: allIdeas.map(i => ({ id: i._id, title: i.title, status: i.status }))
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Route for investors to browse all analyzed ideas
 router.get("/ideas", protect, isInvestor, getInvestorIdeas);
 

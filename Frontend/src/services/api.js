@@ -12,23 +12,28 @@ const getAuthHeaders = () => {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
   };
-  console.log("Auth headers:", headers);
-  console.log("Token from localStorage:", token ? "Present" : "Missing");
   return headers;
 };
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
+  const responseText = await response.text();
+  
   if (!response.ok) {
-    const error = await response
-      .json()
-      .catch(() => ({ message: "Network error" }));
-    console.error("API Error Response:", error);
-    console.error("Response status:", response.status);
-    console.error("Response statusText:", response.statusText);
+    let error;
+    try {
+      error = JSON.parse(responseText);
+    } catch (e) {
+      error = { message: responseText || "Network error" };
+    }
     throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
-  return response.json();
+  
+  try {
+    return JSON.parse(responseText);
+  } catch (e) {
+    throw new Error("Invalid JSON response from server");
+  }
 };
 
 // Helper function to get auth headers for file uploads
@@ -72,17 +77,11 @@ export const ideasAPI = {
       return handleResponse(response);
     } else {
       // Use JSON for ideas without files
-      console.log("Submitting idea to:", `${API_URL}/api/ideas`);
-      console.log("Request payload:", ideaData);
-
       const response = await fetch(`${API_URL}/api/ideas`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(ideaData),
       });
-
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
 
       return handleResponse(response);
     }
@@ -106,7 +105,6 @@ export const ideasAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Ideas API not available, using demo data");
       return {
         success: true,
         data: {
@@ -122,11 +120,9 @@ export const ideasAPI = {
 
   // Get user's ideas
   getUserIdeas: async () => {
-    console.log("=== getUserIdeas API call started ==="); // Debug log
     try {
       // First get the current user info to get userId
       let token = localStorage.getItem("token");
-      console.log("Token exists:", !!token); // Debug log
 
       if (!token) {
         throw new Error("No authentication token found. Please log in.");
@@ -135,28 +131,15 @@ export const ideasAPI = {
       // Decode token to get user ID (simple base64 decode of JWT payload)
       let userId;
       try {
-        console.log("Attempting to decode token..."); // Debug log
         const payload = JSON.parse(atob(token.split(".")[1]));
-        console.log("Token payload:", payload); // Debug log
         userId = payload.id || payload.userId || payload.sub;
-        console.log("Extracted userId:", userId); // Debug log
 
         if (!userId) {
-          console.warn("No user ID found in token, using demo data");
           throw new Error("Invalid token structure");
         }
       } catch (tokenError) {
-        console.warn(
-          "Token decoding failed, using demo data:",
-          tokenError.message
-        );
         throw new Error("Invalid token format");
       }
-
-      console.log(
-        "Making API request to:",
-        `${API_URL}/api/ideas/user/${userId}`
-      ); // Debug log
 
       const response = await Promise.race([
         fetch(`${API_URL}/api/ideas/user/${userId}`, {
@@ -167,14 +150,11 @@ export const ideasAPI = {
         ),
       ]);
 
-      console.log("API response status:", response.status); // Debug log
-
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log("API data:", data); // Debug log
 
       // Transform the data to include required fields
       const transformedData = Array.isArray(data)
@@ -191,10 +171,6 @@ export const ideasAPI = {
         data: transformedData,
       };
     } catch (error) {
-      console.warn(
-        "User ideas API not available, using demo data:",
-        error.message
-      );
       return {
         success: true,
         data: [
@@ -294,7 +270,6 @@ export const entrepreneurAPI = {
         ideas,
       };
     } catch (error) {
-      console.error("Error fetching dashboard metrics:", error);
       return {
         totalIdeas: 0,
         fundingReceived: 0,
@@ -318,7 +293,6 @@ export const entrepreneurAPI = {
 
       return activities;
     } catch (error) {
-      console.error("Error fetching recent activity:", error);
       return [];
     }
   },
@@ -364,24 +338,26 @@ export const entrepreneurAPI = {
 export const investorAPI = {
   // Get all analyzed ideas through investor endpoint
   getAllIdeas: async () => {
-    const response = await fetch(`${API_URL}/api/investors/ideas`, {
+    const response = await fetch(`${API_URL}/api/investor/ideas`, {
       headers: getAuthHeaders(),
     });
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return data;
   },
 
   // Get ideas the investor has shown interest in
   getInterestedIdeas: async () => {
-    const response = await fetch(`${API_URL}/api/investors/interested`, {
+    const response = await fetch(`${API_URL}/api/investor/interested`, {
       headers: getAuthHeaders(),
     });
-    return handleResponse(response);
+    const data = await handleResponse(response);
+    return data;
   },
 
   // Get portfolio analytics
   getPortfolioAnalytics: async () => {
     const response = await fetch(
-      `${API_URL}/api/investors/portfolio/analytics`,
+      `${API_URL}/api/investor/portfolio/analytics`,
       {
         headers: getAuthHeaders(),
       }
@@ -392,7 +368,7 @@ export const investorAPI = {
   // Mark interest through investor endpoint
   markInterest: async (ideaId) => {
     const response = await fetch(
-      `${API_URL}/api/investors/${ideaId}/interest`,
+      `${API_URL}/api/investor/${ideaId}/interest`,
       {
         method: "POST",
         headers: getAuthHeaders(),
@@ -404,7 +380,7 @@ export const investorAPI = {
   // Remove interest through investor endpoint
   removeInterest: async (ideaId) => {
     const response = await fetch(
-      `${API_URL}/api/investors/${ideaId}/interest`,
+      `${API_URL}/api/investor/${ideaId}/interest`,
       {
         method: "DELETE",
         headers: getAuthHeaders(),
@@ -416,7 +392,7 @@ export const investorAPI = {
   // Update interest status
   updateInterestStatus: async (ideaId, status) => {
     const response = await fetch(
-      `${API_URL}/api/investors/${ideaId}/interest`,
+      `${API_URL}/api/investor/${ideaId}/interest`,
       {
         method: "PUT",
         headers: getAuthHeaders(),
@@ -438,7 +414,7 @@ export const investorAPI = {
   comparisons: {
     // Create a new comparison
     create: async (comparisonData) => {
-      const response = await fetch(`${API_URL}/api/investor/comparisons`, {
+      const response = await fetch(`${API_URL}/api/comparison`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(comparisonData),
@@ -448,7 +424,7 @@ export const investorAPI = {
 
     // Get all comparisons for the logged-in investor
     getAll: async () => {
-      const response = await fetch(`${API_URL}/api/investor/comparisons`, {
+      const response = await fetch(`${API_URL}/api/comparison`, {
         headers: getAuthHeaders(),
       });
       return handleResponse(response);
@@ -457,7 +433,7 @@ export const investorAPI = {
     // Get a specific comparison by ID
     getById: async (comparisonId) => {
       const response = await fetch(
-        `${API_URL}/api/investor/comparisons/${comparisonId}`,
+        `${API_URL}/api/comparison/${comparisonId}`,
         {
           headers: getAuthHeaders(),
         }
@@ -468,7 +444,7 @@ export const investorAPI = {
     // Update comparison notes/leader
     update: async (comparisonId, updates) => {
       const response = await fetch(
-        `${API_URL}/api/investor/comparisons/${comparisonId}`,
+        `${API_URL}/api/comparison/${comparisonId}`,
         {
           method: "PUT",
           headers: getAuthHeaders(),
@@ -481,7 +457,7 @@ export const investorAPI = {
     // Delete a comparison
     delete: async (comparisonId) => {
       const response = await fetch(
-        `${API_URL}/api/investor/comparisons/${comparisonId}`,
+        `${API_URL}/api/comparison/${comparisonId}`,
         {
           method: "DELETE",
           headers: getAuthHeaders(),
@@ -495,7 +471,7 @@ export const investorAPI = {
   marketResearch: {
     // Create a new market research note
     create: async (researchData) => {
-      const response = await fetch(`${API_URL}/api/investor/market-research`, {
+      const response = await fetch(`${API_URL}/api/marketResearch`, {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(researchData),
@@ -507,8 +483,8 @@ export const investorAPI = {
     getAll: async (filters = {}) => {
       const queryParams = new URLSearchParams(filters).toString();
       const url = queryParams
-        ? `${API_URL}/api/investor/market-research?${queryParams}`
-        : `${API_URL}/api/investor/market-research`;
+        ? `${API_URL}/api/marketResearch?${queryParams}`
+        : `${API_URL}/api/marketResearch`;
 
       const response = await fetch(url, {
         headers: getAuthHeaders(),
@@ -519,7 +495,7 @@ export const investorAPI = {
     // Get a specific market research note by ID
     getById: async (researchId) => {
       const response = await fetch(
-        `${API_URL}/api/investor/market-research/${researchId}`,
+        `${API_URL}/api/marketResearch/${researchId}`,
         {
           headers: getAuthHeaders(),
         }
@@ -530,7 +506,7 @@ export const investorAPI = {
     // Update a market research note
     update: async (researchId, updates) => {
       const response = await fetch(
-        `${API_URL}/api/investor/market-research/${researchId}`,
+        `${API_URL}/api/marketResearch/${researchId}`,
         {
           method: "PUT",
           headers: getAuthHeaders(),
@@ -543,7 +519,7 @@ export const investorAPI = {
     // Delete a market research note
     delete: async (researchId) => {
       const response = await fetch(
-        `${API_URL}/api/investor/market-research/${researchId}`,
+        `${API_URL}/api/marketResearch/${researchId}`,
         {
           method: "DELETE",
           headers: getAuthHeaders(),
@@ -555,7 +531,7 @@ export const investorAPI = {
     // Get all unique sectors
     getSectors: async () => {
       const response = await fetch(
-        `${API_URL}/api/investor/market-research/sectors/list`,
+        `${API_URL}/api/marketResearch/sectors/list`,
         {
           headers: getAuthHeaders(),
         }
@@ -580,7 +556,6 @@ export const fundingAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Funding API not available, using demo data");
       return {
         success: true,
       };
@@ -658,7 +633,6 @@ export const fundingAPI = {
         data: transformedData,
       };
     } catch (error) {
-      console.warn("User funding API error:", error.message);
       return {
         success: false,
         data: [],
@@ -669,12 +643,8 @@ export const fundingAPI = {
 
   // Create new funding request
   createFundingRequest: async (requestData) => {
-    console.log("=== createFundingRequest API call started ==="); // Debug log
-    console.log("Request data:", requestData); // Debug log
-
     try {
       const headers = getAuthHeaders();
-      console.log("Headers:", headers); // Debug log
 
       // Transform frontend data to match backend structure exactly
       const backendData = {
@@ -728,19 +698,14 @@ export const fundingAPI = {
         body: JSON.stringify(backendData),
       });
 
-      console.log("Response status:", response.status); // Debug log
-      console.log("Response OK:", response.ok); // Debug log
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("API Error:", errorData); // Debug log
         throw new Error(
           errorData.message || `HTTP ${response.status}: ${response.statusText}`
         );
       }
 
       const result = await response.json();
-      console.log("API result:", result); // Debug log
 
       return {
         success: result.success !== false,
@@ -748,8 +713,6 @@ export const fundingAPI = {
         message: result.message || "Funding request created successfully",
       };
     } catch (error) {
-      console.error("Create funding API error:", error.message);
-
       // Return the actual error for validation/auth issues
       return {
         success: false,
@@ -772,7 +735,6 @@ export const fundingAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Funding request API not available, using demo data");
       return {
         success: true,
         data: {
@@ -811,7 +773,6 @@ export const fundingAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.warn("Update funding API error:", error.message);
       return {
         success: true,
         data: {
@@ -886,7 +847,6 @@ export const fundingAPI = {
         message: result.message || "Funding request updated successfully",
       };
     } catch (error) {
-      console.error("Update funding details API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -921,7 +881,6 @@ export const fundingAPI = {
         message: result.message || "Funding request withdrawn successfully",
       };
     } catch (error) {
-      console.error("Withdraw funding API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -956,7 +915,6 @@ export const fundingAPI = {
         ideaTitle: result.ideaTitle || "",
       };
     } catch (error) {
-      console.error("Get interested investors API error:", error.message);
       return {
         success: false,
         data: [],
@@ -984,7 +942,6 @@ export const fundingAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.warn("Funding stats API error:", error.message);
       return {
         success: true,
         data: {
@@ -1028,7 +985,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Get investor pipeline API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -1059,7 +1015,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Mark as viewed API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -1091,7 +1046,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Negotiate funding API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -1123,10 +1077,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error(
-        "Entrepreneur negotiation response API error:",
-        error.message
-      );
       return {
         success: false,
         message: error.message,
@@ -1158,7 +1108,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Respond to funding API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -1200,7 +1149,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Get all funding requests API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -1230,7 +1178,6 @@ export const investorDealAPI = {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Get funding request API error:", error.message);
       return {
         success: false,
         message: error.message,
@@ -1319,7 +1266,6 @@ export const investorInterestAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Investor interest API not available, using demo data");
       return {
         success: true,
         data: [
@@ -1400,9 +1346,6 @@ export const investorInterestAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn(
-        "Update investor interest API not available, using demo response"
-      );
       return {
         success: true,
         data: {
@@ -1430,7 +1373,6 @@ export const analyticsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Analytics API not available, using demo data");
       return {
         success: true,
         data: {
@@ -1524,7 +1466,6 @@ export const analyticsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Idea analytics API not available, using demo data");
       return {
         success: true,
         data: {
@@ -1561,7 +1502,6 @@ export const ideathonsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Ideathons API not available, using demo data");
       return {
         success: true,
         data: [
@@ -1675,7 +1615,6 @@ export const ideathonsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("User registrations API not available, using demo data");
       return {
         success: true,
         data: [
@@ -1719,7 +1658,6 @@ export const ideathonsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Registration API not available, using demo response");
       return {
         success: true,
         data: {
@@ -1748,7 +1686,6 @@ export const ideathonsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Submission API not available, using demo response");
       return {
         success: true,
         data: {
@@ -1778,7 +1715,6 @@ export const teamResourceAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Team resource API not available, using demo data");
       return {
         success: true,
         data: [],
@@ -1799,7 +1735,6 @@ export const teamResourceAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Team resource API not available, using demo data");
       return {
         success: true,
         data: null,
@@ -1817,7 +1752,6 @@ export const teamResourceAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Create team resource API error:", error);
       return {
         success: false,
         message: error.message,
@@ -1835,7 +1769,6 @@ export const teamResourceAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Update team resource API error:", error);
       return {
         success: false,
         message: error.message,
@@ -1852,7 +1785,6 @@ export const teamResourceAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Delete team resource API error:", error);
       return {
         success: false,
         message: error.message,
@@ -1876,7 +1808,6 @@ export const businessAimAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Business aim API not available, using demo data");
       return {
         success: true,
         data: [],
@@ -1897,7 +1828,6 @@ export const businessAimAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Business aim API not available, using demo data");
       return {
         success: true,
         data: null,
@@ -1915,7 +1845,6 @@ export const businessAimAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Create business aim API error:", error);
       return {
         success: false,
         message: error.message,
@@ -1933,7 +1862,6 @@ export const businessAimAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Update business aim API error:", error);
       return {
         success: false,
         message: error.message,
@@ -1950,7 +1878,6 @@ export const businessAimAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Delete business aim API error:", error);
       return {
         success: false,
         message: error.message,
@@ -1975,7 +1902,6 @@ export const collaborationsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Collaborations API not available, using demo data");
       return {
         success: true,
         data: [
@@ -2133,7 +2059,6 @@ export const collaborationsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("User applications API not available, using demo data");
       return {
         success: true,
         data: [
@@ -2192,9 +2117,6 @@ export const collaborationsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn(
-        "Apply collaboration API not available, using demo response"
-      );
       return {
         success: true,
         data: {
@@ -2222,7 +2144,6 @@ export const collaborationsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Collaboration details API not available, using demo data");
       const allCollaborations = await this.getAllCollaborations();
       const collaboration = allCollaborations.data.find(
         (c) => c.id === parseInt(id)
@@ -2248,7 +2169,6 @@ export const collaborationsAPI = {
       ]);
       return handleResponse(response);
     } catch (error) {
-      console.warn("Collaboration stats API not available, using demo data");
       return {
         success: true,
         data: {
@@ -2275,7 +2195,6 @@ export const appFeedbackAPI = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error("Error submitting app feedback:", error);
       throw error;
     }
   },

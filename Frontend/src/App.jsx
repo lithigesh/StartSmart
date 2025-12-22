@@ -59,8 +59,34 @@ const App = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
+              
+              {/* Investor Routes */}
+              <Route
+                path="/investor"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorDashboard />
+                  </RoleBasedRoute>
+                }
+              />
               <Route
                 path="/investor/dashboard"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/investor/browse"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/investor/interests"
                 element={
                   <RoleBasedRoute allowedRole="investor">
                     <InvestorDashboard />
@@ -75,6 +101,7 @@ const App = () => {
                   </RoleBasedRoute>
                 }
               />
+              
               {/* Entrepreneur Routes with Layout */}
               <Route
                 path="/entrepreneur"

@@ -3,7 +3,7 @@ const Idea = require("../models/Idea.model");
 const NotificationService = require("../services/notification.service");
 
 // @desc    Get investor's interested ideas
-// @route   GET /api/investors/interested
+// @route   GET /api/investor/interested
 exports.getInterestedIdeas = async (req, res, next) => {
   try {
     const investorId = req.user._id || req.user.id;
@@ -32,14 +32,12 @@ exports.getInterestedIdeas = async (req, res, next) => {
 };
 
 // @desc    Investor browses all analyzed ideas
-// @route   GET /api/investors/ideas
+// @route   GET /api/investor/ideas
 exports.getInvestorIdeas = async (req, res, next) => {
   try {
-    // Get all ideas that are either analyzed or submitted (for testing purposes)
-    // In production, you might want to restrict this to only 'analyzed' ideas
-    const ideas = await Idea.find({
-      status: { $in: ["analyzed", "submitted"] },
-    })
+    // Get ALL ideas (removed status filter to show all ideas)
+    // TODO: In production, you may want to filter by status
+    const ideas = await Idea.find({})
       .populate("owner", "name email")
       .sort({ createdAt: -1 }); // Sort by newest first
 
@@ -55,11 +53,6 @@ exports.markInterest = async (req, res, next) => {
   try {
     const { ideaId } = req.params;
     const investorId = req.user._id || req.user.id;
-
-    console.log(
-      `Marking interest - Investor ID: ${investorId}, Idea ID: ${ideaId}`
-    );
-    console.log(`User object:`, req.user);
 
     // Validate ObjectId format
     if (!ideaId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -77,15 +70,8 @@ exports.markInterest = async (req, res, next) => {
       return res.status(401).json({ message: "User not authenticated" });
     }
 
-    // For now, allow interest in submitted ideas as well for testing
-    // In production, you might want to restrict to only 'analyzed' ideas
-    if (!["analyzed", "submitted"].includes(idea.status)) {
-      return res
-        .status(400)
-        .json({
-          message: "Can only show interest in analyzed or submitted ideas",
-        });
-    }
+    // Allow interest in ideas with any status
+    // Note: Status validation removed to allow investors to mark interest in all ideas
 
     // Check if interest already exists
     const existingInterest = await InvestorInterest.findOne({

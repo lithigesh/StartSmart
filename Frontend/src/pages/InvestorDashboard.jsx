@@ -94,28 +94,21 @@ const InvestorDashboard = () => {
       setLoading(true);
       setError(null);
 
-      // Load data in parallel - Using only investorAPI for consistency
-      const [ideasData, interestedData, fundingData] = await Promise.all([
-        investorAPI.getAllIdeas().catch((err) => {
-          console.error("Error loading ideas:", err);
-          return [];
-        }),
-        investorAPI.getInterestedIdeas().catch((err) => {
-          console.error("Error loading interested ideas:", err);
-          return [];
-        }),
-        fundingAPI.getAllFundingRequests().catch((err) => {
-          console.error("Error loading funding requests:", err);
-          return [];
-        }),
-      ]);
+      const ideasData = await investorAPI.getAllIdeas();
+      const interestedData = await investorAPI.getInterestedIdeas();
+      const fundingData = await fundingAPI.getAllFundingRequests();
 
-      setIdeas(ideasData);
-      setInterestedIdeas(interestedData);
-      setFundingRequests(fundingData);
+      // Ensure arrays
+      const ideasArray = Array.isArray(ideasData) ? ideasData : [];
+      const interestedArray = Array.isArray(interestedData) ? interestedData : [];
+      const fundingArray = Array.isArray(fundingData) ? fundingData : [];
+
+      setIdeas(ideasArray);
+      setInterestedIdeas(interestedArray);
+      setFundingRequests(fundingArray);
+      
     } catch (err) {
-      console.error("Error loading dashboard data:", err);
-      setError("Failed to load dashboard data");
+      setError("Failed to load dashboard data: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -151,8 +144,6 @@ const InvestorDashboard = () => {
           : "Interest removed successfully";
       // You could add a toast notification here instead of using error state
     } catch (err) {
-      console.error(`Error ${action}ing interest:`, err);
-
       // Provide more specific error messages
       let errorMessage = `Failed to ${action} interest`;
       if (err.message.includes("Already marked")) {
@@ -234,37 +225,43 @@ const InvestorDashboard = () => {
 
   // Filter and sort ideas
   const getFilteredIdeas = (ideasList) => {
-    let filtered = ideasList;
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (idea) =>
-          idea.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          idea.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          idea.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (idea.owner?.name &&
-            idea.owner.name.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+    // Ensure ideasList is an array
+    if (!Array.isArray(ideasList) || ideasList.length === 0) {
+      return [];
     }
 
-    // Category filter
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter((idea) => idea.category === categoryFilter);
-    }
+    let filtered = [...ideasList];
 
-    // Advanced filters
-
-    // AI Score range filter
-    filtered = filtered.filter((idea) => {
-      const score = idea.analysis?.score || 0;
-      return score >= minScore && score <= maxScore;
-    });
-
-    // Funding range filter
-    if (fundingRange !== "all") {
+    // Search filter - only if searchTerm exists
+    if (searchTerm && searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase().trim();
       filtered = filtered.filter((idea) => {
-        const fundingNeeded = idea.fundingNeeded || 0;
+        const matchTitle = idea?.title?.toLowerCase().includes(term);
+        const matchDesc = idea?.description?.toLowerCase().includes(term);
+        const matchCategory = idea?.category?.toLowerCase().includes(term);
+        const matchOwner = idea?.owner?.name?.toLowerCase().includes(term);
+        return matchTitle || matchDesc || matchCategory || matchOwner;
+      });
+    }
+
+    // Category filter - only if not 'all'
+    if (categoryFilter && categoryFilter !== "all") {
+      filtered = filtered.filter((idea) => idea?.category === categoryFilter);
+    }
+
+    // Score filter - ONLY if user has changed from defaults
+    const scoreFilterActive = minScore > 0 || maxScore < 100;
+    if (scoreFilterActive) {
+      filtered = filtered.filter((idea) => {
+        const score = idea?.analysis?.score ?? 0;
+        return score >= minScore && score <= maxScore;
+      });
+    }
+
+    // Funding range filter - only if not 'all'
+    if (fundingRange && fundingRange !== "all") {
+      filtered = filtered.filter((idea) => {
+        const fundingNeeded = idea?.fundingNeeded ?? 0;
         switch (fundingRange) {
           case "0-10k":
             return fundingNeeded <= 10000;
@@ -280,57 +277,63 @@ const InvestorDashboard = () => {
       });
     }
 
-    // Status filter
-    if (statusFilter !== "all") {
+    // Status filter - only if not 'all'
+    if (statusFilter && statusFilter !== "all") {
       filtered = filtered.filter((idea) => {
         switch (statusFilter) {
           case "new":
-            return !idea.analysis;
+            return !idea?.analysis;
           case "analyzed":
-            return idea.analysis && idea.analysis.score;
+            return !!idea?.analysis;
           case "funded":
-            return idea.fundingNeeded && idea.fundingNeeded > 0;
+            return idea?.fundingNeeded && idea.fundingNeeded > 0;
           default:
             return true;
         }
       });
     }
 
-    // Tags filter
-    if (selectedTags.length > 0) {
-      filtered = filtered.filter((idea) =>
-        selectedTags.some(
-          (tag) =>
-            idea.tags?.includes(tag) ||
-            idea.title.toLowerCase().includes(tag.toLowerCase()) ||
-            idea.description.toLowerCase().includes(tag.toLowerCase())
-        )
-      );
+    // Tags filter - only if tags selected
+    if (selectedTags && selectedTags.length > 0) {
+      filtered = filtered.filter((idea) => {
+        const hasTags = selectedTags.some((tag) => {
+          const inTags = idea?.tags?.includes(tag);
+          const inTitle = idea?.title?.toLowerCase().includes(tag.toLowerCase());
+          const inDesc = idea?.description?.toLowerCase().includes(tag.toLowerCase());
+          return inTags || inTitle || inDesc;
+        });
+        return hasTags;
+      });
     }
 
     // Sort
-    switch (sortBy) {
-      case "newest":
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-      case "oldest":
-        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        break;
-      case "score":
-        filtered.sort(
-          (a, b) => (b.analysis?.score || 0) - (a.analysis?.score || 0)
-        );
-        break;
-      default:
-        break;
+    if (sortBy === "newest") {
+      filtered.sort((a, b) => {
+        const dateA = a?.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b?.createdAt ? new Date(b.createdAt) : new Date(0);
+        return dateB - dateA;
+      });
+    } else if (sortBy === "oldest") {
+      filtered.sort((a, b) => {
+        const dateA = a?.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b?.createdAt ? new Date(b.createdAt) : new Date(0);
+        return dateA - dateB;
+      });
+    } else if (sortBy === "score") {
+      filtered.sort((a, b) => {
+        const scoreA = a?.analysis?.score ?? 0;
+        const scoreB = b?.analysis?.score ?? 0;
+        return scoreB - scoreA;
+      });
     }
-
+    
     return filtered;
   };
 
   // Get unique categories
   const getCategories = () => {
-    const categories = [...new Set(ideas.map((idea) => idea.category))];
+    if (!Array.isArray(ideas)) return [];
+    const categories = [...new Set(ideas.filter(idea => idea?.category).map((idea) => idea.category))];
     return categories.sort();
   };
 
@@ -390,52 +393,56 @@ const InvestorDashboard = () => {
         );
 
       case "browse-ideas":
+        const filteredIdeasList = getFilteredIdeas(ideas);
+        
         return (
-          <IdeasSection
-            title="Browse Ideas"
-            ideas={ideas}
-            filteredIdeas={getFilteredIdeas(ideas)}
-            interestedIdeas={interestedIdeas}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            categoryFilter={categoryFilter}
-            setCategoryFilter={setCategoryFilter}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            categories={getCategories()}
-            onInterest={handleInterest}
-            actionLoading={actionLoading}
-            showFilters={true}
-            showAdvancedFilters={true}
-            // Advanced filter props
-            minScore={minScore}
-            setMinScore={setMinScore}
-            maxScore={maxScore}
-            setMaxScore={setMaxScore}
-            fundingRange={fundingRange}
-            setFundingRange={setFundingRange}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            selectedTags={selectedTags}
-            setSelectedTags={setSelectedTags}
-            // Comparison props
-            comparisonMode={comparisonMode}
-            setComparisonMode={setComparisonMode}
-            selectedForComparison={selectedForComparison}
-            onToggleComparison={handleToggleComparison}
-            emptyStateType="search"
-            emptyStateAction={() => {
-              setSearchTerm("");
-              setCategoryFilter("all");
-              setMinScore(0);
-              setMaxScore(100);
-              setFundingRange("all");
-              setStatusFilter("all");
-              setSelectedTags([]);
-            }}
-            emptyStateActionText="Clear Filters"
-            sectionRef={browseIdeasRef}
-          />
+          <>
+            <IdeasSection
+              title="Browse Ideas"
+              ideas={ideas}
+              filteredIdeas={filteredIdeasList}
+              interestedIdeas={interestedIdeas}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              categoryFilter={categoryFilter}
+              setCategoryFilter={setCategoryFilter}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              categories={getCategories()}
+              onInterest={handleInterest}
+              actionLoading={actionLoading}
+              showFilters={true}
+              showAdvancedFilters={true}
+              // Advanced filter props
+              minScore={minScore}
+              setMinScore={setMinScore}
+              maxScore={maxScore}
+              setMaxScore={setMaxScore}
+              fundingRange={fundingRange}
+              setFundingRange={setFundingRange}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+              // Comparison props
+              comparisonMode={comparisonMode}
+              setComparisonMode={setComparisonMode}
+              selectedForComparison={selectedForComparison}
+              onToggleComparison={handleToggleComparison}
+              emptyStateType="search"
+              emptyStateAction={() => {
+                setSearchTerm("");
+                setCategoryFilter("all");
+                setMinScore(0);
+                setMaxScore(100);
+                setFundingRange("all");
+                setStatusFilter("all");
+                setSelectedTags([]);
+              }}
+              emptyStateActionText="Clear Filters"
+              sectionRef={browseIdeasRef}
+            />
+          </>
         );
 
       case "my-interests":
