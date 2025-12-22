@@ -18,12 +18,6 @@ const {
     createFeedback,
     updateFeedback,
     deleteFeedback,
-    // Sustainability management
-    getAllSustainabilityAssessments,
-    createSustainabilityAssessment,
-    updateSustainabilityAssessment,
-    deleteSustainabilityAssessment,
-    getSustainabilityStats,
     // Analytics
     getDashboardAnalytics,
     getChartData,
@@ -51,13 +45,6 @@ router.get('/feedback', protect, isAdmin, getAllFeedback);
 router.post('/feedback', protect, isAdmin, createFeedback);
 router.put('/feedback/:id', protect, isAdmin, updateFeedback);
 router.delete('/feedback/:id', protect, isAdmin, deleteFeedback);
-
-// Sustainability Routes
-router.get('/sustainability', protect, isAdmin, getAllSustainabilityAssessments);
-router.post('/sustainability', protect, isAdmin, createSustainabilityAssessment);
-router.put('/sustainability/:id', protect, isAdmin, updateSustainabilityAssessment);
-router.delete('/sustainability/:id', protect, isAdmin, deleteSustainabilityAssessment);
-router.get('/sustainability/stats', protect, isAdmin, getSustainabilityStats);
 
 // Analytics Routes
 router.get('/analytics/dashboard', protect, isAdmin, getDashboardAnalytics);

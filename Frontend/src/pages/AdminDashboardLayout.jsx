@@ -14,7 +14,6 @@ import {
   FaTachometerAlt,
   FaBars,
   FaTimes,
-  FaLeaf,
 } from "react-icons/fa";
 
 const AdminDashboard = () => {
@@ -34,7 +33,6 @@ const AdminDashboard = () => {
     { id: 'ideathons', label: 'Ideathons', icon: FaTrophy, path: '/admin/ideathons' },
     { id: 'registration-master', label: 'Registration Master', icon: FaTrophy, path: '/admin/registration-master' },
     { id: 'feedback', label: 'Ideas Feedback', icon: FaEdit, path: '/admin/feedback' },
-    { id: 'sustainability', label: 'Ideas Sustainability', icon: FaLeaf, path: '/admin/sustainability' },
   ];
 
   // Redirect if not authenticated or not admin

@@ -18,7 +18,6 @@ import AdminIdeasPage from "./pages/admin/AdminIdeasPage.jsx";
 import AdminIdeathonsPage from "./pages/admin/AdminIdeathonsPage.jsx";
 import AdminRegistrationMasterPage from "./pages/admin/AdminRegistrationMasterPage.jsx";
 import AdminFeedbackPage from "./pages/admin/AdminFeedbackPage.jsx";
-import AdminSustainabilityPage from "./pages/admin/AdminSustainabilityPage.jsx";
 import { IdeaSubmissionPage } from "./pages/IdeaSubmission";
 import AppFeedbackPage from "./components/AppFeedbackPage.jsx";
 
@@ -148,10 +147,6 @@ const App = () => {
                   element={<AdminRegistrationMasterPage />}
                 />
                 <Route path="feedback" element={<AdminFeedbackPage />} />
-                <Route
-                  path="sustainability"
-                  element={<AdminSustainabilityPage />}
-                />
                 <Route index element={<AdminDashboardPage />} />
               </Route>
               <Route

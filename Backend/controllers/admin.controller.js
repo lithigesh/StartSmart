@@ -4,7 +4,6 @@ const Idea = require('../models/Idea.model');
 const Ideathon = require('../models/Ideathon.model');
 const IdeathonRegistration = require('../models/IdeathonRegistration.model');
 const Feedback = require('../models/Feedback.model');
-const Sustainability = require('../models/Sustainability.model');
 const AdminAction = require('../models/AdminAction.model');
 const generateToken = require('../utils/generateToken');
 
@@ -473,21 +472,6 @@ exports.getDashboardAnalytics = async (req, res, next) => {
             }
         ]);
 
-        // Get sustainability statistics
-        const sustainabilityStats = await Sustainability.aggregate([
-            { $match: dateFilter },
-            {
-                $group: {
-                    _id: null,
-                    totalAssessments: { $sum: 1 },
-                    averageScore: { $avg: '$overallScore' },
-                    averageEnvironmental: { $avg: '$environmentalImpact.score' },
-                    averageSocial: { $avg: '$socialImpact.score' },
-                    averageEconomic: { $avg: '$economicSustainability.score' }
-                }
-            }
-        ]);
-
         const responseData = {
             users: userStats[0] || {
                 totalUsers: 0,
@@ -514,13 +498,6 @@ exports.getDashboardAnalytics = async (req, res, next) => {
                 averageRating: 0,
                 positiveCount: 0,
                 negativeCount: 0
-            },
-            sustainability: sustainabilityStats[0] || {
-                totalAssessments: 0,
-                averageScore: 0,
-                averageEnvironmental: 0,
-                averageSocial: 0,
-                averageEconomic: 0
             }
         };
 
@@ -646,32 +623,6 @@ exports.getChartData = async (req, res, next) => {
                 ]);
                 break;
 
-            case 'sustainability':
-                chartData = await Sustainability.aggregate([
-                    { 
-                        $match: {
-                            ...dateFilter,
-                            createdAt: { $exists: true, $type: "date" }
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: {
-                                year: { $year: '$createdAt' },
-                                month: { $month: '$createdAt' },
-                                day: { $dayOfMonth: '$createdAt' }
-                            },
-                            count: { $sum: 1 },
-                            averageScore: { $avg: '$overallScore' },
-                            environmental: { $avg: '$environmentalImpact.score' },
-                            social: { $avg: '$socialImpact.score' },
-                            economic: { $avg: '$economicSustainability.score' }
-                        }
-                    },
-                    { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
-                ]);
-                break;
-
             default:
                 return res.status(400).json({ message: 'Invalid chart type' });
         }
@@ -759,14 +710,6 @@ exports.generateReport = async (req, res, next) => {
                     .populate('investor', 'name email')
                     .sort({ createdAt: -1 });
                 fileName = `feedback-report-${new Date().toISOString().split('T')[0]}`;
-                break;
-
-            case 'sustainability':
-                reportData = await Sustainability.find(dateFilter)
-                    .populate('idea', 'title')
-                    .populate('admin', 'name email')
-                    .sort({ createdAt: -1 });
-                fileName = `sustainability-report-${new Date().toISOString().split('T')[0]}`;
                 break;
 
             case 'analytics':
@@ -990,201 +933,3 @@ exports.deleteFeedback = async (req, res, next) => {
     }
 };
 
-// ========== SUSTAINABILITY MANAGEMENT ==========
-
-// @desc    Get all sustainability assessments
-// @route   GET /api/admin/sustainability
-// @access  Private (Admin only)
-exports.getAllSustainabilityAssessments = async (req, res, next) => {
-    try {
-        const { page = 1, limit = 20, ideaId, rank, minScore, maxScore } = req.query;
-        
-        const filter = {};
-        if (ideaId) filter.idea = ideaId;
-        if (rank) filter.sustainabilityRank = rank;
-        if (minScore || maxScore) {
-            filter.overallSustainabilityScore = {};
-            if (minScore) filter.overallSustainabilityScore.$gte = parseFloat(minScore);
-            if (maxScore) filter.overallSustainabilityScore.$lte = parseFloat(maxScore);
-        }
-
-        const assessments = await Sustainability.find(filter)
-            .populate('idea', 'title description category entrepreneur')
-            .populate('admin', 'name email')
-            .sort({ overallSustainabilityScore: -1, createdAt: -1 })
-            .limit(limit * 1)
-            .skip((page - 1) * limit);
-
-        const total = await Sustainability.countDocuments(filter);
-
-        res.json({
-            assessments,
-            totalPages: Math.ceil(total / limit),
-            currentPage: page,
-            total
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-// @desc    Create sustainability assessment for an idea
-// @route   POST /api/admin/sustainability
-// @access  Private (Admin only)
-exports.createSustainabilityAssessment = async (req, res, next) => {
-    try {
-        const {
-            ideaId,
-            environmentalImpact,
-            socialImpact,
-            economicSustainability,
-            certifications = [],
-            sdgAlignment = [],
-            recommendations = [],
-            visibility
-        } = req.body;
-
-        // Validate required fields
-        if (!ideaId || !environmentalImpact || !socialImpact || !economicSustainability) {
-            return res.status(400).json({
-                message: 'Idea ID and all impact assessments are required'
-            });
-        }
-
-        // Validate idea exists
-        const idea = await Idea.findById(ideaId);
-        if (!idea) {
-            return res.status(404).json({ message: 'Idea not found' });
-        }
-
-        // Check if assessment already exists for this idea
-        const existingAssessment = await Sustainability.findOne({ idea: ideaId });
-        if (existingAssessment) {
-            return res.status(409).json({ 
-                message: 'A sustainability assessment already exists for this idea. Please edit the existing assessment instead of creating a new one.',
-                existingAssessmentId: existingAssessment._id
-            });
-        }
-
-        const assessment = new Sustainability({
-            idea: ideaId,
-            admin: req.user.id,
-            environmentalImpact,
-            socialImpact,
-            economicSustainability,
-            certifications,
-            sdgAlignment,
-            recommendations,
-            visibility: visibility || 'entrepreneur_only'
-        });
-
-        await assessment.save();
-
-        // Log admin action
-        await AdminAction.create({
-            admin: req.user.id,
-            actionType: 'createSustainabilityAssessment',
-            targetId: assessment._id,
-            targetModel: 'Sustainability',
-            details: `Created sustainability assessment for idea "${idea.title}" with score ${assessment.overallSustainabilityScore}/10`
-        });
-
-        const populatedAssessment = await Sustainability.findById(assessment._id)
-            .populate('idea', 'title description category entrepreneur')
-            .populate('admin', 'name email');
-
-        res.status(201).json({
-            message: 'Sustainability assessment created successfully',
-            assessment: populatedAssessment
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-// @desc    Update sustainability assessment
-// @route   PUT /api/admin/sustainability/:id
-// @access  Private (Admin only)
-exports.updateSustainabilityAssessment = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const updateData = req.body;
-
-        const assessment = await Sustainability.findById(id);
-        if (!assessment) {
-            return res.status(404).json({ message: 'Sustainability assessment not found' });
-        }
-
-        const updatedAssessment = await Sustainability.findByIdAndUpdate(
-            id,
-            { ...updateData, updatedAt: new Date() },
-            { new: true }
-        ).populate('idea', 'title description category entrepreneur')
-         .populate('admin', 'name email');
-
-        // Log admin action
-        await AdminAction.create({
-            admin: req.user.id,
-            actionType: 'updateSustainabilityAssessment',
-            targetId: assessment._id,
-            targetModel: 'Sustainability',
-            details: `Updated sustainability assessment for idea "${updatedAssessment.idea.title}"`
-        });
-
-        res.json({
-            message: 'Sustainability assessment updated successfully',
-            assessment: updatedAssessment
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-// @desc    Delete sustainability assessment
-// @route   DELETE /api/admin/sustainability/:id
-// @access  Private (Admin only)
-exports.deleteSustainabilityAssessment = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-
-        const assessment = await Sustainability.findById(id).populate('idea', 'title');
-        if (!assessment) {
-            return res.status(404).json({ message: 'Sustainability assessment not found' });
-        }
-
-        await Sustainability.findByIdAndDelete(id);
-
-        // Log admin action
-        await AdminAction.create({
-            admin: req.user.id,
-            actionType: 'deleteSustainabilityAssessment',
-            targetId: id,
-            targetModel: 'Sustainability',
-            details: `Deleted sustainability assessment for idea "${assessment.idea.title}"`
-        });
-
-        res.json({ message: 'Sustainability assessment deleted successfully' });
-    } catch (error) {
-        next(error);
-    }
-};
-
-// @desc    Get sustainability statistics
-// @route   GET /api/admin/sustainability/stats
-// @access  Private (Admin only)
-exports.getSustainabilityStats = async (req, res, next) => {
-    try {
-        const stats = await Sustainability.getSustainabilityStats();
-        
-        res.json({
-            message: 'Sustainability statistics retrieved successfully',
-            stats: stats[0] || {
-                averageScore: 0,
-                totalAssessments: 0,
-                rankDistribution: []
-            }
-        });
-    } catch (error) {
-        next(error);
-    }
-};
