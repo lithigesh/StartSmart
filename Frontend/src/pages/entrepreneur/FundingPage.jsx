@@ -248,6 +248,11 @@ const FundingPage = () => {
     setShowEditModal(true);
   };
 
+  const handleViewFundingRequest = (request) => {
+    setSelectedFundingRequest(request);
+    setShowEditModal(true);
+  };
+
   const handleUpdateFundingRequest = async (requestId) => {
     try {
       // Refresh the specific funding request to get latest data
@@ -354,7 +359,11 @@ const FundingPage = () => {
 
         {/* Funding Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div key="stat-total-funding" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '0ms' }}>
+          <div
+            key="stat-total-funding"
+            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up"
+            style={{ animationDelay: "0ms" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -368,11 +377,17 @@ const FundingPage = () => {
               <h3 className="text-white font-manrope font-semibold text-lg mb-2">
                 Total Funding
               </h3>
-              <p className="text-white/60 text-sm font-manrope">Received from investors</p>
+              <p className="text-white/60 text-sm font-manrope">
+                Received from investors
+              </p>
             </div>
           </div>
 
-          <div key="stat-funding-requests" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <div
+            key="stat-funding-requests"
+            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up"
+            style={{ animationDelay: "100ms" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -383,10 +398,12 @@ const FundingPage = () => {
                   {fundingRequests.length}
                 </span>
               </div>
-            <h3 className="text-white font-manrope font-semibold text-lg mb-2">
-              Funding Requests
-            </h3>
-            <p className="text-white/60 text-sm font-manrope">Total submitted requests</p>
+              <h3 className="text-white font-manrope font-semibold text-lg mb-2">
+                Funding Requests
+              </h3>
+              <p className="text-white/60 text-sm font-manrope">
+                Total submitted requests
+              </p>
             </div>
           </div>
         </div>
@@ -423,20 +440,20 @@ const FundingPage = () => {
             <div className="text-center py-12 bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
               <div className="relative z-10">
-              <FaDollarSign className="w-16 h-16 text-white/30 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                No Funding Requests Yet
-              </h3>
-              <p className="text-white/60 mb-4">
-                Submit your first funding request to attract investors
-              </p>
-              <button
-                onClick={handleCreateFundingRequest}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200 font-medium"
-              >
-                <FaPlus className="w-4 h-4" />
-                Create First Request
-              </button>
+                <FaDollarSign className="w-16 h-16 text-white/30 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No Funding Requests Yet
+                </h3>
+                <p className="text-white/60 mb-4">
+                  Submit your first funding request to attract investors
+                </p>
+                <button
+                  onClick={handleCreateFundingRequest}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200 font-medium"
+                >
+                  <FaPlus className="w-4 h-4" />
+                  Create First Request
+                </button>
               </div>
             </div>
           ) : (
@@ -444,180 +461,254 @@ const FundingPage = () => {
               {fundingRequests.map((request) => (
                 <div
                   key={request._id}
-                  className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/[0.05] transition-all duration-300 relative overflow-hidden group"
+                  onClick={() => handleViewFundingRequest(request)}
+                  className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/[0.05] hover:border-white/20 transition-all duration-300 relative overflow-hidden group cursor-pointer"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
                   <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h4 className="text-white font-semibold text-lg mb-2">
-                        {request.idea?.title || request.ideaTitle || 'Untitled'}
-                      </h4>
-                      <p className="text-white/70 text-sm mb-3">
-                        {request.idea?.description || request.description || 'No description available'}
-                      </p>
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h4 className="text-white font-semibold text-lg mb-2">
+                          {request.idea?.title ||
+                            request.ideaTitle ||
+                            "Untitled"}
+                        </h4>
+                        <p className="text-white/70 text-sm mb-3">
+                          {request.idea?.description ||
+                            request.description ||
+                            "No description available"}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                          request.status
+                        )}`}
+                      >
+                        {request.status}
+                      </span>
                     </div>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                        request.status
-                      )}`}
-                    >
-                      {request.status}
-                    </span>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <p className="text-white/60 text-xs mb-1">
-                        Amount Requested
-                      </p>
-                      <p className="text-white font-semibold">
-                        {formatCurrency(request.amount)}
-                      </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-white/60 text-xs mb-1">
+                          Amount Requested
+                        </p>
+                        <p className="text-white font-semibold">
+                          {formatCurrency(request.amount)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-white/60 text-xs mb-1">Submitted</p>
+                        <p className="text-white font-semibold">
+                          {formatDate(request.createdAt)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-white/60 text-xs mb-1">Submitted</p>
-                      <p className="text-white font-semibold">
-                        {formatDate(request.createdAt)}
-                      </p>
-                    </div>
-                  </div>
 
-                  {request.message && (
-                    <div className="mb-4">
-                      <p className="text-white/60 text-xs mb-1">Message</p>
-                      <p className="text-white/80 text-sm">{request.message}</p>
-                    </div>
-                  )}
+                    {request.message && (
+                      <div className="mb-4">
+                        <p className="text-white/60 text-xs mb-1">Message</p>
+                        <p className="text-white/80 text-sm">
+                          {request.message}
+                        </p>
+                      </div>
+                    )}
 
-                  {/* Investor Details - Show when accepted */}
-                  {request.status === "accepted" && (
-                    <div className="mb-4 p-4 bg-green-600/10 border border-green-500/30 rounded-lg">
-                      <h5 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
-                        <FaCheckCircle className="w-4 h-4" />
-                        Funding Accepted
-                      </h5>
-                      {request.acceptedBy || (request.investorResponses && request.investorResponses.find(r => r.status === 'accepted')) ? (
-                        <>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                              <p className="text-white/60 text-xs mb-1">Investor Name</p>
-                              <p className="text-white font-medium">
-                                {request.acceptedBy?.name || 
-                                 request.investorResponses?.find(r => r.status === 'accepted')?.investor?.name || 
-                                 'Contact Support'}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-white/60 text-xs mb-1">Contact Email</p>
-                              <p className="text-white font-medium flex items-center gap-2">
-                                <FaEnvelope className="w-3 h-3 text-green-400" />
-                                {(request.acceptedBy?.email || request.investorResponses?.find(r => r.status === 'accepted')?.investor?.email) ? (
-                                  <a 
-                                    href={`mailto:${request.acceptedBy?.email || request.investorResponses?.find(r => r.status === 'accepted')?.investor?.email}`} 
-                                    className="hover:text-green-400 transition-colors break-all"
-                                  >
-                                    {request.acceptedBy?.email || request.investorResponses?.find(r => r.status === 'accepted')?.investor?.email}
-                                  </a>
-                                ) : (
-                                  <span className="text-white/60">Contact Support</span>
-                                )}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-white/60 text-xs mb-1">Amount</p>
-                              <p className="text-white font-medium">
-                                {formatCurrency(request.acceptanceTerms?.finalAmount || request.amount)}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-white/60 text-xs mb-1">Equity</p>
-                              <p className="text-white font-medium">
-                                {request.acceptanceTerms?.finalEquity || request.equity}%
-                              </p>
-                            </div>
-                            {request.acceptedAt && (
+                    {/* Investor Details - Show when accepted */}
+                    {request.status === "accepted" && (
+                      <div className="mb-4 p-4 bg-green-600/10 border border-green-500/30 rounded-lg">
+                        <h5 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                          <FaCheckCircle className="w-4 h-4" />
+                          Funding Accepted
+                        </h5>
+                        {request.acceptedBy ||
+                        (request.investorResponses &&
+                          request.investorResponses.find(
+                            (r) => r.status === "accepted"
+                          )) ? (
+                          <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div>
-                                <p className="text-white/60 text-xs mb-1">Accepted On</p>
-                                <p className="text-white font-medium">{formatDate(request.acceptedAt)}</p>
+                                <p className="text-white/60 text-xs mb-1">
+                                  Investor Name
+                                </p>
+                                <p className="text-white font-medium">
+                                  {request.acceptedBy?.name ||
+                                    request.investorResponses?.find(
+                                      (r) => r.status === "accepted"
+                                    )?.investor?.name ||
+                                    "Contact Support"}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-white/60 text-xs mb-1">
+                                  Contact Email
+                                </p>
+                                <p className="text-white font-medium flex items-center gap-2">
+                                  <FaEnvelope className="w-3 h-3 text-green-400" />
+                                  {request.acceptedBy?.email ||
+                                  request.investorResponses?.find(
+                                    (r) => r.status === "accepted"
+                                  )?.investor?.email ? (
+                                    <a
+                                      href={`mailto:${
+                                        request.acceptedBy?.email ||
+                                        request.investorResponses?.find(
+                                          (r) => r.status === "accepted"
+                                        )?.investor?.email
+                                      }`}
+                                      className="hover:text-green-400 transition-colors break-all"
+                                    >
+                                      {request.acceptedBy?.email ||
+                                        request.investorResponses?.find(
+                                          (r) => r.status === "accepted"
+                                        )?.investor?.email}
+                                    </a>
+                                  ) : (
+                                    <span className="text-white/60">
+                                      Contact Support
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-white/60 text-xs mb-1">
+                                  Amount
+                                </p>
+                                <p className="text-white font-medium">
+                                  {formatCurrency(
+                                    request.acceptanceTerms?.finalAmount ||
+                                      request.amount
+                                  )}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-white/60 text-xs mb-1">
+                                  Equity
+                                </p>
+                                <p className="text-white font-medium">
+                                  {request.acceptanceTerms?.finalEquity ||
+                                    request.equity}
+                                  %
+                                </p>
+                              </div>
+                              {request.acceptedAt && (
+                                <div>
+                                  <p className="text-white/60 text-xs mb-1">
+                                    Accepted On
+                                  </p>
+                                  <p className="text-white font-medium">
+                                    {formatDate(request.acceptedAt)}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                            {request.acceptanceTerms?.conditions && (
+                              <div className="mt-3 pt-3 border-t border-green-500/20">
+                                <p className="text-white/60 text-xs mb-1">
+                                  Terms & Conditions
+                                </p>
+                                <p className="text-white/80 text-sm">
+                                  {request.acceptanceTerms.conditions}
+                                </p>
                               </div>
                             )}
-                          </div>
-                          {request.acceptanceTerms?.conditions && (
-                            <div className="mt-3 pt-3 border-t border-green-500/20">
-                              <p className="text-white/60 text-xs mb-1">Terms & Conditions</p>
-                              <p className="text-white/80 text-sm">{request.acceptanceTerms.conditions}</p>
+                          </>
+                        ) : (
+                          <div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                              <div>
+                                <p className="text-white/60 text-xs mb-1">
+                                  Amount
+                                </p>
+                                <p className="text-white font-medium">
+                                  {formatCurrency(
+                                    request.acceptanceTerms?.finalAmount ||
+                                      request.amount
+                                  )}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-white/60 text-xs mb-1">
+                                  Equity
+                                </p>
+                                <p className="text-white font-medium">
+                                  {request.acceptanceTerms?.finalEquity ||
+                                    request.equity}
+                                  %
+                                </p>
+                              </div>
                             </div>
-                          )}
-                        </>
-                      ) : (
-                        <div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                            <div>
-                              <p className="text-white/60 text-xs mb-1">Amount</p>
-                              <p className="text-white font-medium">
-                                {formatCurrency(request.acceptanceTerms?.finalAmount || request.amount)}
+                            <div className="text-white/80 text-sm bg-white/5 p-3 rounded-lg">
+                              <p className="mb-1">
+                                ✅ Your funding request has been accepted!
+                              </p>
+                              <p className="text-white/60 text-xs">
+                                Investor contact details will be available soon.
+                                Please check your email or contact support for
+                                assistance.
                               </p>
                             </div>
-                            <div>
-                              <p className="text-white/60 text-xs mb-1">Equity</p>
-                              <p className="text-white font-medium">
-                                {request.acceptanceTerms?.finalEquity || request.equity}%
-                              </p>
-                            </div>
                           </div>
-                          <div className="text-white/80 text-sm bg-white/5 p-3 rounded-lg">
-                            <p className="mb-1">✅ Your funding request has been accepted!</p>
-                            <p className="text-white/60 text-xs">
-                              Investor contact details will be available soon. Please check your email or contact support for assistance.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    )}
 
-                  {/* Action buttons */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                    {request.status === "pending" && (
-                      <>
-                        <button
-                          onClick={() => handleEditFundingRequest(request)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
-                        >
-                          <FaEdit className="w-4 h-4" />
-                          Edit
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleWithdrawFundingRequest(request._id)
-                          }
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
-                        >
-                          <FaTrash className="w-4 h-4" />
-                          Delete
-                        </button>
-                      </>
-                    )}
-                    {request.status === "accepted" && (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-600/20 text-green-400 rounded-lg text-sm font-medium">
-                        <FaCheckCircle className="w-4 h-4" />
-                        Accepted
-                      </span>
-                    )}
-                    {request.status === "declined" && (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 rounded-lg text-sm font-medium">
-                        <FaTimesCircle className="w-4 h-4" />
-                        Declined
-                      </span>
-                    )}
-                    {request.status === "withdrawn" && (
-                      <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] text-white/50 rounded-lg text-sm font-medium border border-white/10">
-                        <FaMinusCircle className="w-4 h-4" />
-                        Withdrawn
-                      </span>
-                    )}
-                  </div>
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                      {request.status === "pending" && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditFundingRequest(request);
+                            }}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                          >
+                            <FaEdit className="w-4 h-4" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleWithdrawFundingRequest(request._id);
+                            }}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                          >
+                            <FaTrash className="w-4 h-4" />
+                            Delete
+                          </button>
+                        </>
+                      )}
+                      {request.status === "accepted" && (
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-600/20 text-green-400 rounded-lg text-sm font-medium">
+                          <FaCheckCircle className="w-4 h-4" />
+                          Accepted
+                        </span>
+                      )}
+                      {request.status === "declined" && (
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 rounded-lg text-sm font-medium">
+                          <FaTimesCircle className="w-4 h-4" />
+                          Declined
+                        </span>
+                      )}
+                      {request.status === "withdrawn" && (
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] text-white/50 rounded-lg text-sm font-medium border border-white/10">
+                          <FaMinusCircle className="w-4 h-4" />
+                          Withdrawn
+                        </span>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewFundingRequest(request);
+                        }}
+                        className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/10 text-white rounded-lg transition-colors duration-200 text-sm font-medium border border-white/10"
+                      >
+                        <FaFileAlt className="w-4 h-4" />
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -632,244 +723,245 @@ const FundingPage = () => {
           <div className="bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-white">
-                Request Funding
-              </h2>
-              <button
-                onClick={() => setShowFundingModal(false)}
-                className="text-white/70 hover:text-white transition-colors hover:bg-white/10 rounded-lg p-2"
-              >
-                <FaTimes />
-              </button>
-            </div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-white">
+                  Request Funding
+                </h2>
+                <button
+                  onClick={() => setShowFundingModal(false)}
+                  className="text-white/70 hover:text-white transition-colors hover:bg-white/10 rounded-lg p-2"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+              <form onSubmit={handleFundingFormSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">
+                      Select Idea *
+                    </label>
+                    <select
+                      value={fundingFormData.ideaId}
+                      onChange={(e) =>
+                        handleFundingFormChange("ideaId", e.target.value)
+                      }
+                      className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none backdrop-blur-sm"
+                      required
+                    >
+                      <option value="">Choose an idea...</option>
+                      {userIdeas.map((idea) => (
+                        <option key={idea.id} value={idea.id}>
+                          {idea.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-            <form onSubmit={handleFundingFormSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-white/80 text-sm font-medium mb-2">
-                    Select Idea *
-                  </label>
-                  <select
-                    value={fundingFormData.ideaId}
-                    onChange={(e) =>
-                      handleFundingFormChange("ideaId", e.target.value)
-                    }
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none backdrop-blur-sm"
-                    required
-                  >
-                    <option value="">Choose an idea...</option>
-                    {userIdeas.map((idea) => (
-                      <option key={idea.id} value={idea.id}>
-                        {idea.title}
-                      </option>
-                    ))}
-                  </select>
+                  <div>
+                    <label className="block text-white/80 text-sm font-medium mb-2">
+                      Funding Amount Requested *
+                    </label>
+                    <input
+                      type="number"
+                      value={fundingFormData.amount}
+                      onChange={(e) =>
+                        handleFundingFormChange("amount", e.target.value)
+                      }
+                      placeholder="Enter amount in USD"
+                      className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-white/80 text-sm font-medium mb-2">
-                    Funding Amount Requested *
+                    Equity Percentage Offered *
                   </label>
                   <input
                     type="number"
-                    value={fundingFormData.amount}
+                    value={fundingFormData.equity}
                     onChange={(e) =>
-                      handleFundingFormChange("amount", e.target.value)
+                      handleFundingFormChange("equity", e.target.value)
                     }
-                    placeholder="Enter amount in USD"
+                    placeholder="e.g., 10 for 10%"
+                    min="0"
+                    max="100"
+                    step="0.1"
                     className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
                     required
                   />
+                  <p className="text-white/50 text-xs mt-1">
+                    Percentage of your company equity offered to investors
+                  </p>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">
-                  Equity Percentage Offered *
-                </label>
-                <input
-                  type="number"
-                  value={fundingFormData.equity}
-                  onChange={(e) =>
-                    handleFundingFormChange("equity", e.target.value)
-                  }
-                  placeholder="e.g., 10 for 10%"
-                  min="0"
-                  max="100"
-                  step="0.1"
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
-                  required
-                />
-                <p className="text-white/50 text-xs mt-1">
-                  Percentage of your company equity offered to investors
-                </p>
-              </div>
+                <div>
+                  <label className="block text-white/80 text-sm font-medium mb-2">
+                    Message to Investors
+                  </label>
+                  <textarea
+                    value={fundingFormData.message}
+                    onChange={(e) =>
+                      handleFundingFormChange("message", e.target.value)
+                    }
+                    placeholder="Tell investors why you need funding and what you plan to achieve..."
+                    rows={4}
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none resize-none backdrop-blur-sm"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-white/80 text-sm font-medium mb-2">
-                  Message to Investors
-                </label>
-                <textarea
-                  value={fundingFormData.message}
-                  onChange={(e) =>
-                    handleFundingFormChange("message", e.target.value)
-                  }
-                  placeholder="Tell investors why you need funding and what you plan to achieve..."
-                  rows={4}
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none resize-none backdrop-blur-sm"
-                />
-              </div>
-
-              {/* Investor Targeting Section */}
-              {fundingFormData.ideaId && (
-                <div className="space-y-4 p-4 bg-white/[0.05] border border-white/10 rounded-lg backdrop-blur-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-white font-semibold flex items-center gap-2">
-                        <FaUserPlus className="text-blue-400" />
-                        Target Specific Investors
-                      </h3>
-                      <p className="text-white/60 text-sm mt-1">
-                        {interestedInvestors.length > 0
-                          ? `${interestedInvestors.length} investor(s) have shown interest in this idea`
-                          : "No investors have shown interest yet"}
-                      </p>
+                {/* Investor Targeting Section */}
+                {fundingFormData.ideaId && (
+                  <div className="space-y-4 p-4 bg-white/[0.05] border border-white/10 rounded-lg backdrop-blur-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-white font-semibold flex items-center gap-2">
+                          <FaUserPlus className="text-blue-400" />
+                          Target Specific Investors
+                        </h3>
+                        <p className="text-white/60 text-sm mt-1">
+                          {interestedInvestors.length > 0
+                            ? `${interestedInvestors.length} investor(s) have shown interest in this idea`
+                            : "No investors have shown interest yet"}
+                        </p>
+                      </div>
+                      {interestedInvestors.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setShowInvestorSelector(true)}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
+                        >
+                          <FaUsers className="w-4 h-4" />
+                          Select Investors ({selectedInvestors.length})
+                        </button>
+                      )}
                     </div>
-                    {interestedInvestors.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setShowInvestorSelector(true)}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
-                      >
-                        <FaUsers className="w-4 h-4" />
-                        Select Investors ({selectedInvestors.length})
-                      </button>
+
+                    {/* Access Type Selector */}
+                    <div>
+                      <label className="block text-white/80 text-sm font-medium mb-2">
+                        Request Visibility
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label className="relative flex items-center p-3 bg-white/[0.05] border border-white/10 rounded-lg cursor-pointer hover:bg-white/[0.08] transition-colors backdrop-blur-sm">
+                          <input
+                            type="radio"
+                            name="accessType"
+                            value="public"
+                            checked={accessType === "public"}
+                            onChange={(e) => setAccessType(e.target.value)}
+                            className="mr-3"
+                          />
+                          <div>
+                            <div className="text-white font-medium text-sm">
+                              Public
+                            </div>
+                            <div className="text-white/60 text-xs">
+                              Visible to all investors
+                            </div>
+                          </div>
+                        </label>
+
+                        <label
+                          className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
+                            interestedInvestors.length === 0
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="accessType"
+                            value="invited"
+                            checked={accessType === "invited"}
+                            onChange={(e) => setAccessType(e.target.value)}
+                            disabled={interestedInvestors.length === 0}
+                            className="mr-3"
+                          />
+                          <div>
+                            <div className="text-white font-medium text-sm">
+                              Invited Only
+                            </div>
+                            <div className="text-white/60 text-xs">
+                              Only selected investors
+                            </div>
+                          </div>
+                        </label>
+
+                        <label
+                          className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
+                            interestedInvestors.length === 0
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="accessType"
+                            value="private"
+                            checked={accessType === "private"}
+                            onChange={(e) => setAccessType(e.target.value)}
+                            disabled={interestedInvestors.length === 0}
+                            className="mr-3"
+                          />
+                          <div>
+                            <div className="text-white font-medium text-sm">
+                              Private
+                            </div>
+                            <div className="text-white/60 text-xs">
+                              Strictly selected only
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Selected Investors Display */}
+                    {selectedInvestors.length > 0 && (
+                      <div className="p-3 bg-blue-600/10 border border-blue-500/30 rounded-lg">
+                        <p className="text-blue-400 text-sm font-medium mb-2">
+                          ✓ {selectedInvestors.length} investor(s) selected
+                        </p>
+                        <p className="text-white/60 text-xs">
+                          These investors will be notified and can view your
+                          funding request.
+                        </p>
+                      </div>
                     )}
                   </div>
+                )}
 
-                  {/* Access Type Selector */}
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Request Visibility
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <label className="relative flex items-center p-3 bg-white/[0.05] border border-white/10 rounded-lg cursor-pointer hover:bg-white/[0.08] transition-colors backdrop-blur-sm">
-                        <input
-                          type="radio"
-                          name="accessType"
-                          value="public"
-                          checked={accessType === "public"}
-                          onChange={(e) => setAccessType(e.target.value)}
-                          className="mr-3"
-                        />
-                        <div>
-                          <div className="text-white font-medium text-sm">
-                            Public
-                          </div>
-                          <div className="text-white/60 text-xs">
-                            Visible to all investors
-                          </div>
-                        </div>
-                      </label>
+                <div className="flex gap-3 pt-4 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setShowFundingModal(false)}
+                    className="flex-1 px-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] text-white rounded-lg transition-colors border border-white/10"
+                  >
+                    Cancel
+                  </button>
 
-                      <label
-                        className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
-                          interestedInvestors.length === 0
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="accessType"
-                          value="invited"
-                          checked={accessType === "invited"}
-                          onChange={(e) => setAccessType(e.target.value)}
-                          disabled={interestedInvestors.length === 0}
-                          className="mr-3"
-                        />
-                        <div>
-                          <div className="text-white font-medium text-sm">
-                            Invited Only
-                          </div>
-                          <div className="text-white/60 text-xs">
-                            Only selected investors
-                          </div>
-                        </div>
-                      </label>
-
-                      <label
-                        className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
-                          interestedInvestors.length === 0
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="accessType"
-                          value="private"
-                          checked={accessType === "private"}
-                          onChange={(e) => setAccessType(e.target.value)}
-                          disabled={interestedInvestors.length === 0}
-                          className="mr-3"
-                        />
-                        <div>
-                          <div className="text-white font-medium text-sm">
-                            Private
-                          </div>
-                          <div className="text-white/60 text-xs">
-                            Strictly selected only
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Selected Investors Display */}
-                  {selectedInvestors.length > 0 && (
-                    <div className="p-3 bg-blue-600/10 border border-blue-500/30 rounded-lg">
-                      <p className="text-blue-400 text-sm font-medium mb-2">
-                        ✓ {selectedInvestors.length} investor(s) selected
-                      </p>
-                      <p className="text-white/60 text-xs">
-                        These investors will be notified and can view your
-                        funding request.
-                      </p>
-                    </div>
-                  )}
+                  <button
+                    type="submit"
+                    disabled={submittingFunding}
+                    className="flex-1 px-4 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                  >
+                    {submittingFunding ? (
+                      <>
+                        <FaSpinner className="animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <FaCheckCircle />
+                        Submit Funding Request
+                      </>
+                    )}
+                  </button>
                 </div>
-              )}
-
-              <div className="flex gap-3 pt-4 border-t border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setShowFundingModal(false)}
-                  className="flex-1 px-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] text-white rounded-lg transition-colors border border-white/10"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={submittingFunding}
-                  className="flex-1 px-4 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
-                >
-                  {submittingFunding ? (
-                    <>
-                      <FaSpinner className="animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <FaCheckCircle />
-                      Submit Funding Request
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>            </div>          </div>
+              </form>{" "}
+            </div>{" "}
+          </div>
         </div>
       )}
 
