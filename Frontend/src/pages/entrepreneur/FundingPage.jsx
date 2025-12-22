@@ -353,7 +353,7 @@ const FundingPage = () => {
         </div>
 
         {/* Funding Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div key="stat-total-funding" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '0ms' }}>
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
@@ -387,26 +387,6 @@ const FundingPage = () => {
               Funding Requests
             </h3>
             <p className="text-white/60 text-sm font-manrope">Total submitted requests</p>
-            </div>
-          </div>
-
-          <div key="stat-investors" className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-white/70">
-                  <FaUsers className="w-6 h-6" />
-                </div>
-                <span className="text-2xl font-bold text-purple-400 font-manrope">
-                  {dashboardData.interestedInvestors}
-                </span>
-              </div>
-            <h3 className="text-white font-manrope font-semibold text-lg mb-2">
-              Interested Investors
-            </h3>
-            <p className="text-white/60 text-sm font-manrope">
-              Showing interest in your ideas
-            </p>
             </div>
           </div>
         </div>
@@ -463,7 +443,7 @@ const FundingPage = () => {
             <div className="space-y-4">
               {fundingRequests.map((request) => (
                 <div
-                  key={request.id}
+                  key={request._id}
                   className="bg-white/[0.03] backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/[0.05] transition-all duration-300 relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
@@ -471,10 +451,10 @@ const FundingPage = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <h4 className="text-white font-semibold text-lg mb-2">
-                        {request.ideaTitle}
+                        {request.idea?.title || request.ideaTitle || 'Untitled'}
                       </h4>
                       <p className="text-white/70 text-sm mb-3">
-                        {request.description}
+                        {request.idea?.description || request.description || 'No description available'}
                       </p>
                     </div>
                     <span
@@ -486,19 +466,13 @@ const FundingPage = () => {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                       <p className="text-white/60 text-xs mb-1">
                         Amount Requested
                       </p>
                       <p className="text-white font-semibold">
                         {formatCurrency(request.amount)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-white/60 text-xs mb-1">Team Size</p>
-                      <p className="text-white font-semibold">
-                        {request.teamSize || "Not specified"}
                       </p>
                     </div>
                     <div>
@@ -513,6 +487,93 @@ const FundingPage = () => {
                     <div className="mb-4">
                       <p className="text-white/60 text-xs mb-1">Message</p>
                       <p className="text-white/80 text-sm">{request.message}</p>
+                    </div>
+                  )}
+
+                  {/* Investor Details - Show when accepted */}
+                  {request.status === "accepted" && (
+                    <div className="mb-4 p-4 bg-green-600/10 border border-green-500/30 rounded-lg">
+                      <h5 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                        <FaCheckCircle className="w-4 h-4" />
+                        Funding Accepted
+                      </h5>
+                      {request.acceptedBy || (request.investorResponses && request.investorResponses.find(r => r.status === 'accepted')) ? (
+                        <>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-white/60 text-xs mb-1">Investor Name</p>
+                              <p className="text-white font-medium">
+                                {request.acceptedBy?.name || 
+                                 request.investorResponses?.find(r => r.status === 'accepted')?.investor?.name || 
+                                 'Contact Support'}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-white/60 text-xs mb-1">Contact Email</p>
+                              <p className="text-white font-medium flex items-center gap-2">
+                                <FaEnvelope className="w-3 h-3 text-green-400" />
+                                {(request.acceptedBy?.email || request.investorResponses?.find(r => r.status === 'accepted')?.investor?.email) ? (
+                                  <a 
+                                    href={`mailto:${request.acceptedBy?.email || request.investorResponses?.find(r => r.status === 'accepted')?.investor?.email}`} 
+                                    className="hover:text-green-400 transition-colors break-all"
+                                  >
+                                    {request.acceptedBy?.email || request.investorResponses?.find(r => r.status === 'accepted')?.investor?.email}
+                                  </a>
+                                ) : (
+                                  <span className="text-white/60">Contact Support</span>
+                                )}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-white/60 text-xs mb-1">Amount</p>
+                              <p className="text-white font-medium">
+                                {formatCurrency(request.acceptanceTerms?.finalAmount || request.amount)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-white/60 text-xs mb-1">Equity</p>
+                              <p className="text-white font-medium">
+                                {request.acceptanceTerms?.finalEquity || request.equity}%
+                              </p>
+                            </div>
+                            {request.acceptedAt && (
+                              <div>
+                                <p className="text-white/60 text-xs mb-1">Accepted On</p>
+                                <p className="text-white font-medium">{formatDate(request.acceptedAt)}</p>
+                              </div>
+                            )}
+                          </div>
+                          {request.acceptanceTerms?.conditions && (
+                            <div className="mt-3 pt-3 border-t border-green-500/20">
+                              <p className="text-white/60 text-xs mb-1">Terms & Conditions</p>
+                              <p className="text-white/80 text-sm">{request.acceptanceTerms.conditions}</p>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                            <div>
+                              <p className="text-white/60 text-xs mb-1">Amount</p>
+                              <p className="text-white font-medium">
+                                {formatCurrency(request.acceptanceTerms?.finalAmount || request.amount)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-white/60 text-xs mb-1">Equity</p>
+                              <p className="text-white font-medium">
+                                {request.acceptanceTerms?.finalEquity || request.equity}%
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-white/80 text-sm bg-white/5 p-3 rounded-lg">
+                            <p className="mb-1">✅ Your funding request has been accepted!</p>
+                            <p className="text-white/60 text-xs">
+                              Investor contact details will be available soon. Please check your email or contact support for assistance.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 

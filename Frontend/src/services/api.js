@@ -243,33 +243,50 @@ export const entrepreneurAPI = {
   // Get dashboard metrics for entrepreneur
   getDashboardMetrics: async () => {
     try {
-      // Get all user's ideas first
-      const ideas = await entrepreneurAPI.getMyIdeas();
+      // Get all user's ideas and funding requests
+      const [ideas, fundingResponse] = await Promise.all([
+        entrepreneurAPI.getMyIdeas(),
+        fundingAPI.getUserFundingRequests()
+      ]);
 
-      // Calculate metrics from the ideas
+      // Calculate metrics
       const totalIdeas = ideas.length;
       let fundingReceived = 0;
-      let interestedInvestors = 0;
+      let interestedInvestorsSet = new Set();
 
-      // For each idea, we'd need to get funding and investor interest
-      // For now, we'll return basic metrics
+      // Count interested investors from all ideas
       for (const idea of ideas) {
-        // You can expand this to call specific endpoints for funding/interest data
-        if (idea.fundingReceived) {
-          fundingReceived += idea.fundingReceived;
+        try {
+          // Get investor interests for each idea using the correct endpoint
+          const response = await api.get(`/ideas/${idea._id || idea.id}/investors`);
+          if (response.data && Array.isArray(response.data)) {
+            response.data.forEach(investor => {
+              interestedInvestorsSet.add(investor._id || investor.id);
+            });
+          }
+        } catch (error) {
+          // Continue if individual idea interest fetch fails
+          console.log(`Failed to fetch interests for idea ${idea._id}:`, error.message);
         }
-        if (idea.interestedInvestors) {
-          interestedInvestors += idea.interestedInvestors.length;
-        }
+      }
+
+      // Calculate funding received from accepted requests
+      if (fundingResponse.success && fundingResponse.data) {
+        fundingResponse.data.forEach(request => {
+          if (request.status === 'accepted') {
+            fundingReceived += request.acceptanceTerms?.finalAmount || request.amount || 0;
+          }
+        });
       }
 
       return {
         totalIdeas,
         fundingReceived,
-        interestedInvestors,
+        interestedInvestors: interestedInvestorsSet.size,
         ideas,
       };
     } catch (error) {
+      console.error('Error fetching dashboard metrics:', error);
       return {
         totalIdeas: 0,
         fundingReceived: 0,

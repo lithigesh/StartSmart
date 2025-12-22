@@ -439,6 +439,8 @@ exports.getUserFundingRequests = async (req, res, next) => {
 
     const requests = await FundingRequest.find(filter)
       .populate("idea", "title description category stage")
+      .populate("acceptedBy", "name email role")
+      .populate("investorResponses.investor", "name email")
       .sort({ createdAt: -1 });
 
     res.json({
