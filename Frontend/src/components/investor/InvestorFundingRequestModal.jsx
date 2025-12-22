@@ -186,11 +186,13 @@ const InvestorFundingRequestModal = ({
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
                   {/* Show badge for negotiation tab when there are messages */}
-                  {tab.id === "negotiation" && request.negotiationHistory && request.negotiationHistory.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
-                      {request.negotiationHistory.length}
-                    </span>
-                  )}
+                  {tab.id === "negotiation" &&
+                    request.negotiationHistory &&
+                    request.negotiationHistory.length > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                        {request.negotiationHistory.length}
+                      </span>
+                    )}
                 </button>
               ))}
             </div>
@@ -213,7 +215,9 @@ const InvestorFundingRequestModal = ({
                   messages={request.negotiationHistory || []}
                   currentUserId={user?.id}
                   currentUserRole="investor"
-                  entrepreneurName={request.entrepreneur?.name || "Entrepreneur"}
+                  entrepreneurName={
+                    request.entrepreneur?.name || "Entrepreneur"
+                  }
                   onSendMessage={handleNegotiate}
                   disabled={!["pending", "negotiated"].includes(request.status)}
                   canPropose={true}

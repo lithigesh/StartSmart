@@ -120,7 +120,7 @@ const FundingRequestDetailsModal = ({
       setIsEditing(false);
       setError("");
       setSuccess("");
-      
+
       // Auto-switch to negotiation tab if there are messages
       if (request.negotiationHistory && request.negotiationHistory.length > 0) {
         setActiveTab("negotiation");
@@ -183,7 +183,7 @@ const FundingRequestDetailsModal = ({
           // Update the local request state with the new data
           Object.assign(request, response.data);
         }
-        
+
         // Call onUpdate to refresh the request data in parent component
         if (onUpdate) {
           await onUpdate(request._id || request.id);
@@ -275,7 +275,7 @@ const FundingRequestDetailsModal = ({
     setIsEditing(false);
     setError("");
     setSuccess("");
-    
+
     // Auto-switch to negotiation tab if there are messages
     if (request.negotiationHistory && request.negotiationHistory.length > 0) {
       setActiveTab("negotiation");
@@ -422,11 +422,13 @@ const FundingRequestDetailsModal = ({
                 {tab.icon}
                 {tab.label}
                 {/* Show badge for negotiation tab when there are messages */}
-                {tab.id === "negotiation" && request.negotiationHistory && request.negotiationHistory.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
-                    {request.negotiationHistory.length}
-                  </span>
-                )}
+                {tab.id === "negotiation" &&
+                  request.negotiationHistory &&
+                  request.negotiationHistory.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
+                      {request.negotiationHistory.length}
+                    </span>
+                  )}
               </button>
             ))}
           </div>
@@ -490,9 +492,7 @@ const FundingRequestDetailsModal = ({
                         <div className="text-2xl font-bold text-yellow-400 mb-1">
                           {request.viewedBy ? request.viewedBy.length : 0}
                         </div>
-                        <div className="text-xs text-white/60">
-                          Total Views
-                        </div>
+                        <div className="text-xs text-white/60">Total Views</div>
                       </div>
                     </div>
                   </div>
@@ -509,16 +509,16 @@ const FundingRequestDetailsModal = ({
                     Communicate with investors and send counter-proposals
                   </p>
                 </div>
-                
+
                 <ChatInterface
                   messages={request.negotiationHistory || []}
                   currentUserId={user?.id}
                   currentUserRole="entrepreneur"
-                  entrepreneurName={request.entrepreneur?.name || user?.name || "Entrepreneur"}
-                  onSendMessage={handleSendNegotiation}
-                  disabled={
-                    !["pending", "negotiated"].includes(request.status)
+                  entrepreneurName={
+                    request.entrepreneur?.name || user?.name || "Entrepreneur"
                   }
+                  onSendMessage={handleSendNegotiation}
+                  disabled={!["pending", "negotiated"].includes(request.status)}
                   canPropose={true}
                   height="500px"
                 />
