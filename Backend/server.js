@@ -70,13 +70,44 @@ app.use(errorHandler);
 // Health Check Route
 app.get('/', (req, res) => {
     res.send(`
-        <h2>StartSmart API is running...</h2>
-        <p>View full backend documentation here:</p>
-        <a href="https://github.com/lithigesh/StartSmart/blob/main/Backend/README.md" target="_blank">
-            📄 StartSmart Backend Documentation
-        </a>
+        <div style="
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+            background: #fafafa;
+            color: #333;
+        ">
+            <h2 style="
+                font-size: 28px;
+                margin-bottom: 10px;
+            ">
+                StartSmart API is Running......
+            </h2>
+
+            <p style="
+                font-size: 16px;
+                margin-bottom: 20px;
+            ">
+                Backend service is active and responding.
+            </p>
+
+            <a href="https://github.com/lithigesh/StartSmart/blob/main/Backend/README.md"
+               target="_blank"
+               style="
+                    text-decoration: none;
+                    background: #1976d2;
+                    color: white;
+                    padding: 10px 18px;
+                    border-radius: 6px;
+                    font-size: 15px;
+                    display: inline-block;
+               ">
+                View Backend Documentation
+            </a>
+        </div>
     `);
 });
+
 
 
 const PORT = process.env.PORT || 5001;
