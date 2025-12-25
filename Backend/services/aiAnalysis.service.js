@@ -1,8 +1,10 @@
 // services/aiAnalysis.service.js
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Initialize the Google Generative AI client with the API key from environment variables
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// Initialize OpenRouter API configuration
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+// Model can be configured in .env or defaults to gpt-4o-mini
+// Options: "openai/gpt-4o-mini", "google/gemini-2.0-flash-exp:free", "anthropic/claude-3-haiku"
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
 
 /**
  * Generates a comprehensive SWOT analysis, viability score, and product roadmap for a startup idea.
@@ -13,10 +15,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 async function generateSwotAndRoadmap(ideaData) {
   try {
     // --- MODEL SELECTION ---
-    // Using 'gemini-2.0-flash-thinking-exp' for enhanced reasoning and JSON output
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-thinking-exp",
-    });
+    // Using OpenRouter with 'openai/gpt-4o-mini' for reliable AI analysis
+    // This model is cost-effective and has high availability
 
     // --- ENHANCED COMPREHENSIVE PROMPT ---
     const prompt = `
@@ -112,9 +112,32 @@ async function generateSwotAndRoadmap(ideaData) {
         `;
 
     // --- API CALL ---
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "StartSmart AI Analysis",
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`OpenRouter API error: ${errorData.error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    const text = data.choices[0].message.content;
 
     // --- RESPONSE CLEANING ---
     const jsonString = text
@@ -159,10 +182,10 @@ async function generateSwotAndRoadmap(ideaData) {
     return analysis;
   } catch (error) {
     console.error(
-      "Error calling Gemini API for comprehensive analysis:",
+      "Error calling OpenRouter API for comprehensive analysis:",
       error
     );
-    console.error("Raw response text:", error.message);
+    console.error("Error details:", error.message);
 
     // Return a structured fallback response
     return {
@@ -206,19 +229,89 @@ async function generateSwotAndRoadmap(ideaData) {
 }
 
 /**
- * Fetches mock market trend data for a given keyword.
- * In a real application, this would call an API like Google Trends.
+ * Fetches AI-powered market trend analysis for a given keyword.
+ * Uses OpenRouter API to provide realistic market trend insights.
  * @param {string} keyword - The keyword or category to get trends for.
  * @returns {Promise<Array<object>>} A promise that resolves to an array of trend data.
  */
 async function getMarketTrends(keyword) {
-  // This is a mock response for demonstration purposes.
-  // A real implementation would use a library like 'google-trends-api'.
-  return Promise.resolve([
-    { year: 2021, popularity: Math.floor(Math.random() * 50) + 20 },
-    { year: 2022, popularity: Math.floor(Math.random() * 50) + 30 },
-    { year: 2023, popularity: Math.floor(Math.random() * 50) + 50 },
-  ]);
+  try {
+    const prompt = `
+      As a market research analyst, provide realistic market trend data for the following keyword/industry: "${keyword}"
+      
+      Analyze the market trends from 2021 to 2025, considering:
+      - Market growth patterns
+      - Consumer interest levels
+      - Industry developments
+      - Search trends and public interest
+      - Market maturity and adoption rates
+      
+      Return ONLY a JSON array with this exact structure (no additional text):
+      [
+        { "year": 2021, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2022, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2023, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2024, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2025, "popularity": [0-100 integer], "insight": "brief insight about this year" }
+      ]
+      
+      Popularity scale: 0-20 = Niche/Emerging, 21-40 = Growing, 41-60 = Established, 61-80 = High Growth, 81-100 = Mainstream/Peak
+    `;
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "StartSmart Market Trends",
+      },
+      body: JSON.stringify({
+        model: OPENROUTER_MODEL,
+        messages: [
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      console.error("OpenRouter API error for market trends");
+      throw new Error("API error");
+    }
+
+    const data = await response.json();
+    const text = data.choices[0].message.content;
+
+    // Clean and parse the response
+    const jsonString = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    const trends = JSON.parse(jsonString);
+
+    // Validate the response structure
+    if (Array.isArray(trends) && trends.length > 0) {
+      return trends;
+    } else {
+      throw new Error("Invalid response format");
+    }
+
+  } catch (error) {
+    console.error("Error fetching market trends:", error.message);
+    
+    // Fallback to reasonable default trend data
+    return [
+      { year: 2021, popularity: 40, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2022, popularity: 50, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2023, popularity: 60, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2024, popularity: 70, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2025, popularity: 75, insight: "Market data unavailable - showing baseline trends" },
+    ];
+  }
 }
 
 // Export the functions to be used in other parts of the application
