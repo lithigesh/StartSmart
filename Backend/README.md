@@ -54,7 +54,7 @@ Backend/
 │   ├── report.routes.js             # Report generation endpoints
 │   └── sustainability.routes.js     # Sustainability APIs
 ├── services/                        # External service integrations
-│   ├── aiAnalysis.service.js        # Google Generative AI integration
+│   ├── aiAnalysis.service.js        # OpenRouter AI integration (GPT-4o-mini, Gemini)
 │   ├── email.services.js            # SendGrid email service
 │   ├── notification.service.js      # Notification delivery
 │   └── pdf.service.js               # PDF report generation
@@ -445,14 +445,22 @@ const isInvestor = (req, res, next) => {
 ### AI Analysis Service (`aiAnalysis.service.js`)
 ```javascript
 const analyzeBusinessIdea = async (ideaData) => {
-  // Google Generative AI integration
+  // OpenRouter API integration
+  // Supports multiple AI models: GPT-4o-mini, Gemini 2.0, Claude
   // Comprehensive business analysis
   // Market opportunity assessment
   // Risk evaluation
   // Growth potential analysis
   // Sustainability scoring
+  // AI-powered market trend analysis
 };
 ```
+
+**Supported AI Models**:
+- **GPT-4o-mini** (Default): Cost-effective, reliable analysis
+- **Gemini 2.0 Flash**: Fast processing, free tier available
+- **Claude 3 Haiku**: Advanced reasoning capabilities
+- **GPT-3.5 Turbo**: Budget-friendly option
 
 **Analysis Components**:
 - **Market Viability**: Target market size and competition
@@ -461,6 +469,9 @@ const analyzeBusinessIdea = async (ideaData) => {
 - **Financial Projections**: Revenue and cost estimates
 - **Risk Assessment**: Potential challenges and mitigation
 - **Sustainability Score**: Environmental impact evaluation
+- **Market Trends**: AI-powered industry trend analysis (2021-2025)
+- **SWOT Analysis**: Comprehensive strengths, weaknesses, opportunities, threats
+- **Growth Roadmap**: Strategic milestones and recommendations
 
 ### Email Service (`email.services.js`)
 ```javascript
@@ -526,10 +537,22 @@ npm run seed         # Seed initial data
 ```
 
 ### Environment Configuration
+```bash
+# Required Environment Variables
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/
+JWT_SECRET=your_jwt_secret_key
+OPENROUTER_API_KEY=sk-or-v1-your-api-key
+OPENROUTER_MODEL=openai/gpt-4o-mini  # Optional, defaults to gpt-4o-mini
+SENDGRID_API_KEY=SG.your-sendgrid-key
+VERIFIED_SENDER_EMAIL=your@email.com
+ADMIN_EMAIL=admin@startsmart.com
+ADMIN_PASSWORD=secure_admin_password
+```
+
 ```javascript
 // config/db.js
 const connectDB = async () => {
-  const conn = await mongoose.connect(process.env.MONGODB_URI, {
+  const conn = await mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
