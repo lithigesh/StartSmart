@@ -146,21 +146,6 @@ const AdminDashboard = () => {
         {/* Content area */}
         <div className="flex-1 relative z-10 p-6 overflow-y-auto flex justify-center">
           <div className="w-full max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="mb-8 p-6 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl">
-              <div className="relative">
-                <h1 className="font-manrope font-bold text-3xl text-white mb-2">
-                  {getPageTitle()}
-                </h1>
-                <p className="font-manrope text-white/70">
-                  Welcome back, {user?.name || "Admin"}
-                </p>
-                {/* Floating particles */}
-                <div className="absolute top-2 right-4 w-1 h-1 bg-white/60 rounded-full animate-ping"></div>
-                <div className="absolute bottom-2 right-8 w-1 h-1 bg-white/50 rounded-full animate-bounce"></div>
-              </div>
-            </div>
-
             {/* Route content */}
             <Outlet />
           </div>

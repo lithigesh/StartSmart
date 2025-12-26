@@ -10,9 +10,6 @@ const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
 if (!OPENROUTER_API_KEY) {
   console.error("⚠️  WARNING: OPENROUTER_API_KEY is not configured in .env file!");
   console.error("⚠️  AI analysis will fail without a valid API key.");
-} else {
-  console.log("✅ OpenRouter API key loaded successfully");
-  console.log(`✅ Using model: ${OPENROUTER_MODEL}`);
 }
 
 /**

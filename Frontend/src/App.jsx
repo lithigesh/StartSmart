@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -17,6 +18,7 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage.jsx";
 import AdminIdeasPage from "./pages/admin/AdminIdeasPage.jsx";
 import AdminIdeathonsPage from "./pages/admin/AdminIdeathonsPage.jsx";
 import AdminRegistrationMasterPage from "./pages/admin/AdminRegistrationMasterPage.jsx";
+import AdminIdeathonDetailsPage from "./pages/admin/AdminIdeathonDetailsPage.jsx";
 import AdminFeedbackPage from "./pages/admin/AdminFeedbackPage.jsx";
 import { IdeaSubmissionPage } from "./pages/IdeaSubmission";
 import AppFeedbackPage from "./components/AppFeedbackPage.jsx";
@@ -53,6 +55,31 @@ const App = () => {
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
         <AuthProvider>
+          <Toaster 
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#1f2937',
+                color: '#fff',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                backdropFilter: 'blur(10px)',
+              },
+              success: {
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<LandingPage />} />
@@ -145,6 +172,10 @@ const App = () => {
                 <Route
                   path="registration-master"
                   element={<AdminRegistrationMasterPage />}
+                />
+                <Route
+                  path="ideathon/:id"
+                  element={<AdminIdeathonDetailsPage />}
                 />
                 <Route path="feedback" element={<AdminFeedbackPage />} />
                 <Route index element={<AdminDashboardPage />} />
