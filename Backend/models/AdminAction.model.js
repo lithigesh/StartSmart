@@ -41,4 +41,10 @@ const AdminActionSchema = new mongoose.Schema({
     }
 }, { timestamps: { createdAt: true, updatedAt: false } });
 
+// Indexes for better query performance
+AdminActionSchema.index({ admin: 1, createdAt: -1 });
+AdminActionSchema.index({ actionType: 1, createdAt: -1 });
+AdminActionSchema.index({ targetModel: 1, targetId: 1 });
+AdminActionSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('AdminAction', AdminActionSchema);

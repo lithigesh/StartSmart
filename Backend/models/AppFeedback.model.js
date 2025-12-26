@@ -255,4 +255,6 @@ AppFeedbackSchema.methods.markAsHelpful = function() {
     return this.save();
 };
 
+// Indexes for better query performance (duplicates removed)
+
 module.exports = mongoose.model('AppFeedback', AppFeedbackSchema);

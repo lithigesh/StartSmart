@@ -394,4 +394,19 @@ SustainabilitySchema.methods.getCategoryScores = function() {
     };
 };
 
+// Pre-save middleware to handle legacy field migration
+SustainabilitySchema.pre('save', function(next) {
+    // Migrate submittedBy to admin if admin is not set
+    if (!this.admin && this.submittedBy) {
+        this.admin = this.submittedBy;
+    }
+    
+    // Maintain backward compatibility - sync in both directions
+    if (this.isModified('admin') && !this.submittedBy) {
+        this.submittedBy = this.admin;
+    }
+    
+    next();
+});
+
 module.exports = mongoose.model('Sustainability', SustainabilitySchema);

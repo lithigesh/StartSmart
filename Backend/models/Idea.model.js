@@ -109,4 +109,15 @@ const IdeaSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for better query performance
+IdeaSchema.index({ owner: 1, createdAt: -1 });
+IdeaSchema.index({ status: 1 });
+IdeaSchema.index({ fundingStatus: 1 });
+IdeaSchema.index({ category: 1 });
+IdeaSchema.index({ owner: 1, status: 1 });
+IdeaSchema.index({ 'analysis.score': -1 }); // For sorting by score
+IdeaSchema.index({ createdAt: -1 }); // For recent ideas
+// Text index for search functionality
+IdeaSchema.index({ title: 'text', description: 'text', elevatorPitch: 'text' });
+
 module.exports = mongoose.model("Idea", IdeaSchema);

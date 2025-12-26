@@ -110,6 +110,10 @@ module.exports = {
           "10%, 30%, 50%, 70%, 90%": { transform: "translateX(-5px)" },
           "20%, 40%, 60%, 80%": { transform: "translateX(5px)" },
         },
+        "slide-in-right": {
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -120,6 +124,7 @@ module.exports = {
         "fade-in": "fade-in 0.6s ease-out forwards",
         "slide-up": "slide-up 0.8s ease-out forwards",
         "shake": "shake 0.5s ease-in-out",
+        "slide-in-right": "slide-in-right 0.3s ease-out forwards",
       },
     },
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },

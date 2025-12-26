@@ -111,9 +111,100 @@ exports.submitIdea = async (req, res, next) => {
     // Create notifications for all investors about the new idea
     await NotificationService.createNewIdeaNotification(idea, req.user);
 
+    // Automatically trigger AI analysis in the background
+    // This ensures every new idea gets analyzed without requiring a separate API call
+    (async () => {
+      try {
+        // Update status to analyzing
+        idea.status = "analyzing";
+        await idea.save();
+
+        // Pass the complete idea object to get comprehensive analysis
+        const [aiResult, trendsResult] = await Promise.all([
+          aiService.generateSwotAndRoadmap(idea),
+          aiService.getMarketTrends(idea.category),
+        ]);
+
+        // Process and validate the AI results before storing
+        let roadmap = aiResult.roadmap;
+        if (Array.isArray(roadmap)) {
+          roadmap = roadmap.map((item) => {
+            if (typeof item === "object" && item.milestone) {
+              return `${item.timeframe || "TBD"}: ${item.milestone}`;
+            }
+            return typeof item === "string" ? item : String(item);
+          });
+        }
+
+        // Helper function to convert arrays to formatted strings
+        const formatField = (field) => {
+          if (Array.isArray(field)) {
+            return field.map((item, index) => `${index + 1}. ${item}`).join('\n');
+          }
+          return field;
+        };
+
+        // Process recommendations - convert arrays to strings
+        const recommendations = aiResult.recommendations || {};
+        const processedRecommendations = {
+          immediate_actions: formatField(recommendations.immediate_actions),
+          risk_mitigation: formatField(recommendations.risk_mitigation),
+          growth_strategy: formatField(recommendations.growth_strategy),
+          funding_advice: formatField(recommendations.funding_advice),
+        };
+
+        // Process market assessment - convert arrays to strings
+        const marketAssessment = aiResult.market_assessment || {};
+        const processedMarketAssessment = {
+          market_size_evaluation: formatField(marketAssessment.market_size_evaluation),
+          competitive_positioning: formatField(marketAssessment.competitive_positioning),
+          customer_validation: formatField(marketAssessment.customer_validation),
+        };
+
+        // Store the enhanced analysis results
+        idea.analysis = {
+          score: aiResult.score,
+          swot: aiResult.swot,
+          roadmap: roadmap,
+          trends: trendsResult,
+          recommendations: processedRecommendations,
+          marketAssessment: processedMarketAssessment,
+        };
+        idea.status = "analyzed";
+        await idea.save();
+
+        // Notify the entrepreneur that analysis is complete
+        await NotificationService.createAnalysisCompleteNotification(idea);
+
+        console.log(`AI analysis complete for new idea: ${idea.title}`);
+      } catch (aiError) {
+        console.error(`AI analysis failed for idea ${idea._id}:`, aiError);
+        
+        // Store a basic fallback analysis
+        idea.analysis = {
+          score: 50,
+          swot: {
+            strengths: "Manual analysis required - AI analysis temporarily unavailable",
+            weaknesses: "Manual analysis required - AI analysis temporarily unavailable",
+            opportunities: "Manual analysis required - AI analysis temporarily unavailable",
+            threats: "Manual analysis required - AI analysis temporarily unavailable",
+          },
+          roadmap: [
+            "Q1: Conduct market research and validation",
+            "Q2: Develop MVP and gather user feedback",
+            "Q3: Refine product based on market response",
+            "Q4: Scale and seek additional funding",
+          ],
+          trends: [],
+        };
+        idea.status = "analyzed";
+        await idea.save();
+      }
+    })();
+
     res.status(201).json({
       success: true,
-      message: "Idea submitted successfully",
+      message: "Idea submitted successfully. AI analysis is being processed in the background.",
       data: idea,
     });
   } catch (error) {
@@ -163,6 +254,31 @@ exports.analyzeIdea = async (req, res, next) => {
           });
         }
 
+        // Helper function to convert arrays to formatted strings
+        const formatField = (field) => {
+          if (Array.isArray(field)) {
+            return field.map((item, index) => `${index + 1}. ${item}`).join('\n');
+          }
+          return field;
+        };
+
+        // Process recommendations - convert arrays to strings
+        const recommendations = aiResult.recommendations || {};
+        const processedRecommendations = {
+          immediate_actions: formatField(recommendations.immediate_actions),
+          risk_mitigation: formatField(recommendations.risk_mitigation),
+          growth_strategy: formatField(recommendations.growth_strategy),
+          funding_advice: formatField(recommendations.funding_advice),
+        };
+
+        // Process market assessment - convert arrays to strings
+        const marketAssessment = aiResult.market_assessment || {};
+        const processedMarketAssessment = {
+          market_size_evaluation: formatField(marketAssessment.market_size_evaluation),
+          competitive_positioning: formatField(marketAssessment.competitive_positioning),
+          customer_validation: formatField(marketAssessment.customer_validation),
+        };
+
         // Store the enhanced analysis results
         idea.analysis = {
           score: aiResult.score,
@@ -170,8 +286,8 @@ exports.analyzeIdea = async (req, res, next) => {
           roadmap: roadmap,
           trends: trendsResult,
           // Store additional analysis if provided
-          recommendations: aiResult.recommendations || {},
-          marketAssessment: aiResult.market_assessment || {},
+          recommendations: processedRecommendations,
+          marketAssessment: processedMarketAssessment,
         };
         idea.status = "analyzed";
         await idea.save();
@@ -377,24 +493,13 @@ exports.updateIdea = async (req, res, next) => {
         .json({ message: "Not authorized to update this idea" });
     }
 
-    // Allow editing for draft and submitted status, but not for analyzed or beyond
-    if (idea.status !== "draft" && idea.status !== "submitted") {
-      return res
-        .status(400)
-        .json({
-          message: "Cannot update an idea that is being or has been analyzed.",
-        });
-    }
+    // Allow editing all fields regardless of status
+    // Users can edit their ideas even after analysis
 
     // Update all allowed fields
     idea.title = req.body.title || idea.title;
     idea.description = req.body.description || idea.description;
     idea.category = req.body.category || idea.category;
-    idea.stage = req.body.stage || idea.stage;
-    idea.fundingGoal =
-      req.body.fundingGoal !== undefined
-        ? req.body.fundingGoal
-        : idea.fundingGoal;
     idea.elevatorPitch = req.body.elevatorPitch || idea.elevatorPitch;
     idea.targetAudience = req.body.targetAudience || idea.targetAudience;
     idea.problemStatement = req.body.problemStatement || idea.problemStatement;

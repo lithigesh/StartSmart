@@ -134,5 +134,6 @@ IdeathonSchema.index({ title: 'text', theme: 'text', organizers: 'text' });
 IdeathonSchema.index({ startDate: 1, endDate: 1 });
 IdeathonSchema.index({ status: 1 });
 IdeathonSchema.index({ location: 1 });
+IdeathonSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Ideathon', IdeathonSchema);

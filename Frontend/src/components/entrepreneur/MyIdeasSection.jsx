@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import IdeaCard from "../IdeaCard";
 import IdeasListCharts from "../charts/IdeasListCharts";
-import { FaPlus, FaLightbulb, FaSpinner, FaChartBar } from "react-icons/fa";
+import { FaPlus, FaLightbulb, FaSpinner, FaChartBar, FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from "react-icons/fa";
 import { entrepreneurAPI, ideasAPI } from "../../services/api";
 import { useNotifications } from "../../hooks/useNotifications";
 
@@ -18,11 +18,13 @@ const MyIdeasSection = ({ showTitle = true }) => {
     title: "",
     description: "",
     category: "",
-    stage: "Planning",
-    fundingGoal: "",
+    elevatorPitch: "",
+    targetAudience: "",
+    problemStatement: "",
+    solution: "",
   });
   
-  const { addNotification } = useNotifications();
+  const { addNotification, toastNotifications, removeToastNotification } = useNotifications();
 
   // Fetch user's ideas on component mount
   useEffect(() => {
@@ -86,16 +88,27 @@ const MyIdeasSection = ({ showTitle = true }) => {
   };
 
   // Handle edit idea
-  const handleEditIdea = (idea) => {
-    setEditingIdea(idea);
-    setEditIdea({
-      title: idea.title,
-      description: idea.description,
-      category: idea.category,
-      stage: idea.stage || "Planning",
-      fundingGoal: idea.fundingGoal || "",
-    });
-    setShowEditModal(true);
+  const handleEditIdea = async (idea) => {
+    try {
+      // Fetch full idea details to get all fields
+      const response = await ideasAPI.getIdeaById(idea.id);
+      const fullIdea = response.data || response;
+      
+      setEditingIdea(fullIdea);
+      setEditIdea({
+        title: fullIdea.title || "",
+        description: fullIdea.description || "",
+        category: fullIdea.category || "",
+        elevatorPitch: fullIdea.elevatorPitch || "",
+        targetAudience: fullIdea.targetAudience || "",
+        problemStatement: fullIdea.problemStatement || "",
+        solution: fullIdea.solution || "",
+      });
+      setShowEditModal(true);
+    } catch (error) {
+      console.error("Error loading idea details:", error);
+      addNotification("Failed to load idea details", "error");
+    }
   };
 
   // Handle update idea
@@ -103,25 +116,35 @@ const MyIdeasSection = ({ showTitle = true }) => {
     e.preventDefault();
     try {
       const ideaData = {
-        ...editIdea,
-        fundingGoal: parseFloat(editIdea.fundingGoal) || 0,
+        title: editIdea.title.trim(),
+        description: editIdea.description.trim(),
+        category: editIdea.category.trim(),
+        elevatorPitch: editIdea.elevatorPitch.trim(),
+        targetAudience: editIdea.targetAudience.trim(),
+        problemStatement: editIdea.problemStatement.trim(),
+        solution: editIdea.solution.trim(),
       };
       
-      await ideasAPI.updateIdea(editingIdea.id, ideaData);
-      addNotification("Idea updated successfully!", "success");
+      const ideaId = editingIdea._id || editingIdea.id;
+      const response = await ideasAPI.updateIdea(ideaId, ideaData);
+      addNotification(`"${editIdea.title}" updated successfully!`, "success");
       setShowEditModal(false);
       setEditingIdea(null);
       setEditIdea({
         title: "",
         description: "",
         category: "",
-        stage: "Planning",
-        fundingGoal: "",
+        elevatorPitch: "",
+        targetAudience: "",
+        problemStatement: "",
+        solution: "",
       });
-      fetchMyIdeas(); // Refresh the ideas list
+      // Refresh the ideas list after a short delay
+      setTimeout(() => fetchMyIdeas(), 500);
     } catch (error) {
       console.error("Error updating idea:", error);
-      addNotification("Failed to update idea", "error");
+      const errorMessage = error.message || "Failed to update idea";
+      addNotification(errorMessage, "error");
     }
   };
 
@@ -131,12 +154,16 @@ const MyIdeasSection = ({ showTitle = true }) => {
     
     if (window.confirm(confirmMessage)) {
       try {
-        await ideasAPI.deleteIdea(ideaId);
+        const response = await ideasAPI.deleteIdea(ideaId);
         addNotification(`"${ideaTitle}" deleted successfully!`, "success");
-        fetchMyIdeas(); // Refresh the ideas list
+        // Immediately remove from local state for instant feedback
+        setMyIdeas(prev => prev.filter(idea => idea.id !== ideaId));
+        // Also refresh from server
+        setTimeout(() => fetchMyIdeas(), 500);
       } catch (error) {
         console.error("Error deleting idea:", error);
-        addNotification(`Failed to delete "${ideaTitle}". Please try again.`, "error");
+        const errorMessage = error.message || `Failed to delete "${ideaTitle}"`;
+        addNotification(errorMessage, "error");
       }
     }
   };
@@ -297,6 +324,36 @@ const MyIdeasSection = ({ showTitle = true }) => {
         </div>
       )}
 
+      {/* Toast Notifications */}
+      <div className="fixed bottom-4 right-4 z-50 space-y-2">
+        {toastNotifications.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg backdrop-blur-xl border animate-slide-up min-w-[300px] max-w-md ${
+              toast.type === 'success'
+                ? 'bg-green-500/10 border-green-500/30 text-green-400'
+                : toast.type === 'error'
+                ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                : toast.type === 'warning'
+                ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+                : 'bg-blue-500/10 border-blue-500/30 text-blue-400'
+            }`}
+          >
+            {toast.type === 'success' && <FaCheckCircle className="w-5 h-5 flex-shrink-0" />}
+            {toast.type === 'error' && <FaExclamationCircle className="w-5 h-5 flex-shrink-0" />}
+            {toast.type === 'warning' && <FaExclamationCircle className="w-5 h-5 flex-shrink-0" />}
+            {toast.type === 'info' && <FaInfoCircle className="w-5 h-5 flex-shrink-0" />}
+            <span className="flex-1 font-medium">{toast.message}</span>
+            <button
+              onClick={() => removeToastNotification(toast.id)}
+              className="hover:opacity-70 transition-opacity"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       {/* Edit Idea Modal */}
       {showEditModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -304,9 +361,9 @@ const MyIdeasSection = ({ showTitle = true }) => {
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
             <h2 className="text-2xl font-bold text-white mb-6">Edit Idea</h2>
-            <form onSubmit={handleUpdateIdea} className="space-y-4">
+            <form onSubmit={handleUpdateIdea} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Title</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Title *</label>
                 <input
                   type="text"
                   value={editIdea.title}
@@ -318,19 +375,31 @@ const MyIdeasSection = ({ showTitle = true }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Description</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Elevator Pitch *</label>
                 <textarea
-                  value={editIdea.description}
-                  onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
+                  value={editIdea.elevatorPitch}
+                  onChange={(e) => setEditIdea({ ...editIdea, elevatorPitch: e.target.value })}
                   className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
-                  placeholder="Describe your idea"
-                  rows="4"
+                  placeholder="A brief pitch of your idea"
+                  rows="2"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Category</label>
+                <label className="block text-sm font-medium text-white/70 mb-2">Detailed Description *</label>
+                <textarea
+                  value={editIdea.description}
+                  onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                  placeholder="Detailed description of your idea"
+                  rows="3"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/70 mb-2">Category *</label>
                 <input
                   type="text"
                   value={editIdea.category}
@@ -342,28 +411,38 @@ const MyIdeasSection = ({ showTitle = true }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Stage</label>
-                <select
-                  value={editIdea.stage}
-                  onChange={(e) => setEditIdea({ ...editIdea, stage: e.target.value })}
+                <label className="block text-sm font-medium text-white/70 mb-2">Target Audience *</label>
+                <input
+                  type="text"
+                  value={editIdea.targetAudience}
+                  onChange={(e) => setEditIdea({ ...editIdea, targetAudience: e.target.value })}
                   className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
-                >
-                  <option value="Planning">Planning</option>
-                  <option value="Development">Development</option>
-                  <option value="Testing">Testing</option>
-                  <option value="Launch">Launch</option>
-                </select>
+                  placeholder="Who is your target audience?"
+                  required
+                />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">Funding Goal ($)</label>
-                <input
-                  type="number"
-                  value={editIdea.fundingGoal}
-                  onChange={(e) => setEditIdea({ ...editIdea, fundingGoal: e.target.value })}
+                <label className="block text-sm font-medium text-white/70 mb-2">Problem Statement *</label>
+                <textarea
+                  value={editIdea.problemStatement}
+                  onChange={(e) => setEditIdea({ ...editIdea, problemStatement: e.target.value })}
                   className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
-                  placeholder="Enter funding goal"
-                  min="0"
+                  placeholder="What problem does your idea solve?"
+                  rows="2"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-white/70 mb-2">Solution *</label>
+                <textarea
+                  value={editIdea.solution}
+                  onChange={(e) => setEditIdea({ ...editIdea, solution: e.target.value })}
+                  className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                  placeholder="How does your idea solve the problem?"
+                  rows="2"
+                  required
                 />
               </div>
 

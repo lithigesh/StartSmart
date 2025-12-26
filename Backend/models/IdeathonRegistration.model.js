@@ -143,5 +143,12 @@ const IdeathonRegistrationSchema = new mongoose.Schema({
 
 // Prevent a user from registering for the same ideathon more than once
 IdeathonRegistrationSchema.index({ ideathon: 1, entrepreneur: 1 }, { unique: true });
+// Additional indexes for common query patterns
+IdeathonRegistrationSchema.index({ ideathon: 1, status: 1 });
+IdeathonRegistrationSchema.index({ entrepreneur: 1 });
+IdeathonRegistrationSchema.index({ idea: 1 });
+IdeathonRegistrationSchema.index({ registeredBy: 1 });
+IdeathonRegistrationSchema.index({ progressStatus: 1 });
+IdeathonRegistrationSchema.index({ deadlineDate: 1 });
 
 module.exports = mongoose.model('IdeathonRegistration', IdeathonRegistrationSchema);

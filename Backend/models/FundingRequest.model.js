@@ -151,6 +151,13 @@ FundingRequestSchema.index({ status: 1 });
 FundingRequestSchema.index({ idea: 1 });
 FundingRequestSchema.index({ "invitedInvestors.investor": 1 });
 FundingRequestSchema.index({ accessType: 1, status: 1 });
+// Additional compound indexes for common query patterns
+FundingRequestSchema.index({ entrepreneur: 1, status: 1 });
+FundingRequestSchema.index({ idea: 1, status: 1 });
+FundingRequestSchema.index({ viewedBy: 1 });
+FundingRequestSchema.index({ "investorResponses.investor": 1 });
+FundingRequestSchema.index({ "negotiationHistory.investor": 1 });
+FundingRequestSchema.index({ createdAt: -1 });
 
 // Pre-save middleware to calculate valuation
 FundingRequestSchema.pre("save", function (next) {

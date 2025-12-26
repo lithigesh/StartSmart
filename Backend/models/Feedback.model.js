@@ -132,7 +132,7 @@ FeedbackSchema.methods.canBeEdited = function() {
     return this.status !== 'reviewed' && this.createdAt > oneDayAgo;
 };
 
-// Pre-save middleware for backward compatibility
+// Pre-save middleware for backward compatibility and legacy field migration
 FeedbackSchema.pre('save', function(next) {
     // Handle backward compatibility
     if (this.investor && !this.admin) {
@@ -142,6 +142,15 @@ FeedbackSchema.pre('save', function(next) {
     if (this.comment && !this.comments) {
         this.comments = this.comment;
     }
+    
+    // Sync fields to maintain backward compatibility
+    if (this.isModified('admin') && !this.investor) {
+        this.investor = this.admin;
+    }
+    if (this.isModified('comments') && !this.comment) {
+        this.comment = this.comments;
+    }
+    
     if (this.isNew && !this.status) {
         this.status = 'submitted';
     }

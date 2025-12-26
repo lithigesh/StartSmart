@@ -141,4 +141,8 @@ const BusinessAimSchema = new mongoose.Schema({
     collection: 'businessAims' // Explicitly specify collection name
 });
 
+// Indexes for better query performance
+BusinessAimSchema.index({ status: 1 });
+BusinessAimSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('BusinessAim', BusinessAimSchema);

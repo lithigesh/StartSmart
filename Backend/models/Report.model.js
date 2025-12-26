@@ -10,4 +10,8 @@ const ReportSchema = new mongoose.Schema({
     fileUrl: { type: String, required: true }, // URL to the PDF stored in a service like AWS S3
 }, { timestamps: { createdAt: true, updatedAt: false } });
 
+// Indexes for better query performance
+ReportSchema.index({ idea: 1, reportType: 1 });
+ReportSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Report', ReportSchema);

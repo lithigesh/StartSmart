@@ -6,6 +6,15 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 // Options: "openai/gpt-4o-mini", "google/gemini-2.0-flash-exp:free", "anthropic/claude-3-haiku"
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
 
+// Validate API key on module load
+if (!OPENROUTER_API_KEY) {
+  console.error("⚠️  WARNING: OPENROUTER_API_KEY is not configured in .env file!");
+  console.error("⚠️  AI analysis will fail without a valid API key.");
+} else {
+  console.log("✅ OpenRouter API key loaded successfully");
+  console.log(`✅ Using model: ${OPENROUTER_MODEL}`);
+}
+
 /**
  * Generates a comprehensive SWOT analysis, viability score, and product roadmap for a startup idea.
  * Now enhanced to use all comprehensive data from the idea submission form.
@@ -13,6 +22,10 @@ const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
  * @returns {Promise<object>} A promise that resolves to an object containing the enhanced analysis.
  */
 async function generateSwotAndRoadmap(ideaData) {
+  // Check if API key is available
+  if (!OPENROUTER_API_KEY) {
+    throw new Error("OpenRouter API key is not configured. Please add OPENROUTER_API_KEY to your .env file.");
+  }
   try {
     // --- MODEL SELECTION ---
     // Using OpenRouter with 'openai/gpt-4o-mini' for reliable AI analysis
@@ -235,6 +248,18 @@ async function generateSwotAndRoadmap(ideaData) {
  * @returns {Promise<Array<object>>} A promise that resolves to an array of trend data.
  */
 async function getMarketTrends(keyword) {
+  // Check if API key is available
+  if (!OPENROUTER_API_KEY) {
+    console.warn("OpenRouter API key not configured, returning default trends");
+    return [
+      { year: 2021, popularity: 45 },
+      { year: 2022, popularity: 55 },
+      { year: 2023, popularity: 65 },
+      { year: 2024, popularity: 75 },
+      { year: 2025, popularity: 85 },
+    ];
+  }
+
   try {
     const prompt = `
       As a market research analyst, provide realistic market trend data for the following keyword/industry: "${keyword}"

@@ -12,5 +12,8 @@ const InvestorInterestSchema = new mongoose.Schema({
 
 // Ensure an investor can only have one interest status per idea
 InvestorInterestSchema.index({ idea: 1, investor: 1 }, { unique: true });
+// Additional indexes for common query patterns
+InvestorInterestSchema.index({ investor: 1, status: 1, updatedAt: -1 });
+InvestorInterestSchema.index({ idea: 1, status: 1 });
 
 module.exports = mongoose.model('InvestorInterest', InvestorInterestSchema);

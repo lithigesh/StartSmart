@@ -157,10 +157,7 @@ TeamResourceSchema.virtual('ownerDetails', {
   select: 'name email'
 });
 
-// Index for faster queries
-TeamResourceSchema.index({ ideaId: 1 });
-TeamResourceSchema.index({ owner: 1 });
-TeamResourceSchema.index({ createdAt: -1 });
+// Index for faster queries (other indexes defined at the end)
 
 // Pre-save middleware to validate team member uniqueness
 TeamResourceSchema.pre('save', function(next) {
@@ -203,5 +200,12 @@ TeamResourceSchema.methods.hasTeamMember = function(email) {
     member.email && member.email.toLowerCase() === email.toLowerCase()
   );
 };
+
+// Indexes for better query performance
+TeamResourceSchema.index({ ideaId: 1 }, { unique: true });
+TeamResourceSchema.index({ owner: 1 });
+TeamResourceSchema.index({ coreSkills: 1 });
+TeamResourceSchema.index({ resourcesNeeded: 1 });
+TeamResourceSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('TeamResource', TeamResourceSchema);

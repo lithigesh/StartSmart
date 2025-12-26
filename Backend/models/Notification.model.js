@@ -42,4 +42,13 @@ const NotificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for better query performance
+NotificationSchema.index({ user: 1, createdAt: -1 });
+NotificationSchema.index({ user: 1, read: 1 });
+NotificationSchema.index({ type: 1 });
+NotificationSchema.index({ relatedIdea: 1 });
+NotificationSchema.index({ relatedUser: 1 });
+// TTL index to auto-delete expired notifications
+NotificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 module.exports = mongoose.model("Notification", NotificationSchema);

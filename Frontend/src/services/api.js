@@ -220,6 +220,27 @@ export const ideasAPI = {
       };
     }
   },
+
+  // Update an idea
+  updateIdea: async (ideaId, ideaData) => {
+    const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(ideaData),
+    });
+    const result = await handleResponse(response);
+    return result;
+  },
+
+  // Delete an idea
+  deleteIdea: async (ideaId) => {
+    const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    const result = await handleResponse(response);
+    return result;
+  },
 };
 
 // Entrepreneur specific API
@@ -326,25 +347,6 @@ export const entrepreneurAPI = {
   // Get interested investors for an idea
   getInterestedInvestors: async (ideaId) => {
     const response = await fetch(`${API_URL}/api/ideas/${ideaId}/investors`, {
-      headers: getAuthHeaders(),
-    });
-    return handleResponse(response);
-  },
-
-  // Update an idea
-  updateIdea: async (ideaId, ideaData) => {
-    const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {
-      method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify(ideaData),
-    });
-    return handleResponse(response);
-  },
-
-  // Delete an idea
-  deleteIdea: async (ideaId) => {
-    const response = await fetch(`${API_URL}/api/ideas/${ideaId}`, {
-      method: "DELETE",
       headers: getAuthHeaders(),
     });
     return handleResponse(response);
