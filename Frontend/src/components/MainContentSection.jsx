@@ -5,7 +5,6 @@ import {
   FaChartLine,
   FaUsers,
   FaFileAlt,
-  FaBell,
   FaSearch,
 } from "react-icons/fa";
 import {
@@ -43,40 +42,40 @@ const SectionTitle = ({ title, description, className = "" }) => (
 
 const FEATURES_DATA = [
   {
-    title: "Investor Dashboard & Matching",
+    title: "AI-Powered SWOT Analysis",
     description:
-      "Investors can browse curated startup ideas, view detailed analysis, and express interest.",
-    icon: <FaUsers />,
-  },
-  {
-    title: "AI-Powered Report and Analytics",
-    description:
-      "Generate detailed PDF reports with SWOT analysis, market insights, and recommendations. Track your progress and share professional documentation with stakeholders.",
+      "Get instant, comprehensive SWOT analysis powered by advanced AI. Identify strengths, weaknesses, opportunities, and threats for your startup idea with detailed insights.",
     icon: <FaChartLine />,
   },
   {
-    title: "Interest Status Tracking",
+    title: "Market Research & Comparison",
     description:
-      "Real-time tracking of investor interests. Monitor which investors have expressed interest.",
+      "Conduct thorough market research and competitor analysis. Compare your idea with existing solutions and identify unique value propositions in the market.",
     icon: <FaSearch />,
   },
   {
-    title: "Smart Idea Validation",
+    title: "Ideathon Participation",
     description:
-      "A validation system that scores your startup idea based on market demand, competition analysis, and feasibility. Refine your concept before pitching to investors.",
+      "Participate in startup competitions and ideathons to showcase your ideas. Win prizes, gain recognition, and accelerate your startup's growth through competitive events.",
     icon: <FaFileAlt />,
   },
   {
-    title: "Interactive Idea Feed",
+    title: "Investor Matching Platform",
     description:
-      "Investors browse through a curated feed of startup ideas with filtering. Discover promising opportunities efficiently.",
+      "Connect with investors through our intelligent matching system. Investors can browse ideas, express interest, and initiate funding negotiations directly.",
+    icon: <FaUsers />,
+  },
+  {
+    title: "Comprehensive Idea Submission",
+    description:
+      "Submit detailed startup ideas with business plans, market research, financial projections, and supporting documents. Track your ideas through every stage.",
     icon: <FaLightbulb />,
   },
   {
-    title: "Notification System",
+    title: "Funding Request & Negotiation",
     description:
-      "Automated notifications keep both entrepreneurs and investors informed about status updates, new matches, interest expressions.",
-    icon: <FaBell />,
+      "Request funding with detailed proposals, negotiate terms with investors through our messaging system, and track funding status in real-time.",
+    icon: <FaDollarSign />,
   },
 ];
 
@@ -132,8 +131,8 @@ export const MainContentSection = () => {
 
       <div className="flex flex-col items-center gap-8 md:gap-12 w-full relative z-10">
         <SectionTitle
-          title="How Start Smart Works"
-          description="Our platform bridges the gap between innovative entrepreneurs and forward-thinking investors. Experience a seamless journey from idea submission to funding through our intelligent dual-sided ecosystem."
+          title="How StartSmart Works"
+          description="Our platform connects innovative entrepreneurs with forward-thinking investors through AI-powered analysis and comprehensive ideathon management. Experience a seamless journey from idea submission to funding."
         />
       </div>
 
@@ -173,10 +172,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Submit Your Idea
+                  Submit Your Startup Idea
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Complete our comprehensive idea form with attachments
+                  Complete our detailed submission form with business plans, market research, and financial projections
                 </p>
               </div>
             </div>
@@ -189,10 +188,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Get AI Analysis
+                  Get AI-Powered Analysis
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Receive SWOT analysis, viability scores, and insights
+                  Receive comprehensive SWOT analysis, viability scores, market insights, and product roadmaps instantly
                 </p>
               </div>
             </div>
@@ -205,10 +204,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Connect with Investors
+                  Connect & Request Funding
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Get notified when investors express interest in your idea
+                  Browse investors, submit funding requests, and negotiate terms through our messaging platform
                 </p>
               </div>
             </div>
@@ -221,10 +220,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Download Reports
+                  Download Professional Reports
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Get comprehensive PDF reports for stakeholders
+                  Generate PDF reports with complete analysis and insights to share with stakeholders
                 </p>
               </div>
             </div>
@@ -265,10 +264,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Browse Idea Feed
+                  Browse Startup Ideas
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Explore curated startup ideas with AI analysis
+                  Explore curated startup ideas with complete details, business plans, and AI-powered analysis
                 </p>
               </div>
             </div>
@@ -281,10 +280,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  View Detailed Analysis
+                  Review AI Analysis & Reports
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Access comprehensive reports and insights
+                  Access comprehensive SWOT analysis, viability scores, market insights, and PDF reports
                 </p>
               </div>
             </div>
@@ -297,10 +296,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Express Interest
+                  Express Interest & Negotiate
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Mark promising ideas and notify entrepreneurs
+                  Show interest in promising ideas and negotiate funding terms through secure messaging
                 </p>
               </div>
             </div>
@@ -313,10 +312,10 @@ export const MainContentSection = () => {
               </div>
               <div>
                 <h4 className="font-manrope text-text-primary font-medium transition-colors duration-300 ease-in-out group-hover:text-gray-200">
-                  Track Investments
+                  Participate in Ideathons
                 </h4>
                 <p className="font-manrope text-gray-400 text-sm transition-colors duration-300 ease-in-out group-hover:text-gray-300">
-                  Monitor your investment pipeline and opportunities
+                  Join startup competitions and discover innovative teams and breakthrough ideas
                 </p>
               </div>
             </div>
