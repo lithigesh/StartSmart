@@ -338,19 +338,18 @@ exports.analyzeIdea = async (req, res, next) => {
 };
 
 // @desc    Get all ideas for a specific user
-// @route   GET /api/ideas/user/:userId
+// @route   GET /api/ideas/user
 exports.getUserIdeas = async (req, res, next) => {
   try {
-    // Ensure the logged-in user is requesting their own ideas
-    if (req.user.id !== req.params.userId) {
-      return res
-        .status(403)
-        .json({ message: "You can only view your own ideas." });
-    }
-    const ideas = await Idea.find({ owner: req.params.userId }).sort({
+    // Get ideas for the logged-in user from req.user.id (set by auth middleware)
+    const ideas = await Idea.find({ owner: req.user.id }).sort({
       createdAt: -1,
     });
-    res.json(ideas);
+    res.json({
+      success: true,
+      data: ideas,
+      message: 'Ideas fetched successfully'
+    });
   } catch (error) {
     next(error);
   }

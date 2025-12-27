@@ -23,12 +23,18 @@ Frontend/
 │   │   │   ├── SideBar.jsx          # Navigation sidebar for entrepreneur dashboard
 │   │   │   ├── DashboardCard.jsx    # Metric display cards
 │   │   │   ├── IdeaCard.jsx         # Individual idea display component
-│   │   │   ├── NotificationsPopup.jsx # Real-time notification popup
+│   │   │   ├── IdeathonRegistrationForm.jsx  # Registration modal with toast notifications
+│   │   │   ├── RegistrationSuccessScreen.jsx # Success confirmation screen
+│   │   │   ├── MyRegisteredIdeathons.jsx     # Registered competitions with withdraw option
+│   │   │   ├── NotificationsPopup.jsx        # Real-time notification popup
 │   │   │   └── index.js             # Component exports
 │   │   ├── investor/                # Investor-specific components
 │   │   │   ├── IdeasSection.jsx     # Ideas browsing interface
 │   │   │   ├── ErrorMessage.jsx     # Error display component
 │   │   │   └── index.js             # Component exports
+│   │   ├── admin/                   # Admin-specific components
+│   │   │   ├── IdeathonRegistrationMaster.jsx  # Ideathon management (title changed from registration master)
+│   │   │   └── AdminIdeathonDetailsPage.jsx    # Detailed view with contact info
 │   │   ├── EmptyState.jsx           # Empty data state component
 │   │   ├── ErrorBoundary.jsx        # React error boundary wrapper
 │   │   ├── Footer.jsx               # Site footer component
@@ -40,19 +46,25 @@ Frontend/
 │   │   └── RoleBasedRoute.jsx       # Role-specific route protection
 │   ├── pages/                       # Page-level components
 │   │   ├── entrepreneur/            # Entrepreneur dashboard pages
-│   │   │   ├── EntrepreneurDashboard.jsx      # Main entrepreneur dashboard
-│   │   │   ├── EntrepreneurDashboardPage.jsx  # Enhanced dashboard view
-│   │   │   ├── CollaborationsPage.jsx         # Team collaboration interface
-│   │   │   └── IdeathonsPage.jsx              # Competition participation
+│   │   │   ├── EntrepreneurLayout.jsx         # Dashboard layout wrapper
+│   │   │   ├── OverviewPage.jsx               # Main entrepreneur dashboard
+│   │   │   ├── MyIdeasPage.jsx                # Ideas management
+│   │   │   ├── FundingPage.jsx                # Funding requests
+│   │   │   ├── InvestorsPage.jsx              # Investor discovery
+│   │   │   ├── IdeathonsPage.jsx              # Competition listing
+│   │   │   ├── IdeathonDetailsPage.jsx        # Detailed ideathon view (NEW)
+│   │   │   ├── NotificationsPage.jsx          # Notification center
+│   │   │   └── FeedbackPage.jsx               # Feedback interface
 │   │   ├── investor/                # Investor dashboard pages
-│   │   │   └── InvestorDashboard.jsx # Main investor dashboard
+│   │   │   ├── InvestorDashboard.jsx          # Main investor dashboard
+│   │   │   └── InvestorDealsPage.jsx          # Deal pipeline
 │   │   ├── admin/                   # Admin dashboard pages
-│   │   │   ├── AdminDashboardPage.jsx        # Admin overview dashboard
-│   │   │   ├── AdminIdeasPage.jsx            # Idea management interface
-│   │   │   ├── AdminIdeathonsPage.jsx        # Competition management
-│   │   │   ├── AdminUsersPage.jsx            # User account management
-│   │   │   ├── AdminFeedbackPage.jsx         # Feedback collection
-│   │   │   └── AdminSustainabilityPage.jsx   # Sustainability tracking
+│   │   │   ├── AdminDashboardPage.jsx         # Admin overview dashboard
+│   │   │   ├── AdminIdeasPage.jsx             # Idea management interface
+│   │   │   ├── AdminIdeathonsPage.jsx         # Competition management
+│   │   │   ├── AdminIdeathonDetailsPage.jsx   # Registration details view
+│   │   │   ├── AdminUsersPage.jsx             # User account management
+│   │   │   └── AdminFeedbackPage.jsx          # Feedback collection
 │   │   ├── IdeaSubmission/          # Multi-step idea submission
 │   │   │   ├── IdeaSubmissionPage.jsx        # Main submission workflow
 │   │   │   └── components/                   # Form components
@@ -213,12 +225,42 @@ Frontend/
 #### `IdeathonsPage.jsx`
 **Purpose**: Competition participation platform
 **Features**:
-- Browse available competitions
-- Register for ideathons
-- Submit competition entries
-- Track competition progress
-- View results and rankings
-- Prize distribution
+- Browse available competitions with search and filters
+- View details button for comprehensive ideathon information
+- Register for ideathons with validation
+- View registered ideathons with withdrawal option
+- Track competition progress and status
+- Real-time toast notifications for actions
+- Responsive card-based layout
+
+**Recent Updates**:
+- Added "View Details" button above "Register Now"
+- Navigation to dedicated `/entrepreneur/ideathon/:id` details page
+- Fixed API endpoint from `/api/ideathon-registrations/my-registrations` to `/api/ideathons/my-registrations`
+- Added toast notifications for successful registration
+- Improved error handling for duplicate registrations
+
+#### `IdeathonDetailsPage.jsx` (New)
+**Purpose**: Comprehensive ideathon information display
+**Features**:
+- Full ideathon description and overview
+- Submission format requirements display (badges)
+- Eligibility criteria section
+- Judging criteria breakdown
+- Contact information for organizers
+- Prize pool and participant count
+- Location and date information
+- Registration button with modal integration
+- Registration status indicator
+- Back navigation to ideathons list
+
+**Workflow**:
+1. User clicks "View Details" on ideathon card
+2. Navigates to `/entrepreneur/ideathon/:id`
+3. Views complete ideathon information
+4. Can register directly from details page
+5. Registration modal opens on same page
+6. Success notification and status update on registration
 
 ### 💼 Investor Pages
 
@@ -272,6 +314,19 @@ Frontend/
 - Revenue and performance metrics
 - Security and compliance monitoring
 
+**Navigation Items**:
+- Dashboard - Overview and analytics
+- Manage Users - User account management
+- Manage Ideas - Idea content moderation
+- Ideathons - Competition management
+- Ideas Feedback - Feedback collection
+
+**Recent Updates**:
+- Removed "Registration Master" page from admin navigation
+- Streamlined sidebar menu for better UX
+- Enhanced glassmorphism design with improved contrast
+- Added real-time activity monitoring
+
 #### `AdminUsersPage.jsx`
 **Purpose**: User account management
 **Features**:
@@ -296,19 +351,28 @@ Frontend/
 **Purpose**: Competition management system
 **Features**:
 - Create and manage ideathons
-- Set competition parameters
+- Set competition parameters (description, eligibility, judging criteria)
 - Manage registrations and submissions
-- Configure judging criteria
+- Configure submission formats (Pitch Deck, Prototype, Business Document, etc.)
+- View team registration details with contact information
 - Prize distribution management
 - Performance analytics
+- Direct access to registration details without separate master page
 
 **Workflow**:
-1. Create Competition → Set up ideathon parameters
-2. Registration → Manage participant enrollment
-3. Submissions → Monitor and moderate entries
-4. Judging → Coordinate evaluation process
-5. Results → Announce winners and distribute prizes
-6. Analytics → Review competition performance
+1. Create Competition → Set up ideathon with all details
+2. Configure Requirements → Set eligibility, judging criteria, submission formats
+3. Registration → View and manage participant enrollment with contact details
+4. Monitoring → Track submissions and progress
+5. Evaluation → Coordinate judging process
+6. Results → Announce winners and distribute prizes
+7. Analytics → Review competition performance
+
+**Recent Updates**:
+- Integrated registration management directly in ideathon details
+- Removed separate "Registration Master" page
+- Enhanced contact detail display for registered teams
+- Improved navigation and workflow efficiency
 
 #### `AdminSustainabilityPage.jsx`
 **Purpose**: Environmental impact monitoring

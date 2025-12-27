@@ -18,7 +18,8 @@ const {
     updateMilestone,
     submitFinalSubmission,
     getFinalSubmission,
-    updateFinalSubmission
+    updateFinalSubmission,
+    withdrawFromIdeathon
 } = require('../controllers/ideathon.controller');
 
 // Admin routes for managing ideathons
@@ -35,6 +36,7 @@ router.put('/:id/registrations/:registrationId', protect, updateRegistration);
 router.post('/:id/register', protect, registerForIdeathon); // Allow both admin and entrepreneur
 router.get('/:id/registrations', protect, isAdmin, getIdeathonRegistrations);
 router.put('/:id/results', protect, isAdmin, postIdeathonWinners);
+router.delete('/registrations/:registrationId', protect, withdrawFromIdeathon);
 
 // Progress tracking routes
 router.put('/registrations/:registrationId/progress', protect, updateRegistrationProgress);

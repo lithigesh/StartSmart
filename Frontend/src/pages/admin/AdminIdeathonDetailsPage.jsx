@@ -479,7 +479,8 @@ const AdminIdeathonDetailsPage = () => {
                         {registration.teamMembers?.length || 0} Members
                       </span>
                     </div>
-                    <p className="text-white/60 text-sm">Team Lead: {registration.registeredBy?.name} ({registration.registeredBy?.email})</p>
+                    <p className="text-white/60 text-sm mb-1">Team Lead: {registration.registeredBy?.name}</p>
+                    <p className="text-white/60 text-sm">Contact: {registration.registeredBy?.email || registration.entrepreneur?.email}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from 'react-hot-toast';
 import IdeaSubmissionForm from "../../components/entrepreneur/IdeaSubmissionForm";
 import {
   FaTimes,
@@ -392,31 +393,45 @@ function IdeathonRegistrationForm({
         : await ideathonsAPI.registerForIdeathon(ideathonId, registrationData);
 
       if (response.success) {
-        const selectedIdea = userIdeas.find(idea => idea.id === parseInt(formData.selectedIdeaId));
-        setSuccessData({
-          ideathonTitle,
-          registrationId: Date.now(),
-          teamName: formData.teamName,
-          ideaTitle: selectedIdea?.title,
-          email: formData.email,
-          mobileNumber: formData.mobileNumber,
-          pitchDetails: formData.pitchDetails,
-          teamMembers: formData.teamMembers,
-          githubUrl: formData.githubUrl
-        });
-        setShowSuccessView(true);
+        // Show success toast
+        toast.success(isUpdate 
+          ? "Registration updated successfully!" 
+          : "Successfully registered for ideathon!"
+        );
+        
+        // Close the modal
+        onClose();
+        
+        // If onSuccess callback is provided, call it
+        if (typeof onSuccess === 'function') {
+          onSuccess();
+        }
       } else {
-        setError(response.message || (isUpdate 
-          ? "Failed to update registration. Please try again." 
-          : "Failed to register for ideathon. Please try again."
-        ));
+        // Check if the error is "Already registered"
+        if (response.message && response.message.toLowerCase().includes("already registered")) {
+          toast.info("Already registered for this ideathon");
+          onClose();
+        } else {
+          setError(response.message || (isUpdate 
+            ? "Failed to update registration. Please try again." 
+            : "Failed to register for ideathon. Please try again."
+          ));
+        }
       }
     } catch (err) {
       console.error(isUpdate ? "Error updating registration:" : "Error registering:", err);
-      setError(isUpdate
-        ? "Failed to update. Please check your connection and try again."
-        : "Failed to register. Please check your connection and try again."
-      );
+      
+      // Check if the error message contains "already registered"
+      const errorMessage = err.message || err.toString();
+      if (errorMessage.toLowerCase().includes("already registered")) {
+        toast.info("Already registered for this ideathon");
+        onClose();
+      } else {
+        setError(isUpdate
+          ? "Failed to update. Please check your connection and try again."
+          : "Failed to register. Please check your connection and try again."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }

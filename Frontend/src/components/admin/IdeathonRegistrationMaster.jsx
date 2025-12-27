@@ -454,17 +454,8 @@ const IdeathonRegistrationMaster = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold text-white flex items-center gap-3">
           <FaTrophy className="text-purple-400" />
-          Ideathon Registration Master
+          Ideathon Management
         </h2>
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={() => setShowRegistrationModal({})}
-            className="enhanced-button px-6 py-3 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg font-medium hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 flex items-center gap-3 backdrop-blur-sm border border-blue-400/30"
-          >
-            <FaUsers className="text-sm" />
-            Register Team
-          </button>
-        </div>
       </div>
 
       {/* Error Display */}
@@ -584,25 +575,11 @@ const IdeathonRegistrationMaster = () => {
 
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => {
-                    setRegistrationFormData({
-                      ...registrationFormData,
-                      ideathonId: ideathon._id
-                    });
-                    setEditingRegistration(null);
-                    setShowRegistrationModal({});
-                  }}
-                  className="enhanced-button flex-1 px-3 py-2 bg-gradient-to-r from-green-500/80 to-green-600/80 text-white rounded-lg font-medium hover:from-green-400/90 hover:to-green-500/90 transition-all duration-300 flex items-center justify-center gap-2 text-sm backdrop-blur-sm border border-green-400/30"
-                >
-                  <FaUsers className="text-xs" />
-                  Register Team
-                </button>
-                <button
                   onClick={() => navigate(`/admin/ideathon/${ideathon._id}`)}
-                  className="enhanced-button flex-1 px-3 py-2 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg font-medium hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 flex items-center justify-center gap-2 text-sm backdrop-blur-sm border border-blue-400/30"
+                  className="enhanced-button w-full px-3 py-2 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg font-medium hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 flex items-center justify-center gap-2 text-sm backdrop-blur-sm border border-blue-400/30"
                 >
                   <FaEye className="text-xs" />
-                  View ({registrationCount})
+                  View Details ({registrationCount})
                 </button>
               </div>
             </div>
@@ -796,222 +773,6 @@ const IdeathonRegistrationMaster = () => {
                   className="enhanced-button px-6 py-2 bg-gradient-to-r from-purple-500/80 to-purple-600/80 text-white rounded-lg hover:from-purple-400/90 hover:to-purple-500/90 transition-all duration-300 backdrop-blur-sm border border-purple-400/30"
                 >
                   {editingIdeathon ? 'Update Ideathon' : 'Create Ideathon'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Registration Modal */}
-      {showRegistrationModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
-             style={{ 
-               backdropFilter: 'blur(20px)',
-               WebkitBackdropFilter: 'blur(20px)',
-             }}>
-          <div className="bg-gradient-to-br from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border border-white/20 rounded-2xl p-8 w-full max-w-3xl max-h-[95vh] overflow-y-auto shadow-2xl custom-scrollbar ml-0 md:ml-32">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-white">
-                {editingRegistration ? 'Edit Registration' : 'Register Team for Ideathon'}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowRegistrationModal(null);
-                  setEditingRegistration(null);
-                  resetRegistrationForm();
-                }}
-                className="enhanced-button p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            <form onSubmit={editingRegistration ? handleUpdateRegistration : handleCreateRegistration} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">Ideathon *</label>
-                  <select
-                    value={registrationFormData.ideathonId}
-                    onChange={(e) => setRegistrationFormData({ ...registrationFormData, ideathonId: e.target.value })}
-                    className="enhanced-dropdown w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                    required
-                    disabled={editingRegistration}
-                  >
-                    <option value="" className="bg-gray-800 text-white">Select Ideathon</option>
-                    {(ideathons || []).map(ideathon => (
-                      <option key={ideathon._id} value={ideathon._id} className="bg-gray-800 text-white">
-                        {ideathon.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">Team Lead *</label>
-                  <select
-                    value={registrationFormData.userId}
-                    onChange={(e) => setRegistrationFormData({ ...registrationFormData, userId: e.target.value })}
-                    className="enhanced-dropdown w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                    required
-                    disabled={editingRegistration}
-                  >
-                    <option value="" className="bg-gray-800 text-white">Select Team Lead</option>
-                    {(users || []).filter(u => u.role === 'entrepreneur').map(user => (
-                      <option key={user._id} value={user._id} className="bg-gray-800 text-white">
-                        {user.name} ({user.email})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">Team Name *</label>
-                  <input
-                    type="text"
-                    value={registrationFormData.teamName}
-                    onChange={(e) => setRegistrationFormData({ ...registrationFormData, teamName: e.target.value })}
-                    className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">Project Title *</label>
-                  <input
-                    type="text"
-                    value={registrationFormData.projectTitle}
-                    onChange={(e) => setRegistrationFormData({ ...registrationFormData, projectTitle: e.target.value })}
-                    className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-white/70 text-sm font-medium mb-2">Project Description *</label>
-                <textarea
-                  value={registrationFormData.projectDescription}
-                  onChange={(e) => setRegistrationFormData({ ...registrationFormData, projectDescription: e.target.value })}
-                  rows={4}
-                  className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">Tech Stack</label>
-                  <input
-                    type="text"
-                    value={registrationFormData.techStack}
-                    onChange={(e) => setRegistrationFormData({ ...registrationFormData, techStack: e.target.value })}
-                    placeholder="e.g., React, Node.js, MongoDB"
-                    className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white/70 text-sm font-medium mb-2">GitHub Repository</label>
-                  <input
-                    type="url"
-                    value={registrationFormData.githubRepo}
-                    onChange={(e) => setRegistrationFormData({ ...registrationFormData, githubRepo: e.target.value })}
-                    placeholder="https://github.com/..."
-                    className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                  />
-                </div>
-              </div>
-
-              {/* Team Members */}
-              <div>
-                <label className="block text-white/70 text-sm font-medium mb-2">Team Members</label>
-                
-                {/* Add Team Member */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                  <input
-                    type="text"
-                    placeholder="Member Name"
-                    value={newTeamMember.name}
-                    onChange={(e) => setNewTeamMember({ ...newTeamMember, name: e.target.value })}
-                    className="px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    value={newTeamMember.email}
-                    onChange={(e) => setNewTeamMember({ ...newTeamMember, email: e.target.value })}
-                    className="px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                  />
-                  <select
-                    value={newTeamMember.role}
-                    onChange={(e) => setNewTeamMember({ ...newTeamMember, role: e.target.value })}
-                    className="enhanced-dropdown px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                  >
-                    <option value="" className="bg-gray-800 text-white">Select Role</option>
-                    {memberRoles.map(role => (
-                      <option key={role} value={role} className="bg-gray-800 text-white">{role}</option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={addTeamMember}
-                    className="enhanced-button px-4 py-2 bg-green-500/80 text-white rounded-lg hover:bg-green-600/80 transition-all duration-300"
-                  >
-                    Add
-                  </button>
-                </div>
-
-                {/* Team Members List */}
-                {registrationFormData.teamMembers.length > 0 && (
-                  <div className="space-y-2">
-                    {registrationFormData.teamMembers.map((member, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                        <div>
-                          <span className="text-white font-medium">{member.name}</span>
-                          <span className="text-white/70 ml-2">({member.email})</span>
-                          <span className="text-white/50 ml-2">- {member.role}</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeTeamMember(index)}
-                          className="text-red-400 hover:text-red-300 p-1"
-                        >
-                          <FaTimes />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-white/70 text-sm font-medium mb-2">Additional Information</label>
-                <textarea
-                  value={registrationFormData.additionalInfo}
-                  onChange={(e) => setRegistrationFormData({ ...registrationFormData, additionalInfo: e.target.value })}
-                  rows={3}
-                  className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-                />
-              </div>
-
-              <div className="flex justify-end space-x-4 pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowRegistrationModal(null);
-                    setEditingRegistration(null);
-                    resetRegistrationForm();
-                  }}
-                  className="px-6 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 border border-white/20"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="enhanced-button px-6 py-2 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 backdrop-blur-sm border border-blue-400/30"
-                >
-                  {editingRegistration ? 'Update Registration' : 'Register Team'}
                 </button>
               </div>
             </form>

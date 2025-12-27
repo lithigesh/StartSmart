@@ -981,3 +981,36 @@ exports.updateMilestone = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Withdraw from ideathon (delete registration)
+// @route   DELETE /api/ideathons/registrations/:registrationId
+exports.withdrawFromIdeathon = async (req, res, next) => {
+    try {
+        const registration = await IdeathonRegistration.findById(req.params.registrationId);
+
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Check if the user is authorized (either the entrepreneur or admin)
+        if (registration.entrepreneur.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to withdraw this registration'
+            });
+        }
+
+        await registration.deleteOne();
+
+        res.status(200).json({
+            success: true,
+            message: 'Successfully withdrawn from ideathon'
+        });
+    } catch (error) {
+        console.error('Withdraw from ideathon error:', error);
+        next(error);
+    }
+};

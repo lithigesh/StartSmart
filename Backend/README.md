@@ -112,7 +112,7 @@ POST /api/auth/login
 |--------|----------|--------|-------------|
 | `POST` | `/` | Entrepreneur | Submit new business idea |
 | `GET` | `/` | Investor | Browse all available ideas |
-| `GET` | `/user/:userId` | Entrepreneur | Get user's submitted ideas |
+| `GET` | `/user` | Entrepreneur | Get user's submitted ideas |
 | `GET` | `/interested/list` | Investor | Get investor's interested ideas |
 | `GET` | `/:id` | Protected | Get specific idea details |
 | `PUT` | `/:id` | Entrepreneur | Update idea information |
@@ -130,6 +130,12 @@ POST /api/auth/login
 - **AI Analysis Integration**: Google Generative AI for idea evaluation
 - **Interest Management**: Investor-entrepreneur connection system
 - **PDF Report Generation**: Comprehensive analysis reports
+
+**Recent Updates**:
+- Changed endpoint from `/user/:userId` to `/user` for better RESTful design
+- Fixed response format: Now returns `{ success: true, data: [...], message: '...' }` instead of plain array
+- Improved error handling for authentication token validation
+- Added proper 404 handling for non-existent ideas
 
 ### 💰 Funding Routes (`/api/funding`)
 
@@ -166,20 +172,32 @@ POST /api/auth/login
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
 | `POST` | `/` | Admin | Create new ideathon |
-| `GET` | `/` | Protected | Get all ideathons |
+| `GET` | `/` | Protected | Get all ideathons with filtering |
+| `GET` | `/my-registrations` | Entrepreneur | Get user's registered ideathons |
 | `GET` | `/registrations` | Admin | Get all registrations |
-| `GET` | `/:id` | Protected | Get specific ideathon |
+| `GET` | `/:id` | Protected | Get specific ideathon details |
 | `PUT` | `/:id` | Admin | Update ideathon details |
 | `DELETE` | `/:id` | Admin | Delete ideathon |
-| `POST` | `/:id/register` | Protected | Register for ideathon |
+| `POST` | `/:id/register` | Entrepreneur | Register for ideathon |
 | `GET` | `/:id/registrations` | Admin | Get ideathon registrations |
+| `PUT` | `/:id/registrations/:registrationId` | Protected | Update registration |
+| `DELETE` | `/registrations/:registrationId` | Entrepreneur | Withdraw from ideathon |
 | `PUT` | `/:id/results` | Admin | Post competition results |
 
 **Ideathon Features**:
-- **Competition Management**: Create and manage competitions
-- **Registration System**: Handle participant enrollment
-- **Submission Tracking**: Monitor competition entries
+- **Competition Management**: Create and manage competitions with full details
+- **Registration System**: Handle participant enrollment with validation
+- **Withdrawal System**: Allow users to withdraw with confirmation
+- **Detailed Information**: Description, submission format, eligibility criteria, judging criteria, contact info
+- **Submission Tracking**: Monitor competition entries and progress
 - **Result Management**: Announce winners and distribute prizes
+- **Email Notifications**: Automated emails for registration confirmation
+
+**Recent Updates**:
+- Fixed endpoint structure: `/api/ideathons/my-registrations` (previously incorrectly referenced as `/api/ideathon-registrations/my-registrations`)
+- Added withdrawal functionality with DELETE endpoint
+- Enhanced response format with success flags and structured data
+- Improved error handling for duplicate registrations
 
 ### 🔧 Admin Routes (`/api/admin`)
 

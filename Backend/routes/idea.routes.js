@@ -45,10 +45,11 @@ router.route('/')
 // Placed before '/:id' to avoid "interested" being treated as an ID.
 router.get('/interested/list', protect, isInvestor, getInterestedIdeasForInvestor);
 
-// --- Entrepreneur's Idea History Route: /api/ideas/user/:userId ---
-// Fetches all ideas submitted by a specific entrepreneur.
+// --- Entrepreneur's Idea History Route: /api/ideas/user ---
+// Fetches all ideas submitted by the logged-in entrepreneur.
 // IMPORTANT: Must be before /:id route to avoid "user" being treated as an ID
-router.get('/user/:userId', protect, isEntrepreneur, getUserIdeas);
+// Changed from /user/:userId to /user to use req.user.id from auth middleware
+router.get('/user', protect, isEntrepreneur, getUserIdeas);
 
 // --- Specific Idea Routes: /api/ideas/:id ---
 // Handles CRUD operations on a single idea by its ID.

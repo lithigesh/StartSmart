@@ -155,7 +155,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
     if (window.confirm(confirmMessage)) {
       try {
         const response = await ideasAPI.deleteIdea(ideaId);
-        addNotification(`"${ideaTitle}" deleted successfully!`, "success");
+        addNotification(`"${ideaTitle}" has been deleted.`, "error");
         // Immediately remove from local state for instant feedback
         setMyIdeas(prev => prev.filter(idea => idea.id !== ideaId));
         // Also refresh from server

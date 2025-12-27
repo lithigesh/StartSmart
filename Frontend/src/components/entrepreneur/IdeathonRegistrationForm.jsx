@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from 'react-hot-toast';
 import {
   FaTimes,
   FaUpload,
@@ -61,62 +62,38 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       setIsLoadingIdeas(true);
       setError("");
       
-      // API call to get user's ideas - will fallback to demo data if API unavailable
+      console.log("Fetching user ideas...");
+      // API call to get user's ideas
       const response = await ideasAPI.getUserIdeas();
       
+      console.log("API Response:", response);
+      
       // Check if response has data regardless of success flag
-      if (response && response.data && Array.isArray(response.data)) {
-        setUserIdeas(response.data);
-        console.log("Successfully loaded ideas:", response.data.length);
+      if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+        // Ensure each idea has an _id field (some might have just id)
+        const normalizedIdeas = response.data.map(idea => ({
+          ...idea,
+          _id: idea._id || idea.id
+        }));
+        setUserIdeas(normalizedIdeas);
+        console.log("Successfully loaded ideas:", normalizedIdeas.length, normalizedIdeas);
+      } else if (response && Array.isArray(response) && response.length > 0) {
+        // Handle case where response is directly an array
+        const normalizedIdeas = response.map(idea => ({
+          ...idea,
+          _id: idea._id || idea.id
+        }));
+        setUserIdeas(normalizedIdeas);
+        console.log("Successfully loaded ideas (direct array):", normalizedIdeas.length, normalizedIdeas);
       } else {
-        // If no data, fall back to hardcoded demo data
-        const demoIdeas = [
-          {
-            id: 1,
-            title: "AI-Powered Marketing Platform",
-            category: "Technology",
-            elevatorPitch: "Transform marketing with AI-driven automation",
-            targetAudience: "Small to medium businesses"
-          },
-          {
-            id: 2,
-            title: "Smart Home Automation",
-            category: "IoT",
-            elevatorPitch: "Smart homes that adapt to save energy",
-            targetAudience: "Homeowners and property managers"
-          },
-          {
-            id: 3,
-            title: "Sustainable Fashion Marketplace",
-            category: "E-commerce",
-            elevatorPitch: "Connect conscious consumers with sustainable fashion",
-            targetAudience: "Eco-conscious millennials"
-          }
-        ];
-        setUserIdeas(demoIdeas);
-        console.log("Using fallback demo ideas:", demoIdeas.length);
+        // No ideas found
+        console.log("No ideas found in response");
+        setUserIdeas([]);
       }
     } catch (err) {
       console.error("Error fetching user ideas:", err);
-      // Even if there's an error, provide demo data
-      const demoIdeas = [
-        {
-          id: 1,
-          title: "AI-Powered Marketing Platform",
-          category: "Technology",
-          elevatorPitch: "Transform marketing with AI-driven automation",
-          targetAudience: "Small to medium businesses"
-        },
-        {
-          id: 2,
-          title: "Smart Home Automation",
-          category: "IoT",
-          elevatorPitch: "Smart homes that adapt to save energy",
-          targetAudience: "Homeowners and property managers"
-        }
-      ];
-      setUserIdeas(demoIdeas);
-      console.log("Error occurred, using demo ideas:", demoIdeas.length);
+      // Set empty array on error to show "No ideas" message
+      setUserIdeas([]);
     } finally {
       setIsLoadingIdeas(false);
     }
@@ -334,6 +311,14 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
 
       if (!response.ok) {
         const errorMessage = responseData?.message || response.statusText || 'Registration failed';
+        
+        // Check if the error is "Already registered"
+        if (errorMessage.toLowerCase().includes("already registered")) {
+          toast.info("Already registered for this ideathon");
+          onClose();
+          return;
+        }
+        
         throw new Error(errorMessage);
       }
 
@@ -354,6 +339,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
 
       console.log("Registration successful!", successData);
       
+      // Show success toast
+      toast.success("Successfully registered for the ideathon!");
+      
       setSuccess("Successfully registered for the ideathon!");
       setRegistrationData(successData);
       setRegistrationSuccess(true);
@@ -366,7 +354,16 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       }
     } catch (error) {
       console.error("Registration error:", error);
-      setError(error.message || "Registration failed. Please try again.");
+      
+      // Check if the error message contains "already registered"
+      const errorMessage = error.message || "Registration failed. Please try again.";
+      if (errorMessage.toLowerCase().includes("already registered")) {
+        toast.info("Already registered for this ideathon");
+        onClose();
+        return;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

@@ -75,6 +75,7 @@ const AdminIdeasPage = () => {
       
       setIdeas((prev) => prev.filter((idea) => idea._id !== id));
       setError(null);
+      toast.error(`Idea "${idea?.title || 'Unknown'}" has been deleted.`);
     } catch (err) {
       setError(`Error deleting idea: ${err.message}`);
       console.error("Delete idea error:", err);
