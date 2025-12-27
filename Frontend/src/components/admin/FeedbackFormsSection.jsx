@@ -313,8 +313,12 @@ const FeedbackFormsSection = () => {
 
             {/* Feedback Form Modal */}
             {showForm && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+                     style={{
+                       backdropFilter: 'blur(20px)',
+                       WebkitBackdropFilter: 'blur(20px)'
+                     }}>
+                    <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto ml-0 md:ml-32">
                         <div className="p-6">
                             <h3 className="text-xl font-semibold mb-4 text-white">
                                 {editingFeedback ? 'Edit Feedback' : 'Add New Feedback'}

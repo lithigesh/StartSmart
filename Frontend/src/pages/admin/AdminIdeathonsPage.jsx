@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast from 'react-hot-toast';
 import {
   FaTrophy,
   FaSpinner,
@@ -144,13 +145,17 @@ const AdminIdeathonsPage = () => {
       
       if (response.success) {
         await fetchIdeathons();
+        setShowForm(false);
+        setEditingIdeathon(null);
         setError(null);
+        toast.success('Ideathon created successfully!');
         return true; // Success
       } else {
         throw new Error(response.message || 'Failed to create ideathon');
       }
     } catch (err) {
       setError(`Error creating ideathon: ${err.message}`);
+      toast.error(err.message || 'Failed to create ideathon');
       console.error("Create ideathon error:", err);
       return false; // Failure
     } finally {
@@ -179,13 +184,17 @@ const AdminIdeathonsPage = () => {
       
       if (response.success) {
         await fetchIdeathons();
+        setShowForm(false);
+        setEditingIdeathon(null);
         setError(null);
+        toast.success('Ideathon updated successfully!');
         return true; // Success
       } else {
         throw new Error(response.message || 'Failed to update ideathon');
       }
     } catch (err) {
       setError(`Error updating ideathon: ${err.message}`);
+      toast.error(err.message || 'Failed to update ideathon');
       console.error("Update ideathon error:", err);
       return false; // Failure
     } finally {
@@ -463,7 +472,7 @@ const AdminIdeathonsPage = () => {
                   {/* Action Buttons */}
                   <div className="mt-auto pt-4 space-y-3">
                     <button
-                      onClick={() => setViewingIdeathon(ideathon)}
+                      onClick={() => navigate(`/admin/ideathon/${ideathon._id}`)}
                       className="enhanced-button w-full px-4 py-2 bg-gradient-to-r from-white/20 to-white/10 text-white border border-white/20 rounded-lg font-manrope font-medium hover:from-white/30 hover:to-white/20 hover:border-white/30 transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm"
                     >
                       <FaEye className="text-sm" />
@@ -695,10 +704,9 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
     try {
       const success = await onSubmit(formData);
       if (success) {
-        setSubmitSuccess(editingIdeathon ? 'Ideathon updated successfully!' : 'Ideathon created successfully!');
-        setTimeout(() => {
-          onClose();
-        }, 2000);
+        // Success handled by parent component with toast
+      } else {
+        setSubmitError('Failed to save ideathon. Please try again.');
       }
     } catch (error) {
       setSubmitError(error.message || 'Failed to save ideathon. Please try again.');
@@ -718,9 +726,9 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-gray-900/95 to-black/95 border border-white/20 rounded-2xl backdrop-blur-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-gradient-to-br from-white/[0.08] to-black/95 border border-white/20 rounded-2xl backdrop-blur-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto ml-0 md:ml-32">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-gray-900/95 to-black/95 backdrop-blur-xl border-b border-white/10 p-6 rounded-t-2xl">
+        <div className="sticky top-0 bg-gradient-to-r from-white/[0.08] to-black/95 backdrop-blur-xl border-b border-white/10 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white mb-1">
@@ -758,60 +766,6 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
         {/* Form Content */}
         <div className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Quick Action Buttons for Testing */}
-              {!editingIdeathon && (
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFormData({
-                        title: '',
-                        theme: '',
-                        fundingPrizes: '',
-                        startDate: '',
-                        endDate: '',
-                        description: '',
-                        organizers: '',
-                        submissionFormat: [],
-                        eligibilityCriteria: '',
-                        judgingCriteria: '',
-                        location: '',
-                        contactInformation: ''
-                      });
-                    }}
-                    className="px-4 py-2 bg-gray-600/20 border border-gray-400/30 text-gray-400 rounded-lg hover:bg-gray-600/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm"
-                  >
-                    🗑️ Clear Form
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const today = new Date();
-                      const startDate = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-                      const endDate = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000);
-                      
-                      setFormData({
-                        title: 'Blockchain Innovation Summit 2025',
-                        theme: 'Blockchain & Web3 Technologies',
-                        fundingPrizes: '$75,000 Grand Prize + $35,000 Second Place + $15,000 Third Place',
-                        startDate: startDate.toISOString().split('T')[0],
-                        endDate: endDate.toISOString().split('T')[0],
-                        description: 'An intensive 7-day blockchain ideathon bringing together developers, designers, and entrepreneurs to build the next generation of decentralized applications. Participants will have access to mentors from leading blockchain companies and cutting-edge development tools.',
-                        organizers: 'StartSmart Platform, BlockchainHub, Web3 Foundation',
-                        submissionFormat: ['Pitch Deck', 'Prototype', 'Demo'],
-                        eligibilityCriteria: 'Open to all developers, designers, and entrepreneurs 18+. Previous blockchain experience helpful but not required. Teams of 1-4 members.',
-                        judgingCriteria: 'Technical Innovation (35%), User Experience (25%), Market Impact (25%), Presentation Quality (15%)',
-                        location: 'Online',
-                        contactInformation: 'blockchain@startsmart.com | Discord: StartSmart#2025'
-                      });
-                    }}
-                    className="px-4 py-2 bg-blue-600/20 border border-blue-400/30 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-all duration-200 text-sm font-medium backdrop-blur-sm"
-                  >
-                    🚀 Fill Sample Data
-                  </button>
-                </div>
-              )}
-
               {/* Basic Information Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Title */}
@@ -824,8 +778,8 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
-                    className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
-                      formErrors.title ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                    className={`w-full bg-white/[0.05] border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      formErrors.title ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-white/30'
                     }`}
                     placeholder="AI Innovation Challenge 2025"
                   />
@@ -845,7 +799,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     name="theme"
                     value={formData.theme}
                     onChange={handleInputChange}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                    className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200"
                     placeholder="Artificial Intelligence & Machine Learning"
                   />
                 </div>
@@ -860,7 +814,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                    className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200"
                     placeholder="Virtual / San Francisco, CA"
                   />
                 </div>
@@ -875,8 +829,8 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     name="startDate"
                     value={formData.startDate}
                     onChange={handleInputChange}
-                    className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
-                      formErrors.startDate ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                    className={`w-full bg-white/[0.05] border rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      formErrors.startDate ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-white/30'
                     }`}
                   />
                   {formErrors.startDate && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
@@ -895,8 +849,8 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     name="endDate"
                     value={formData.endDate}
                     onChange={handleInputChange}
-                    className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
-                      formErrors.endDate ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                    className={`w-full bg-white/[0.05] border rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                      formErrors.endDate ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-white/30'
                     }`}
                   />
                   {formErrors.endDate && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
@@ -915,7 +869,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     name="fundingPrizes"
                     value={formData.fundingPrizes}
                     onChange={handleInputChange}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                    className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200"
                     placeholder="$50,000 Grand Prize + $20,000 Runner-up"
                   />
                 </div>
@@ -931,8 +885,8 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={4}
-                  className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 resize-none transition-all duration-200 ${
-                    formErrors.description ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                  className={`w-full bg-white/[0.05] border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 resize-none transition-all duration-200 ${
+                    formErrors.description ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-white/30'
                   }`}
                   placeholder="Join us for an exciting 48-hour hackathon focused on building innovative AI solutions that solve real-world problems. Teams will compete to create groundbreaking applications..."
                 />
@@ -952,8 +906,8 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                   name="organizers"
                   value={formData.organizers}
                   onChange={handleInputChange}
-                  className={`w-full bg-black/30 border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
-                    formErrors.organizers ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-blue-500/50 focus:border-blue-400/50'
+                  className={`w-full bg-white/[0.05] border rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 transition-all duration-200 ${
+                    formErrors.organizers ? 'border-red-400/50 focus:ring-red-500/50' : 'border-white/20 focus:ring-white/30'
                   }`}
                   placeholder="StartSmart Innovation Hub, TechVentures Inc."
                 />
@@ -980,7 +934,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                         />
                         <div className={`w-5 h-5 rounded border-2 transition-all duration-200 ${
                           formData.submissionFormat.includes(format)
-                            ? 'bg-blue-500 border-blue-400'
+                            ? 'bg-white/20 border-white/40'
                             : 'border-white/30 group-hover:border-white/50'
                         }`}>
                           {formData.submissionFormat.includes(format) && (
@@ -1011,7 +965,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     value={formData.eligibilityCriteria}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 resize-none transition-all duration-200"
+                    className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 resize-none transition-all duration-200"
                     placeholder="Students and professionals with programming experience. Teams of 2-5 members..."
                   />
                 </div>
@@ -1025,7 +979,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                     value={formData.judgingCriteria}
                     onChange={handleInputChange}
                     rows={3}
-                    className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 resize-none transition-all duration-200"
+                    className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 resize-none transition-all duration-200"
                     placeholder="Innovation (30%), Technical Implementation (25%), Business Viability (25%), Presentation (20%)"
                   />
                 </div>
@@ -1041,7 +995,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
                   name="contactInformation"
                   value={formData.contactInformation}
                   onChange={handleInputChange}
-                  className="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400/50 transition-all duration-200"
+                  className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200"
                   placeholder="contact@startsmart.com | +1 (555) 123-4567"
                 />
               </div>
@@ -1059,7 +1013,7 @@ const IdeathonFormModal = ({ isOpen, onClose, onSubmit, editingIdeathon, isLoadi
               <button
                 type="submit"
                 disabled={isLoading || submitSuccess}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white rounded-xl transition-all duration-200 font-medium disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
+                className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all duration-200 font-medium disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg"
               >
                 {isLoading ? (
                   <>

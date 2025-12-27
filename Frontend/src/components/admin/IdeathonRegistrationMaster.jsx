@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { 
   FaTrophy, 
   FaPlus, 
@@ -18,6 +20,7 @@ import {
 import { API_BASE } from '../../services/api';
 
 const IdeathonRegistrationMaster = () => {
+  const navigate = useNavigate();
   const [ideathons, setIdeathons] = useState([]);
   const [registrations, setRegistrations] = useState([]);
   const [users, setUsers] = useState([]);
@@ -26,7 +29,7 @@ const IdeathonRegistrationMaster = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showRegistrationModal, setShowRegistrationModal] = useState(null);
   const [editingIdeathon, setEditingIdeathon] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [editingRegistration, setEditingRegistration] = useState(null);
   
   // Filters and search
   const [searchTerm, setSearchTerm] = useState('');
@@ -157,8 +160,10 @@ const IdeathonRegistrationMaster = () => {
       await fetchIdeathons();
       setShowCreateForm(false);
       resetForm();
+      toast.success('Ideathon created successfully!');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Failed to create ideathon');
     }
   };
 
@@ -178,9 +183,12 @@ const IdeathonRegistrationMaster = () => {
 
       await fetchIdeathons();
       setEditingIdeathon(null);
+      setShowCreateForm(false);
       resetForm();
+      toast.success('Ideathon updated successfully!');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || 'Failed to update ideathon');
     }
   };
 
@@ -233,14 +241,85 @@ const IdeathonRegistrationMaster = () => {
       await fetchRegistrations();
       setShowRegistrationModal(null);
       resetRegistrationForm();
-      
-      // Show success message
-      setSuccessMessage('Team registered successfully!');
-      setTimeout(() => setSuccessMessage(''), 5000); // Clear message after 5 seconds
-      
+      toast.success('Team registered successfully!');
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.message);
+      toast.error(err.message || 'Failed to register team');
+    }
+  };
+
+  const handleEditRegistration = (registration) => {
+    setEditingRegistration(registration);
+    setRegistrationFormData({
+      ideathonId: registration.ideathon?._id || '',
+      userId: registration.registeredBy?._id || '',
+      ideaId: registration.idea?._id || '',
+      teamName: registration.teamName || '',
+      teamMembers: registration.teamMembers || [],
+      projectTitle: registration.projectTitle || '',
+      projectDescription: registration.projectDescription || '',
+      techStack: registration.techStack || '',
+      githubRepo: registration.githubRepo || '',
+      additionalInfo: registration.additionalInfo || ''
+    });
+    setShowRegistrationModal({});
+  };
+
+  const handleUpdateRegistration = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${API_BASE}/api/ideathons/registrations/${editingRegistration._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          teamName: registrationFormData.teamName,
+          projectTitle: registrationFormData.projectTitle,
+          projectDescription: registrationFormData.projectDescription,
+          pitchDetails: registrationFormData.projectDescription,
+          teamMembers: registrationFormData.teamMembers,
+          techStack: registrationFormData.techStack,
+          githubRepo: registrationFormData.githubRepo,
+          additionalInfo: registrationFormData.additionalInfo
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update registration');
+      }
+
+      await fetchRegistrations();
+      setShowRegistrationModal(null);
+      setEditingRegistration(null);
+      resetRegistrationForm();
+      toast.success('Registration updated successfully!');
+    } catch (err) {
+      console.error('Update error:', err);
+      setError(err.message);
+      toast.error(err.message || 'Failed to update registration');
+    }
+  };
+
+  const handleDeleteRegistration = async (registrationId) => {
+    if (!window.confirm('Are you sure you want to delete this registration?')) return;
+    
+    try {
+      const response = await fetch(`${API_BASE}/api/ideathons/registrations/${registrationId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error('Failed to delete registration');
+
+      await fetchRegistrations();
+      toast.success('Registration deleted successfully!');
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message || 'Failed to delete registration');
     }
   };
 
@@ -395,14 +474,6 @@ const IdeathonRegistrationMaster = () => {
         </div>
       )}
 
-      {/* Success Message Display */}
-      {successMessage && (
-        <div className="bg-green-500/20 border border-green-500/30 text-green-400 p-4 rounded-lg flex items-center gap-3">
-          <FaCheckCircle className="text-green-400" />
-          {successMessage}
-        </div>
-      )}
-
       {/* Filters */}
       <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-3">
@@ -518,6 +589,7 @@ const IdeathonRegistrationMaster = () => {
                       ...registrationFormData,
                       ideathonId: ideathon._id
                     });
+                    setEditingRegistration(null);
                     setShowRegistrationModal({});
                   }}
                   className="enhanced-button flex-1 px-3 py-2 bg-gradient-to-r from-green-500/80 to-green-600/80 text-white rounded-lg font-medium hover:from-green-400/90 hover:to-green-500/90 transition-all duration-300 flex items-center justify-center gap-2 text-sm backdrop-blur-sm border border-green-400/30"
@@ -526,6 +598,7 @@ const IdeathonRegistrationMaster = () => {
                   Register Team
                 </button>
                 <button
+                  onClick={() => navigate(`/admin/ideathon/${ideathon._id}`)}
                   className="enhanced-button flex-1 px-3 py-2 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg font-medium hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 flex items-center justify-center gap-2 text-sm backdrop-blur-sm border border-blue-400/30"
                 >
                   <FaEye className="text-xs" />
@@ -537,76 +610,14 @@ const IdeathonRegistrationMaster = () => {
         })}
       </div>
 
-      {/* Registrations Section */}
-      {registrations.length > 0 && (
-        <div className="bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-xl">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <FaUsers className="text-blue-400" />
-              Registrations
-            </h3>
-            <select
-              value={selectedIdeathon}
-              onChange={(e) => setSelectedIdeathon(e.target.value)}
-              className="enhanced-dropdown px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
-            >
-              <option value="all" className="bg-gray-800 text-white">All Ideathons</option>
-              {(ideathons || []).map(ideathon => (
-                <option key={ideathon._id} value={ideathon._id} className="bg-gray-800 text-white">
-                  {ideathon.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-white/5 border-b border-white/10">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase">Team</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase">Ideathon</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase">Project</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase">Members</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
-                {filteredRegistrations.map((registration) => (
-                  <tr key={registration._id} className="hover:bg-white/5 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="text-white font-medium">{registration.teamName}</div>
-                      <div className="text-white/60 text-sm">{registration.registeredBy?.name}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-white">{registration.ideathon?.title}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-white">{registration.projectTitle}</div>
-                      <div className="text-white/60 text-sm">{registration.techStack}</div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-white">{registration.teamMembers?.length || 0} members</div>
-                    </td>
-                    <td className="px-4 py-3 text-white/70 text-sm">
-                      {formatDateTime(registration.createdAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
       {/* Create/Edit Ideathon Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
              style={{ 
-               background: 'rgba(0, 0, 0, 0.8)',
                backdropFilter: 'blur(20px)',
                WebkitBackdropFilter: 'blur(20px)',
              }}>
-          <div className="bg-gradient-to-br from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border border-white/20 rounded-2xl p-8 w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl custom-scrollbar">
+          <div className="bg-gradient-to-br from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border border-white/20 rounded-2xl p-8 w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl custom-scrollbar ml-0 md:ml-32">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-white">
                 {editingIdeathon ? 'Edit Ideathon' : 'Create New Ideathon'}
@@ -794,18 +805,20 @@ const IdeathonRegistrationMaster = () => {
 
       {/* Registration Modal */}
       {showRegistrationModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/90"
              style={{ 
-               background: 'rgba(0, 0, 0, 0.8)',
                backdropFilter: 'blur(20px)',
                WebkitBackdropFilter: 'blur(20px)',
              }}>
-          <div className="bg-gradient-to-br from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border border-white/20 rounded-2xl p-8 w-full max-w-3xl max-h-[95vh] overflow-y-auto shadow-2xl custom-scrollbar">
+          <div className="bg-gradient-to-br from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border border-white/20 rounded-2xl p-8 w-full max-w-3xl max-h-[95vh] overflow-y-auto shadow-2xl custom-scrollbar ml-0 md:ml-32">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-white">Register Team for Ideathon</h3>
+              <h3 className="text-2xl font-bold text-white">
+                {editingRegistration ? 'Edit Registration' : 'Register Team for Ideathon'}
+              </h3>
               <button
                 onClick={() => {
                   setShowRegistrationModal(null);
+                  setEditingRegistration(null);
                   resetRegistrationForm();
                 }}
                 className="enhanced-button p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-300"
@@ -814,7 +827,7 @@ const IdeathonRegistrationMaster = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateRegistration} className="space-y-6">
+            <form onSubmit={editingRegistration ? handleUpdateRegistration : handleCreateRegistration} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-white/70 text-sm font-medium mb-2">Ideathon *</label>
@@ -823,6 +836,7 @@ const IdeathonRegistrationMaster = () => {
                     onChange={(e) => setRegistrationFormData({ ...registrationFormData, ideathonId: e.target.value })}
                     className="enhanced-dropdown w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
                     required
+                    disabled={editingRegistration}
                   >
                     <option value="" className="bg-gray-800 text-white">Select Ideathon</option>
                     {(ideathons || []).map(ideathon => (
@@ -840,6 +854,7 @@ const IdeathonRegistrationMaster = () => {
                     onChange={(e) => setRegistrationFormData({ ...registrationFormData, userId: e.target.value })}
                     className="enhanced-dropdown w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50"
                     required
+                    disabled={editingRegistration}
                   >
                     <option value="" className="bg-gray-800 text-white">Select Team Lead</option>
                     {(users || []).filter(u => u.role === 'entrepreneur').map(user => (
@@ -985,6 +1000,7 @@ const IdeathonRegistrationMaster = () => {
                   type="button"
                   onClick={() => {
                     setShowRegistrationModal(null);
+                    setEditingRegistration(null);
                     resetRegistrationForm();
                   }}
                   className="px-6 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 border border-white/20"
@@ -995,7 +1011,7 @@ const IdeathonRegistrationMaster = () => {
                   type="submit"
                   className="enhanced-button px-6 py-2 bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white rounded-lg hover:from-blue-400/90 hover:to-blue-500/90 transition-all duration-300 backdrop-blur-sm border border-blue-400/30"
                 >
-                  Register Team
+                  {editingRegistration ? 'Update Registration' : 'Register Team'}
                 </button>
               </div>
             </form>
