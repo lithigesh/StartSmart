@@ -106,7 +106,7 @@ const IdeaCard = ({
               View
             </button>
             <button
-              onClick={() => navigate(`/submit-idea?edit=${idea._id || idea.id}`)}
+              onClick={() => onEdit(idea)}
               className="btn btn-sm bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <FaEdit className="w-3 h-3" />

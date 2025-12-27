@@ -305,57 +305,68 @@ const IdeaMasterForm = ({ onDataChange, onSuccess, onError, initialData = {}, is
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg">
-      <div className="mb-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {isEditMode ? 'Edit Idea Master' : 'Idea Master'}
-            </h2>
-            <p className="text-gray-400">
-              Define the core concept, problem, and solution for your innovative idea.
-            </p>
+    <div className="max-w-4xl mx-auto">
+      {/* Header Section */}
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white font-manrope mb-3">
+                {isEditMode ? 'Edit Your Idea' : 'Submit Your Innovative Idea'}
+              </h2>
+              <p className="text-white/70 font-manrope text-lg">
+                Define the core concept, problem, and solution for your innovative startup idea.
+              </p>
+              {!isEditMode && (
+                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                  <p className="text-blue-300 font-manrope text-sm">
+                    💡 <strong>Sample data has been pre-loaded</strong> to help you get started quickly. You can modify any field or use the "Clear Form" button to start fresh.
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            {/* Quick Action Buttons */}
             {!isEditMode && (
-              <div className="mt-3 p-3 bg-blue-900/30 border border-blue-500/30 rounded-lg">
-                <p className="text-blue-300 text-sm">
-                  💡 <strong>Sample data has been pre-loaded</strong> to help you get started quickly. You can modify any field or use the "Clear Form" button to start fresh.
-                </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={clearForm}
+                  className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope"
+                >
+                  🗑️ Clear Form
+                </button>
+                <button
+                  type="button"
+                  onClick={loadSampleData}
+                  className="px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
+                  🚀 Load Sample Data
+                </button>
               </div>
             )}
           </div>
-          
-          {/* Quick Action Buttons */}
-          {!isEditMode && (
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={clearForm}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg transition-colors duration-200 border border-gray-600"
-              >
-                🗑️ Clear Form
-              </button>
-              <button
-                type="button"
-                onClick={loadSampleData}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition-colors duration-200"
-              >
-                🚀 Load Sample Data
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Form Section */}
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10 p-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Information Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-white mb-4">Basic Information</h3>
+        <div className="space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-xl font-semibold text-white font-manrope">Basic Information</h3>
+            <p className="text-white/60 font-manrope text-sm mt-1">Essential details about your innovative idea</p>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {/* Idea Title */}
-            <div className="md:col-span-2">
-              <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
-                Idea Title *
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-white font-manrope mb-2">
+                Idea Title <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
@@ -363,159 +374,251 @@ const IdeaMasterForm = ({ onDataChange, onSuccess, onError, initialData = {}, is
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white ${
-                  errors.title ? 'border-red-500' : 'border-gray-600'
+                className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                  errors.title ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                 }`}
-                placeholder="Enter a compelling title for your idea"
+                placeholder="Enter a compelling title for your innovative idea"
                 maxLength={100}
                 required
               />
-              {errors.title && <p className="mt-1 text-sm text-red-400">{errors.title}</p>}
-              <p className="mt-1 text-xs text-gray-400">{formData.title.length}/100 characters</p>
+              {errors.title && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.title}</p>}
+              <p className="mt-2 text-xs text-white/40 font-manrope">{formData.title.length}/100 characters</p>
             </div>
 
-            {/* Category */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Category */}
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-white font-manrope mb-2">
+                  Category <span className="text-red-400">*</span>
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                    errors.category ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
+                  }`}
+                  required
+                >
+                  <option value="" className="bg-black text-white">Select a category</option>
+                  {categories.map(cat => (
+                    <option key={cat} value={cat} className="bg-black text-white">{cat}</option>
+                  ))}
+                </select>
+                {errors.category && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.category}</p>}
+              </div>
+
+              {/* Stage */}
+              <div>
+                <label htmlFor="stage" className="block text-sm font-medium text-white font-manrope mb-2">
+                  Development Stage
+                </label>
+                <select
+                  id="stage"
+                  name="stage"
+                  value={formData.stage}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
+                >
+                  {stages.map(stage => (
+                    <option key={stage} value={stage} className="bg-black text-white">{stage}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Description */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-1">
-                Category *
+              <label htmlFor="description" className="block text-sm font-medium text-white font-manrope mb-2">
+                Detailed Description <span className="text-red-400">*</span>
               </label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white ${
-                  errors.category ? 'border-red-500' : 'border-gray-600'
+                rows={6}
+                className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                  errors.description ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                 }`}
+                placeholder="Provide a comprehensive description of your innovative idea, its features, and potential impact"
+                maxLength={2000}
                 required
-              >
-                <option value="">Select a category</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-              {errors.category && <p className="mt-1 text-sm text-red-400">{errors.category}</p>}
+              />
+              {errors.description && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.description}</p>}
+              <p className="mt-2 text-xs text-white/40 font-manrope">{formData.description.length}/2000 characters</p>
             </div>
-
-            {/* Stage */}
-            <div>
-              <label htmlFor="stage" className="block text-sm font-medium text-gray-300 mb-1">
-                Current Stage
-              </label>
-              <select
-                id="stage"
-                name="stage"
-                value={formData.stage}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white"
-              >
-                {stages.map(stage => (
-                  <option key={stage} value={stage}>{stage}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mt-4">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
-              Description *
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              rows={4}
-              className={`w-full px-3 py-2 border rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.description ? 'border-red-500' : 'border-gray-600'
-              }`}
-              placeholder="Provide a detailed description of your idea (minimum 50 characters)"
-              maxLength={2000}
-              required
-            />
-            {errors.description && <p className="mt-1 text-sm text-red-400">{errors.description}</p>}
-            <p className="mt-1 text-xs text-gray-400">{formData.description.length}/2000 characters</p>
           </div>
         </div>
 
         {/* Problem & Solution Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-white mb-4">Problem & Solution</h3>
+        <div className="space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-xl font-semibold text-white font-manrope">Problem & Solution</h3>
+            <p className="text-white/60 font-manrope text-sm mt-1">Define the problem you're solving and your innovative solution</p>
+          </div>
           
-          {/* Problem Statement */}
-          <div className="mb-4">
-            <label htmlFor="problemStatement" className="block text-sm font-medium text-gray-300 mb-1">
-              Problem Statement *
-            </label>
-            <textarea
-              id="problemStatement"
-              name="problemStatement"
-              value={formData.problemStatement}
-              onChange={handleInputChange}
-              rows={3}
-              className={`w-full px-3 py-2 border rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.problemStatement ? 'border-red-500' : 'border-gray-600'
-              }`}
-              placeholder="What problem does your idea solve?"
-              required
-            />
-            {errors.problemStatement && <p className="mt-1 text-sm text-red-400">{errors.problemStatement}</p>}
-          </div>
-
-          {/* Solution */}
-          <div className="mb-4">
-            <label htmlFor="solution" className="block text-sm font-medium text-gray-300 mb-1">
-              Solution *
-            </label>
-            <textarea
-              id="solution"
-              name="solution"
-              value={formData.solution}
-              onChange={handleInputChange}
-              rows={3}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.solution ? 'border-red-500' : 'border-gray-600'
-              }`}
-              placeholder="How does your idea solve the problem?"
-              required
-            />
-            {errors.solution && <p className="mt-1 text-sm text-red-400">{errors.solution}</p>}
-          </div>
-
-          {/* Unique Value Proposition */}
-          <div className="mb-4">
-            <label htmlFor="uniqueValueProposition" className="block text-sm font-medium text-gray-300 mb-1">
-              Unique Value Proposition *
-            </label>
-            <textarea
-              id="uniqueValueProposition"
-              name="uniqueValueProposition"
-              value={formData.uniqueValueProposition}
-              onChange={handleInputChange}
-              rows={2}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.uniqueValueProposition ? 'border-red-500' : 'border-gray-600'
-              }`}
-              placeholder="What makes your solution unique?"
-              required
-            />
-            {errors.uniqueValueProposition && <p className="mt-1 text-sm text-red-400">{errors.uniqueValueProposition}</p>}
-          </div>
-        </div>
-
-        {/* Market Information Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-white mb-4">Market Information</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-6">
             {/* Target Audience */}
             <div>
-              <label htmlFor="targetAudience" className="block text-sm font-medium text-gray-300 mb-1">
-                Target Audience *
+              <label htmlFor="targetAudience" className="block text-sm font-medium text-white font-manrope mb-2">
+                Target Audience <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
+                id="targetAudience"
+                name="targetAudience"
+                value={formData.targetAudience}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                  errors.targetAudience ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
+                }`}
+                placeholder="Who is your primary target audience? Be specific about demographics, needs, and characteristics"
+                maxLength={500}
+                required
+              />
+              {errors.targetAudience && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.targetAudience}</p>}
+              <p className="mt-2 text-xs text-white/40 font-manrope">{formData.targetAudience.length}/500 characters</p>
+            </div>
+
+            {/* Problem Statement */}
+            <div>
+              <label htmlFor="problemStatement" className="block text-sm font-medium text-white font-manrope mb-2">
+                Problem Statement <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                id="problemStatement"
+                name="problemStatement"
+                value={formData.problemStatement}
+                onChange={handleInputChange}
+                rows={4}
+                className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                  errors.problemStatement ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
+                }`}
+                placeholder="Clearly describe the problem your idea addresses. What pain points does your target audience face?"
+                maxLength={1000}
+                required
+              />
+              {errors.problemStatement && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.problemStatement}</p>}
+              <p className="mt-2 text-xs text-white/40 font-manrope">{formData.problemStatement.length}/1000 characters</p>
+            </div>
+
+            {/* Solution */}
+            <div>
+              <label htmlFor="solution" className="block text-sm font-medium text-white font-manrope mb-2">
+                Your Solution <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                id="solution"
+                name="solution"
+                value={formData.solution}
+                onChange={handleInputChange}
+                rows={4}
+                className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                  errors.solution ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
+                }`}
+                placeholder="How does your idea solve the identified problem? What makes your solution unique and effective?"
+                maxLength={1000}
+                required
+              />
+              {errors.solution && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.solution}</p>}
+              <p className="mt-2 text-xs text-white/40 font-manrope">{formData.solution.length}/1000 characters</p>
+            </div>
+          </div>
+        </div>
+        {/* Market & Value Proposition Section */}
+        <div className="space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-xl font-semibold text-white font-manrope">Market & Value Proposition</h3>
+            <p className="text-white/60 font-manrope text-sm mt-1">Define your unique value and market opportunity</p>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-6">
+            {/* Unique Value Proposition */}
+            <div>
+              <label htmlFor="uniqueValueProposition" className="block text-sm font-medium text-white font-manrope mb-2">
+                Unique Value Proposition <span className="text-red-400">*</span>
+              </label>
+              <textarea
+                id="uniqueValueProposition"
+                name="uniqueValueProposition"
+                value={formData.uniqueValueProposition}
+                onChange={handleInputChange}
+                rows={3}
+                className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                  errors.uniqueValueProposition ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
+                }`}
+                placeholder="What makes your solution unique? How does it differentiate from existing alternatives?"
+                required
+              />
+              {errors.uniqueValueProposition && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.uniqueValueProposition}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Market Size */}
+              <div>
+                <label htmlFor="marketSize" className="block text-sm font-medium text-white font-manrope mb-2">
+                  Market Size & Opportunity
+                </label>
+                <input
+                  type="text"
+                  id="marketSize"
+                  name="marketSize"
+                  value={formData.marketSize}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
+                  placeholder="e.g., $5B market growing at 15% annually"
+                />
+              </div>
+
+              {/* Competitive Advantage */}
+              <div>
+                <label htmlFor="competitiveAdvantage" className="block text-sm font-medium text-white font-manrope mb-2">
+                  Competitive Advantage
+                </label>
+                <input
+                  type="text"
+                  id="competitiveAdvantage"
+                  name="competitiveAdvantage"
+                  value={formData.competitiveAdvantage}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
+                  placeholder="What gives you an edge over competitors?"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* File Attachments Section */}
+        <div className="space-y-6">
+          <div className="border-b border-white/10 pb-4">
+            <h3 className="text-xl font-semibold text-white font-manrope">Supporting Documents</h3>
+            <p className="text-white/60 font-manrope text-sm mt-1">Upload any supporting documents (optional)</p>
+          </div>
+          
+          <div>
+            <label htmlFor="attachments" className="block text-sm font-medium text-white font-manrope mb-2">
+              Attachments (Optional)
+            </label>
+            <div className="relative">
+              <input
+                type="file"
+                id="attachments"
+                name="attachments"
+                onChange={handleInputChange}
+                multiple
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+            </div>
+            {errors.attachments && <p className="mt-2 text-sm text-red-400 font-manrope">{errors.attachments}</p>}
+            <p className="mt-2 text-xs text-white/40 font-manrope">
+              Supported formats: PDF, DOC, PPT, Images • Max size: 10MB per file • Max files: 5
+            </p>
+          </div>
+        </div>
                 id="targetAudience"
                 name="targetAudience"
                 value={formData.targetAudience}
@@ -524,91 +627,35 @@ const IdeaMasterForm = ({ onDataChange, onSuccess, onError, initialData = {}, is
                   errors.targetAudience ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Who is your target customer?"
-                required
-              />
-              {errors.targetAudience && <p className="mt-1 text-sm text-red-400">{errors.targetAudience}</p>}
-            </div>
-
-            {/* Market Size */}
-            <div>
-              <label htmlFor="marketSize" className="block text-sm font-medium text-gray-300 mb-1">
-                Market Size (Optional)
-              </label>
-              <input
-                type="text"
-                id="marketSize"
-                name="marketSize"
-                value={formData.marketSize}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white"
-                placeholder="e.g., $1B TAM, 10M potential users"
-              />
-            </div>
-          </div>
-
-          {/* Competitive Advantage */}
-          <div className="mt-4">
-            <label htmlFor="competitiveAdvantage" className="block text-sm font-medium text-gray-300 mb-1">
-              Competitive Advantage (Optional)
-            </label>
-            <textarea
-              id="competitiveAdvantage"
-              name="competitiveAdvantage"
-              value={formData.competitiveAdvantage}
-              onChange={handleInputChange}
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-white"
-              placeholder="What advantages do you have over competitors?"
-            />
-          </div>
-        </div>
-
-        {/* Attachments Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-white mb-4">Supporting Documents</h3>
-          
-          <div>
-            <label htmlFor="attachments" className="block text-sm font-medium text-gray-300 mb-1">
-              Attachments (Optional)
-            </label>
-            <input
-              type="file"
-              id="attachments"
-              name="attachments"
-              onChange={handleInputChange}
-              multiple
-              accept=".pdf,.ppt,.pptx,.doc,.docx,.jpg,.jpeg,.png,.gif"
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.attachments ? 'border-red-500' : 'border-gray-600'
-              }`}
-            />
-            {errors.attachments && <p className="mt-1 text-sm text-red-400">{errors.attachments}</p>}
-            <p className="mt-1 text-xs text-gray-400">
-              Supported formats: PDF, PPT, DOC, Images. Max 5 files, 10MB each.
-            </p>
-          </div>
-        </div>
-
         {/* Submit Error */}
         {errors.submit && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-400">{errors.submit}</p>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+            <p className="text-red-400 font-manrope">{errors.submit}</p>
           </div>
         )}
 
         {/* Submit Button */}
-        <div className="flex justify-end pt-4">
+        <div className="flex justify-end pt-8 border-t border-white/10">
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-6 py-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            className={`px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-manrope font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${
+              isSubmitting ? 'opacity-50 cursor-not-allowed transform-none hover:scale-100' : ''
             }`}
           >
-            {isSubmitting ? 'Saving...' : (isEditMode ? 'Update Idea' : 'Save Idea')}
+            {isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Saving...
+              </div>
+            ) : (
+              isEditMode ? 'Update Idea' : 'Submit Idea'
+            )}
           </button>
         </div>
       </form>
+        </div>
+      </div>
     </div>
   );
 };

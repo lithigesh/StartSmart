@@ -2,25 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { businessAimAPI, ideasAPI } from '../../../services/api';
 
 const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, isEditMode = false, ideaId = null }) => {
+  // Sample data for quick testing and demonstration
+  const sampleData = {
+    businessModel: 'SaaS (Software as a Service) with tiered subscription plans targeting agricultural businesses and individual farmers. Revenue generated through monthly/annual subscriptions, premium features, and consulting services.',
+    revenueStreams: ['Subscription', 'Consulting/Services', 'Licensing'],
+    targetMarket: 'Primary: Small to medium agricultural businesses and tech-forward farmers in North America and Europe. Secondary: Agricultural cooperatives, urban farming initiatives, and agricultural technology integrators seeking AI-powered solutions.',
+    marketSize: '$12.8B vertical farming market growing at 24% CAGR, with $4.2B in AI agricultural applications. Target addressable market of 2.4M farms in North America and 10.8M in Europe, representing $850M immediate opportunity.',
+    competitionAnalysis: 'Main competitors include AeroFarms, Plenty, and Iron Ox in hardware-focused solutions. Our competitive advantage lies in AI-powered optimization software that works with existing infrastructure, 60% lower cost than hardware-heavy alternatives, and faster deployment times.',
+    pricingStrategy: 'Freemium model: Basic plan free (up to 5 plants), Professional $29/month (unlimited plants + basic AI), Enterprise $99/month (advanced AI + analytics + support). Custom enterprise pricing for large operations. Annual plans offer 20% discount.',
+    salesStrategy: 'Digital-first approach with content marketing, SEO, and social media. Partner with agricultural suppliers and equipment manufacturers. Attend agricultural trade shows and conferences. Referral program for existing customers. Direct sales team for enterprise accounts.',
+    marketingStrategy: 'Inbound marketing through educational content about urban farming and AI technology. Partnerships with gardening influencers and sustainability advocates. Free webinars and workshops. Social proof through customer success stories and case studies.',
+    fundingRequirement: '750000',
+    useOfFunds: 'Product Development (40% - $300K): AI algorithm refinement, mobile app enhancement, IoT integration. Marketing & Sales (30% - $225K): Digital marketing campaigns, trade show participation, sales team expansion. Operations (20% - $150K): Infrastructure scaling, customer support, quality assurance. Legal & Compliance (10% - $75K): Patent applications, regulatory compliance, legal documentation.',
+    financialProjections: 'Year 1: $120K revenue, 400 customers. Year 2: $480K revenue, 1,600 customers. Year 3: $1.2M revenue, 3,500 customers. Break-even expected month 18. Projected 15% monthly growth rate after initial traction period.',
+    keyMetrics: ['Monthly Recurring Revenue (MRR)', 'Customer Acquisition Cost (CAC)', 'Lifetime Value (LTV)', 'Churn Rate'],
+    riskAssessment: 'Technology risks: AI model accuracy, hardware compatibility issues. Market risks: Slow adoption of new technology, economic downturn affecting discretionary spending. Competition risks: Large tech companies entering market. Regulatory risks: Changing agricultural regulations.',
+    mitigationStrategies: 'Diversified technology stack to reduce single-point failures. Strong customer support and education programs. Strategic partnerships with established agricultural companies. Flexible pricing to accommodate market conditions. Continuous innovation to maintain competitive edge.',
+    exitStrategy: 'Strategic acquisition by major agricultural technology company (John Deere, Monsanto/Bayer) or agricultural equipment manufacturer within 5-7 years. Alternative: IPO after reaching $50M+ annual revenue. Focus on building valuable IP portfolio and customer base.',
+    timeline: '24 months to full market presence: Months 1-6: Product refinement and beta testing. Months 7-12: Limited market launch and customer feedback integration. Months 13-18: Full product launch and scaling. Months 19-24: Market expansion and partnership development.',
+    milestones: [
+      {
+        title: 'Beta Product Launch',
+        description: 'Complete beta version with 50 test users providing feedback',
+        targetDate: new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 6 months from now
+        keyDeliverables: 'Functional AI algorithms, mobile app, user feedback analysis'
+      },
+      {
+        title: 'Commercial Launch',
+        description: 'Full product launch with paid subscription tiers',
+        targetDate: new Date(Date.now() + 12 * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 12 months from now
+        keyDeliverables: 'Payment system, customer support, marketing campaign launch'
+      },
+      {
+        title: 'Scale to 1000 Customers',
+        description: 'Reach 1000 paying customers across all subscription tiers',
+        targetDate: new Date(Date.now() + 18 * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 18 months from now
+        keyDeliverables: 'Customer acquisition systems, retention programs, product optimization'
+      }
+    ]
+  };
+
   const [formData, setFormData] = useState({
     ideaId: ideaId || '',
-    businessModel: '',
-    revenueStreams: [],
-    targetMarket: '',
-    marketSize: '',
-    competitionAnalysis: '',
-    pricingStrategy: '',
-    salesStrategy: '',
-    marketingStrategy: '',
-    fundingRequirement: '',
-    useOfFunds: '',
-    financialProjections: '',
-    keyMetrics: [],
-    riskAssessment: '',
-    mitigationStrategies: '',
-    exitStrategy: '',
-    timeline: '',
-    milestones: [],
+    businessModel: initialData.businessModel || sampleData.businessModel,
+    revenueStreams: initialData.revenueStreams || sampleData.revenueStreams,
+    targetMarket: initialData.targetMarket || sampleData.targetMarket,
+    marketSize: initialData.marketSize || sampleData.marketSize,
+    competitionAnalysis: initialData.competitionAnalysis || sampleData.competitionAnalysis,
+    pricingStrategy: initialData.pricingStrategy || sampleData.pricingStrategy,
+    salesStrategy: initialData.salesStrategy || sampleData.salesStrategy,
+    marketingStrategy: initialData.marketingStrategy || sampleData.marketingStrategy,
+    fundingRequirement: initialData.fundingRequirement || sampleData.fundingRequirement,
+    useOfFunds: initialData.useOfFunds || sampleData.useOfFunds,
+    financialProjections: initialData.financialProjections || sampleData.financialProjections,
+    keyMetrics: initialData.keyMetrics || sampleData.keyMetrics,
+    riskAssessment: initialData.riskAssessment || sampleData.riskAssessment,
+    mitigationStrategies: initialData.mitigationStrategies || sampleData.mitigationStrategies,
+    exitStrategy: initialData.exitStrategy || sampleData.exitStrategy,
+    timeline: initialData.timeline || sampleData.timeline,
+    milestones: initialData.milestones || sampleData.milestones,
     ...initialData
   });
 
@@ -28,6 +68,40 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableIdeas, setAvailableIdeas] = useState([]);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
+
+  // Function to clear form data
+  const clearForm = () => {
+    setFormData({
+      ideaId: ideaId || '',
+      businessModel: '',
+      revenueStreams: [],
+      targetMarket: '',
+      marketSize: '',
+      competitionAnalysis: '',
+      pricingStrategy: '',
+      salesStrategy: '',
+      marketingStrategy: '',
+      fundingRequirement: '',
+      useOfFunds: '',
+      financialProjections: '',
+      keyMetrics: [],
+      riskAssessment: '',
+      mitigationStrategies: '',
+      exitStrategy: '',
+      timeline: '',
+      milestones: []
+    });
+    setErrors({});
+  };
+
+  // Function to load fresh sample data
+  const loadSampleData = () => {
+    setFormData({
+      ideaId: ideaId || '',
+      ...sampleData
+    });
+    setErrors({});
+  };
 
   // Predefined revenue streams
   const availableRevenueStreams = [
@@ -286,17 +360,56 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">
-          {isEditMode ? 'Edit Business Aim' : 'Business Aim & Strategy'}
-        </h2>
-        <p className="text-gray-400">
-          Define your business model, market strategy, and financial objectives.
-        </p>
+    <div className="max-w-4xl mx-auto">
+      {/* Header Section */}
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white font-manrope mb-3">
+                {isEditMode ? 'Edit Business Aim & Strategy' : 'Business Aim & Strategy'}
+              </h2>
+              <p className="text-white/70 font-manrope text-lg">
+                Define your business model, market strategy, and financial objectives for sustainable growth.
+              </p>
+              {!isEditMode && (
+                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                  <p className="text-blue-300 font-manrope text-sm">
+                    💡 <strong>Sample data has been pre-loaded</strong> to help you get started quickly. You can modify any field or use the "Clear Form" button to start fresh.
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            {/* Quick Action Buttons */}
+            {!isEditMode && (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={clearForm}
+                  className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope"
+                >
+                  🗑️ Clear Form
+                </button>
+                <button
+                  type="button"
+                  onClick={loadSampleData}
+                  className="px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
+                  🚀 Load Sample Data
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Form Section */}
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10 p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
         {/* Idea Selection Section - Only show if not bound to specific idea */}
         {!ideaId && (
           <div className="bg-gray-800 p-4 rounded-lg">
@@ -798,6 +911,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
           </button>
         </div>
       </form>
+        </div>
+      </div>
     </div>
   );
 };

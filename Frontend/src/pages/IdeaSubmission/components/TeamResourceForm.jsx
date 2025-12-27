@@ -2,17 +2,68 @@ import React, { useState, useEffect } from 'react';
 import { teamResourceAPI, ideasAPI } from '../../../services/api';
 
 const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, isEditMode = false, ideaId = null }) => {
+  // Sample data for quick testing and demonstration
+  const sampleData = {
+    teamMembers: [
+      {
+        name: 'Sarah Chen',
+        role: 'CEO & Product Manager',
+        skills: ['Management', 'Product Development', 'Marketing'],
+        experience: '8 years in product management at tech startups, previously led teams at two successful exits'
+      },
+      {
+        name: 'Marcus Rodriguez',
+        role: 'CTO & Lead Developer',
+        skills: ['Technology', 'Product Development'],
+        experience: '10 years full-stack development, expert in AI/ML, former senior engineer at major tech companies'
+      },
+      {
+        name: 'Emily Watson',
+        role: 'Head of Marketing & Sales',
+        skills: ['Marketing', 'Sales', 'Business Development'],
+        experience: '6 years digital marketing, specialist in growth hacking and customer acquisition strategies'
+      }
+    ],
+    coreSkills: ['Technology', 'Marketing', 'Product Development', 'Management'],
+    resourcesNeeded: [
+      {
+        type: 'Cloud Services',
+        description: 'AWS infrastructure for scalable backend services and AI model hosting',
+        estimatedCost: 15000,
+        priority: 'High'
+      },
+      {
+        type: 'Software',
+        description: 'Professional development tools, design software, and project management platforms',
+        estimatedCost: 8000,
+        priority: 'High'
+      },
+      {
+        type: 'Office Space',
+        description: 'Co-working space for team collaboration and client meetings',
+        estimatedCost: 12000,
+        priority: 'Medium'
+      }
+    ],
+    skillsGap: 'We need to strengthen our capabilities in data science and machine learning model optimization. Additionally, we require expertise in regulatory compliance for agricultural technology and established relationships with farming cooperatives for market validation and distribution channels.',
+    resourceBudget: '150000',
+    teamStructure: 'Flat organizational structure with cross-functional teams. Each core team member leads their domain while contributing to other areas. We believe in collaborative decision-making with clear accountability. Weekly all-hands meetings ensure alignment, and bi-weekly one-on-ones maintain individual growth focus.',
+    collaborationPreferences: 'We prefer agile methodologies with 2-week sprints, daily standups, and regular retrospectives. Strong emphasis on transparent communication through Slack and Notion. We value work-life balance and encourage asynchronous collaboration across time zones while maintaining core collaboration hours.',
+    remoteWorkPolicy: 'Hybrid',
+    timeline: '18 months to full market launch: 6 months MVP development and testing, 6 months pilot program with select farming partners, 6 months full product launch and scaling. Key milestones include prototype completion (month 3), beta testing (month 9), and commercial launch (month 18).'
+  };
+
   const [formData, setFormData] = useState({
     ideaId: ideaId || '',
-    teamMembers: [],
-    coreSkills: [],
-    resourcesNeeded: [],
-    skillsGap: '',
-    resourceBudget: '',
-    teamStructure: '',
-    collaborationPreferences: '',
-    remoteWorkPolicy: 'Flexible',
-    timeline: '',
+    teamMembers: initialData.teamMembers || sampleData.teamMembers,
+    coreSkills: initialData.coreSkills || sampleData.coreSkills,
+    resourcesNeeded: initialData.resourcesNeeded || sampleData.resourcesNeeded,
+    skillsGap: initialData.skillsGap || sampleData.skillsGap,
+    resourceBudget: initialData.resourceBudget || sampleData.resourceBudget,
+    teamStructure: initialData.teamStructure || sampleData.teamStructure,
+    collaborationPreferences: initialData.collaborationPreferences || sampleData.collaborationPreferences,
+    remoteWorkPolicy: initialData.remoteWorkPolicy || sampleData.remoteWorkPolicy,
+    timeline: initialData.timeline || sampleData.timeline,
     ...initialData
   });
 
@@ -20,6 +71,32 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableIdeas, setAvailableIdeas] = useState([]);
   const [loadingIdeas, setLoadingIdeas] = useState(false);
+
+  // Function to clear form data
+  const clearForm = () => {
+    setFormData({
+      ideaId: ideaId || '',
+      teamMembers: [],
+      coreSkills: [],
+      resourcesNeeded: [],
+      skillsGap: '',
+      resourceBudget: '',
+      teamStructure: '',
+      collaborationPreferences: '',
+      remoteWorkPolicy: 'Flexible',
+      timeline: ''
+    });
+    setErrors({});
+  };
+
+  // Function to load fresh sample data
+  const loadSampleData = () => {
+    setFormData({
+      ideaId: ideaId || '',
+      ...sampleData
+    });
+    setErrors({});
+  };
 
   // Predefined core skills - matching backend enum
   const availableCoreSkills = [
@@ -287,17 +364,56 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-900 rounded-lg shadow-lg">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">
-          {isEditMode ? 'Edit Team & Resources' : 'Team & Resource Management'}
-        </h2>
-        <p className="text-gray-400">
-          Define your team structure, skills, and resource requirements for your idea.
-        </p>
+    <div className="max-w-4xl mx-auto">
+      {/* Header Section */}
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-3xl font-bold text-white font-manrope mb-3">
+                {isEditMode ? 'Edit Team & Resources' : 'Team & Resource Management'}
+              </h2>
+              <p className="text-white/70 font-manrope text-lg">
+                Define your team structure, skills, and resource requirements for your idea.
+              </p>
+              {!isEditMode && (
+                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                  <p className="text-blue-300 font-manrope text-sm">
+                    💡 <strong>Sample data has been pre-loaded</strong> to help you get started quickly. You can modify any field or use the "Clear Form" button to start fresh.
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            {/* Quick Action Buttons */}
+            {!isEditMode && (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={clearForm}
+                  className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope"
+                >
+                  🗑️ Clear Form
+                </button>
+                <button
+                  type="button"
+                  onClick={loadSampleData}
+                  className="px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
+                  🚀 Load Sample Data
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Form Section */}
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+        <div className="relative z-10 p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
         {/* Idea Selection Section - Only show if not bound to specific idea */}
         {!ideaId && (
           <div className="bg-gray-800 p-4 rounded-lg">
@@ -704,6 +820,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
           </button>
         </div>
       </form>
+        </div>
+      </div>
     </div>
   );
 };

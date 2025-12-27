@@ -356,146 +356,110 @@ const MyIdeasSection = ({ showTitle = true }) => {
 
       {/* Edit Idea Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-black border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] relative overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-black to-white/[0.02] rounded-2xl pointer-events-none"></div>
-            <div className="relative z-10 p-8">
-              <div className="flex items-center justify-between mb-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl max-w-md w-full mx-4 p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold text-white mb-6">Edit Idea</h2>
+              <form onSubmit={handleUpdateIdea} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
                 <div>
-                  <h2 className="text-2xl font-bold text-white font-manrope">Edit Idea</h2>
-                  <p className="text-white/60 text-sm font-manrope mt-1">
-                    Update your idea details and information
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setEditingIdea(null);
-                  }}
-                  className="p-2 hover:bg-white/[0.08] rounded-lg transition-colors text-white/70 hover:text-white"
-                >
-                  <FaTimes className="w-5 h-5" />
-                </button>
-              </div>
-              
-              <form onSubmit={handleUpdateIdea} className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-white font-manrope mb-2">
-                      Title <span className="text-red-400">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={editIdea.title}
-                      onChange={(e) => setEditIdea({ ...editIdea, title: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-                      placeholder="Enter a compelling title for your idea"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white font-manrope mb-2">
-                      Elevator Pitch <span className="text-red-400">*</span>
-                    </label>
-                    <textarea
-                      value={editIdea.elevatorPitch}
-                      onChange={(e) => setEditIdea({ ...editIdea, elevatorPitch: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 resize-none"
-                      placeholder="A brief and compelling pitch of your idea"
-                      rows="2"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white font-manrope mb-2">
-                      Detailed Description <span className="text-red-400">*</span>
-                    </label>
-                    <textarea
-                      value={editIdea.description}
-                      onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 resize-none"
-                      placeholder="Provide a comprehensive description of your innovative idea"
-                      rows="4"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-white font-manrope mb-2">
-                        Category <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={editIdea.category}
-                        onChange={(e) => setEditIdea({ ...editIdea, category: e.target.value })}
-                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-                        placeholder="e.g., Technology, Health, Education"
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-white font-manrope mb-2">
-                        Target Audience <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={editIdea.targetAudience}
-                        onChange={(e) => setEditIdea({ ...editIdea, targetAudience: e.target.value })}
-                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300"
-                        placeholder="Who is your target audience?"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white font-manrope mb-2">
-                      Problem Statement <span className="text-red-400">*</span>
-                    </label>
-                    <textarea
-                      value={editIdea.problemStatement}
-                      onChange={(e) => setEditIdea({ ...editIdea, problemStatement: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 resize-none"
-                      placeholder="What specific problem does your idea address?"
-                      rows="3"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white font-manrope mb-2">
-                      Solution <span className="text-red-400">*</span>
-                    </label>
-                    <textarea
-                      value={editIdea.solution}
-                      onChange={(e) => setEditIdea({ ...editIdea, solution: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 resize-none"
-                      placeholder="How does your idea solve the identified problem?"
-                      rows="3"
-                      required
-                    />
-                  </div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Title *</label>
+                  <input
+                    type="text"
+                    value={editIdea.title}
+                    onChange={(e) => setEditIdea({ ...editIdea, title: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="Enter idea title"
+                    required
+                  />
                 </div>
 
-                <div className="flex gap-3 pt-6 border-t border-white/10">
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Elevator Pitch *</label>
+                  <textarea
+                    value={editIdea.elevatorPitch}
+                    onChange={(e) => setEditIdea({ ...editIdea, elevatorPitch: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="A brief pitch of your idea"
+                    rows="2"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Detailed Description *</label>
+                  <textarea
+                    value={editIdea.description}
+                    onChange={(e) => setEditIdea({ ...editIdea, description: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="Detailed description of your idea"
+                    rows="3"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Category *</label>
+                  <input
+                    type="text"
+                    value={editIdea.category}
+                    onChange={(e) => setEditIdea({ ...editIdea, category: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="e.g., Technology, Health, Education"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Target Audience *</label>
+                  <input
+                    type="text"
+                    value={editIdea.targetAudience}
+                    onChange={(e) => setEditIdea({ ...editIdea, targetAudience: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="Who is your target audience?"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Problem Statement *</label>
+                  <textarea
+                    value={editIdea.problemStatement}
+                    onChange={(e) => setEditIdea({ ...editIdea, problemStatement: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="What problem does your idea solve?"
+                    rows="2"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-white/70 mb-2">Solution *</label>
+                  <textarea
+                    value={editIdea.solution}
+                    onChange={(e) => setEditIdea({ ...editIdea, solution: e.target.value })}
+                    className="w-full px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg focus:ring-2 focus:ring-white/20 focus:border-white/30 text-white backdrop-blur-sm"
+                    placeholder="How does your idea solve the problem?"
+                    rows="2"
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => {
                       setShowEditModal(false);
                       setEditingIdea(null);
                     }}
-                    className="flex-1 px-6 py-3 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-all duration-300 text-white font-manrope border border-white/10 hover:border-white/20"
+                    className="flex-1 px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-colors text-white border border-white/10"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all duration-300 text-white font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 rounded-lg transition-all text-white"
                   >
                     Update Idea
                   </button>
