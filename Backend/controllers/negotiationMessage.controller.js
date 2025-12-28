@@ -22,7 +22,8 @@ exports.getMessagesForRequest = async (req, res) => {
     }
 
     // Check authorization
-    const isEntrepreneur = req.user.id === fundingRequest.entrepreneur?._id.toString();
+    const isEntrepreneur =
+      req.user.id === fundingRequest.entrepreneur?._id.toString();
     const hasInterest = fundingRequest.interests?.some(
       (interest) => interest.investor?.toString() === req.user.id
     );
@@ -86,8 +87,9 @@ exports.sendMessage = async (req, res) => {
     }
 
     // Verify funding request exists and user has access
-    const fundingRequest = await FundingRequest.findById(fundingRequestId)
-      .populate("entrepreneur", "name email");
+    const fundingRequest = await FundingRequest.findById(
+      fundingRequestId
+    ).populate("entrepreneur", "name email");
 
     if (!fundingRequest) {
       return res.status(404).json({
@@ -97,7 +99,8 @@ exports.sendMessage = async (req, res) => {
     }
 
     // Determine user role
-    const isEntrepreneur = req.user.id === fundingRequest.entrepreneur?._id.toString();
+    const isEntrepreneur =
+      req.user.id === fundingRequest.entrepreneur?._id.toString();
     const hasInterest = fundingRequest.interests?.some(
       (interest) => interest.investor?.toString() === req.user.id
     );
@@ -254,7 +257,7 @@ exports.getUnreadCount = async (req, res) => {
 
     // Get all funding requests where user is involved
     let query = {};
-    
+
     if (fundingRequestId) {
       query.fundingRequest = fundingRequestId;
     }
@@ -277,6 +280,79 @@ exports.getUnreadCount = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to get unread count",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Mark messages as viewed (read receipts)
+ */
+exports.markMessagesAsViewed = async (req, res) => {
+  try {
+    const { fundingRequestId } = req.params;
+    const { messageIds } = req.body;
+
+    if (!Array.isArray(messageIds) || messageIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Message IDs array is required",
+      });
+    }
+
+    // Verify access to funding request
+    const fundingRequest = await FundingRequest.findById(fundingRequestId);
+    if (!fundingRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "Funding request not found",
+      });
+    }
+
+    const isEntrepreneur =
+      req.user.id === fundingRequest.entrepreneur?.toString();
+    const hasInterest = fundingRequest.investorResponses?.some(
+      (r) => r.investor?.toString() === req.user.id
+    );
+
+    if (!isEntrepreneur && !hasInterest) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized to mark messages as viewed",
+      });
+    }
+
+    // Mark messages as viewed
+    const messages = await NegotiationMessage.find({
+      _id: { $in: messageIds },
+      fundingRequest: fundingRequestId,
+      sender: { $ne: req.user.id }, // Don't mark own messages
+    });
+
+    let markedCount = 0;
+    for (const message of messages) {
+      const alreadyViewed = message.viewedBy.some(
+        (v) => v.user?.toString() === req.user.id
+      );
+
+      if (!alreadyViewed) {
+        await message.markAsViewed(req.user.id);
+        markedCount++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `${markedCount} messages marked as viewed`,
+      data: {
+        markedCount,
+      },
+    });
+  } catch (error) {
+    console.error("Error marking messages as viewed:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to mark messages as viewed",
       error: error.message,
     });
   }

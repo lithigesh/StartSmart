@@ -54,6 +54,7 @@ const FundingRequestDetailsModal = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
+  const [messages, setMessages] = useState([]);
 
   // Negotiation chat state (minimal for compatibility)
   const [sendingMessage, setSendingMessage] = useState(false);
@@ -122,11 +123,86 @@ const FundingRequestDetailsModal = ({
       setSuccess("");
 
       // Auto-switch to negotiation tab if there are messages
-      if (request.negotiationHistory && request.negotiationHistory.length > 0) {
+      if (messages.length > 0) {
         setActiveTab("negotiation");
       }
     }
   }, [request]);
+
+  // Fetch messages when modal opens or when request changes
+  useEffect(() => {
+    if (request?._id) {
+      fetchMessages();
+    }
+  }, [request]);
+
+  // Poll for new messages when on negotiation tab
+  useEffect(() => {
+    if (!request || activeTab !== "negotiation") return;
+
+    // Initial fetch
+    fetchMessages();
+
+    // Set up polling every 5 seconds
+    const pollInterval = setInterval(() => {
+      fetchMessages();
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [request, activeTab]);
+
+  const fetchMessages = async () => {
+    if (!request?._id) return;
+
+    try {
+      const response = await fundingAPI.getMessagesForRequest(request._id);
+      if (response.success && response.data?.messages) {
+        const newMessages = response.data.messages;
+        setMessages(newMessages);
+
+        // Mark new messages as viewed (read receipts)
+        const unviewedMessageIds = newMessages
+          .filter(
+            (msg) =>
+              msg.sender?._id !== user?.id &&
+              !msg.viewedBy?.some((v) => v.user === user?.id)
+          )
+          .map((msg) => msg._id)
+          .filter(Boolean);
+
+        if (unviewedMessageIds.length > 0) {
+          markMessagesAsViewed(unviewedMessageIds);
+        }
+      } else {
+        // Fallback to legacy negotiationHistory if new API fails
+        setMessages(request.negotiationHistory || []);
+      }
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      // Fallback to legacy data
+      setMessages(request.negotiationHistory || []);
+    }
+  };
+
+  const markMessagesAsViewed = async (messageIds) => {
+    try {
+      await fetch(
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:5001"
+        }/api/messages/funding/${request._id}/viewed`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ messageIds }),
+        }
+      );
+    } catch (error) {
+      console.error("Error marking messages as viewed:", error);
+    }
+  };
 
   // Handler for sending negotiation messages
   const handleSendNegotiation = async (messageData) => {
@@ -177,6 +253,9 @@ const FundingRequestDetailsModal = ({
         // Show success message
         setSuccess("Negotiation message sent successfully!");
         setTimeout(() => setSuccess(""), 3000);
+
+        // Fetch latest messages immediately after sending
+        setTimeout(() => fetchMessages(), 500);
 
         // Update the request directly if we got the updated data
         if (response.data) {
@@ -511,7 +590,7 @@ const FundingRequestDetailsModal = ({
                 </div>
 
                 <ChatInterface
-                  messages={request.negotiationHistory || []}
+                  messages={messages}
                   currentUserId={user?.id}
                   currentUserRole="entrepreneur"
                   entrepreneurName={

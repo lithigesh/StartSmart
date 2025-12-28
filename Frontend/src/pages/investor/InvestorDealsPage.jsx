@@ -107,11 +107,11 @@ const InvestorDealsPage = () => {
       if (allRequestsResponse.success && allRequestsResponse.data) {
         const allRequests = allRequestsResponse.data;
         const viewedIds = new Set([
-          ...finalPipeline.new.map((r) => r._id),
-          ...finalPipeline.viewed.map((r) => r._id),
-          ...finalPipeline.negotiating.map((r) => r._id),
-          ...finalPipeline.accepted.map((r) => r._id),
-          ...finalPipeline.declined.map((r) => r._id),
+          ...(finalPipeline.new || []).map((r) => r._id),
+          ...(finalPipeline.viewed || []).map((r) => r._id),
+          ...(finalPipeline.negotiating || []).map((r) => r._id),
+          ...(finalPipeline.accepted || []).map((r) => r._id),
+          ...(finalPipeline.declined || []).map((r) => r._id),
         ]);
 
         // Add truly new requests (pending and not in any pipeline stage)

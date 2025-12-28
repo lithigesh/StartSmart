@@ -57,7 +57,6 @@ const FundingPage = () => {
     milestones: "",
     teamSize: "",
     currentRevenue: "",
-    projectedRevenue: "",
     targetMarket: "",
     competitiveAdvantage: "",
     riskFactors: "",
@@ -66,14 +65,13 @@ const FundingPage = () => {
     revenueModel: "",
     customerTraction: "",
     intellectualProperty: "",
-    keyTeamMembers: "",
-    advisors: "",
-    existingInvestors: "",
     contactPhone: "",
     contactEmail: "",
     companyWebsite: "",
     linkedinProfile: "",
     additionalDocuments: "",
+    fundingStage: "seed",
+    investmentType: "equity",
   });
   const [submittingFunding, setSubmittingFunding] = useState(false);
 
@@ -107,13 +105,17 @@ const FundingPage = () => {
   };
 
   const handleCreateFundingRequest = () => {
+    console.log("Create Funding Request clicked");
+    console.log("User Ideas:", userIdeas);
     if (userIdeas.length === 0) {
+      console.log("No ideas found, showing notification");
       addNotification(
         "You need to submit an idea before requesting funding",
         "error"
       );
       return;
     }
+    console.log("Opening funding modal");
     setShowFundingModal(true);
   };
 
@@ -190,7 +192,6 @@ const FundingPage = () => {
       milestones: "",
       teamSize: "",
       currentRevenue: "",
-      projectedRevenue: "",
       targetMarket: "",
       competitiveAdvantage: "",
       riskFactors: "",
@@ -199,14 +200,13 @@ const FundingPage = () => {
       revenueModel: "",
       customerTraction: "",
       intellectualProperty: "",
-      keyTeamMembers: "",
-      advisors: "",
-      existingInvestors: "",
       contactPhone: "",
       contactEmail: "",
       companyWebsite: "",
       linkedinProfile: "",
       additionalDocuments: "",
+      fundingStage: "seed",
+      investmentType: "equity",
     });
     setSelectedInvestors([]);
     setInterestedInvestors([]);

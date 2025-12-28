@@ -78,6 +78,13 @@ const SideBar = ({
       path: "/entrepreneur/notifications",
     },
     {
+      id: "settings",
+      label: "Settings",
+      icon: <FaCog className="w-5 h-5" />,
+      description: "Account settings",
+      path: "/entrepreneur/settings",
+    },
+    {
       id: "feedback",
       label: "App Feedback",
       icon: <FaComment className="w-5 h-5" />,
@@ -111,7 +118,7 @@ const SideBar = ({
   const handleNavigation = (item) => {
     navigate(item.path);
     onSectionChange && onSectionChange(item.id);
-    
+
     // Auto-collapse on mobile after selection
     if (window.innerWidth < 1024) {
       setIsCollapsed && setIsCollapsed(true);
@@ -190,7 +197,7 @@ const SideBar = ({
       >
         {/* Glass morphism overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] pointer-events-none"></div>
-        
+
         {/* Header */}
         <div className="flex items-center h-16 px-4 border-b border-white/10 relative z-10">
           <div className="flex items-center justify-between w-full">
@@ -263,7 +270,9 @@ const SideBar = ({
             className={`
               w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
               text-red-400 hover:text-red-300 hover:bg-red-900/20 hover:scale-105
-              ${isCollapsed && window.innerWidth >= 1024 ? "justify-center" : ""}
+              ${
+                isCollapsed && window.innerWidth >= 1024 ? "justify-center" : ""
+              }
             `}
           >
             <FaSignOutAlt className="w-5 h-5" />

@@ -3,17 +3,12 @@ import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { appFeedbackAPI } from "../../services/api";
-import {
-  FaComment,
-  FaPaperPlane,
-  FaStar,
-  FaCheckCircle,
-} from "react-icons/fa";
+import { FaComment, FaPaperPlane, FaStar, FaCheckCircle } from "react-icons/fa";
 
 const FeedbackPage = () => {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
-  
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -27,9 +22,11 @@ const FeedbackPage = () => {
 
   const categories = [
     { value: "general", label: "General Feedback" },
-    { value: "bug", label: "Bug Report" },
-    { value: "feature", label: "Feature Request" },
-    { value: "ui", label: "UI/UX Feedback" },
+    { value: "bug_report", label: "Bug Report" },
+    { value: "feature_request", label: "Feature Request" },
+    { value: "ui_ux", label: "UI/UX Feedback" },
+    { value: "performance", label: "Performance" },
+    { value: "security", label: "Security" },
     { value: "other", label: "Other" },
   ];
 
@@ -47,7 +44,10 @@ const FeedbackPage = () => {
     }
 
     if (formData.description.trim().length < 10) {
-      addNotification("Feedback description must be at least 10 characters long", "error");
+      addNotification(
+        "Feedback description must be at least 10 characters long",
+        "error"
+      );
       return;
     }
 
@@ -98,9 +98,12 @@ const FeedbackPage = () => {
         </div>
 
         {/* Feedback Form */}
-        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up" style={{ animationDelay: '0ms' }}>
+        <div
+          className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up"
+          style={{ animationDelay: "0ms" }}
+        >
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-          
+
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
@@ -143,7 +146,9 @@ const FeedbackPage = () => {
                     <button
                       key={cat.value}
                       type="button"
-                      onClick={() => setFormData({ ...formData, category: cat.value })}
+                      onClick={() =>
+                        setFormData({ ...formData, category: cat.value })
+                      }
                       className={`px-4 py-3 rounded-lg border transition-all duration-200 font-manrope font-medium ${
                         formData.category === cat.value
                           ? "bg-white/20 border-white/30 text-white"
@@ -175,14 +180,17 @@ const FeedbackPage = () => {
               {/* Overall Rating */}
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
-                  Overall Experience Rating <span className="text-red-400">*</span>
+                  Overall Experience Rating{" "}
+                  <span className="text-red-400">*</span>
                 </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
-                      onClick={() => setFormData({ ...formData, overallRating: star })}
+                      onClick={() =>
+                        setFormData({ ...formData, overallRating: star })
+                      }
                       onMouseEnter={() => setHoveredRating(star)}
                       onMouseLeave={() => setHoveredRating(0)}
                       className="transition-all duration-200 hover:scale-110"
@@ -202,18 +210,22 @@ const FeedbackPage = () => {
               {/* Recommendation Score */}
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
-                  How likely are you to recommend StartSmart? <span className="text-red-400">*</span>
+                  How likely are you to recommend StartSmart?{" "}
+                  <span className="text-red-400">*</span>
                 </label>
                 <div className="flex gap-2 flex-wrap">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
                     <button
                       key={score}
                       type="button"
-                      onClick={() => setFormData({ ...formData, recommendationScore: score })}
+                      onClick={() =>
+                        setFormData({ ...formData, recommendationScore: score })
+                      }
                       onMouseEnter={() => setHoveredRecommendation(score)}
                       onMouseLeave={() => setHoveredRecommendation(0)}
                       className={`w-12 h-12 rounded-lg border transition-all duration-200 font-manrope font-semibold ${
-                        score <= (hoveredRecommendation || formData.recommendationScore)
+                        score <=
+                        (hoveredRecommendation || formData.recommendationScore)
                           ? score <= 6
                             ? "bg-red-400/20 border-red-400/30 text-red-400"
                             : score <= 8
@@ -255,7 +267,10 @@ const FeedbackPage = () => {
 
         {/* Benefits Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <div
+            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up"
+            style={{ animationDelay: "100ms" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-4">
@@ -270,7 +285,10 @@ const FeedbackPage = () => {
             </div>
           </div>
 
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <div
+            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up"
+            style={{ animationDelay: "200ms" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-xl bg-green-400/10 flex items-center justify-center mb-4">
@@ -285,7 +303,10 @@ const FeedbackPage = () => {
             </div>
           </div>
 
-          <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: '300ms' }}>
+          <div
+            className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up"
+            style={{ animationDelay: "300ms" }}
+          >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <div className="w-12 h-12 rounded-xl bg-purple-400/10 flex items-center justify-center mb-4">

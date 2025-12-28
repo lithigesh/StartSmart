@@ -38,6 +38,24 @@ const IdeaSchema = new mongoose.Schema(
     useOfFunds: { type: String },
     equityOffer: { type: String },
 
+    // Additional Business Details
+    uniqueValueProposition: { type: String },
+    competitiveAdvantage: { type: String },
+    stage: {
+      type: String,
+      enum: [
+        "Concept",
+        "Research",
+        "Prototype",
+        "MVP",
+        "Beta",
+        "Launch",
+        "Growth",
+        "Scale",
+      ],
+      default: "Concept",
+    },
+
     // Attachments
     attachments: [
       {
@@ -115,9 +133,9 @@ IdeaSchema.index({ status: 1 });
 IdeaSchema.index({ fundingStatus: 1 });
 IdeaSchema.index({ category: 1 });
 IdeaSchema.index({ owner: 1, status: 1 });
-IdeaSchema.index({ 'analysis.score': -1 }); // For sorting by score
+IdeaSchema.index({ "analysis.score": -1 }); // For sorting by score
 IdeaSchema.index({ createdAt: -1 }); // For recent ideas
 // Text index for search functionality
-IdeaSchema.index({ title: 'text', description: 'text', elevatorPitch: 'text' });
+IdeaSchema.index({ title: "text", description: "text", elevatorPitch: "text" });
 
 module.exports = mongoose.model("Idea", IdeaSchema);

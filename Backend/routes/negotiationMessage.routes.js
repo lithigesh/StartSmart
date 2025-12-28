@@ -4,6 +4,7 @@ const {
   getMessagesForRequest,
   sendMessage,
   markMessagesAsDelivered,
+  markMessagesAsViewed,
   retryMessage,
   getUnreadCount,
 } = require("../controllers/negotiationMessage.controller");
@@ -20,6 +21,9 @@ router.post("/funding/:fundingRequestId", sendMessage);
 
 // Mark messages as delivered
 router.put("/funding/:fundingRequestId/delivered", markMessagesAsDelivered);
+
+// Mark messages as viewed (read receipts)
+router.put("/funding/:fundingRequestId/viewed", markMessagesAsViewed);
 
 // Retry a failed message
 router.put("/:messageId/retry", retryMessage);

@@ -12,6 +12,8 @@ import {
   FaClock,
 } from "react-icons/fa";
 
+const MAX_MESSAGE_LENGTH = 2000;
+
 /**
  * Unified ChatInterface Component
  * Used by both investors and entrepreneurs for negotiation chat
@@ -32,6 +34,7 @@ const ChatInterface = ({
   const [proposedEquity, setProposedEquity] = useState("");
   const [showProposalFields, setShowProposalFields] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState("");
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -54,8 +57,34 @@ const ChatInterface = ({
       e.stopPropagation();
     }
 
+    // Clear previous errors
+    setError("");
+
     if (!message.trim() && !proposedAmount && !proposedEquity) {
       return;
+    }
+
+    // Validate message length
+    if (message.length > MAX_MESSAGE_LENGTH) {
+      setError(`Message cannot exceed ${MAX_MESSAGE_LENGTH} characters`);
+      return;
+    }
+
+    // Validate proposal amounts
+    if (proposedAmount) {
+      const amount = parseFloat(proposedAmount);
+      if (isNaN(amount) || amount <= 0) {
+        setError("Proposed amount must be a positive number");
+        return;
+      }
+    }
+
+    if (proposedEquity) {
+      const equity = parseFloat(proposedEquity);
+      if (isNaN(equity) || equity <= 0 || equity > 100) {
+        setError("Proposed equity must be between 0 and 100 percent");
+        return;
+      }
     }
 
     setIsSending(true);
@@ -80,8 +109,10 @@ const ChatInterface = ({
       setProposedAmount("");
       setProposedEquity("");
       setShowProposalFields(false);
+      setError("");
     } catch (error) {
       console.error("Error sending message:", error);
+      setError(error.message || "Failed to send message. Please try again.");
     } finally {
       setIsSending(false);
     }
@@ -101,6 +132,7 @@ const ChatInterface = ({
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays}d ago`;
 
+    // For older messages, show full date and time
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -265,6 +297,54 @@ const ChatInterface = ({
                         <p className="whitespace-pre-wrap break-words">
                           {msg.content || msg.message}
                         </p>
+
+                        {/* Display structured proposal data if available */}
+                        {msg.proposalData &&
+                          (msg.proposalData.amount ||
+                            msg.proposalData.equity) && (
+                            <div
+                              className={`mt-3 pt-3 border-t ${
+                                isOwn ? "border-blue-500" : "border-gray-600"
+                              }`}
+                            >
+                              <div className="text-sm font-semibold mb-2 flex items-center gap-2">
+                                💰{" "}
+                                {msg.messageType === "proposal"
+                                  ? "Proposed Terms"
+                                  : "Counter Proposal"}
+                              </div>
+                              <div className="space-y-1 text-sm">
+                                {msg.proposalData.amount && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="opacity-75">Amount:</span>
+                                    <span className="font-semibold">
+                                      $
+                                      {msg.proposalData.amount.toLocaleString()}
+                                    </span>
+                                  </div>
+                                )}
+                                {msg.proposalData.equity && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="opacity-75">Equity:</span>
+                                    <span className="font-semibold">
+                                      {msg.proposalData.equity}%
+                                    </span>
+                                  </div>
+                                )}
+                                {msg.proposalData.valuation && (
+                                  <div className="flex items-center gap-2">
+                                    <span className="opacity-75">
+                                      Valuation:
+                                    </span>
+                                    <span className="font-semibold">
+                                      $
+                                      {msg.proposalData.valuation.toLocaleString()}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                       </div>
 
                       {/* Message Footer */}
@@ -343,56 +423,81 @@ const ChatInterface = ({
           )}
 
           {/* Message Input Box */}
-          <div className="flex gap-2">
-            <textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              placeholder="Type your message... (Shift+Enter for new line)"
-              rows={3}
-              className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              disabled={isSending}
-            />
-            <div className="flex flex-col gap-2">
-              {canPropose && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowProposalFields(!showProposalFields);
+          <div className="space-y-2">
+            {/* Error Message */}
+            {error && (
+              <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                <FaExclamationTriangle className="w-4 h-4 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <textarea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
                   }}
-                  type="button"
-                  className={`px-4 py-2 rounded-lg border transition-colors ${
-                    showProposalFields
-                      ? "bg-blue-600 border-blue-500 text-white"
-                      : "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
-                  }`}
-                  title="Add proposed terms"
+                  placeholder="Type your message... (Shift+Enter for new line)"
+                  rows={3}
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                   disabled={isSending}
-                >
-                  💰
-                </button>
-              )}
-              <button
-                onClick={handleSendMessage}
-                type="button"
-                disabled={
-                  isSending ||
-                  (!message.trim() && !proposedAmount && !proposedEquity)
-                }
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
-              >
-                {isSending ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <FaPaperPlane className="w-4 h-4" />
+                  maxLength={MAX_MESSAGE_LENGTH}
+                />
+                {/* Character Counter */}
+                <div className="flex justify-end mt-1">
+                  <span
+                    className={`text-xs ${
+                      message.length > MAX_MESSAGE_LENGTH * 0.9
+                        ? "text-yellow-400"
+                        : "text-gray-500"
+                    }`}
+                  >
+                    {message.length} / {MAX_MESSAGE_LENGTH}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                {canPropose && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowProposalFields(!showProposalFields);
+                    }}
+                    type="button"
+                    className={`px-4 py-2 rounded-lg border transition-colors ${
+                      showProposalFields
+                        ? "bg-blue-600 border-blue-500 text-white"
+                        : "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
+                    }`}
+                    title="Add proposed terms"
+                    disabled={isSending}
+                  >
+                    💰
+                  </button>
                 )}
-              </button>
+                <button
+                  onClick={handleSendMessage}
+                  type="button"
+                  disabled={
+                    isSending ||
+                    (!message.trim() && !proposedAmount && !proposedEquity)
+                  }
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {isSending ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <FaPaperPlane className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

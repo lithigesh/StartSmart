@@ -2,6 +2,7 @@ const FundingRequest = require("../models/FundingRequest.model");
 const Idea = require("../models/Idea.model");
 const InvestorInterest = require("../models/InvestorInterest.model");
 const User = require("../models/User.model");
+const NegotiationMessage = require("../models/NegotiationMessage.model");
 
 // ===== HELPER FUNCTIONS =====
 
@@ -1075,6 +1076,14 @@ exports.investorNegotiate = async (req, res, next) => {
       });
     }
 
+    // Validate message length
+    if (message.length > 2000) {
+      return res.status(400).json({
+        success: false,
+        message: "Message cannot exceed 2000 characters",
+      });
+    }
+
     // Validate numeric inputs if provided
     if (
       proposedAmount !== undefined &&
@@ -1131,7 +1140,36 @@ exports.investorNegotiate = async (req, res, next) => {
       });
     }
 
-    // Build negotiation message
+    // Create structured proposal data
+    const proposalData = {};
+    if (proposedAmount) {
+      proposalData.amount = parseFloat(proposedAmount);
+    }
+    if (proposedEquity) {
+      proposalData.equity = parseFloat(proposedEquity);
+    }
+    if (proposedAmount && proposedEquity) {
+      proposalData.valuation = Math.round(
+        (parseFloat(proposedAmount) / parseFloat(proposedEquity)) * 100
+      );
+    }
+
+    // Create new message using NegotiationMessage model
+    const newMessage = new NegotiationMessage({
+      fundingRequest: request._id,
+      sender: investorId,
+      senderRole: "investor",
+      messageType: Object.keys(proposalData).length > 0 ? "proposal" : "text",
+      content: message.trim(),
+      proposalData:
+        Object.keys(proposalData).length > 0 ? proposalData : undefined,
+      status: "sent",
+    });
+
+    await newMessage.save();
+    await newMessage.populate("sender", "name email");
+
+    // Also add to legacy negotiationHistory for backward compatibility
     let negotiationMessage = message;
     if (proposedAmount || proposedEquity) {
       negotiationMessage += "\n\n📊 Proposed Terms:\n";
@@ -1141,17 +1179,10 @@ exports.investorNegotiate = async (req, res, next) => {
       if (proposedEquity) {
         negotiationMessage += `📈 Equity: ${proposedEquity}%\n`;
       }
-
-      // Calculate new valuation
-      if (proposedAmount && proposedEquity) {
-        const newValuation = Math.round(
-          (proposedAmount / proposedEquity) * 100
-        );
-        negotiationMessage += `🏢 Implied Valuation: $${newValuation.toLocaleString()}`;
+      if (proposalData.valuation) {
+        negotiationMessage += `🏢 Implied Valuation: $${proposalData.valuation.toLocaleString()}`;
       }
     }
-
-    // Add to negotiation history
     request.negotiationHistory.push({
       investor: investorId,
       message: negotiationMessage,
@@ -1228,6 +1259,14 @@ exports.entrepreneurRespond = async (req, res, next) => {
       });
     }
 
+    // Validate message length
+    if (message.length > 2000) {
+      return res.status(400).json({
+        success: false,
+        message: "Message cannot exceed 2000 characters",
+      });
+    }
+
     // Validate numeric inputs if provided
     if (
       proposedAmount !== undefined &&
@@ -1284,7 +1323,36 @@ exports.entrepreneurRespond = async (req, res, next) => {
       });
     }
 
-    // Build response message
+    // Create structured proposal data
+    const proposalData = {};
+    if (proposedAmount) {
+      proposalData.amount = parseFloat(proposedAmount);
+    }
+    if (proposedEquity) {
+      proposalData.equity = parseFloat(proposedEquity);
+    }
+    if (proposedAmount && proposedEquity) {
+      proposalData.valuation = Math.round(
+        (parseFloat(proposedAmount) / parseFloat(proposedEquity)) * 100
+      );
+    }
+
+    // Create new message using NegotiationMessage model
+    const newMessage = new NegotiationMessage({
+      fundingRequest: request._id,
+      sender: entrepreneurId,
+      senderRole: "entrepreneur",
+      messageType: Object.keys(proposalData).length > 0 ? "proposal" : "text",
+      content: message.trim(),
+      proposalData:
+        Object.keys(proposalData).length > 0 ? proposalData : undefined,
+      status: "sent",
+    });
+
+    await newMessage.save();
+    await newMessage.populate("sender", "name email");
+
+    // Also add to legacy negotiationHistory for backward compatibility
     let responseMessage = message;
     if (proposedAmount || proposedEquity) {
       responseMessage += "\n\n📊 Counter Proposal:\n";
@@ -1294,17 +1362,10 @@ exports.entrepreneurRespond = async (req, res, next) => {
       if (proposedEquity) {
         responseMessage += `📈 Equity: ${proposedEquity}%\n`;
       }
-
-      // Calculate new valuation
-      if (proposedAmount && proposedEquity) {
-        const newValuation = Math.round(
-          (proposedAmount / proposedEquity) * 100
-        );
-        responseMessage += `🏢 Implied Valuation: $${newValuation.toLocaleString()}`;
+      if (proposalData.valuation) {
+        responseMessage += `🏢 Implied Valuation: $${proposalData.valuation.toLocaleString()}`;
       }
     }
-
-    // Add to negotiation history (entrepreneur messages use null investor field)
     request.negotiationHistory.push({
       investor: null, // null indicates entrepreneur message
       message: responseMessage,

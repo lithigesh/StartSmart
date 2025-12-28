@@ -18,7 +18,7 @@ const getAuthHeaders = () => {
 // Helper function to handle API responses
 const handleResponse = async (response) => {
   const responseText = await response.text();
-  
+
   if (!response.ok) {
     let error;
     try {
@@ -28,7 +28,7 @@ const handleResponse = async (response) => {
     }
     throw new Error(error.message || `HTTP error! status: ${response.status}`);
   }
-  
+
   try {
     return JSON.parse(responseText);
   } catch (e) {
@@ -256,10 +256,13 @@ export const entrepreneurAPI = {
   getDashboardMetrics: async () => {
     try {
       // Get all user's ideas and funding requests
-      const [ideas, fundingResponse] = await Promise.all([
+      const [ideasResponse, fundingResponse] = await Promise.all([
         entrepreneurAPI.getMyIdeas(),
-        fundingAPI.getUserFundingRequests()
+        fundingAPI.getUserFundingRequests(),
       ]);
+
+      // Extract ideas array from response
+      const ideas = ideasResponse?.data || [];
 
       // Calculate metrics
       const totalIdeas = ideas.length;
@@ -270,23 +273,29 @@ export const entrepreneurAPI = {
       for (const idea of ideas) {
         try {
           // Get investor interests for each idea using the correct endpoint
-          const response = await api.get(`/ideas/${idea._id || idea.id}/investors`);
+          const response = await api.get(
+            `/ideas/${idea._id || idea.id}/investors`
+          );
           if (response.data && Array.isArray(response.data)) {
-            response.data.forEach(investor => {
+            response.data.forEach((investor) => {
               interestedInvestorsSet.add(investor._id || investor.id);
             });
           }
         } catch (error) {
           // Continue if individual idea interest fetch fails
-          console.log(`Failed to fetch interests for idea ${idea._id}:`, error.message);
+          console.log(
+            `Failed to fetch interests for idea ${idea._id}:`,
+            error.message
+          );
         }
       }
 
       // Calculate funding received from accepted requests
       if (fundingResponse.success && fundingResponse.data) {
-        fundingResponse.data.forEach(request => {
-          if (request.status === 'accepted') {
-            fundingReceived += request.acceptanceTerms?.finalAmount || request.amount || 0;
+        fundingResponse.data.forEach((request) => {
+          if (request.status === "accepted") {
+            fundingReceived +=
+              request.acceptanceTerms?.finalAmount || request.amount || 0;
           }
         });
       }
@@ -298,7 +307,7 @@ export const entrepreneurAPI = {
         ideas,
       };
     } catch (error) {
-      console.error('Error fetching dashboard metrics:', error);
+      console.error("Error fetching dashboard metrics:", error);
       return {
         totalIdeas: 0,
         fundingReceived: 0,
@@ -377,38 +386,29 @@ export const investorAPI = {
 
   // Mark interest through investor endpoint
   markInterest: async (ideaId) => {
-    const response = await fetch(
-      `${API_URL}/api/investor/${ideaId}/interest`,
-      {
-        method: "POST",
-        headers: getAuthHeaders(),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/investor/${ideaId}/interest`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+    });
     return handleResponse(response);
   },
 
   // Remove interest through investor endpoint
   removeInterest: async (ideaId) => {
-    const response = await fetch(
-      `${API_URL}/api/investor/${ideaId}/interest`,
-      {
-        method: "DELETE",
-        headers: getAuthHeaders(),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/investor/${ideaId}/interest`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
     return handleResponse(response);
   },
 
   // Update interest status
   updateInterestStatus: async (ideaId, status) => {
-    const response = await fetch(
-      `${API_URL}/api/investor/${ideaId}/interest`,
-      {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ status }),
-      }
-    );
+    const response = await fetch(`${API_URL}/api/investor/${ideaId}/interest`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ status }),
+    });
     return handleResponse(response);
   },
 
@@ -553,6 +553,40 @@ export const investorAPI = {
 
 // Funding API
 export const fundingAPI = {
+  // Get messages for a funding request
+  getMessagesForRequest: async (requestId, page = 1, limit = 50) => {
+    try {
+      const response = await Promise.race([
+        fetch(
+          `${API_URL}/api/messages/${requestId}?page=${page}&limit=${limit}`,
+          {
+            method: "GET",
+            headers: getAuthHeaders(),
+          }
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        data: { messages: [], pagination: {} },
+      };
+    }
+  },
+
   // Get all funding requests
   getAllFundingRequests: async () => {
     try {
@@ -969,6 +1003,40 @@ export const fundingAPI = {
 
 // Investor Deal Management API
 export const investorDealAPI = {
+  // Get messages for a funding request
+  getMessagesForRequest: async (requestId, page = 1, limit = 50) => {
+    try {
+      const response = await Promise.race([
+        fetch(
+          `${API_URL}/api/messages/${requestId}?page=${page}&limit=${limit}`,
+          {
+            method: "GET",
+            headers: getAuthHeaders(),
+          }
+        ),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 10000)
+        ),
+      ]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        data: { messages: [], pagination: {} },
+      };
+    }
+  },
+
   // Get investor's deal pipeline
   getInvestorPipeline: async (stage = null) => {
     try {
@@ -1444,13 +1512,14 @@ export const analyticsAPI = {
           recentActivity: [
             {
               type: "investor_interest",
-              message: "TechVentures Capital showed interest in AI-Powered Marketing Platform",
-              timestamp: "2024-01-15T10:00:00Z"
+              message:
+                "TechVentures Capital showed interest in AI-Powered Marketing Platform",
+              timestamp: "2024-01-15T10:00:00Z",
             },
             {
               type: "funding_received",
               message: "Received $250K funding for Smart Home Automation",
-              timestamp: "2024-01-12T14:30:00Z"
+              timestamp: "2024-01-12T14:30:00Z",
             },
             {
               type: "meeting_scheduled",

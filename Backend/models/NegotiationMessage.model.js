@@ -33,7 +33,21 @@ const NegotiationMessageSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: [2000, "Message cannot exceed 2000 characters"],
     },
+    // Read receipts - track who has viewed this message
+    viewedBy: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        viewedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     // Proposal-specific data
     proposalData: {
       amount: {
@@ -81,6 +95,29 @@ NegotiationMessageSchema.index({ fundingRequest: 1, status: 1 });
 NegotiationMessageSchema.virtual("senderName").get(function () {
   return this.sender?.name || "Unknown";
 });
+
+// Method to mark message as viewed by a user
+NegotiationMessageSchema.methods.markAsViewed = function (userId) {
+  const alreadyViewed = this.viewedBy.some(
+    (view) => view.user.toString() === userId.toString()
+  );
+
+  if (!alreadyViewed) {
+    this.viewedBy.push({
+      user: userId,
+      viewedAt: new Date(),
+    });
+  }
+
+  return this.save();
+};
+
+// Method to check if message has been viewed by a user
+NegotiationMessageSchema.methods.isViewedBy = function (userId) {
+  return this.viewedBy.some(
+    (view) => view.user.toString() === userId.toString()
+  );
+};
 
 // Method to format message with proposal data
 NegotiationMessageSchema.methods.getFormattedContent = function () {
@@ -137,9 +174,7 @@ NegotiationMessageSchema.statics.getMessageCount = async function (
 };
 
 // Static method to mark messages as delivered
-NegotiationMessageSchema.statics.markAsDelivered = async function (
-  messageIds
-) {
+NegotiationMessageSchema.statics.markAsDelivered = async function (messageIds) {
   return this.updateMany(
     { _id: { $in: messageIds }, status: "sent" },
     { $set: { status: "delivered" } }

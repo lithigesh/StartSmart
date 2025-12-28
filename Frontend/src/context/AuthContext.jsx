@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from "react";
 
 // Get API URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5001";
@@ -18,11 +24,11 @@ const getInitialState = () => {
   };
 
   // Only access localStorage in browser environment
-  if (typeof window !== 'undefined' && window.localStorage) {
+  if (typeof window !== "undefined" && window.localStorage) {
     try {
       const token = localStorage.getItem("token");
       const storedUser = localStorage.getItem("user");
-      
+
       if (token && storedUser) {
         const parsedUser = JSON.parse(storedUser);
         return {
@@ -36,7 +42,7 @@ const getInitialState = () => {
     } catch (error) {
       console.error("Error parsing stored user:", error);
       // Clean up corrupted data
-      if (typeof window !== 'undefined' && window.localStorage) {
+      if (typeof window !== "undefined" && window.localStorage) {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
       }
@@ -57,6 +63,13 @@ const authReducer = (state, action) => {
         ...state,
         isAuthenticated: true,
         loading: false,
+        user: action.payload,
+        error: null,
+      };
+    case "UPDATE_USER":
+      localStorage.setItem("user", JSON.stringify(action.payload));
+      return {
+        ...state,
         user: action.payload,
         error: null,
       };
@@ -108,7 +121,7 @@ export const AuthProvider = ({ children }) => {
   // Get role-based dashboard URL
   const getRoleDashboardUrl = (user) => {
     if (!user || !user.role) return "/";
-    
+
     switch (user.role) {
       case "admin":
         return "/admin/dashboard";
@@ -124,7 +137,7 @@ export const AuthProvider = ({ children }) => {
   // Load user - wrapped with useCallback to prevent infinite loops
   const loadUser = useCallback(async () => {
     // Skip if not in browser environment
-    if (typeof window === 'undefined' || !window.localStorage) {
+    if (typeof window === "undefined" || !window.localStorage) {
       dispatch({ type: "AUTH_ERROR" });
       return;
     }
@@ -138,7 +151,7 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: "AUTH_ERROR" });
       return;
     }
-    
+
     if (token && storedUser) {
       try {
         // Try to use stored user data first
@@ -157,7 +170,7 @@ export const AuthProvider = ({ children }) => {
         }
       }
     }
-    
+
     if (token) {
       try {
         const response = await fetch(`${API_URL}/api/auth/me`, {
@@ -187,99 +200,108 @@ export const AuthProvider = ({ children }) => {
   }, [API_URL]); // Only depend on API_URL which shouldn't change
 
   // Register user - wrapped with useCallback
-  const register = useCallback(async (formData) => {
-    dispatch({ type: "SET_LOADING", payload: true });
+  const register = useCallback(
+    async (formData) => {
+      dispatch({ type: "SET_LOADING", payload: true });
 
-    try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        dispatch({
-          type: "REGISTER_SUCCESS",
-          payload: data,
+      try {
+        const response = await fetch(`${API_URL}/api/auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         });
-        return { success: true, data, user: data.user };
-      } else {
+
+        const data = await response.json();
+
+        if (response.ok) {
+          dispatch({
+            type: "REGISTER_SUCCESS",
+            payload: data,
+          });
+          return { success: true, data, user: data.user };
+        } else {
+          dispatch({
+            type: "REGISTER_FAIL",
+            payload: data.message || "Registration failed",
+          });
+          return {
+            success: false,
+            error: data.message || "Registration failed",
+          };
+        }
+      } catch (error) {
         dispatch({
           type: "REGISTER_FAIL",
-          payload: data.message || "Registration failed",
+          payload: error.message || "Network error",
         });
-        return { success: false, error: data.message || "Registration failed" };
+        return { success: false, error: error.message || "Network error" };
       }
-    } catch (error) {
-      dispatch({
-        type: "REGISTER_FAIL",
-        payload: error.message || "Network error",
-      });
-      return { success: false, error: error.message || "Network error" };
-    }
-  }, [API_URL]);
+    },
+    [API_URL]
+  );
 
   // Login user - simplified and more reliable, wrapped with useCallback
-  const login = useCallback(async (formData) => {
-    dispatch({ type: "SET_LOADING", payload: true });
+  const login = useCallback(
+    async (formData) => {
+      dispatch({ type: "SET_LOADING", payload: true });
 
-    try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store token and user data safely
-        if (typeof window !== 'undefined' && window.localStorage) {
-          try {
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("user", JSON.stringify(data.user));
-          } catch (error) {
-            console.error("Error storing to localStorage:", error);
-          }
-        }
-        
-        // Update state
-        dispatch({
-          type: "LOGIN_SUCCESS",
-          payload: data,
+      try {
+        const response = await fetch(`${API_URL}/api/auth/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         });
-        
-        return { 
-          success: true, 
-          user: data.user,
-          redirectUrl: getRoleDashboardUrl(data.user)
-        };
-      } else {
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Store token and user data safely
+          if (typeof window !== "undefined" && window.localStorage) {
+            try {
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+            } catch (error) {
+              console.error("Error storing to localStorage:", error);
+            }
+          }
+
+          // Update state
+          dispatch({
+            type: "LOGIN_SUCCESS",
+            payload: data,
+          });
+
+          return {
+            success: true,
+            user: data.user,
+            redirectUrl: getRoleDashboardUrl(data.user),
+          };
+        } else {
+          dispatch({
+            type: "LOGIN_FAIL",
+            payload: data.message || "Login failed",
+          });
+          return { success: false, error: data.message || "Login failed" };
+        }
+      } catch (error) {
         dispatch({
           type: "LOGIN_FAIL",
-          payload: data.message || "Login failed",
+          payload: error.message || "Network error",
         });
-        return { success: false, error: data.message || "Login failed" };
+        return { success: false, error: error.message || "Network error" };
       }
-    } catch (error) {
-      dispatch({
-        type: "LOGIN_FAIL",
-        payload: error.message || "Network error",
-      });
-      return { success: false, error: error.message || "Network error" };
-    }
-  }, [API_URL]);
+    },
+    [API_URL]
+  );
 
   // Logout user with optional redirect - wrapped with useCallback
   const logout = useCallback((redirectTo = null) => {
     // Clear storage safely
-    if (typeof window !== 'undefined' && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage) {
       try {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -287,10 +309,10 @@ export const AuthProvider = ({ children }) => {
         console.error("Error clearing localStorage:", error);
       }
     }
-    
+
     // Update state
     dispatch({ type: "LOGOUT" });
-    
+
     // Handle redirect
     if (redirectTo) {
       // Use setTimeout to ensure state is updated before redirect
@@ -303,6 +325,14 @@ export const AuthProvider = ({ children }) => {
   // Clear errors - wrapped with useCallback
   const clearErrors = useCallback(() => {
     dispatch({ type: "CLEAR_ERRORS" });
+  }, []);
+
+  // Update user - wrapped with useCallback
+  const updateUser = useCallback((userData) => {
+    dispatch({
+      type: "UPDATE_USER",
+      payload: userData,
+    });
   }, []);
 
   useEffect(() => {
@@ -318,6 +348,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         clearErrors,
         loadUser,
+        updateUser,
         getRoleDashboardUrl,
       }}
     >

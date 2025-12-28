@@ -263,18 +263,31 @@ const PortfolioDashboard = () => {
     return null;
   }
 
-  const { overview, pipeline, distribution, recentDeals } = portfolioData;
+  const {
+    overview = {},
+    pipeline = {},
+    distribution = { byCategory: [], byStage: [] },
+    recentDeals = [],
+  } = portfolioData;
 
   // Prepare data for pipeline funnel chart
   const pipelineData = [
-    { stage: "Viewed", count: pipeline.viewed, fill: COLORS.primary[0] },
+    { stage: "Viewed", count: pipeline.viewed || 0, fill: COLORS.primary[0] },
     {
       stage: "Negotiating",
-      count: pipeline.negotiating,
+      count: pipeline.negotiating || 0,
       fill: COLORS.primary[1],
     },
-    { stage: "Accepted", count: pipeline.accepted, fill: COLORS.primary[2] },
-    { stage: "Declined", count: pipeline.declined, fill: COLORS.primary[3] },
+    {
+      stage: "Accepted",
+      count: pipeline.accepted || 0,
+      fill: COLORS.primary[2],
+    },
+    {
+      stage: "Declined",
+      count: pipeline.declined || 0,
+      fill: COLORS.primary[3],
+    },
   ];
 
   return (

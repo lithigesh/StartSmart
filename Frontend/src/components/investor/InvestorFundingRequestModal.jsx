@@ -31,6 +31,7 @@ const InvestorFundingRequestModal = ({
   onRequestUpdate,
 }) => {
   const [request, setRequest] = useState(initialRequest);
+  const [messages, setMessages] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(false);
   const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
@@ -38,12 +39,82 @@ const InvestorFundingRequestModal = ({
   const { user } = useAuth();
   const { addNotification } = useNotifications();
 
+  // Fetch messages when modal opens or when on negotiation tab
   useEffect(() => {
     if (isOpen && initialRequest) {
       setRequest(initialRequest);
       markAsViewed();
+      fetchMessages();
     }
   }, [isOpen, initialRequest]);
+
+  // Poll for new messages when on negotiation tab
+  useEffect(() => {
+    if (!isOpen || !request || activeTab !== "negotiation") return;
+
+    // Initial fetch
+    fetchMessages();
+
+    // Set up polling every 5 seconds
+    const pollInterval = setInterval(() => {
+      fetchMessages();
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [isOpen, request, activeTab]);
+
+  const fetchMessages = async () => {
+    if (!request?._id) return;
+
+    try {
+      const response = await investorDealAPI.getMessagesForRequest(request._id);
+      if (response.success && response.data?.messages) {
+        const newMessages = response.data.messages;
+        setMessages(newMessages);
+
+        // Mark new messages as viewed (read receipts)
+        const unviewedMessageIds = newMessages
+          .filter(
+            (msg) =>
+              msg.sender?._id !== user?.id &&
+              !msg.viewedBy?.some((v) => v.user === user?.id)
+          )
+          .map((msg) => msg._id)
+          .filter(Boolean);
+
+        if (unviewedMessageIds.length > 0) {
+          markMessagesAsViewed(unviewedMessageIds);
+        }
+      } else {
+        // Fallback to legacy negotiationHistory if new API fails
+        setMessages(request.negotiationHistory || []);
+      }
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+      // Fallback to legacy data
+      setMessages(request.negotiationHistory || []);
+    }
+  };
+
+  const markMessagesAsViewed = async (messageIds) => {
+    try {
+      await fetch(
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:5001"
+        }/api/messages/funding/${request._id}/viewed`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ messageIds }),
+        }
+      );
+    } catch (error) {
+      console.error("Error marking messages as viewed:", error);
+    }
+  };
 
   const markAsViewed = async () => {
     try {
@@ -63,8 +134,8 @@ const InvestorFundingRequestModal = ({
       if (response.success) {
         setRequest(response.data);
         addNotification("Negotiation message sent successfully", "success");
-        // Don't call onRequestUpdate to prevent modal from resetting
-        // if (onRequestUpdate) onRequestUpdate();
+        // Fetch latest messages immediately after sending
+        setTimeout(() => fetchMessages(), 500);
       } else {
         addNotification(response.message || "Failed to send message", "error");
       }
@@ -186,13 +257,11 @@ const InvestorFundingRequestModal = ({
                   <tab.icon className="w-4 h-4" />
                   {tab.label}
                   {/* Show badge for negotiation tab when there are messages */}
-                  {tab.id === "negotiation" &&
-                    request.negotiationHistory &&
-                    request.negotiationHistory.length > 0 && (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
-                        {request.negotiationHistory.length}
-                      </span>
-                    )}
+                  {tab.id === "negotiation" && messages.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {messages.length}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -212,7 +281,7 @@ const InvestorFundingRequestModal = ({
             {activeTab === "negotiation" && (
               <div className="h-[500px]">
                 <ChatInterface
-                  messages={request.negotiationHistory || []}
+                  messages={messages}
                   currentUserId={user?.id}
                   currentUserRole="investor"
                   entrepreneurName={

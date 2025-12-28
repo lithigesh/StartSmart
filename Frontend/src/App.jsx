@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -33,6 +33,7 @@ import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
 import IdeathonDetailsPage from "./pages/entrepreneur/IdeathonDetailsPage.jsx";
 import NotificationsPage from "./pages/entrepreneur/NotificationsPage.jsx";
 import FeedbackPage from "./pages/entrepreneur/FeedbackPage.jsx";
+import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
 
 // Investor Pages
 import InvestorDealsPage from "./pages/investor/InvestorDealsPage.jsx";
@@ -56,27 +57,27 @@ const App = () => {
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
         <AuthProvider>
-          <Toaster 
+          <Toaster
             position="top-right"
             toastOptions={{
               duration: 4000,
               style: {
-                background: '#1f2937',
-                color: '#fff',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                backdropFilter: 'blur(10px)',
+                background: "#1f2937",
+                color: "#fff",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: "12px",
+                backdropFilter: "blur(10px)",
               },
               success: {
                 iconTheme: {
-                  primary: '#10b981',
-                  secondary: '#fff',
+                  primary: "#10b981",
+                  secondary: "#fff",
                 },
               },
               error: {
                 iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#fff',
+                  primary: "#ef4444",
+                  secondary: "#fff",
                 },
               },
             }}
@@ -86,7 +87,7 @@ const App = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              
+
               {/* Investor Routes */}
               <Route
                 path="/investor"
@@ -128,7 +129,7 @@ const App = () => {
                   </RoleBasedRoute>
                 }
               />
-              
+
               {/* Entrepreneur Routes with Layout */}
               <Route
                 path="/entrepreneur"
@@ -146,6 +147,7 @@ const App = () => {
                 <Route path="ideathons" element={<IdeathonsPage />} />
                 <Route path="ideathon/:id" element={<IdeathonDetailsPage />} />
                 <Route path="notifications" element={<NotificationsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
                 <Route path="feedback" element={<FeedbackPage />} />
               </Route>
               <Route
