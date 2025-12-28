@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import IdeaCard from "../IdeaCard";
-import IdeasListCharts from "../charts/IdeasListCharts";
-import { FaPlus, FaLightbulb, FaSpinner, FaChartBar, FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from "react-icons/fa";
+import { FaPlus, FaLightbulb, FaSpinner, FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from "react-icons/fa";
 import { entrepreneurAPI, ideasAPI } from "../../services/api";
 import { useNotifications } from "../../hooks/useNotifications";
 
@@ -13,7 +12,6 @@ const MyIdeasSection = ({ showTitle = true }) => {
   const [error, setError] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingIdea, setEditingIdea] = useState(null);
-  const [showCharts, setShowCharts] = useState(false);
   const [editIdea, setEditIdea] = useState({
     title: "",
     description: "",
@@ -202,17 +200,6 @@ const MyIdeasSection = ({ showTitle = true }) => {
           </div>
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => setShowCharts(!showCharts)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                showCharts 
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-white/[0.05] hover:bg-white/[0.08] text-white/70 border border-white/10'
-              }`}
-            >
-              <FaChartBar className="w-4 h-4" />
-              {showCharts ? 'Hide Analytics' : 'Show Analytics'}
-            </button>
-            <button 
               onClick={handleAddNewIdea}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200"
             >
@@ -223,22 +210,11 @@ const MyIdeasSection = ({ showTitle = true }) => {
         </div>
       )}
 
-      {/* Analytics Controls when title is hidden */}
+      {/* Add New Idea Controls when title is hidden */}
       {!showTitle && (
         <div className="flex justify-end mb-4">
           <div className="flex items-center gap-3">
             <button 
-              onClick={() => setShowCharts(!showCharts)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                showCharts 
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                  : 'bg-white/[0.05] hover:bg-white/[0.08] text-white/70 border border-white/10'
-              }`}
-            >
-              <FaChartBar className="w-4 h-4" />
-              {showCharts ? 'Hide Analytics' : 'Show Analytics'}
-            </button>
-            <button 
               onClick={handleAddNewIdea}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200"
             >
@@ -249,12 +225,7 @@ const MyIdeasSection = ({ showTitle = true }) => {
         </div>
       )}
 
-      {/* Analytics Charts */}
-      {showCharts && !loading && !error && myIdeas.length > 0 && (
-        <div className="mb-8">
-          <IdeasListCharts />
-        </div>
-      )}
+
 
       {/* Loading State */}
       {loading && (

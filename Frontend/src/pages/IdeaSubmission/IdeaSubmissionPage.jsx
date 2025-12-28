@@ -144,7 +144,7 @@ const IdeaSubmissionPage = () => {
     <ErrorBoundary>
       <div className="min-h-screen bg-black">
         {/* Header */}
-        <div className="bg-gray-900 shadow-sm border-b border-gray-700">
+        <div className="bg-black/95 backdrop-blur-xl border-b border-white/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="py-6">
               <div className="flex items-center justify-between">
@@ -166,7 +166,7 @@ const IdeaSubmissionPage = () => {
         </div>
 
         {/* Progress Indicator */}
-        <div className="bg-gray-900 border-b border-gray-700">
+        <div className="bg-black/95 border-b border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="py-4">
               <nav className="flex space-x-8" aria-label="Tabs">
@@ -181,10 +181,10 @@ const IdeaSubmissionPage = () => {
                       className={`
                         flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
                         ${isActive 
-                          ? 'bg-gray-800 border-2 border-white text-white' 
+                          ? 'bg-black/95 border-2 border-white text-white' 
                           : isCompleted
-                            ? 'bg-gray-800 border-2 border-green-500 text-green-400 hover:bg-gray-700'
-                            : 'bg-gray-800 border-2 border-gray-600 text-gray-400 hover:bg-gray-700'
+                            ? 'bg-black/95 border-2 border-green-500 text-green-400 hover:bg-gray-700'
+                            : 'bg-black/95 border-2 border-gray-600 text-gray-400 hover:bg-gray-700'
                         }
                       `}
                     >

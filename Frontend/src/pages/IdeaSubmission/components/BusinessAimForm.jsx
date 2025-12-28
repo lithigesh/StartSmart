@@ -374,7 +374,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 Define your business model, market strategy, and financial objectives for sustainable growth.
               </p>
               {!isEditMode && (
-                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                <div className="mt-4 p-4 bg-black/95/10 border border-blue-500/20 rounded-xl">
                   <p className="text-blue-300 font-manrope text-sm">
                     💡 <strong>Sample data has been pre-loaded</strong> to help you get started quickly. You can modify any field or use the "Clear Form" button to start fresh.
                   </p>
@@ -412,7 +412,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
           <form onSubmit={handleSubmit} className="space-y-8">
         {/* Idea Selection Section - Only show if not bound to specific idea */}
         {!ideaId && (
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-black/95 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-white mb-4">Select an Idea</h3>
             
             {loadingIdeas ? (
@@ -439,12 +439,12 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                   name="ideaId"
                   value={formData.ideaId}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
                   required
                 >
-                  <option value="">Select an idea...</option>
+                  <option value="" className="bg-black text-white">Select an idea...</option>
                   {availableIdeas.map((idea) => (
-                    <option key={idea._id} value={idea._id}>
+                    <option key={idea._id} value={idea._id} className="bg-black text-white">
                       {idea.title || idea.problemTitle || 'Untitled Idea'}
                     </option>
                   ))}
@@ -458,13 +458,13 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
         )}
 
         {/* Business Model Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-white mb-4">Business Model</h3>
             
             {/* Business Model Description */}
             <div className="mb-4">
-              <label htmlFor="businessModel" className="block text-sm font-medium text-gray-300 mb-1">
-                Business Model Description *
+              <label htmlFor="businessModel" className="block text-sm font-medium text-white font-manrope mb-2">
+                Business Model Description <span className="text-red-400">*</span>
               </label>
               <textarea
                 id="businessModel"
@@ -472,8 +472,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.businessModel}
                 onChange={handleInputChange}
                 rows={4}
-              className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.businessModel ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                errors.businessModel ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
               }`}
               placeholder="Describe how your business will create, deliver, and capture value"
               required
@@ -483,8 +483,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
 
           {/* Revenue Streams */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3">
-              Revenue Streams *
+            <label className="block text-sm font-medium text-white font-manrope mb-3">
+              Revenue Streams <span className="text-red-400">*</span>
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {availableRevenueStreams.map(stream => (
@@ -506,7 +506,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
         </div>
 
         {/* Market Analysis Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Market Analysis</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -521,7 +521,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.targetMarket}
                 onChange={handleInputChange}
                 rows={3}
-                className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                className={`w-full px-3 py-2 border bg-black/95 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                   errors.targetMarket ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Define your target customer segments and market"
@@ -558,7 +558,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
               value={formData.competitionAnalysis}
               onChange={handleInputChange}
               rows={4}
-              className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+              className={`w-full px-3 py-2 border bg-black/95 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                 errors.competitionAnalysis ? 'border-red-500' : 'border-gray-600'
               }`}
               placeholder="Analyze your competitors, their strengths/weaknesses, and your competitive advantages"
@@ -569,7 +569,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
         </div>
 
         {/* Strategy Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Strategy</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -584,7 +584,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.pricingStrategy}
                 onChange={handleInputChange}
                 rows={3}
-                className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                className={`w-full px-3 py-2 border bg-black/95 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                   errors.pricingStrategy ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Describe your pricing model and strategy"
@@ -604,7 +604,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.salesStrategy}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
                 placeholder="How will you sell your product/service?"
               />
             </div>
@@ -621,14 +621,14 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
               value={formData.marketingStrategy}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
               placeholder="How will you market and promote your solution?"
             />
           </div>
         </div>
 
         {/* Financial Planning Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Financial Planning</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -643,7 +643,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 name="fundingRequirement"
                 value={formData.fundingRequirement}
                 onChange={handleInputChange}
-                className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                className={`w-full px-3 py-2 border bg-black/95 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                   errors.fundingRequirement ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="e.g., $500,000"
@@ -662,7 +662,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.useOfFunds}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
                 placeholder="How will you use the funding?"
               />
             </div>
@@ -679,7 +679,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
               value={formData.financialProjections}
               onChange={handleInputChange}
               rows={4}
-              className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
               placeholder="Provide revenue and expense projections for the next 3-5 years"
             />
           </div>
@@ -708,7 +708,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
         </div>
 
         {/* Risk Management Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Risk Management</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -723,7 +723,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.riskAssessment}
                 onChange={handleInputChange}
                 rows={4}
-                className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                className={`w-full px-3 py-2 border bg-black/95 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                   errors.riskAssessment ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="Identify potential risks and challenges"
@@ -743,7 +743,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                 value={formData.mitigationStrategies}
                 onChange={handleInputChange}
                 rows={4}
-                className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
                 placeholder="How will you mitigate identified risks?"
               />
             </div>
@@ -760,14 +760,14 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
               value={formData.exitStrategy}
               onChange={handleInputChange}
               rows={2}
-              className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
               placeholder="What are your potential exit strategies?"
             />
           </div>
         </div>
 
         {/* Timeline & Milestones Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-black">Timeline & Milestones</h3>
             <button
@@ -790,7 +790,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
               name="timeline"
               value={formData.timeline}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-3 py-2 border bg-black/95 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
               placeholder="e.g., 18 months to market, 3 years to profitability"
             />
           </div>
@@ -804,7 +804,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
           ) : (
             <div className="space-y-4">
               {formData.milestones.map((milestone, index) => (
-                <div key={index} className="bg-gray-900 p-4 rounded-md border border-gray-200">
+                <div key={index} className="bg-black/95 p-4 rounded-md border border-gray-200">
                   <div className="flex justify-between items-start mb-3">
                     <h4 className="text-md font-medium text-black">Milestone #{index + 1}</h4>
                     <button
@@ -826,8 +826,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                         type="text"
                         value={milestone.title}
                         onChange={(e) => updateMilestone(index, 'title', e.target.value)}
-                        className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                          errors[`milestone_${index}_title`] ? 'border-red-500' : 'border-gray-600'
+                        className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                          errors[`milestone_${index}_title`] ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                         }`}
                         placeholder="Milestone title"
                         required
@@ -846,8 +846,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                         type="text"
                         value={milestone.timeline}
                         onChange={(e) => updateMilestone(index, 'timeline', e.target.value)}
-                        className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                          errors[`milestone_${index}_timeline`] ? 'border-red-500' : 'border-gray-600'
+                        className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                          errors[`milestone_${index}_timeline`] ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                         }`}
                         placeholder="e.g., Month 6, Q2 2024"
                         required
@@ -866,7 +866,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                         value={milestone.description}
                         onChange={(e) => updateMilestone(index, 'description', e.target.value)}
                         rows={2}
-                        className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 resize-none"
                         placeholder="Describe this milestone"
                       />
                     </div>
@@ -880,7 +880,7 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
                         type="text"
                         value={milestone.metrics}
                         onChange={(e) => updateMilestone(index, 'metrics', e.target.value)}
-                        className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
                         placeholder="How will you measure success? (e.g., 1000 users, $10K revenue)"
                       />
                     </div>
@@ -893,8 +893,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
 
         {/* Submit Error */}
         {errors.submit && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-400">{errors.submit}</p>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+            <p className="text-red-400 font-manrope">{errors.submit}</p>
           </div>
         )}
 
@@ -903,8 +903,8 @@ const BusinessAimForm = ({ onDataChange, onSuccess, onError, initialData = {}, i
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-6 py-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            className={`px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-manrope font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${
+              isSubmitting ? 'opacity-50 cursor-not-allowed transform-none hover:scale-100' : ''
             }`}
           >
             {isSubmitting ? 'Saving...' : (isEditMode ? 'Update Business Aim' : 'Save Business Aim')}

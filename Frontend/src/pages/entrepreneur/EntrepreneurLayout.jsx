@@ -18,7 +18,6 @@ const EntrepreneurLayout = () => {
       'my-ideas': '/entrepreneur/my-ideas',
       funding: '/entrepreneur/funding',
       investors: '/entrepreneur/investors',
-      analytics: '/entrepreneur/analytics',
       ideathons: '/entrepreneur/ideathons',
       collaborations: '/entrepreneur/collaborations',
       notifications: '/entrepreneur/notifications',
@@ -42,8 +41,6 @@ const EntrepreneurLayout = () => {
       setActiveSection('funding');
     } else if (path.includes('/investors')) {
       setActiveSection('investors');
-    } else if (path.includes('/analytics')) {
-      setActiveSection('analytics');
     } else if (path.includes('/ideathons')) {
       setActiveSection('ideathons');
     } else if (path.includes('/collaborations')) {

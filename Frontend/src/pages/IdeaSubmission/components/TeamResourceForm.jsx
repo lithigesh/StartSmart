@@ -416,7 +416,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
           <form onSubmit={handleSubmit} className="space-y-8">
         {/* Idea Selection Section - Only show if not bound to specific idea */}
         {!ideaId && (
-          <div className="bg-gray-800 p-4 rounded-lg">
+          <div className="bg-black/95 p-4 rounded-lg">
             <h3 className="text-lg font-semibold text-white mb-4">Select an Idea</h3>
             
             {loadingIdeas ? (
@@ -443,12 +443,12 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
                   name="ideaId"
                   value={formData.ideaId}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
                   required
                 >
-                  <option value="">Select an idea...</option>
+                  <option value="" className="bg-black text-white">Select an idea...</option>
                   {availableIdeas.map((idea) => (
-                    <option key={idea._id} value={idea._id}>
+                    <option key={idea._id} value={idea._id} className="bg-black text-white">
                       {idea.title || idea.problemTitle || 'Untitled Idea'}
                     </option>
                   ))}
@@ -462,7 +462,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
         )}
 
         {/* Team Members Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-white">Team Members</h3>
               <button
@@ -482,7 +482,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
           ) : (
             <div className="space-y-4">
               {formData.teamMembers.map((member, index) => (
-                <div key={index} className="bg-gray-900 p-4 rounded-md border border-gray-200">
+                <div key={index} className="bg-black/95 p-4 rounded-md border border-gray-200">
                   <div className="flex justify-between items-start mb-3">
                     <h4 className="text-md font-medium text-black">Team Member #{index + 1}</h4>
                     <button
@@ -497,15 +497,15 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Name */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-1">
-                        Name *
+                      <label className="block text-sm font-medium text-white font-manrope mb-2">
+                        Name <span className="text-red-400">*</span>
                       </label>
                       <input
                         type="text"
                         value={member.name}
                         onChange={(e) => updateTeamMember(index, 'name', e.target.value)}
-                        className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                          errors[`teamMember_${index}_name`] ? 'border-red-500' : 'border-gray-600'
+                        className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                          errors[`teamMember_${index}_name`] ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                         }`}
                         placeholder="Full name"
                         required
@@ -524,8 +524,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
                         type="text"
                         value={member.role}
                         onChange={(e) => updateTeamMember(index, 'role', e.target.value)}
-                        className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                          errors[`teamMember_${index}_role`] ? 'border-red-500' : 'border-gray-600'
+                        className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                          errors[`teamMember_${index}_role`] ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                         }`}
                         placeholder="e.g., Co-founder, CTO, Lead Developer"
                         required
@@ -544,8 +544,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
                         type="text"
                         value={member.expertise}
                         onChange={(e) => updateTeamMember(index, 'expertise', e.target.value)}
-                        className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                          errors[`teamMember_${index}_expertise`] ? 'border-red-500' : 'border-gray-600'
+                        className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                          errors[`teamMember_${index}_expertise`] ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                         }`}
                         placeholder="Key skills and expertise areas"
                         required
@@ -564,8 +564,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
                         type="email"
                         value={member.email}
                         onChange={(e) => updateTeamMember(index, 'email', e.target.value)}
-                        className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                          errors[`teamMember_${index}_email`] ? 'border-red-500' : 'border-gray-600'
+                        className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                          errors[`teamMember_${index}_email`] ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
                         }`}
                         placeholder="Email address"
                       />
@@ -641,7 +641,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
         </div>
 
         {/* Core Skills Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Core Skills *</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {availableCoreSkills.map(skill => (
@@ -662,7 +662,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
         </div>
 
         {/* Skills Gap Analysis */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Skills Gap Analysis</h3>
           <div>
             <label htmlFor="skillsGap" className="block text-sm font-medium text-gray-300 mb-1">
@@ -674,7 +674,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
               value={formData.skillsGap}
               onChange={handleInputChange}
               rows={4}
-              className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+              className={`w-full px-3 py-2 border bg-black/95 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
                 errors.skillsGap ? 'border-red-500' : 'border-gray-600'
               }`}
               placeholder="Describe what skills or expertise your team currently lacks and needs to acquire"
@@ -685,7 +685,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
         </div>
 
         {/* Resources Needed Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Resources Needed *</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {resourceTypes.map(resource => (
@@ -706,7 +706,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
         </div>
 
         {/* Additional Information Section */}
-        <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="bg-black/95 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-white mb-4">Additional Information</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -759,8 +759,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
               value={formData.teamStructure}
               onChange={handleInputChange}
               rows={3}
-              className={`w-full px-3 py-2 border bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
-                errors.teamStructure ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                errors.teamStructure ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-white/30'
               }`}
               placeholder="Describe how your team is organized and how members will collaborate"
             />
@@ -778,7 +778,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
               value={formData.collaborationPreferences}
               onChange={handleInputChange}
               rows={2}
-              className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 resize-none"
               placeholder="Preferred tools, methodologies, communication styles, etc."
             />
           </div>
@@ -794,7 +794,7 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
               name="timeline"
               value={formData.timeline}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border bg-gray-700 text-white border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
               placeholder="e.g., 6 months MVP, 12 months full launch"
             />
           </div>
@@ -802,8 +802,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
 
         {/* Submit Error */}
         {errors.submit && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-400">{errors.submit}</p>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+            <p className="text-red-400 font-manrope">{errors.submit}</p>
           </div>
         )}
 
@@ -812,8 +812,8 @@ const TeamResourceForm = ({ onDataChange, onSuccess, onError, initialData = {}, 
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-6 py-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            className={`px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-manrope font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${
+              isSubmitting ? 'opacity-50 cursor-not-allowed transform-none hover:scale-100' : ''
             }`}
           >
             {isSubmitting ? 'Saving...' : (isEditMode ? 'Update Team & Resources' : 'Save Team & Resources')}

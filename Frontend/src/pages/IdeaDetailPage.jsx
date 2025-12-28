@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { investorAPI } from "../services/api";
-import IdeaDetailCharts from "../components/charts/IdeaDetailCharts";
 import {
   FaArrowLeft,
   FaLightbulb,
@@ -21,7 +20,6 @@ import {
   FaExclamationTriangle,
   FaBullseye,
   FaRocket,
-  FaChartBar,
   FaMoneyBill,
   FaDollarSign,
   FaCogs,
@@ -44,7 +42,6 @@ const IdeaDetailPage = () => {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isInterested, setIsInterested] = useState(false);
-  const [showCharts, setShowCharts] = useState(false);
 
   const token = localStorage.getItem("token");
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
@@ -198,17 +195,6 @@ const IdeaDetailPage = () => {
 
             {isAdminView ? (
               <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setShowCharts(!showCharts)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    showCharts 
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                      : 'bg-gray-700 hover:bg-gray-600 text-white/70'
-                  }`}
-                >
-                  <FaChartBar className="w-4 h-4" />
-                  {showCharts ? 'Hide Analytics' : 'Show Analytics'}
-                </button>
                 <button
                   onClick={handleDelete}
                   disabled={actionLoading}
@@ -224,17 +210,6 @@ const IdeaDetailPage = () => {
               </div>
             ) : user?.role === "investor" ? (
               <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setShowCharts(!showCharts)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    showCharts 
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                      : 'bg-gray-700 hover:bg-gray-600 text-white/70'
-                  }`}
-                >
-                  <FaChartBar className="w-4 h-4" />
-                  {showCharts ? 'Hide Analytics' : 'Show Analytics'}
-                </button>
                 <button
                   onClick={handleInterest}
                   disabled={actionLoading}
@@ -254,19 +229,7 @@ const IdeaDetailPage = () => {
                   {isInterested ? "Remove Interest" : "Show Interest"}
                 </button>
               </div>
-            ) : (
-              <button 
-                onClick={() => setShowCharts(!showCharts)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  showCharts 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                    : 'bg-gray-700 hover:bg-gray-600 text-white/70'
-                }`}
-              >
-                <FaChartBar className="w-4 h-4" />
-                {showCharts ? 'Hide Analytics' : 'Show Analytics'}
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
@@ -332,13 +295,6 @@ const IdeaDetailPage = () => {
             </p>
           </div>
         </div>
-
-        {/* Analytics Charts */}
-        {showCharts && (
-          <div className="mb-8">
-            <IdeaDetailCharts ideaId={currentId} />
-          </div>
-        )}
 
         {/* Elevator Pitch */}
         {idea.elevatorPitch && (

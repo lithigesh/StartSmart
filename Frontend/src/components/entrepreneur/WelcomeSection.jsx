@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { FaPlus, FaChartLine, FaLightbulb } from "react-icons/fa";
+import { FaPlus, FaLightbulb } from "react-icons/fa";
 
 const WelcomeSection = () => {
   const navigate = useNavigate();
@@ -41,10 +41,6 @@ const WelcomeSection = () => {
           >
             <FaPlus className="w-4 h-4" />
             Submit New Idea
-          </button>
-          <button className="inline-flex items-center gap-2 border border-white/20 text-white/70 hover:text-white hover:border-white/40 px-6 py-3 rounded-lg font-medium transition-colors duration-200 bg-white/[0.05] hover:bg-white/[0.08]">
-            <FaChartLine className="w-4 h-4" />
-            View Analytics
           </button>
         </div>
       </div>
