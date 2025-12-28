@@ -142,15 +142,20 @@ export const ideasAPI = {
 
       const data = await response.json();
 
-      // Transform the data to include required fields
-      const transformedData = Array.isArray(data)
-        ? data.map((idea) => ({
-            ...idea,
-            id: idea._id, // Ensure id field exists
-            elevatorPitch: idea.elevatorPitch || idea.description,
-            targetAudience: idea.targetAudience || "General audience",
-          }))
+      // Check if backend returned success format {success, data} or direct array
+      const ideasArray = data.success && Array.isArray(data.data) 
+        ? data.data 
+        : Array.isArray(data) 
+        ? data 
         : [];
+
+      // Transform the data to include required fields
+      const transformedData = ideasArray.map((idea) => ({
+        ...idea,
+        id: idea._id || idea.id, // Ensure id field exists
+        elevatorPitch: idea.elevatorPitch || idea.description,
+        targetAudience: idea.targetAudience || "General audience",
+      }));
 
       return {
         success: true,

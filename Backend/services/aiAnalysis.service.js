@@ -93,7 +93,7 @@ async function generateSwotAndRoadmap(ideaData) {
                 "threats": "[Detailed analysis of external threats - consider competitive landscape, market risks, regulatory changes, technological disruption, economic factors]"
               },
               "roadmap": [
-                "[Array of 5-7 strategic milestones as strings with timeframes included, e.g., 'Q1 2024: Complete MVP development and initial testing', 'Q2 2024: Secure Series A funding', etc.]"
+                "[Array of exactly 8 strategic milestones as strings, one for each quarter starting from Q1 2026 through Q4 2027, e.g., 'Q1 2026: Complete MVP development and initial testing', 'Q2 2026: Secure Series A funding', etc.]"
               ],
               "recommendations": {
                 "immediate_actions": "[3-4 specific actions to take in the next 3 months]",
@@ -127,7 +127,7 @@ async function generateSwotAndRoadmap(ideaData) {
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:3000",
+        "HTTP-Referer": "https://startsmart-frontend.vercel.app",
         "X-Title": "StartSmart AI Analysis",
       },
       body: JSON.stringify({
@@ -174,10 +174,14 @@ async function generateSwotAndRoadmap(ideaData) {
 
     if (!analysis.roadmap || !Array.isArray(analysis.roadmap)) {
       analysis.roadmap = [
-        "Q1: Market research and MVP development",
-        "Q2: Beta testing and user feedback collection",
-        "Q3: Product refinement and initial market launch",
-        "Q4: Customer acquisition and growth optimization",
+        "Q1 2026: Market research and MVP development",
+        "Q2 2026: Beta testing and user feedback collection",
+        "Q3 2026: Product refinement and initial market launch",
+        "Q4 2026: Customer acquisition and growth optimization",
+        "Q1 2027: Scale marketing efforts and expand customer base",
+        "Q2 2027: Develop strategic partnerships and explore new markets",
+        "Q3 2027: Enhance product features based on user feedback",
+        "Q4 2027: Evaluate Series A funding and expansion opportunities",
       ];
     } else {
       // Convert roadmap objects to strings if needed
@@ -249,11 +253,14 @@ async function getMarketTrends(keyword) {
   if (!OPENROUTER_API_KEY) {
     console.warn("OpenRouter API key not configured, returning default trends");
     return [
-      { year: 2021, popularity: 45 },
-      { year: 2022, popularity: 55 },
-      { year: 2023, popularity: 65 },
-      { year: 2024, popularity: 75 },
-      { year: 2025, popularity: 85 },
+      { year: 2023, popularity: 50 },
+      { year: 2024, popularity: 55 },
+      { year: 2025, popularity: 60 },
+      { year: 2026, popularity: 65 },
+      { year: 2027, popularity: 70 },
+      { year: 2028, popularity: 75 },
+      { year: 2029, popularity: 78 },
+      { year: 2030, popularity: 80 },
     ];
   }
 
@@ -261,7 +268,7 @@ async function getMarketTrends(keyword) {
     const prompt = `
       As a market research analyst, provide realistic market trend data for the following keyword/industry: "${keyword}"
       
-      Analyze the market trends from 2021 to 2025, considering:
+      Analyze the market trends from 2023 to 2030, considering:
       - Market growth patterns
       - Consumer interest levels
       - Industry developments
@@ -270,11 +277,14 @@ async function getMarketTrends(keyword) {
       
       Return ONLY a JSON array with this exact structure (no additional text):
       [
-        { "year": 2021, "popularity": [0-100 integer], "insight": "brief insight about this year" },
-        { "year": 2022, "popularity": [0-100 integer], "insight": "brief insight about this year" },
         { "year": 2023, "popularity": [0-100 integer], "insight": "brief insight about this year" },
         { "year": 2024, "popularity": [0-100 integer], "insight": "brief insight about this year" },
-        { "year": 2025, "popularity": [0-100 integer], "insight": "brief insight about this year" }
+        { "year": 2025, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2026, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2027, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2028, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2029, "popularity": [0-100 integer], "insight": "brief insight about this year" },
+        { "year": 2030, "popularity": [0-100 integer], "insight": "brief insight about this year" }
       ]
       
       Popularity scale: 0-20 = Niche/Emerging, 21-40 = Growing, 41-60 = Established, 61-80 = High Growth, 81-100 = Mainstream/Peak
@@ -327,11 +337,14 @@ async function getMarketTrends(keyword) {
     
     // Fallback to reasonable default trend data
     return [
-      { year: 2021, popularity: 40, insight: "Market data unavailable - showing baseline trends" },
-      { year: 2022, popularity: 50, insight: "Market data unavailable - showing baseline trends" },
-      { year: 2023, popularity: 60, insight: "Market data unavailable - showing baseline trends" },
-      { year: 2024, popularity: 70, insight: "Market data unavailable - showing baseline trends" },
-      { year: 2025, popularity: 75, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2023, popularity: 50, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2024, popularity: 55, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2025, popularity: 60, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2026, popularity: 65, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2027, popularity: 70, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2028, popularity: 75, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2029, popularity: 78, insight: "Market data unavailable - showing baseline trends" },
+      { year: 2030, popularity: 80, insight: "Market data unavailable - showing baseline trends" },
     ];
   }
 }
