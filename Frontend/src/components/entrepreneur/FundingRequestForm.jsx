@@ -27,7 +27,7 @@ import { ideasAPI, fundingAPI } from "../../services/api";
  */
 const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   const [formData, setFormData] = useState({
     selectedIdeaId: "",
     amount: "",
@@ -65,10 +65,26 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   const steps = [
-    { id: "overview", label: "Overview", icon: <FaFileContract className="w-4 h-4" /> },
-    { id: "business", label: "Business Details", icon: <FaBullseye className="w-4 h-4" /> },
-    { id: "financial", label: "Financial", icon: <FaChartLine className="w-4 h-4" /> },
-    { id: "team", label: "Team & Contact", icon: <FaUsers className="w-4 h-4" /> },
+    {
+      id: "overview",
+      label: "Overview",
+      icon: <FaFileContract className="w-4 h-4" />,
+    },
+    {
+      id: "business",
+      label: "Business Details",
+      icon: <FaBullseye className="w-4 h-4" />,
+    },
+    {
+      id: "financial",
+      label: "Financial",
+      icon: <FaChartLine className="w-4 h-4" />,
+    },
+    {
+      id: "team",
+      label: "Team & Contact",
+      icon: <FaUsers className="w-4 h-4" />,
+    },
   ];
 
   const fetchUserIdeas = async () => {
@@ -130,17 +146,18 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (validationErrors[name]) {
-      setValidationErrors(prev => ({ ...prev, [name]: "" }));
+      setValidationErrors((prev) => ({ ...prev, [name]: "" }));
     }
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateCurrentStep = () => {
     const errors = {};
-    
+
     if (currentStep === 0) {
       // Overview - Required fields
-      if (!formData.selectedIdeaId) errors.selectedIdeaId = "Please select an idea";
+      if (!formData.selectedIdeaId)
+        errors.selectedIdeaId = "Please select an idea";
       if (!formData.amount) {
         errors.amount = "Amount is required";
       } else if (parseFloat(formData.amount) <= 0) {
@@ -157,42 +174,58 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
       if (!formData.message) errors.message = "Please provide a brief message";
     } else if (currentStep === 1) {
       // Business Details - All required
-      if (!formData.businessPlan) errors.businessPlan = "Business plan is required";
-      if (!formData.targetMarket) errors.targetMarket = "Target market is required";
-      if (!formData.revenueModel) errors.revenueModel = "Revenue model is required";
-      if (!formData.competitiveAdvantage) errors.competitiveAdvantage = "Competitive advantage is required";
-      if (!formData.customerTraction) errors.customerTraction = "Customer traction is required";
+      if (!formData.businessPlan)
+        errors.businessPlan = "Business plan is required";
+      if (!formData.targetMarket)
+        errors.targetMarket = "Target market is required";
+      if (!formData.revenueModel)
+        errors.revenueModel = "Revenue model is required";
+      if (!formData.competitiveAdvantage)
+        errors.competitiveAdvantage = "Competitive advantage is required";
+      if (!formData.customerTraction)
+        errors.customerTraction = "Customer traction is required";
     } else if (currentStep === 2) {
       // Financial - All required
-      if (!formData.financialProjections) errors.financialProjections = "Financial projections are required";
+      if (!formData.financialProjections)
+        errors.financialProjections = "Financial projections are required";
       if (!formData.useOfFunds) errors.useOfFunds = "Use of funds is required";
       if (!formData.timeline) errors.timeline = "Timeline is required";
       if (!formData.milestones) errors.milestones = "Milestones are required";
-      if (!formData.riskFactors) errors.riskFactors = "Risk factors are required";
-      if (!formData.exitStrategy) errors.exitStrategy = "Exit strategy is required";
-      if (!formData.currentRevenue && formData.currentRevenue !== "0") errors.currentRevenue = "Current revenue is required";
-      if (!formData.previousFunding && formData.previousFunding !== "0") errors.previousFunding = "Previous funding is required (enter 0 if none)";
+      if (!formData.riskFactors)
+        errors.riskFactors = "Risk factors are required";
+      if (!formData.exitStrategy)
+        errors.exitStrategy = "Exit strategy is required";
+      if (!formData.currentRevenue && formData.currentRevenue !== "0")
+        errors.currentRevenue = "Current revenue is required";
+      if (!formData.previousFunding && formData.previousFunding !== "0")
+        errors.previousFunding =
+          "Previous funding is required (enter 0 if none)";
     } else if (currentStep === 3) {
       // Team & Contact - All required
       if (!formData.teamSize) errors.teamSize = "Team size is required";
-      if (!formData.contactPhone) errors.contactPhone = "Contact phone is required";
+      if (!formData.contactPhone)
+        errors.contactPhone = "Contact phone is required";
       if (!formData.contactEmail) {
         errors.contactEmail = "Contact email is required";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
         errors.contactEmail = "Please enter a valid email";
       }
-      if (!formData.companyWebsite) errors.companyWebsite = "Company website is required";
-      if (!formData.linkedinProfile) errors.linkedinProfile = "LinkedIn profile is required";
-      if (!formData.intellectualProperty) errors.intellectualProperty = "Intellectual property information is required";
+      if (!formData.companyWebsite)
+        errors.companyWebsite = "Company website is required";
+      if (!formData.linkedinProfile)
+        errors.linkedinProfile = "LinkedIn profile is required";
+      if (!formData.intellectualProperty)
+        errors.intellectualProperty =
+          "Intellectual property information is required";
     }
-    
+
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleNext = () => {
     if (validateCurrentStep()) {
-      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
       setError("");
     } else {
       setError("Please fill in all required fields before proceeding");
@@ -200,7 +233,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const handlePrevious = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0));
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
     setError("");
   };
 
@@ -245,7 +278,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
       };
 
       const response = await fundingAPI.createFundingRequest(requestData);
-      
+
       if (response && response.success) {
         setSuccess("Funding request submitted successfully!");
         if (onSuccess) {
@@ -267,32 +300,38 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
     if (!amount) return "";
     const num = parseFloat(amount);
     if (isNaN(num)) return "";
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(num);
   };
 
   const handleCreateIdea = () => {
     onClose();
-    window.dispatchEvent(new CustomEvent('navigateToIdeas'));
+    window.dispatchEvent(new CustomEvent("navigateToIdeas"));
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose}></div>
-      
+      <div
+        className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+        onClick={onClose}
+      ></div>
+
       <div className="relative w-full max-w-5xl max-h-[90vh] bg-black border border-white/20 rounded-2xl overflow-hidden z-[70] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
           <div>
-            <h2 className="text-2xl font-bold text-white">Create Funding Request</h2>
+            <h2 className="text-2xl font-bold text-white">
+              Create Funding Request
+            </h2>
             <p className="text-white/60 mt-1">
-              Step {currentStep + 1} of {steps.length}: {steps[currentStep].label}
+              Step {currentStep + 1} of {steps.length}:{" "}
+              {steps[currentStep].label}
             </p>
           </div>
           <button
@@ -305,16 +344,16 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
 
         {/* Messages */}
         {success && (
-          <div className="mx-6 mt-4 p-4 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
-            <FaCheck className="w-5 h-5 text-green-400" />
-            <p className="text-green-400">{success}</p>
+          <div className="mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+            <FaCheck className="w-5 h-5 text-white/90" />
+            <p className="text-white/90">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="mx-6 mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-3">
-            <FaExclamationTriangle className="w-5 h-5 text-red-400" />
-            <p className="text-red-400">{error}</p>
+          <div className="mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+            <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
+            <p className="text-white/80">{error}</p>
           </div>
         )}
 
@@ -330,13 +369,15 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   currentStep === index
                     ? "border-b-2 border-white text-white"
                     : currentStep > index
-                    ? "text-green-400 hover:text-green-300 cursor-pointer"
+                    ? "text-white/90 hover:text-white/90 cursor-pointer"
                     : "text-white/40 cursor-not-allowed"
                 }`}
               >
                 {step.icon}
                 <span className="font-medium">{step.label}</span>
-                {currentStep > index && <FaCheck className="w-3 h-3 text-green-400" />}
+                {currentStep > index && (
+                  <FaCheck className="w-3 h-3 text-white/90" />
+                )}
               </button>
             ))}
           </div>
@@ -373,25 +414,32 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   {/* Idea Selection */}
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Select Idea <span className="text-red-400">*</span>
+                      Select Idea <span className="text-white/80">*</span>
                     </label>
                     <select
                       name="selectedIdeaId"
                       value={formData.selectedIdeaId}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                        validationErrors.selectedIdeaId ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.selectedIdeaId
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     >
                       <option value="">Choose an idea...</option>
                       {userIdeas.map((idea) => (
-                        <option key={idea._id || idea.id} value={idea._id || idea.id}>
+                        <option
+                          key={idea._id || idea.id}
+                          value={idea._id || idea.id}
+                        >
                           {idea.title} - {idea.category}
                         </option>
                       ))}
                     </select>
                     {validationErrors.selectedIdeaId && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.selectedIdeaId}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.selectedIdeaId}
+                      </p>
                     )}
                   </div>
 
@@ -399,11 +447,18 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   {formData.selectedIdeaId && (
                     <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
                       {(() => {
-                        const selectedIdea = userIdeas.find(idea => (idea._id || idea.id) === formData.selectedIdeaId);
+                        const selectedIdea = userIdeas.find(
+                          (idea) =>
+                            (idea._id || idea.id) === formData.selectedIdeaId
+                        );
                         return selectedIdea ? (
                           <div>
-                            <h4 className="text-white font-medium mb-2">{selectedIdea.title}</h4>
-                            <p className="text-white/60 text-sm mb-2">{selectedIdea.elevatorPitch}</p>
+                            <h4 className="text-white font-medium mb-2">
+                              {selectedIdea.title}
+                            </h4>
+                            <p className="text-white/60 text-sm mb-2">
+                              {selectedIdea.elevatorPitch}
+                            </p>
                             <div className="flex items-center gap-4 text-xs text-white/50">
                               <span>Category: {selectedIdea.category}</span>
                               <span>Target: {selectedIdea.targetAudience}</span>
@@ -418,7 +473,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Amount Required <span className="text-red-400">*</span>
+                        Amount Required <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -429,21 +484,27 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="250000"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.amount ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.amount
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {formData.amount && !validationErrors.amount && (
-                        <p className="text-white/60 text-sm mt-2">{formatCurrency(formData.amount)}</p>
+                        <p className="text-white/60 text-sm mt-2">
+                          {formatCurrency(formData.amount)}
+                        </p>
                       )}
                       {validationErrors.amount && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.amount}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.amount}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Equity Offered <span className="text-red-400">*</span>
+                        Equity Offered <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaPercentage className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -455,12 +516,16 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           placeholder="15"
                           step="0.1"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.equity ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.equity
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.equity && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.equity}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.equity}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -469,7 +534,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Funding Stage <span className="text-red-400">*</span>
+                        Funding Stage <span className="text-white/80">*</span>
                       </label>
                       <select
                         name="fundingStage"
@@ -488,7 +553,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Investment Type <span className="text-red-400">*</span>
+                        Investment Type <span className="text-white/80">*</span>
                       </label>
                       <select
                         name="investmentType"
@@ -497,7 +562,9 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                         className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
                       >
                         <option value="equity">Equity</option>
-                        <option value="convertible_note">Convertible Note</option>
+                        <option value="convertible_note">
+                          Convertible Note
+                        </option>
                         <option value="safe">SAFE</option>
                         <option value="revenue_share">Revenue Share</option>
                         <option value="other">Other</option>
@@ -508,7 +575,8 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   {/* Message */}
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Brief Message for Investors <span className="text-red-400">*</span>
+                      Brief Message for Investors{" "}
+                      <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="message"
@@ -517,11 +585,15 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Introduce your funding request to potential investors..."
                       rows={4}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.message ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.message
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.message && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.message}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -532,7 +604,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Business Plan <span className="text-red-400">*</span>
+                      Business Plan <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="businessPlan"
@@ -541,17 +613,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Describe your business model, value proposition, and market strategy in detail..."
                       rows={4}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.businessPlan ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.businessPlan
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.businessPlan && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.businessPlan}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.businessPlan}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Target Market <span className="text-red-400">*</span>
+                      Target Market <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="targetMarket"
@@ -560,17 +636,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Define your target market, market size, and addressable opportunity..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.targetMarket ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.targetMarket
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.targetMarket && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.targetMarket}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.targetMarket}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Revenue Model <span className="text-red-400">*</span>
+                      Revenue Model <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="revenueModel"
@@ -579,17 +659,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Explain how your business generates or will generate revenue..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.revenueModel ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.revenueModel
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.revenueModel && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.revenueModel}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.revenueModel}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Competitive Advantage <span className="text-red-400">*</span>
+                      Competitive Advantage{" "}
+                      <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="competitiveAdvantage"
@@ -598,17 +683,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="What sets you apart from competitors? What's your unique value proposition..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.competitiveAdvantage ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.competitiveAdvantage
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.competitiveAdvantage && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.competitiveAdvantage}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.competitiveAdvantage}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Customer Traction <span className="text-red-400">*</span>
+                      Customer Traction <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="customerTraction"
@@ -617,11 +706,15 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Current customers, user base, growth metrics, or traction indicators..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.customerTraction ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.customerTraction
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.customerTraction && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.customerTraction}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.customerTraction}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -633,7 +726,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Current Revenue <span className="text-red-400">*</span>
+                        Current Revenue <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -644,18 +737,23 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="0"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.currentRevenue ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.currentRevenue
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.currentRevenue && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.currentRevenue}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.currentRevenue}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Previous Funding <span className="text-red-400">*</span>
+                        Previous Funding{" "}
+                        <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -666,19 +764,24 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="0"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.previousFunding ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.previousFunding
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.previousFunding && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.previousFunding}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.previousFunding}
+                        </p>
                       )}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Financial Projections <span className="text-red-400">*</span>
+                      Financial Projections{" "}
+                      <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="financialProjections"
@@ -687,17 +790,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Revenue projections, growth forecasts, profitability timeline..."
                       rows={4}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.financialProjections ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.financialProjections
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.financialProjections && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.financialProjections}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.financialProjections}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Use of Funds <span className="text-red-400">*</span>
+                      Use of Funds <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="useOfFunds"
@@ -706,18 +813,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Detailed breakdown of how the funding will be allocated..."
                       rows={4}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.useOfFunds ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.useOfFunds
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.useOfFunds && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.useOfFunds}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.useOfFunds}
+                      </p>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Timeline <span className="text-red-400">*</span>
+                        Timeline <span className="text-white/80">*</span>
                       </label>
                       <textarea
                         name="timeline"
@@ -726,17 +837,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                         placeholder="Project timeline and key dates..."
                         rows={3}
                         className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                          validationErrors.timeline ? 'border-red-500' : 'border-gray-700'
+                          validationErrors.timeline
+                            ? "border-white"
+                            : "border-gray-700"
                         }`}
                       />
                       {validationErrors.timeline && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.timeline}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.timeline}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Milestones <span className="text-red-400">*</span>
+                        Milestones <span className="text-white/80">*</span>
                       </label>
                       <textarea
                         name="milestones"
@@ -745,18 +860,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                         placeholder="Key milestones and achievements..."
                         rows={3}
                         className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                          validationErrors.milestones ? 'border-red-500' : 'border-gray-700'
+                          validationErrors.milestones
+                            ? "border-white"
+                            : "border-gray-700"
                         }`}
                       />
                       {validationErrors.milestones && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.milestones}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.milestones}
+                        </p>
                       )}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Risk Factors <span className="text-red-400">*</span>
+                      Risk Factors <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="riskFactors"
@@ -765,17 +884,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Potential risks and mitigation strategies..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.riskFactors ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.riskFactors
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.riskFactors && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.riskFactors}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.riskFactors}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Exit Strategy <span className="text-red-400">*</span>
+                      Exit Strategy <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="exitStrategy"
@@ -784,11 +907,15 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Potential exit scenarios (IPO, acquisition, etc.)..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.exitStrategy ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.exitStrategy
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.exitStrategy && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.exitStrategy}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.exitStrategy}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -799,7 +926,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Team Size <span className="text-red-400">*</span>
+                      Team Size <span className="text-white/80">*</span>
                     </label>
                     <input
                       type="number"
@@ -809,18 +936,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Number of team members"
                       min="1"
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                        validationErrors.teamSize ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.teamSize
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.teamSize && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.teamSize}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.teamSize}
+                      </p>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Contact Phone <span className="text-red-400">*</span>
+                        Contact Phone <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -831,18 +962,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="+1 (555) 123-4567"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.contactPhone ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.contactPhone
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.contactPhone && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.contactPhone}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.contactPhone}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Contact Email <span className="text-red-400">*</span>
+                        Contact Email <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -853,12 +988,16 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="your@email.com"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.contactEmail ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.contactEmail
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.contactEmail && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.contactEmail}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.contactEmail}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -866,7 +1005,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Company Website <span className="text-red-400">*</span>
+                        Company Website <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaGlobe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -877,18 +1016,23 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="https://yourcompany.com"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.companyWebsite ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.companyWebsite
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.companyWebsite && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.companyWebsite}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.companyWebsite}
+                        </p>
                       )}
                     </div>
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        LinkedIn Profile <span className="text-red-400">*</span>
+                        LinkedIn Profile{" "}
+                        <span className="text-white/80">*</span>
                       </label>
                       <div className="relative">
                         <FaLinkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -899,19 +1043,24 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                           onChange={handleInputChange}
                           placeholder="https://linkedin.com/in/yourprofile"
                           className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                            validationErrors.linkedinProfile ? 'border-red-500' : 'border-gray-700'
+                            validationErrors.linkedinProfile
+                              ? "border-white"
+                              : "border-gray-700"
                           }`}
                         />
                       </div>
                       {validationErrors.linkedinProfile && (
-                        <p className="text-red-400 text-sm mt-2">{validationErrors.linkedinProfile}</p>
+                        <p className="text-white/80 text-sm mt-2">
+                          {validationErrors.linkedinProfile}
+                        </p>
                       )}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Intellectual Property <span className="text-red-400">*</span>
+                      Intellectual Property{" "}
+                      <span className="text-white/80">*</span>
                     </label>
                     <textarea
                       name="intellectualProperty"
@@ -920,17 +1069,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       placeholder="Patents, trademarks, copyrights, trade secrets..."
                       rows={3}
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
-                        validationErrors.intellectualProperty ? 'border-red-500' : 'border-gray-700'
+                        validationErrors.intellectualProperty
+                          ? "border-white"
+                          : "border-gray-700"
                       }`}
                     />
                     {validationErrors.intellectualProperty && (
-                      <p className="text-red-400 text-sm mt-2">{validationErrors.intellectualProperty}</p>
+                      <p className="text-white/80 text-sm mt-2">
+                        {validationErrors.intellectualProperty}
+                      </p>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Additional Documents <span className="text-white/40">(Optional)</span>
+                      Additional Documents{" "}
+                      <span className="text-white/40">(Optional)</span>
                     </label>
                     <textarea
                       name="additionalDocuments"

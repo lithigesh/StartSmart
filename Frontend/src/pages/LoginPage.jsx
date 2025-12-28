@@ -130,8 +130,8 @@ const LoginPage = () => {
 
             {/* Success message */}
             {successMessage && (
-              <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                <p className="text-green-400 text-sm font-manrope">
+              <div className="mb-6 p-4 bg-white/10/10 border border-white/20 rounded-lg">
+                <p className="text-white/90 text-sm font-manrope">
                   {successMessage}
                 </p>
               </div>
@@ -139,15 +139,15 @@ const LoginPage = () => {
 
             {/* Error message from navigation state */}
             {errorMessage && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm font-manrope">{errorMessage}</p>
+              <div className="mb-6 p-4 bg-white/10 border border-white/20 rounded-lg">
+                <p className="text-white/80 text-sm font-manrope">{errorMessage}</p>
               </div>
             )}
 
             {/* Error message from auth context */}
             {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm font-manrope">{error}</p>
+              <div className="mb-6 p-4 bg-white/10 border border-white/20 rounded-lg">
+                <p className="text-white/80 text-sm font-manrope">{error}</p>
               </div>
             )}
 

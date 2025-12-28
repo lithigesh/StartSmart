@@ -48,8 +48,8 @@ const NetworkErrorPage = () => {
 
             {/* Network Icon */}
             <div className="mb-6 flex justify-center">
-              <div className="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center">
-                <FaWifi className="w-10 h-10 text-blue-400" />
+              <div className="w-20 h-20 bg-white/20/10 rounded-full flex items-center justify-center">
+                <FaWifi className="w-10 h-10 text-white/90" />
               </div>
             </div>
 

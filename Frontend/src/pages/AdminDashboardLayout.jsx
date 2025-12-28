@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
-import '../styles/AdminEnhancements.css';
+import "../styles/AdminEnhancements.css";
 import {
   FaUsers,
   FaLightbulb,
@@ -27,11 +27,31 @@ const AdminDashboard = () => {
 
   // Sidebar navigation items with routes
   const sidebarItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: FaTachometerAlt, path: '/admin/dashboard' },
-    { id: 'users', label: 'Manage Users', icon: FaUsers, path: '/admin/users' },
-    { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb, path: '/admin/ideas' },
-    { id: 'ideathons', label: 'Ideathons', icon: FaTrophy, path: '/admin/ideathons' },
-    { id: 'feedback', label: 'Ideas Feedback', icon: FaEdit, path: '/admin/feedback' },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: FaTachometerAlt,
+      path: "/admin/dashboard",
+    },
+    { id: "users", label: "Manage Users", icon: FaUsers, path: "/admin/users" },
+    {
+      id: "ideas",
+      label: "Manage Ideas",
+      icon: FaLightbulb,
+      path: "/admin/ideas",
+    },
+    {
+      id: "ideathons",
+      label: "Ideathons",
+      icon: FaTrophy,
+      path: "/admin/ideathons",
+    },
+    {
+      id: "feedback",
+      label: "Ideas Feedback",
+      icon: FaEdit,
+      path: "/admin/feedback",
+    },
   ];
 
   // Redirect if not authenticated or not admin
@@ -43,8 +63,8 @@ const AdminDashboard = () => {
 
   // Get page title based on current path
   const getPageTitle = () => {
-    const item = sidebarItems.find(item => item.path === currentPath);
-    return item ? item.label : 'Admin Dashboard';
+    const item = sidebarItems.find((item) => item.path === currentPath);
+    return item ? item.label : "Admin Dashboard";
   };
 
   // Show loading screen while checking authentication
@@ -74,11 +94,24 @@ const AdminDashboard = () => {
       </div>
 
       {/* Sidebar - Enhanced with lighter theme and wider width */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-72 min-w-72 max-w-72 h-screen bg-gradient-to-b from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border-r border-white/20 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:w-72 lg:min-w-72 lg:max-w-72 lg:h-screen flex flex-col shadow-2xl`}>
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-72 min-w-72 max-w-72 h-screen bg-gradient-to-b from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border-r border-white/20 transform ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:w-72 lg:min-w-72 lg:max-w-72 lg:h-screen flex flex-col shadow-2xl`}
+      >
         <div className="flex items-center justify-between h-16 px-6 border-b border-white/20 flex-shrink-0 w-full">
-          <Link to="/admin/dashboard" className="inline-flex items-center gap-3 text-white/80 hover:text-white transition-colors duration-300 min-w-0">
-            <img src={StartSmartIcon} alt="StartSmart Logo" className="w-7 h-7 flex-shrink-0" />
-            <span className="font-manrope font-semibold text-lg truncate">StartSmart</span>
+          <Link
+            to="/admin/dashboard"
+            className="inline-flex items-center gap-3 text-white/80 hover:text-white transition-colors duration-300 min-w-0"
+          >
+            <img
+              src={StartSmartIcon}
+              alt="StartSmart Logo"
+              className="w-7 h-7 flex-shrink-0"
+            />
+            <span className="font-manrope font-semibold text-lg truncate">
+              StartSmart
+            </span>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -87,7 +120,7 @@ const AdminDashboard = () => {
             <FaTimes />
           </button>
         </div>
-        
+
         <nav className="mt-6 flex-1 overflow-y-auto w-full px-3 custom-scrollbar">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
@@ -99,14 +132,20 @@ const AdminDashboard = () => {
                 onClick={() => setSidebarOpen(false)}
                 className={`w-full flex items-center gap-4 px-4 py-4 text-left transition-all duration-300 relative overflow-hidden group rounded-xl mb-2 ${
                   isActive
-                    ? 'bg-gradient-to-r from-white/[0.25] to-white/[0.15] text-white border border-white/30 shadow-xl transform scale-105'
-                    : 'text-white/80 hover:text-white hover:bg-white/[0.12] hover:translate-x-1 hover:scale-102 hover:shadow-lg'
+                    ? "bg-gradient-to-r from-white/[0.25] to-white/[0.15] text-white border border-white/30 shadow-xl transform scale-105"
+                    : "text-white/80 hover:text-white hover:bg-white/[0.12] hover:translate-x-1 hover:scale-102 hover:shadow-lg"
                 }`}
               >
-                <Icon className={`text-xl flex-shrink-0 transition-all duration-300 ${
-                  isActive ? 'text-white scale-110' : 'group-hover:scale-110 group-hover:rotate-6'
-                }`} />
-                <span className="font-manrope font-medium transition-all duration-300 truncate flex-1 min-w-0 text-base">{item.label}</span>
+                <Icon
+                  className={`text-xl flex-shrink-0 transition-all duration-300 ${
+                    isActive
+                      ? "text-white scale-110"
+                      : "group-hover:scale-110 group-hover:rotate-6"
+                  }`}
+                />
+                <span className="font-manrope font-medium transition-all duration-300 truncate flex-1 min-w-0 text-base">
+                  {item.label}
+                </span>
                 {isActive && (
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 )}
@@ -119,8 +158,8 @@ const AdminDashboard = () => {
 
         <div className="p-4 border-t border-white/20 flex-shrink-0 w-full">
           <button
-            onClick={() => logout('/admin/login')}
-            className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-gradient-to-r from-red-600/80 to-red-700/80 text-white rounded-xl font-manrope font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            onClick={() => logout("/admin/login")}
+            className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white/20 text-white rounded-xl font-manrope font-semibold hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
           >
             <FaSignOutAlt className="text-lg" />
             Logout
@@ -138,7 +177,9 @@ const AdminDashboard = () => {
           >
             <FaBars />
           </button>
-          <h1 className="font-manrope font-bold text-white">{getPageTitle()}</h1>
+          <h1 className="font-manrope font-bold text-white">
+            {getPageTitle()}
+          </h1>
           <div className="w-6"></div>
         </div>
 

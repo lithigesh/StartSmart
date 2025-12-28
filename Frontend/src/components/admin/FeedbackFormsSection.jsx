@@ -194,7 +194,7 @@ const FeedbackFormsSection = () => {
             <Star
                 key={i}
                 size={16}
-                className={i < rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}
+                className={i < rating ? 'text-white/70 fill-current' : 'text-gray-300'}
             />
         ));
     };
@@ -298,15 +298,15 @@ const FeedbackFormsSection = () => {
                 </div>
 
                 {error && (
-                    <div className="bg-gradient-to-r from-red-900/30 to-red-800/20 border border-red-500/30 rounded-lg backdrop-blur-sm px-4 py-3 mb-4">
-                        <p className="text-red-400 text-sm font-manrope">{error}</p>
+                    <div className="bg-gradient-to-r from-white/30 to-white/20 border border-white/30 rounded-lg backdrop-blur-sm px-4 py-3 mb-4">
+                        <p className="text-white/80 text-sm font-manrope">{error}</p>
                     </div>
                 )}
 
                 {successMessage && (
-                    <div className="bg-gradient-to-r from-green-900/30 to-green-800/20 border border-green-500/30 rounded-lg backdrop-blur-sm px-4 py-3 mb-4 flex items-center gap-3">
-                        <MessageSquare className="text-green-400" size={20} />
-                        <p className="text-green-400 text-sm font-manrope">{successMessage}</p>
+                    <div className="bg-gradient-to-r from-white/30 to-white/20 border border-white/30 rounded-lg backdrop-blur-sm px-4 py-3 mb-4 flex items-center gap-3">
+                        <MessageSquare className="text-white/90" size={20} />
+                        <p className="text-white/90 text-sm font-manrope">{successMessage}</p>
                     </div>
                 )}
             </div>
@@ -616,7 +616,7 @@ const FeedbackFormsSection = () => {
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(feedback._id)}
-                                                className="p-2 text-white/50 hover:text-red-400 hover:bg-red-900/30 rounded transition-colors"
+                                                className="p-2 text-white/50 hover:text-white/80 hover:bg-white/30 rounded transition-colors"
                                             >
                                                 <Trash2 size={16} />
                                             </button>

@@ -246,7 +246,7 @@ const SettingsSection = () => {
 
       {/* Success Message */}
       {success && (
-        <div className="bg-green-500/20 border border-green-500/50 text-green-400 px-4 py-3 rounded-lg flex items-center gap-2">
+        <div className="bg-white/10/20 border border-white/50 text-white/90 px-4 py-3 rounded-lg flex items-center gap-2">
           <FaCheck className="w-5 h-5" />
           <span>{success}</span>
         </div>
@@ -254,7 +254,7 @@ const SettingsSection = () => {
 
       {/* General Error Message */}
       {errors.general && (
-        <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2">
+        <div className="bg-white/20 border border-white/50 text-white/80 px-4 py-3 rounded-lg flex items-center gap-2">
           <FaInfoCircle className="w-5 h-5" />
           <span>{errors.general}</span>
         </div>
@@ -263,8 +263,8 @@ const SettingsSection = () => {
       {/* Account Information */}
       <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-            <FaInfoCircle className="w-5 h-5 text-blue-400" />
+          <div className="w-10 h-10 rounded-lg bg-white/20/20 flex items-center justify-center">
+            <FaInfoCircle className="w-5 h-5 text-white/90" />
           </div>
           <div>
             <h3 className="text-white font-semibold text-lg font-manrope">
@@ -310,12 +310,12 @@ const SettingsSection = () => {
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               className={`w-full px-4 py-3 bg-white/[0.03] border ${
-                errors.name ? "border-red-500" : "border-white/20"
-              } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope`}
+                errors.name ? "border-white" : "border-white/20"
+              } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope`}
               placeholder="Enter your full name"
             />
             {errors.name && (
-              <p className="text-red-400 text-sm mt-1">{errors.name}</p>
+              <p className="text-white/80 text-sm mt-1">{errors.name}</p>
             )}
           </div>
 
@@ -328,23 +328,23 @@ const SettingsSection = () => {
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               className={`w-full px-4 py-3 bg-white/[0.03] border ${
-                errors.email ? "border-red-500" : "border-white/20"
-              } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope`}
+                errors.email ? "border-white" : "border-white/20"
+              } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope`}
               placeholder="Enter your email"
             />
             {errors.email && (
-              <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+              <p className="text-white/80 text-sm mt-1">{errors.email}</p>
             )}
           </div>
 
           <button
             type="submit"
             disabled={isUpdatingProfile}
-            className="w-full bg-green-500/20 text-green-400 hover:bg-green-500/30 disabled:bg-gray-500/20 disabled:text-gray-400 disabled:cursor-not-allowed px-4 py-3 rounded-lg transition-colors duration-300 font-manrope font-medium flex items-center justify-center gap-2"
+            className="w-full bg-white/10/20 text-white/90 hover:bg-white/10/30 disabled:bg-gray-500/20 disabled:text-gray-400 disabled:cursor-not-allowed px-4 py-3 rounded-lg transition-colors duration-300 font-manrope font-medium flex items-center justify-center gap-2"
           >
             {isUpdatingProfile ? (
               <>
-                <div className="w-5 h-5 border-2 border-green-400 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 Updating...
               </>
             ) : (
@@ -360,8 +360,8 @@ const SettingsSection = () => {
       {/* Security Settings */}
       <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/10">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-            <FaLock className="w-5 h-5 text-green-400" />
+          <div className="w-10 h-10 rounded-lg bg-white/10/20 flex items-center justify-center">
+            <FaLock className="w-5 h-5 text-white/90" />
           </div>
           <div>
             <h3 className="text-white font-semibold text-lg font-manrope">
@@ -375,7 +375,7 @@ const SettingsSection = () => {
 
         {/* Password Error Message */}
         {errors.password && (
-          <div className="bg-red-500/20 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 mb-4">
+          <div className="bg-white/20 border border-white/50 text-white/80 px-4 py-3 rounded-lg flex items-center gap-2 mb-4">
             <FaInfoCircle className="w-5 h-5" />
             <span>{errors.password}</span>
           </div>
@@ -394,8 +394,8 @@ const SettingsSection = () => {
                   handlePasswordChange("currentPassword", e.target.value)
                 }
                 className={`w-full px-4 py-3 pr-12 bg-white/[0.03] border ${
-                  errors.currentPassword ? "border-red-500" : "border-white/20"
-                } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope`}
+                  errors.currentPassword ? "border-white" : "border-white/20"
+                } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope`}
                 placeholder="Enter current password"
               />
               <button
@@ -416,7 +416,7 @@ const SettingsSection = () => {
               </button>
             </div>
             {errors.currentPassword && (
-              <p className="text-red-400 text-sm mt-1">
+              <p className="text-white/80 text-sm mt-1">
                 {errors.currentPassword}
               </p>
             )}
@@ -434,8 +434,8 @@ const SettingsSection = () => {
                   handlePasswordChange("newPassword", e.target.value)
                 }
                 className={`w-full px-4 py-3 pr-12 bg-white/[0.03] border ${
-                  errors.newPassword ? "border-red-500" : "border-white/20"
-                } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope`}
+                  errors.newPassword ? "border-white" : "border-white/20"
+                } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope`}
                 placeholder="Enter new password (min 6 characters)"
               />
               <button
@@ -453,7 +453,7 @@ const SettingsSection = () => {
               </button>
             </div>
             {errors.newPassword && (
-              <p className="text-red-400 text-sm mt-1">{errors.newPassword}</p>
+              <p className="text-white/80 text-sm mt-1">{errors.newPassword}</p>
             )}
           </div>
 
@@ -469,8 +469,8 @@ const SettingsSection = () => {
                   handlePasswordChange("confirmPassword", e.target.value)
                 }
                 className={`w-full px-4 py-3 pr-12 bg-white/[0.03] border ${
-                  errors.confirmPassword ? "border-red-500" : "border-white/20"
-                } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope`}
+                  errors.confirmPassword ? "border-white" : "border-white/20"
+                } rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope`}
                 placeholder="Confirm new password"
               />
               <button
@@ -491,7 +491,7 @@ const SettingsSection = () => {
               </button>
             </div>
             {errors.confirmPassword && (
-              <p className="text-red-400 text-sm mt-1">
+              <p className="text-white/80 text-sm mt-1">
                 {errors.confirmPassword}
               </p>
             )}
@@ -500,11 +500,11 @@ const SettingsSection = () => {
           <button
             type="submit"
             disabled={isUpdatingPassword}
-            className="w-full bg-green-500/20 text-green-400 hover:bg-green-500/30 disabled:bg-gray-500/20 disabled:text-gray-400 disabled:cursor-not-allowed px-4 py-3 rounded-lg transition-colors duration-300 font-manrope font-medium flex items-center justify-center gap-2"
+            className="w-full bg-white/10/20 text-white/90 hover:bg-white/10/30 disabled:bg-gray-500/20 disabled:text-gray-400 disabled:cursor-not-allowed px-4 py-3 rounded-lg transition-colors duration-300 font-manrope font-medium flex items-center justify-center gap-2"
           >
             {isUpdatingPassword ? (
               <>
-                <div className="w-5 h-5 border-2 border-green-400 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 Updating...
               </>
             ) : (

@@ -135,7 +135,7 @@ const InvestorFundingRequestModal = ({
       <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-700 p-6 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-white/600/20 to-white/20 border-b border-gray-700 p-6 flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white">
                 {request.idea?.title || "Funding Request Details"}
@@ -161,7 +161,7 @@ const InvestorFundingRequestModal = ({
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap relative ${
                     activeTab === tab.id
-                      ? "text-blue-400 border-b-2 border-blue-400 bg-blue-600/10"
+                      ? "text-white/90 border-b-2 border-white bg-white/20/10"
                       : "text-gray-400 hover:text-white hover:bg-gray-800/50"
                   }`}
                 >
@@ -169,7 +169,7 @@ const InvestorFundingRequestModal = ({
                   {tab.label}
                   {/* Show badge for negotiation tab when there are messages */}
                   {tab.id === "negotiation" && messages.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-white/20 text-white text-xs rounded-full flex items-center justify-center">
                       {messages.length}
                     </span>
                   )}
@@ -194,12 +194,12 @@ const InvestorFundingRequestModal = ({
                 {/* Entrepreneur Contact Information */}
                 <div className="bg-white/5 rounded-xl p-6 border border-white/10">
                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <FaUsers className="w-5 h-5 text-blue-400" />
+                    <FaUsers className="w-5 h-5 text-white/90" />
                     Entrepreneur Contact
                   </h3>
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
-                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                      <div className="w-16 h-16 bg-gradient-to-br from-white/500 to-white rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
                         {(request.entrepreneur?.name || "E").charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1">
@@ -216,7 +216,7 @@ const InvestorFundingRequestModal = ({
                           href={`https://mail.google.com/mail/?view=cm&fs=1&to=${request.entrepreneur.email}&su=Regarding ${request.idea?.title || 'Your Funding Request'}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                          className="px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                         >
                           <FaEnvelope className="w-4 h-4" />
                           Email
@@ -235,7 +235,7 @@ const InvestorFundingRequestModal = ({
                           href={`https://mail.google.com/mail/?view=cm&fs=1&to=${request.contactEmail}&su=Regarding ${request.idea?.title || 'Funding Request'}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                          className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-colors"
                         >
                           Email
                         </a>
@@ -255,9 +255,9 @@ const InvestorFundingRequestModal = ({
                 </div>
 
                 {/* Additional Info */}
-                <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20">
+                <div className="bg-gradient-to-r from-white/500/10 to-white/10 rounded-xl p-6 border border-white/20">
                   <div className="flex items-start gap-4">
-                    <FaHandshake className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
+                    <FaHandshake className="w-6 h-6 text-white/90 flex-shrink-0 mt-1" />
                     <div>
                       <h4 className="text-white font-semibold mb-2">Ready to Connect?</h4>
                       <p className="text-white/70 text-sm leading-relaxed">
@@ -277,14 +277,14 @@ const InvestorFundingRequestModal = ({
                 <button
                   onClick={() => setShowAcceptanceModal(true)}
                   disabled={isResponding}
-                  className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/30 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <FaCheckCircle className="w-5 h-5" />
                   Accept Deal
                 </button>
                 <button
                   onClick={() => setActiveTab("negotiation")}
-                  className="flex-1 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <FaHandshake className="w-5 h-5" />
                   Negotiate
@@ -292,7 +292,7 @@ const InvestorFundingRequestModal = ({
                 <button
                   onClick={handleDecline}
                   disabled={isResponding}
-                  className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-white/20 hover:bg-white/30 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <FaTimesCircle className="w-5 h-5" />
                   Decline
@@ -529,10 +529,10 @@ const TeamTab = ({ request }) => (
 const MetricCard = ({ icon: Icon, label, value, color }) => {
   const colorClasses = {
     green:
-      "from-green-600/20 to-green-600/5 border-green-500/30 text-green-400",
-    blue: "from-blue-600/20 to-blue-600/5 border-blue-500/30 text-blue-400",
+      "from-white/20 to-white/5 border-white/30 text-white/90",
+    blue: "from-white/600/20 to-white/600/5 border-white/30 text-white/90",
     purple:
-      "from-purple-600/20 to-purple-600/5 border-purple-500/30 text-purple-400",
+      "from-white/20 to-white/5 border-white/30 text-white/90",
   };
 
   return (

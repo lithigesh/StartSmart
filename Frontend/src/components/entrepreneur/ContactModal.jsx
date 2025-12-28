@@ -19,7 +19,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
 
       <div className="relative w-full max-w-2xl bg-gradient-to-br from-gray-900 via-black to-gray-900 border border-white/20 rounded-2xl overflow-hidden shadow-2xl m-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-blue-600/10 to-purple-600/10">
+        <div className="flex items-center justify-between p-6 border-b border-white/10 bg-gradient-to-r from-white/600/10 to-white/10">
           <div>
             <h2 className="text-2xl font-bold text-white">Contact Information</h2>
             <p className="text-white/60 mt-1 text-sm">
@@ -39,7 +39,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
           {/* Entrepreneur Contact */}
           <div className="bg-white/5 rounded-xl p-6 border border-white/10">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <FaUsers className="w-5 h-5 text-blue-400" />
+              <FaUsers className="w-5 h-5 text-white/90" />
               Your Contact Information
             </h3>
             <div className="space-y-3">
@@ -54,7 +54,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
                     href={`https://mail.google.com/mail/?view=cm&fs=1&to=${fundingRequest.contactEmail}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-colors"
                   >
                     Email
                   </a>
@@ -76,7 +76,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
           {fundingRequest.investorResponses && fundingRequest.investorResponses.length > 0 && (
             <div className="bg-white/5 rounded-xl p-6 border border-white/10">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <FaUsers className="w-5 h-5 text-green-400" />
+                <FaUsers className="w-5 h-5 text-white/90" />
                 Interested Investors
               </h3>
               <div className="space-y-4">
@@ -84,7 +84,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
                   .filter(r => r.status === "interested" || r.status === "accepted")
                   .map((response, index) => (
                     <div key={index} className="flex items-center gap-3 p-4 bg-white/5 rounded-lg border border-white/10">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                      <div className="w-12 h-12 bg-gradient-to-br from-white/500 to-white rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                         {(response.investor?.name || "I").charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -96,7 +96,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
                           </div>
                         )}
                         {response.status === "accepted" && (
-                          <span className="inline-flex items-center gap-1 mt-2 text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                          <span className="inline-flex items-center gap-1 mt-2 text-xs bg-white/10/20 text-white/90 px-2 py-1 rounded">
                             <FaCheckCircle className="w-3 h-3" />
                             Accepted
                           </span>
@@ -107,7 +107,7 @@ const ContactModal = ({ isOpen, onClose, fundingRequest, user }) => {
                           href={`https://mail.google.com/mail/?view=cm&fs=1&to=${response.investor.email}&su=Regarding ${fundingRequest.idea?.title || 'Funding Request'}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                          className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                         >
                           <FaEnvelope className="w-4 h-4" />
                           Email

@@ -121,7 +121,7 @@ const NegotiationChat = ({
               if (isSystem) {
                 return (
                   <div key={index} className="flex justify-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600/20 border border-blue-500/30 rounded-full text-blue-300 text-sm">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20/20 border border-white/30 rounded-full text-white/90 text-sm">
                       {msg.message?.startsWith("✅") ? (
                         <FaCheckCircle className="w-4 h-4" />
                       ) : (
@@ -148,7 +148,7 @@ const NegotiationChat = ({
                     {/* Avatar */}
                     <div
                       className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                        isOwnMessage ? "bg-blue-600" : "bg-purple-600"
+                        isOwnMessage ? "bg-white/20" : "bg-white"
                       }`}
                     >
                       {isOwnMessage ? (
@@ -163,7 +163,7 @@ const NegotiationChat = ({
                       <div
                         className={`px-4 py-3 rounded-2xl ${
                           isOwnMessage
-                            ? "bg-blue-600 text-white rounded-tr-none"
+                            ? "bg-white/20 text-white rounded-tr-none"
                             : "bg-gray-800 border border-gray-700 text-white rounded-tl-none"
                         }`}
                       >
@@ -203,7 +203,7 @@ const NegotiationChat = ({
                   value={proposedAmount}
                   onChange={(e) => setProposedAmount(e.target.value)}
                   placeholder="e.g., 250000"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
                 />
               </div>
               <div>
@@ -216,7 +216,7 @@ const NegotiationChat = ({
                   value={proposedEquity}
                   onChange={(e) => setProposedEquity(e.target.value)}
                   placeholder="e.g., 15"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
                 />
               </div>
             </div>
@@ -235,7 +235,7 @@ const NegotiationChat = ({
               }}
               placeholder="Type your negotiation message... (Shift+Enter for new line)"
               rows={3}
-              className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent resize-none"
             />
             <div className="flex flex-col gap-2">
               <button
@@ -246,7 +246,7 @@ const NegotiationChat = ({
                 type="button"
                 className={`px-4 py-2 rounded-lg border transition-colors ${
                   showProposalFields
-                    ? "bg-blue-600 border-blue-500 text-white"
+                    ? "bg-white/20 border-white text-white"
                     : "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
                 }`}
                 title="Add proposed terms"
@@ -260,7 +260,7 @@ const NegotiationChat = ({
                   isSending ||
                   (!message.trim() && !proposedAmount && !proposedEquity)
                 }
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 {isSending ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

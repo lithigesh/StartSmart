@@ -212,13 +212,13 @@ const FundingRequestDetailsModal = ({
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "text-yellow-400 bg-yellow-400/10 border-yellow-400/20";
+        return "text-white/70 bg-white/10 border-white/20";
       case "accepted":
-        return "text-green-400 bg-green-400/10 border-green-400/20";
+        return "text-white/90 bg-white/10 border-white/20";
       case "negotiated":
-        return "text-blue-400 bg-blue-400/10 border-blue-400/20";
+        return "text-white/90 bg-white/10 border-white/20";
       case "declined":
-        return "text-red-400 bg-red-400/10 border-red-400/20";
+        return "text-white/80 bg-white/10 border-white/20";
       case "withdrawn":
         return "text-gray-400 bg-gray-400/10 border-gray-400/20";
       default:
@@ -288,7 +288,7 @@ const FundingRequestDetailsModal = ({
             {canEdit && !isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center gap-2 font-manrope"
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 flex items-center gap-2 font-manrope"
               >
                 <FaEdit className="w-4 h-4" />
                 Edit
@@ -305,16 +305,16 @@ const FundingRequestDetailsModal = ({
 
         {/* Success/Error Messages */}
         {success && (
-          <div className="mx-6 mt-4 p-4 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
-            <FaCheck className="w-5 h-5 text-green-400" />
-            <p className="text-green-400">{success}</p>
+          <div className="mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+            <FaCheck className="w-5 h-5 text-white/90" />
+            <p className="text-white/90">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="mx-6 mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-3">
-            <FaExclamationTriangle className="w-5 h-5 text-red-400" />
-            <p className="text-red-400">{error}</p>
+          <div className="mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+            <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
+            <p className="text-white/80">{error}</p>
           </div>
         )}
 
@@ -337,7 +337,7 @@ const FundingRequestDetailsModal = ({
                 {tab.id === "negotiation" &&
                   request.negotiationHistory &&
                   request.negotiationHistory.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-white/20 text-white text-xs rounded-full flex items-center justify-center animate-pulse">
                       {request.negotiationHistory.length}
                     </span>
                   )}
@@ -357,7 +357,7 @@ const FundingRequestDetailsModal = ({
                   {/* Amount */}
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Funding Amount <span className="text-red-400">*</span>
+                      Funding Amount <span className="text-white/80">*</span>
                     </label>
                     <div className="relative">
                       <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -381,7 +381,7 @@ const FundingRequestDetailsModal = ({
                   {/* Equity */}
                   <div>
                     <label className="block text-white font-medium mb-3">
-                      Equity Offered <span className="text-red-400">*</span>
+                      Equity Offered <span className="text-white/80">*</span>
                     </label>
                     <div className="relative">
                       <FaPercentage className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
@@ -847,7 +847,7 @@ const FundingRequestDetailsModal = ({
                             href={request.companyWebsite}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-400 hover:underline"
+                            className="text-white/90 hover:underline"
                           >
                             {request.companyWebsite}
                           </a>
@@ -879,7 +879,7 @@ const FundingRequestDetailsModal = ({
                             href={request.linkedinProfile}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-400 hover:underline"
+                            className="text-white/90 hover:underline"
                           >
                             LinkedIn Profile
                           </a>

@@ -7,7 +7,7 @@ const WelcomeSection = () => {
 
   const handleSubmitIdea = () => {
     // Navigate to the new 3-form idea submission system
-    navigate('/submit-idea');
+    navigate("/submit-idea");
   };
 
   return (
@@ -16,15 +16,13 @@ const WelcomeSection = () => {
       <div className="relative">
         <div className="flex items-center gap-4 mb-4">
           <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-            <FaLightbulb className="w-6 h-6 text-yellow-500" />
+            <FaLightbulb className="w-6 h-6 text-gray-800" />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white">
               Ready to innovate?
             </h2>
-            <p className="text-gray-400">
-              Transform your ideas into reality
-            </p>
+            <p className="text-gray-400">Transform your ideas into reality</p>
           </div>
         </div>
 
@@ -35,7 +33,7 @@ const WelcomeSection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <button 
+          <button
             onClick={handleSubmitIdea}
             className="inline-flex items-center gap-2 bg-white text-black hover:bg-white/90 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
           >

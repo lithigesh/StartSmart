@@ -45,8 +45,8 @@ const NotFoundPage = () => {
 
             {/* 404 Icon */}
             <div className="mb-6 flex justify-center">
-              <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center">
-                <FaExclamationTriangle className="w-10 h-10 text-red-400" />
+              <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center">
+                <FaExclamationTriangle className="w-10 h-10 text-white/80" />
               </div>
             </div>
 

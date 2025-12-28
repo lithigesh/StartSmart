@@ -25,12 +25,12 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
     const [showForm, setShowForm] = useState(false);
 
     const categories = [
-        { value: 'general', label: 'General', icon: MessageSquare, color: 'text-blue-500' },
-        { value: 'bug_report', label: 'Bug Report', icon: Bug, color: 'text-red-500' },
-        { value: 'feature_request', label: 'Feature Request', icon: Lightbulb, color: 'text-yellow-500' },
-        { value: 'ui_ux', label: 'UI/UX', icon: Monitor, color: 'text-purple-500' },
-        { value: 'performance', label: 'Performance', icon: CheckCircle, color: 'text-green-500' },
-        { value: 'security', label: 'Security', icon: AlertCircle, color: 'text-orange-500' }
+        { value: 'general', label: 'General', icon: MessageSquare, color: 'text-white/90' },
+        { value: 'bug_report', label: 'Bug Report', icon: Bug, color: 'text-white/80' },
+        { value: 'feature_request', label: 'Feature Request', icon: Lightbulb, color: 'text-white/70' },
+        { value: 'ui_ux', label: 'UI/UX', icon: Monitor, color: 'text-white/90' },
+        { value: 'performance', label: 'Performance', icon: CheckCircle, color: 'text-white/90' },
+        { value: 'security', label: 'Security', icon: AlertCircle, color: 'text-white/80' }
     ];
 
     const handleSubmit = async (e) => {
@@ -151,9 +151,9 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
                         size={20}
                         className={`${
                             star <= rating
-                                ? 'text-yellow-400 fill-current'
+                                ? 'text-white/70 fill-current'
                                 : 'text-gray-600'
-                        } cursor-pointer hover:text-yellow-300 transition-colors`}
+                        } cursor-pointer hover:text-white/70 transition-colors`}
                         onClick={() => setRating(star)}
                     />
                 ))}
@@ -166,7 +166,7 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
             <div className="text-center">
                 <button
                     onClick={() => setShowForm(true)}
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 font-medium"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 font-medium"
                 >
                     <MessageSquare size={18} />
                     Submit Feedback
@@ -203,7 +203,7 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
                                     onClick={() => setFormData(prev => ({ ...prev, category: category.value }))}
                                     className={`p-3 rounded-lg border-2 transition-colors flex items-center space-x-2 text-sm ${
                                         formData.category === category.value
-                                            ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                                            ? 'border-white bg-white/20/10 text-white/90'
                                             : 'border-gray-600 hover:border-gray-500 text-gray-300'
                                     }`}
                                 >
@@ -226,8 +226,8 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
                         onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                         className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none ${
                             formData.title.trim().length > 0 && formData.title.trim().length < 5
-                                ? 'border-red-400 focus:border-red-500'
-                                : 'border-gray-600 focus:border-blue-500'
+                                ? 'border-white focus:border-white'
+                                : 'border-gray-600 focus:border-white'
                         }`}
                         placeholder="Brief summary of your feedback"
                         required
@@ -248,8 +248,8 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
                         rows={4}
                         className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none resize-none ${
                             formData.description.trim().length > 0 && formData.description.trim().length < 10
-                                ? 'border-red-400 focus:border-red-500'
-                                : 'border-gray-600 focus:border-blue-500'
+                                ? 'border-white focus:border-white'
+                                : 'border-gray-600 focus:border-white'
                         }`}
                         placeholder="Please provide detailed feedback..."
                         required
@@ -305,7 +305,7 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
                         id="contactForFollowUp"
                         checked={formData.contactForFollowUp}
                         onChange={(e) => setFormData(prev => ({ ...prev, contactForFollowUp: e.target.checked }))}
-                        className="rounded border-gray-600 text-blue-600 focus:ring-blue-500 bg-gray-700"
+                        className="rounded border-gray-600 text-white/90 focus:ring-white bg-gray-700"
                     />
                     <label htmlFor="contactForFollowUp" className="ml-2 text-sm text-gray-300">
                         I'm okay with being contacted for follow-up questions
@@ -324,7 +324,7 @@ const InlineFeedbackForm = ({ onSubmitSuccess }) => {
                     <button
                         type="submit"
                         disabled={submitting || formData.title.trim().length < 5 || formData.description.trim().length < 10}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2 transition-colors"
+                        className="px-6 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 disabled:opacity-50 flex items-center space-x-2 transition-colors"
                     >
                         {submitting ? (
                             <>

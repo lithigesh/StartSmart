@@ -112,20 +112,20 @@ const MarketResearchModal = ({
       {/* Modal */}
       <div className="absolute inset-4 md:inset-8 lg:inset-16 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-white/20 rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-scale-up">
         {/* Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.08] via-transparent to-indigo-500/[0.08] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/500/[0.08] via-transparent to-white/[0.08] pointer-events-none"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.15),transparent_50%)] pointer-events-none"></div>
 
         {/* Header */}
         <div className="relative z-10 flex items-center justify-between p-6 lg:p-8 border-b border-white/10 bg-gradient-to-r from-white/[0.05] to-transparent backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full"></div>
-              <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl shadow-lg">
+              <div className="absolute inset-0 bg-white/20/30 blur-xl rounded-full"></div>
+              <div className="relative bg-gradient-to-br from-white/500 to-white p-3 rounded-xl shadow-lg">
                 <FaBook className="w-6 h-6 text-white" />
               </div>
             </div>
             <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-white font-manrope bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+              <h2 className="text-2xl lg:text-3xl font-bold text-white font-manrope bg-gradient-to-r from-white via-white to-white bg-clip-text text-transparent">
                 {isEditing ? "Edit" : "New"} Market Research Note
               </h2>
               <p className="text-white/60 text-sm font-manrope mt-1">
@@ -135,7 +135,7 @@ const MarketResearchModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-3 text-white/70 hover:text-white hover:bg-red-500/20 rounded-xl transition-all duration-300 hover:scale-110 border border-white/10 hover:border-red-500/30"
+            className="p-3 text-white/70 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-300 hover:scale-110 border border-white/10 hover:border-white/30"
             title="Close"
           >
             <FaTimes className="w-5 h-5" />
@@ -149,9 +149,9 @@ const MarketResearchModal = ({
         >
           {/* Error Message */}
           {error && (
-            <div className="bg-gradient-to-r from-red-500/20 to-red-600/20 border-2 border-red-500/40 rounded-xl p-4 text-red-300 font-manrope animate-shake backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-white/20 to-white/20 border-2 border-white/40 rounded-xl p-4 text-white/80 font-manrope animate-shake backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 {error}
               </div>
             </div>
@@ -160,7 +160,7 @@ const MarketResearchModal = ({
           {/* Basic Information */}
           <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border-2 border-white/20 rounded-2xl p-6 backdrop-blur-sm">
             <h3 className="text-xl font-bold text-white mb-4 font-manrope flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-indigo-500 rounded-full"></div>
+              <div className="w-1 h-6 bg-gradient-to-b from-white/400 to-white rounded-full"></div>
               Basic Information
             </h3>
 
@@ -168,7 +168,7 @@ const MarketResearchModal = ({
               {/* Title */}
               <div>
                 <label className="block text-white/80 font-manrope font-semibold mb-2">
-                  Title <span className="text-red-400">*</span>
+                  Title <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="text"
@@ -177,14 +177,14 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="e.g., FinTech Market Analysis Q4 2025"
                   required
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope"
                 />
               </div>
 
               {/* Sector */}
               <div>
                 <label className="block text-white/80 font-manrope font-semibold mb-2">
-                  Sector / Industry <span className="text-red-400">*</span>
+                  Sector / Industry <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="text"
@@ -193,7 +193,7 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="e.g., FinTech, Healthcare, E-commerce"
                   required
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope"
                 />
               </div>
 
@@ -214,12 +214,12 @@ const MarketResearchModal = ({
                       }
                     }}
                     placeholder="Add tags (press Enter)"
-                    className="flex-1 px-4 py-2 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope text-sm"
+                    className="flex-1 px-4 py-2 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope text-sm"
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-xl hover:bg-blue-500/30 transition-all duration-300 font-manrope font-medium text-sm border border-blue-400/30"
+                    className="px-4 py-2 bg-white/20/20 text-white/90 rounded-xl hover:bg-white/20/30 transition-all duration-300 font-manrope font-medium text-sm border border-white/30"
                   >
                     Add
                   </button>
@@ -229,16 +229,16 @@ const MarketResearchModal = ({
                     {formData.tags.map((tag, index) => (
                       <div
                         key={index}
-                        className="bg-blue-500/20 px-3 py-1 rounded-lg border border-blue-400/30 flex items-center gap-2"
+                        className="bg-white/20/20 px-3 py-1 rounded-lg border border-white/30 flex items-center gap-2"
                       >
-                        <FaTag className="w-3 h-3 text-blue-400" />
-                        <span className="text-blue-300 text-sm font-manrope">
+                        <FaTag className="w-3 h-3 text-white/90" />
+                        <span className="text-white/90 text-sm font-manrope">
                           {tag}
                         </span>
                         <button
                           type="button"
                           onClick={() => handleRemoveTag(tag)}
-                          className="text-blue-400/60 hover:text-red-400 transition-colors"
+                          className="text-white/90/60 hover:text-white/80 transition-colors"
                         >
                           <FaTimes className="w-3 h-3" />
                         </button>
@@ -253,7 +253,7 @@ const MarketResearchModal = ({
           {/* Market Analysis */}
           <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border-2 border-white/20 rounded-2xl p-6 backdrop-blur-sm">
             <h3 className="text-xl font-bold text-white mb-4 font-manrope flex items-center gap-2">
-              <FaChartLine className="w-5 h-5 text-blue-400" />
+              <FaChartLine className="w-5 h-5 text-white/90" />
               Market Analysis
             </h3>
 
@@ -269,7 +269,7 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="Total addressable market, growth rate, projections..."
                   rows={3}
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope resize-none"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
                 ></textarea>
               </div>
 
@@ -284,7 +284,7 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="Emerging trends, market dynamics, consumer behavior..."
                   rows={4}
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope resize-none"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
                 ></textarea>
               </div>
 
@@ -299,7 +299,7 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="Key players, market share, competitive positioning..."
                   rows={4}
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope resize-none"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
                 ></textarea>
               </div>
             </div>
@@ -308,9 +308,9 @@ const MarketResearchModal = ({
           {/* SWOT-like Analysis */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Opportunities */}
-            <div className="bg-gradient-to-br from-green-500/[0.08] to-emerald-500/[0.04] border-2 border-green-400/20 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] border-2 border-white/20 rounded-2xl p-6 backdrop-blur-sm">
               <h3 className="text-lg font-bold text-white mb-3 font-manrope flex items-center gap-2">
-                <FaTrophy className="w-5 h-5 text-green-400" />
+                <FaTrophy className="w-5 h-5 text-white/90" />
                 Opportunities
               </h3>
               <textarea
@@ -319,14 +319,14 @@ const MarketResearchModal = ({
                 onChange={handleChange}
                 placeholder="Growth areas, untapped markets, investment opportunities..."
                 rows={5}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-green-400/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope resize-none"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
               ></textarea>
             </div>
 
             {/* Threats */}
-            <div className="bg-gradient-to-br from-red-500/[0.08] to-orange-500/[0.04] border-2 border-red-400/20 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] border-2 border-white/20 rounded-2xl p-6 backdrop-blur-sm">
               <h3 className="text-lg font-bold text-white mb-3 font-manrope flex items-center gap-2">
-                <FaExclamationTriangle className="w-5 h-5 text-red-400" />
+                <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
                 Threats & Risks
               </h3>
               <textarea
@@ -335,7 +335,7 @@ const MarketResearchModal = ({
                 onChange={handleChange}
                 placeholder="Market risks, regulatory challenges, potential obstacles..."
                 rows={5}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-red-400/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-red-500/50 focus:ring-2 focus:ring-red-500/20 transition-all duration-300 font-manrope resize-none"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
               ></textarea>
             </div>
           </div>
@@ -343,7 +343,7 @@ const MarketResearchModal = ({
           {/* Additional Information */}
           <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border-2 border-white/20 rounded-2xl p-6 backdrop-blur-sm">
             <h3 className="text-xl font-bold text-white mb-4 font-manrope flex items-center gap-2">
-              <FaFileAlt className="w-5 h-5 text-blue-400" />
+              <FaFileAlt className="w-5 h-5 text-white/90" />
               Additional Information
             </h3>
 
@@ -359,7 +359,7 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="Research papers, articles, reports, URLs..."
                   rows={3}
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope resize-none"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
                 ></textarea>
               </div>
 
@@ -374,7 +374,7 @@ const MarketResearchModal = ({
                   onChange={handleChange}
                   placeholder="Additional observations, key takeaways, action items..."
                   rows={4}
-                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope resize-none"
+                  className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
                 ></textarea>
               </div>
             </div>
@@ -384,7 +384,7 @@ const MarketResearchModal = ({
         {/* Footer */}
         <div className="relative z-10 flex items-center justify-between p-6 border-t border-white/10 bg-gradient-to-r from-white/[0.03] to-transparent backdrop-blur-sm">
           <p className="text-white/60 text-sm font-manrope">
-            <span className="text-red-400">*</span> Required fields
+            <span className="text-white/80">*</span> Required fields
           </p>
           <div className="flex items-center gap-3">
             <button
@@ -397,7 +397,7 @@ const MarketResearchModal = ({
             <button
               onClick={handleSubmit}
               disabled={saving}
-              className="px-8 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-manrope font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 hover:shadow-xl hover:shadow-green-500/30 border border-green-400/30"
+              className="px-8 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all duration-300 font-manrope font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 hover:scale-105 hover:shadow-xl hover:shadow-white/30 border border-white/30"
             >
               {saving ? (
                 <>

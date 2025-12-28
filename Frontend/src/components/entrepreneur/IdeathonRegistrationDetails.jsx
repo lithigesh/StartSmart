@@ -21,11 +21,11 @@ const IdeathonRegistrationDetails = ({ registration, onClose }) => {
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {/* Status Banner */}
-          <div className="mb-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg flex items-center gap-3">
+          <div className="mb-6 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
             {registration.status === 'approved' ? (
-              <FaCheckCircle className="w-5 h-5 text-green-400" />
+              <FaCheckCircle className="w-5 h-5 text-white/90" />
             ) : (
-              <FaClock className="w-5 h-5 text-yellow-400" />
+              <FaClock className="w-5 h-5 text-white/70" />
             )}
             <div>
               <h3 className="text-white font-medium">
@@ -61,7 +61,7 @@ const IdeathonRegistrationDetails = ({ registration, onClose }) => {
                       href={registration.githubUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300"
+                      className="text-white/90 hover:text-white/90"
                     >
                       View Repository
                     </a>
@@ -127,7 +127,7 @@ const IdeathonRegistrationDetails = ({ registration, onClose }) => {
                       rel="noopener noreferrer"
                       className="p-3 bg-gray-800/50 rounded-lg flex items-center gap-3 hover:bg-gray-800 transition-colors"
                     >
-                      <FaFileAlt className="w-4 h-4 text-blue-400" />
+                      <FaFileAlt className="w-4 h-4 text-white/90" />
                       <span className="text-white">{doc.name}</span>
                     </a>
                   ))}

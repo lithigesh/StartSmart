@@ -322,30 +322,30 @@ const RegisterPage = () => {
 
             {/* Error/Success messages */}
             {emailError && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm font-manrope">
+              <div className="mb-6 p-4 bg-white/10 border border-white/20 rounded-lg">
+                <p className="text-white/80 text-sm font-manrope">
                   {emailError}
                 </p>
               </div>
             )}
 
             {passwordError && !emailError && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm font-manrope">
+              <div className="mb-6 p-4 bg-white/10 border border-white/20 rounded-lg">
+                <p className="text-white/80 text-sm font-manrope">
                   {passwordError}
                 </p>
               </div>
             )}
 
             {error && !passwordError && !emailError && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-red-400 text-sm font-manrope">{error}</p>
+              <div className="mb-6 p-4 bg-white/10 border border-white/20 rounded-lg">
+                <p className="text-white/80 text-sm font-manrope">{error}</p>
               </div>
             )}
 
             {successMessage && (
-              <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                <p className="text-green-400 text-sm font-manrope">
+              <div className="mb-6 p-4 bg-white/10/10 border border-white/20 rounded-lg">
+                <p className="text-white/90 text-sm font-manrope">
                   {successMessage}
                 </p>
               </div>
@@ -453,9 +453,9 @@ const RegisterPage = () => {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 bg-white/[0.05] border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300 font-manrope pr-12 ${
                       emailValid === false
-                        ? "border-red-500/50 focus:ring-red-500/30 focus:border-red-500/40"
+                        ? "border-white/50 focus:ring-white/30 focus:border-white/40"
                         : emailValid === true
-                        ? "border-green-500/50 focus:ring-green-500/30 focus:border-green-500/40"
+                        ? "border-white/50 focus:ring-white/30 focus:border-white/40"
                         : "border-white/20 focus:ring-white/30 focus:border-white/40"
                     }`}
                     placeholder="Enter your email"
@@ -465,22 +465,22 @@ const RegisterPage = () => {
                   {emailValid !== null && formData.email && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                       {emailValid ? (
-                        <FaCheck className="w-4 h-4 text-green-400" />
+                        <FaCheck className="w-4 h-4 text-white/90" />
                       ) : (
-                        <FaTimes className="w-4 h-4 text-red-400" />
+                        <FaTimes className="w-4 h-4 text-white/80" />
                       )}
                     </div>
                   )}
                 </div>
                 {/* Inline email validation messages */}
                 {emailValid === false && formData.email && (
-                  <p className="text-red-400 text-xs font-manrope mt-1 flex items-center gap-1">
+                  <p className="text-white/80 text-xs font-manrope mt-1 flex items-center gap-1">
                     <FaTimes className="w-3 h-3" />
                     Please enter a valid email address
                   </p>
                 )}
                 {emailValid === true && formData.email && (
-                  <p className="text-green-400 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
+                  <p className="text-white/90 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
                     <FaCheck className="w-3 h-3" />
                     Valid email format
                   </p>
@@ -503,9 +503,9 @@ const RegisterPage = () => {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 bg-white/[0.05] border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300 font-manrope pr-12 ${
                       passwordValid === false
-                        ? "border-red-500/50 focus:ring-red-500/30 focus:border-red-500/40"
+                        ? "border-white/50 focus:ring-white/30 focus:border-white/40"
                         : passwordValid === true
-                        ? "border-green-500/50 focus:ring-green-500/30 focus:border-green-500/40"
+                        ? "border-white/50 focus:ring-white/30 focus:border-white/40"
                         : "border-white/20 focus:ring-white/30 focus:border-white/40"
                     }`}
                     placeholder="Create a password"
@@ -515,9 +515,9 @@ const RegisterPage = () => {
                   {passwordValid !== null && formData.password && (
                     <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
                       {passwordValid ? (
-                        <FaCheck className="w-4 h-4 text-green-400" />
+                        <FaCheck className="w-4 h-4 text-white/90" />
                       ) : (
-                        <FaTimes className="w-4 h-4 text-red-400" />
+                        <FaTimes className="w-4 h-4 text-white/80" />
                       )}
                     </div>
                   )}
@@ -531,13 +531,13 @@ const RegisterPage = () => {
                 </div>
                 {/* Inline password validation messages */}
                 {passwordValid === false && formData.password && (
-                  <p className="text-red-400 text-xs font-manrope mt-1 flex items-center gap-1">
+                  <p className="text-white/80 text-xs font-manrope mt-1 flex items-center gap-1">
                     <FaTimes className="w-3 h-3" />
                     Password must be at least 6 characters long
                   </p>
                 )}
                 {passwordValid === true && formData.password && (
-                  <p className="text-green-400 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
+                  <p className="text-white/90 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
                     <FaCheck className="w-3 h-3" />
                     Password meets requirements
                   </p>
@@ -558,11 +558,11 @@ const RegisterPage = () => {
                     onBlur={handleConfirmPasswordBlur}
                     className={`w-full px-4 py-3 bg-white/[0.05] border rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 transition-all duration-300 font-manrope pr-12 ${
                       passwordError && passwordError.includes("not match")
-                        ? "border-red-500/50 focus:ring-red-500/30"
+                        ? "border-white/50 focus:ring-white/30"
                         : passwordsMatch &&
                           formData.password &&
                           formData.confirmPassword
-                        ? "border-green-500/50 focus:ring-green-500/30 focus:border-green-500/40"
+                        ? "border-white/50 focus:ring-white/30 focus:border-white/40"
                         : "border-white/20 focus:ring-white/30 focus:border-white/40"
                     }`}
                     placeholder="Confirm your password"
@@ -573,7 +573,7 @@ const RegisterPage = () => {
                     formData.password &&
                     formData.confirmPassword && (
                       <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                        <FaCheck className="w-4 h-4 text-green-400" />
+                        <FaCheck className="w-4 h-4 text-white/90" />
                       </div>
                     )}
                   <button
@@ -589,14 +589,14 @@ const RegisterPage = () => {
                   formData.password &&
                   formData.confirmPassword &&
                   !passwordError && (
-                    <p className="text-green-400 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
+                    <p className="text-white/90 text-xs font-manrope mt-1 flex items-center gap-1 animate-fadeIn">
                       <FaCheck className="w-3 h-3" />
                       Passwords match
                     </p>
                   )}
                 {/* Inline error message for password mismatch */}
                 {passwordError && passwordError.includes("not match") && (
-                  <p className="text-red-400 text-xs font-manrope mt-1">
+                  <p className="text-white/80 text-xs font-manrope mt-1">
                     {passwordError}
                   </p>
                 )}
@@ -614,7 +614,7 @@ const RegisterPage = () => {
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {successMessage ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-green-600/30 border-t-green-600 rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-green-600 rounded-full animate-spin"></div>
                       Redirecting...
                     </>
                   ) : isLoading ? (

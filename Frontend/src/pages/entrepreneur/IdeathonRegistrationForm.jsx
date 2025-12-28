@@ -513,8 +513,8 @@ function IdeathonRegistrationForm({
             </h2>
             <p className="text-white/60 mt-1">{ideathonTitle}</p>
             {isUpdate && updateDeadline && (
-              <div className="mt-2 px-3 py-2 bg-yellow-900/20 border border-yellow-500/30 rounded-md">
-                <p className="text-yellow-400 text-sm">
+              <div className="mt-2 px-3 py-2 bg-white/20 border border-white/30 rounded-md">
+                <p className="text-white/70 text-sm">
                   Updates allowed until:{" "}
                   {new Date(updateDeadline).toLocaleDateString()}{" "}
                   {new Date(updateDeadline).toLocaleTimeString()}
@@ -558,7 +558,7 @@ function IdeathonRegistrationForm({
             </div>
             <div className="h-2 bg-white/[0.08] rounded-full overflow-hidden border border-white/10">
               <div
-                className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+                className="h-full bg-gradient-to-r from-white/500 to-white transition-all duration-300"
                 style={{
                   width: (() => {
                     const requiredFields = [
@@ -586,17 +586,17 @@ function IdeathonRegistrationForm({
 
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
-              <FaCheck className="w-5 h-5 text-green-400" />
-              <p className="text-green-400">{success}</p>
+            <div className="mb-6 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+              <FaCheck className="w-5 h-5 text-white/90" />
+              <p className="text-white/90">{success}</p>
             </div>
           )}
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-3">
-              <FaExclamationTriangle className="w-5 h-5 text-red-400" />
-              <p className="text-red-400">{error}</p>
+            <div className="mb-6 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+              <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
+              <p className="text-white/80">{error}</p>
             </div>
           )}
 
@@ -612,7 +612,7 @@ function IdeathonRegistrationForm({
               <div>
                 <label className="block text-white font-medium mb-3">
                   Select Idea to Register{" "}
-                  <span className="text-red-400">*</span>
+                  <span className="text-white/80">*</span>
                 </label>
 
                 {userIdeas.length === 0 ? (
@@ -685,7 +685,7 @@ function IdeathonRegistrationForm({
               {/* Team Name */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Team Name <span className="text-red-400">*</span>
+                  Team Name <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="text"
@@ -703,19 +703,19 @@ function IdeathonRegistrationForm({
                 <div
                   className={`p-4 rounded-lg ${
                     registrationStatus === "shortlisted"
-                      ? "bg-green-900/20 border border-green-500/30"
+                      ? "bg-white/20 border border-white/30"
                       : registrationStatus === "rejected"
-                      ? "bg-red-900/20 border border-red-500/30"
-                      : "bg-yellow-900/20 border border-yellow-500/30"
+                      ? "bg-white/20 border border-white/30"
+                      : "bg-white/20 border border-white/30"
                   }`}
                 >
                   <h4
                     className={`font-medium mb-1 ${
                       registrationStatus === "shortlisted"
-                        ? "text-green-400"
+                        ? "text-white/90"
                         : registrationStatus === "rejected"
-                        ? "text-red-400"
-                        : "text-yellow-400"
+                        ? "text-white/80"
+                        : "text-white/70"
                     }`}
                   >
                     Registration Status:{" "}
@@ -753,7 +753,7 @@ function IdeathonRegistrationForm({
               {/* Age */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Age <span className="text-red-400">*</span>
+                  Age <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="number"
@@ -776,7 +776,7 @@ function IdeathonRegistrationForm({
               {/* Team Size */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Team Size <span className="text-red-400">*</span>
+                  Team Size <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="number"
@@ -800,7 +800,7 @@ function IdeathonRegistrationForm({
               {/* Mobile Number */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Mobile Number <span className="text-red-400">*</span>
+                  Mobile Number <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="tel"
@@ -827,7 +827,7 @@ function IdeathonRegistrationForm({
               {/* Email */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Email Address <span className="text-red-400">*</span>
+                  Email Address <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="email"
@@ -864,7 +864,7 @@ function IdeathonRegistrationForm({
               {/* Pitch Details */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Pitch Details <span className="text-red-400">*</span>
+                  Pitch Details <span className="text-white/80">*</span>
                 </label>
                 <textarea
                   name="pitchDetails"
@@ -933,7 +933,7 @@ function IdeathonRegistrationForm({
                         <button
                           type="button"
                           onClick={() => removeFile(index)}
-                          className="p-1 text-white/60 hover:text-red-400 transition-colors"
+                          className="p-1 text-white/60 hover:text-white/80 transition-colors"
                         >
                           <FaTimes className="w-4 h-4" />
                         </button>
@@ -956,7 +956,7 @@ function IdeathonRegistrationForm({
                         acceptedTerms: e.target.checked,
                       }))
                     }
-                    className="mt-1 h-4 w-4 rounded border-white/20 bg-white/[0.05] text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0"
+                    className="mt-1 h-4 w-4 rounded border-white/20 bg-white/[0.05] text-white/90 focus:ring-2 focus:ring-white focus:ring-offset-0"
                     required
                   />
                   <span className="text-sm text-white/70 group-hover:text-white/90">
@@ -969,7 +969,7 @@ function IdeathonRegistrationForm({
                       onClick={() =>
                         window.open("/terms-and-conditions", "_blank")
                       }
-                      className="text-blue-400 hover:text-blue-300 underline"
+                      className="text-white/90 hover:text-white/90 underline"
                     >
                       Terms and Conditions
                     </button>

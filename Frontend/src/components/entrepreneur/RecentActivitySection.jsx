@@ -65,10 +65,10 @@ const RecentActivitySection = () => {
     switch (type) {
       case 'interest_confirmation':
       case 'new_investor_interest':
-        return <FaBriefcase className="w-4 h-4 text-green-500" />;
+        return <FaBriefcase className="w-4 h-4 text-white/90" />;
       case 'funding_update':
       case 'funding_received':
-        return <FaDollarSign className="w-4 h-4 text-yellow-500" />;
+        return <FaDollarSign className="w-4 h-4 text-white/70" />;
       case 'idea_viewed':
       case 'new_view':
         return <FaEye className="w-4 h-4 text-gray-400" />;
@@ -101,11 +101,11 @@ const RecentActivitySection = () => {
 
       {/* Error State */}
       {error && (
-        <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
-          <p className="text-red-300 mb-2">{error}</p>
+        <div className="bg-white/20 border border-white rounded-lg p-4">
+          <p className="text-white/80 mb-2">{error}</p>
           <button 
             onClick={fetchRecentActivities}
-            className="text-sm text-red-400 hover:text-red-300 underline"
+            className="text-sm text-white/80 hover:text-white/80 underline"
           >
             Try again
           </button>

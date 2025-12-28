@@ -37,7 +37,7 @@ const NotificationsSection = () => {
               All Notifications
             </h3>
             {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+              <span className="bg-white/20 text-white text-xs px-2 py-1 rounded-full font-semibold">
                 {unreadCount}
               </span>
             )}
@@ -60,7 +60,7 @@ const NotificationsSection = () => {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-xs text-green-400 hover:text-green-300 font-medium transition-colors duration-300"
+                className="text-xs text-white/90 hover:text-white/90 font-medium transition-colors duration-300"
               >
                 Mark all read
               </button>
@@ -69,7 +69,7 @@ const NotificationsSection = () => {
             {notifications.length > 0 && (
               <button
                 onClick={clearAllNotifications}
-                className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors duration-300"
+                className="text-xs text-white/80 hover:text-white/80 font-medium transition-colors duration-300"
               >
                 Clear all
               </button>
@@ -79,12 +79,12 @@ const NotificationsSection = () => {
 
         {/* Error state */}
         {notificationsError && (
-          <div className="mb-4 bg-red-500/20 border border-red-500/30 rounded-lg p-3">
+          <div className="mb-4 bg-white/20 border border-white/30 rounded-lg p-3">
             <div className="flex justify-between items-center">
-              <p className="text-red-300 text-sm">{notificationsError}</p>
+              <p className="text-white/80 text-sm">{notificationsError}</p>
               <button
                 onClick={clearNotificationsError}
-                className="text-red-300 hover:text-red-200"
+                className="text-white/80 hover:text-white/80"
               >
                 <FaTimes className="w-3 h-3" />
               </button>
@@ -137,13 +137,13 @@ const NotificationsSection = () => {
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                           notification.type === "new_idea"
-                            ? "bg-green-500/20 text-green-400"
+                            ? "bg-white/10/20 text-white/90"
                             : notification.type === "idea_update"
-                            ? "bg-blue-500/20 text-blue-400"
+                            ? "bg-white/20/20 text-white/90"
                             : notification.type === "interest_confirmation"
-                            ? "bg-purple-500/20 text-purple-400"
+                            ? "bg-white/20/20 text-white/90"
                             : notification.type === "funding_update"
-                            ? "bg-yellow-500/20 text-yellow-400"
+                            ? "bg-white/20 text-white/70"
                             : "bg-gray-500/20 text-gray-400"
                         }`}
                       >
@@ -183,12 +183,12 @@ const NotificationsSection = () => {
                               </p>
                               <div className="flex items-center gap-1">
                                 {notification.priority === "high" && (
-                                  <span className="text-red-400 text-xs">
+                                  <span className="text-white/80 text-xs">
                                     ●
                                   </span>
                                 )}
                                 {!notification.read && (
-                                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                                  <span className="w-2 h-2 bg-white/10 rounded-full"></span>
                                 )}
                               </div>
                             </div>
@@ -209,7 +209,7 @@ const NotificationsSection = () => {
                                     );
                                   }
                                 }}
-                                className="p-1 text-white/50 hover:text-green-400 transition-colors duration-200"
+                                className="p-1 text-white/50 hover:text-white/90 transition-colors duration-200"
                                 title="Mark as read"
                               >
                                 <FaCheck className="w-3 h-3" />
@@ -227,7 +227,7 @@ const NotificationsSection = () => {
                                   );
                                 }
                               }}
-                              className="p-1 text-white/50 hover:text-red-400 transition-colors duration-200"
+                              className="p-1 text-white/50 hover:text-white/80 transition-colors duration-200"
                               title="Delete notification"
                             >
                               <FaTimes className="w-3 h-3" />

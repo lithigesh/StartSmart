@@ -135,8 +135,8 @@ const OverviewPage = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-900/20 border border-red-700/50 rounded-2xl p-4 backdrop-blur-xl animate-shake">
-          <p className="text-red-200 font-manrope">{error}</p>
+        <div className="bg-white/20 border border-white/50 rounded-2xl p-4 backdrop-blur-xl animate-shake">
+          <p className="text-white/80 font-manrope">{error}</p>
         </div>
       )}
     </div>

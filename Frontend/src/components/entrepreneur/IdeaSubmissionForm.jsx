@@ -513,7 +513,7 @@ const IdeaSubmissionForm = ({ isOpen, onClose, onSubmit }) => {
                       <span className="text-white text-sm">{file.name}</span>
                       <button
                         onClick={() => removeAttachment(index)}
-                        className="text-red-400 hover:text-red-300"
+                        className="text-white/80 hover:text-white/80"
                       >
                         <FaTimes />
                       </button>

@@ -351,8 +351,8 @@ const IdeaMasterForm = ({
                 innovative startup idea.
               </p>
               {!isEditMode && (
-                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                  <p className="text-blue-300 font-manrope text-sm">
+                <div className="mt-4 p-4 bg-white/5 border border-white/20 rounded-xl">
+                  <p className="text-white/80 font-manrope text-sm">
                     💡 <strong>Sample data has been pre-loaded</strong> to help
                     you get started quickly. You can modify any field or use the
                     "Clear Form" button to start fresh.
@@ -374,7 +374,7 @@ const IdeaMasterForm = ({
                 <button
                   type="button"
                   onClick={loadSampleData}
-                  className="px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                 >
                   🚀 Load Sample Data
                 </button>
@@ -407,7 +407,7 @@ const IdeaMasterForm = ({
                     htmlFor="title"
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
-                    Idea Title <span className="text-red-400">*</span>
+                    Idea Title <span className="text-white/70">*</span>
                   </label>
                   <input
                     type="text"
@@ -417,7 +417,7 @@ const IdeaMasterForm = ({
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
                       errors.title
-                        ? "border-red-500/50 focus:border-red-500"
+                        ? "border-white/50 focus:border-white/70"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="Enter a compelling title for your innovative idea"
@@ -425,7 +425,7 @@ const IdeaMasterForm = ({
                     required
                   />
                   {errors.title && (
-                    <p className="mt-2 text-sm text-red-400 font-manrope">
+                    <p className="mt-2 text-sm text-white/70 font-manrope">
                       {errors.title}
                     </p>
                   )}
@@ -441,7 +441,7 @@ const IdeaMasterForm = ({
                       htmlFor="category"
                       className="block text-sm font-medium text-white font-manrope mb-2"
                     >
-                      Category <span className="text-red-400">*</span>
+                      Category <span className="text-white/70">*</span>
                     </label>
                     <select
                       id="category"
@@ -450,7 +450,7 @@ const IdeaMasterForm = ({
                       onChange={handleInputChange}
                       className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
                         errors.category
-                          ? "border-red-500/50 focus:border-red-500"
+                          ? "border-white/50 focus:border-white"
                           : "border-white/10 focus:border-white/30"
                       }`}
                       required
@@ -469,7 +469,7 @@ const IdeaMasterForm = ({
                       ))}
                     </select>
                     {errors.category && (
-                      <p className="mt-2 text-sm text-red-400 font-manrope">
+                      <p className="mt-2 text-sm text-white/70 font-manrope">
                         {errors.category}
                       </p>
                     )}
@@ -509,7 +509,8 @@ const IdeaMasterForm = ({
                     htmlFor="description"
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
-                    Detailed Description <span className="text-red-400">*</span>
+                    Detailed Description{" "}
+                    <span className="text-white/70">*</span>
                   </label>
                   <textarea
                     id="description"
@@ -519,7 +520,7 @@ const IdeaMasterForm = ({
                     rows={6}
                     className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
                       errors.description
-                        ? "border-red-500/50 focus:border-red-500"
+                        ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="Provide a comprehensive description of your innovative idea, its features, and potential impact"
@@ -527,7 +528,7 @@ const IdeaMasterForm = ({
                     required
                   />
                   {errors.description && (
-                    <p className="mt-2 text-sm text-red-400 font-manrope">
+                    <p className="mt-2 text-sm text-white/70 font-manrope">
                       {errors.description}
                     </p>
                   )}
@@ -556,7 +557,7 @@ const IdeaMasterForm = ({
                     htmlFor="targetAudience"
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
-                    Target Audience <span className="text-red-400">*</span>
+                    Target Audience <span className="text-white/70">*</span>
                   </label>
                   <input
                     type="text"
@@ -566,7 +567,7 @@ const IdeaMasterForm = ({
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 ${
                       errors.targetAudience
-                        ? "border-red-500/50 focus:border-red-500"
+                        ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="Who is your primary target audience? Be specific about demographics, needs, and characteristics"
@@ -574,7 +575,7 @@ const IdeaMasterForm = ({
                     required
                   />
                   {errors.targetAudience && (
-                    <p className="mt-2 text-sm text-red-400 font-manrope">
+                    <p className="mt-2 text-sm text-white/70 font-manrope">
                       {errors.targetAudience}
                     </p>
                   )}
@@ -589,7 +590,7 @@ const IdeaMasterForm = ({
                     htmlFor="problemStatement"
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
-                    Problem Statement <span className="text-red-400">*</span>
+                    Problem Statement <span className="text-white/70">*</span>
                   </label>
                   <textarea
                     id="problemStatement"
@@ -599,7 +600,7 @@ const IdeaMasterForm = ({
                     rows={4}
                     className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
                       errors.problemStatement
-                        ? "border-red-500/50 focus:border-red-500"
+                        ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="Clearly describe the problem your idea addresses. What pain points does your target audience face?"
@@ -607,7 +608,7 @@ const IdeaMasterForm = ({
                     required
                   />
                   {errors.problemStatement && (
-                    <p className="mt-2 text-sm text-red-400 font-manrope">
+                    <p className="mt-2 text-sm text-white/70 font-manrope">
                       {errors.problemStatement}
                     </p>
                   )}
@@ -622,7 +623,7 @@ const IdeaMasterForm = ({
                     htmlFor="solution"
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
-                    Your Solution <span className="text-red-400">*</span>
+                    Your Solution <span className="text-white/70">*</span>
                   </label>
                   <textarea
                     id="solution"
@@ -632,7 +633,7 @@ const IdeaMasterForm = ({
                     rows={4}
                     className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
                       errors.solution
-                        ? "border-red-500/50 focus:border-red-500"
+                        ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="How does your idea solve the identified problem? What makes your solution unique and effective?"
@@ -640,7 +641,7 @@ const IdeaMasterForm = ({
                     required
                   />
                   {errors.solution && (
-                    <p className="mt-2 text-sm text-red-400 font-manrope">
+                    <p className="mt-2 text-sm text-white/70 font-manrope">
                       {errors.solution}
                     </p>
                   )}
@@ -669,7 +670,7 @@ const IdeaMasterForm = ({
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
                     Unique Value Proposition{" "}
-                    <span className="text-red-400">*</span>
+                    <span className="text-white/70">*</span>
                   </label>
                   <textarea
                     id="uniqueValueProposition"
@@ -679,14 +680,14 @@ const IdeaMasterForm = ({
                     rows={3}
                     className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
                       errors.uniqueValueProposition
-                        ? "border-red-500/50 focus:border-red-500"
+                        ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="What makes your solution unique? How does it differentiate from existing alternatives?"
                     required
                   />
                   {errors.uniqueValueProposition && (
-                    <p className="mt-2 text-sm text-red-400 font-manrope">
+                    <p className="mt-2 text-sm text-white/70 font-manrope">
                       {errors.uniqueValueProposition}
                     </p>
                   )}
@@ -760,11 +761,11 @@ const IdeaMasterForm = ({
                     onChange={handleInputChange}
                     multiple
                     accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/20 file:text-white hover:file:bg-white/30"
                   />
                 </div>
                 {errors.attachments && (
-                  <p className="mt-2 text-sm text-red-400 font-manrope">
+                  <p className="mt-2 text-sm text-white/70 font-manrope">
                     {errors.attachments}
                   </p>
                 )}
@@ -777,8 +778,8 @@ const IdeaMasterForm = ({
 
             {/* Submit Error */}
             {errors.submit && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-                <p className="text-red-400 font-manrope">{errors.submit}</p>
+              <div className="bg-white/5 border border-white/20 rounded-xl p-4">
+                <p className="text-white/80 font-manrope">{errors.submit}</p>
               </div>
             )}
 
@@ -787,7 +788,7 @@ const IdeaMasterForm = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-manrope font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${
+                className={`px-8 py-3 bg-white/20 hover:bg-white/30 text-white font-manrope font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] ${
                   isSubmitting
                     ? "opacity-50 cursor-not-allowed transform-none hover:scale-100"
                     : ""

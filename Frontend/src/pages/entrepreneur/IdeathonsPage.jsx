@@ -158,8 +158,8 @@ const IdeathonsPage = () => {
 
   const getStatusColor = (statusInfo) => {
     switch (statusInfo.color) {
-      case 'green': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'blue': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'green': return 'bg-white/10/20 text-white/90 border-white/30';
+      case 'blue': return 'bg-white/20/20 text-white/90 border-white/30';
       case 'gray': return 'bg-white/10 text-white/60 border-white/20';
       default: return 'bg-white/10 text-white/60 border-white/20';
     }
@@ -269,8 +269,8 @@ const IdeathonsPage = () => {
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-4">
-          <p className="text-red-400">{error}</p>
+        <div className="bg-white/30 border border-white/30 rounded-lg p-4">
+          <p className="text-white/80">{error}</p>
         </div>
       )}
 
@@ -298,7 +298,7 @@ const IdeathonsPage = () => {
                     {statusInfo.label}
                   </span>
                   {registered && (
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400 border border-green-500/30 flex items-center gap-1">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/10/20 text-white/90 border border-white/30 flex items-center gap-1">
                       <FaCheckCircle className="text-xs" />
                       Registered
                     </span>
@@ -343,7 +343,7 @@ const IdeathonsPage = () => {
                 {ideathon.fundingPrizes && (
                   <div className="mb-4 p-3 bg-white/5 border border-white/10 rounded-lg">
                     <div className="flex items-center gap-2 mb-1">
-                      <FaTrophy className="text-yellow-400 text-sm" />
+                      <FaTrophy className="text-white/70 text-sm" />
                       <span className="text-white/70 text-xs font-semibold uppercase">Prize Pool</span>
                     </div>
                     <p className="text-white font-medium text-sm">{ideathon.fundingPrizes}</p>
@@ -384,10 +384,10 @@ const IdeathonsPage = () => {
                     disabled={registered || statusInfo.status === 'expired'}
                     className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
                       registered
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30 cursor-not-allowed'
+                        ? 'bg-white/10/20 text-white/90 border border-white/30 cursor-not-allowed'
                         : statusInfo.status === 'expired'
                         ? 'bg-white/10 text-white/60 border border-white/20 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-blue-500/80 to-blue-600/80 text-white border border-blue-400/30 hover:from-blue-400/90 hover:to-blue-500/90'
+                        : 'bg-gradient-to-r from-white/500/80 to-white/600/80 text-white border border-white/30 hover:from-white/400/90 hover:to-white/500/90'
                     }`}
                   >
                     {registered ? (

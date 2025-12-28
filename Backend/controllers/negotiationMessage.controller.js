@@ -137,9 +137,9 @@ exports.sendMessage = async (req, res) => {
     }
 
     // Emit socket event to funding request room
-    const io = req.app.get('io');
+    const io = req.app.get("io");
     if (io) {
-      io.to(`funding:${fundingRequestId}`).emit('newMessage', message);
+      io.to(`funding:${fundingRequestId}`).emit("newMessage", message);
     }
 
     res.status(201).json({

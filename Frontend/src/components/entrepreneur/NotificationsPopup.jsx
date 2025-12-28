@@ -22,13 +22,13 @@ const NotificationsPopup = ({
   const getNotificationIcon = (type) => {
     switch (type) {
       case "new_idea":
-        return <FaLightbulb className="w-4 h-4 text-yellow-500" />;
+        return <FaLightbulb className="w-4 h-4 text-white/70" />;
       case "funding_update":
-        return <FaDollarSign className="w-4 h-4 text-green-500" />;
+        return <FaDollarSign className="w-4 h-4 text-white/90" />;
       case "interest_confirmation":
-        return <FaUsers className="w-4 h-4 text-purple-500" />;
+        return <FaUsers className="w-4 h-4 text-white/90" />;
       case "analysis_complete":
-        return <FaLightbulb className="w-4 h-4 text-purple-500" />;
+        return <FaLightbulb className="w-4 h-4 text-white/90" />;
       default:
         return <FaBell className="w-4 h-4 text-gray-400" />;
     }
@@ -102,7 +102,7 @@ const NotificationsPopup = ({
               All Notifications
             </h3>
             {unreadCount > 0 && (
-              <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 font-medium">
+              <span className="bg-white/20 text-white text-xs rounded-full px-2 py-1 font-medium">
                 {unreadCount}
               </span>
             )}
@@ -139,14 +139,14 @@ const NotificationsPopup = ({
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-xs text-green-400 hover:text-green-300 font-medium"
+                className="text-xs text-white/90 hover:text-white/90 font-medium"
               >
                 Mark all read
               </button>
             )}
             <button
               onClick={handleDeleteSelected}
-              className="text-xs text-red-400 hover:text-red-300 font-medium"
+              className="text-xs text-white/80 hover:text-white/80 font-medium"
             >
               Clear all
             </button>
@@ -184,7 +184,7 @@ const NotificationsPopup = ({
                       checked={selectedNotifications.includes(notification._id)}
                       onChange={() => toggleSelectNotification(notification._id)}
                       onClick={(e) => e.stopPropagation()}
-                      className="rounded border-white/20 text-white focus:ring-purple-500 bg-white/[0.05]"
+                      className="rounded border-white/20 text-white focus:ring-white bg-white/[0.05]"
                     />
                   </div>
 
@@ -200,7 +200,7 @@ const NotificationsPopup = ({
                         {notification.title}
                       </h4>
                       {!notification.read && (
-                        <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0 ml-2"></div>
+                        <div className="w-2 h-2 bg-white/20 rounded-full flex-shrink-0 ml-2"></div>
                       )}
                     </div>
                     
@@ -222,7 +222,7 @@ const NotificationsPopup = ({
                               e.stopPropagation();
                               markAsRead(notification._id);
                             }}
-                            className="text-xs text-green-400 hover:text-green-300"
+                            className="text-xs text-white/90 hover:text-white/90"
                           >
                             <FaCheck className="w-3 h-3" />
                           </button>
@@ -232,7 +232,7 @@ const NotificationsPopup = ({
                             e.stopPropagation();
                             deleteNotification(notification._id);
                           }}
-                          className="text-xs text-red-400 hover:text-red-300"
+                          className="text-xs text-white/80 hover:text-white/80"
                         >
                           <FaTrash className="w-3 h-3" />
                         </button>

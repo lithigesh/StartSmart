@@ -45,8 +45,8 @@ const UnauthorizedPage = () => {
 
             {/* 401 Icon */}
             <div className="mb-6 flex justify-center">
-              <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center">
-                <FaLock className="w-10 h-10 text-yellow-400" />
+              <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center">
+                <FaLock className="w-10 h-10 text-white/70" />
               </div>
             </div>
 

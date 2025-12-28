@@ -116,7 +116,7 @@ const IdeathonStatistics = () => {
                   }}
                 />
                 <Legend />
-                <Bar dataKey="count" fill="#4f46e5" name="Number of Projects" />
+                <Bar dataKey="count" fill="#3B82F6" name="Number of Projects" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -141,7 +141,7 @@ const IdeathonStatistics = () => {
                     cy="50%"
                     labelLine={false}
                     outerRadius={130}
-                    fill="#8884d8"
+                    fill="#9CA3AF"
                     dataKey="value"
                     nameKey="name"
                     label={({ name, percent }) =>

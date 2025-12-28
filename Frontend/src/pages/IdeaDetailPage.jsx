@@ -33,9 +33,10 @@ const IdeaDetailPage = () => {
   const { ideaId, id } = useParams(); // Support both ideaId and id params
   const navigate = useNavigate();
   const { user, getRoleDashboardUrl } = useAuth();
-  
+
   const currentId = id || ideaId; // Use whichever param is available
-  const isAdminView = user?.role === 'admin' && window.location.pathname.includes('/admin/idea/');
+  const isAdminView =
+    user?.role === "admin" && window.location.pathname.includes("/admin/idea/");
 
   const [idea, setIdea] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,9 +48,9 @@ const IdeaDetailPage = () => {
   const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
   const getDashboardUrl = () => {
-    if (isAdminView) return '/admin/dashboard?section=ideas';
-    if (user?.role === 'entrepreneur') return '/entrepreneur/my-ideas';
-    if (user?.role === 'investor') return '/investor/dashboard';
+    if (isAdminView) return "/admin/dashboard?section=ideas";
+    if (user?.role === "entrepreneur") return "/entrepreneur/my-ideas";
+    if (user?.role === "investor") return "/investor/dashboard";
     return user ? getRoleDashboardUrl(user) : "/";
   };
 
@@ -68,13 +69,13 @@ const IdeaDetailPage = () => {
         const res = await fetch(`${API_BASE}/api/admin/ideas/${currentId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) throw new Error('Failed to fetch idea');
+        if (!res.ok) throw new Error("Failed to fetch idea");
         ideaData = await res.json();
       } else {
         // Investor API call
         ideaData = await investorAPI.getIdeaById(currentId);
       }
-      
+
       setIdea(ideaData);
 
       // Check if user has shown interest (only for investors)
@@ -119,20 +120,20 @@ const IdeaDetailPage = () => {
 
   const handleDelete = async () => {
     if (!isAdminView) return;
-    if (!window.confirm('Are you sure you want to delete this idea?')) return;
-    
+    if (!window.confirm("Are you sure you want to delete this idea?")) return;
+
     try {
       setActionLoading(true);
       const res = await fetch(`${API_BASE}/api/admin/ideas/${currentId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (!res.ok) {
-        throw new Error('Failed to delete idea');
+        throw new Error("Failed to delete idea");
       }
-      
-      navigate('/admin/dashboard');
+
+      navigate("/admin/dashboard");
     } catch (err) {
       console.error("Error deleting idea:", err);
       setError("Failed to delete idea");
@@ -172,7 +173,9 @@ const IdeaDetailPage = () => {
             onClick={() => navigate(getDashboardUrl())}
             className="btn bg-white text-black hover:bg-gray-100 rounded-lg px-6 py-2 font-manrope"
           >
-            {user?.role === 'entrepreneur' ? 'Back to My Ideas' : 'Back to Dashboard'}
+            {user?.role === "entrepreneur"
+              ? "Back to My Ideas"
+              : "Back to Dashboard"}
           </button>
         </div>
       </div>
@@ -190,7 +193,13 @@ const IdeaDetailPage = () => {
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <FaArrowLeft className="w-4 h-4" />
-              <span className="font-manrope">{isAdminView ? 'Back to All Ideas' : user?.role === 'entrepreneur' ? 'Back to My Ideas' : 'Back to Dashboard'}</span>
+              <span className="font-manrope">
+                {isAdminView
+                  ? "Back to All Ideas"
+                  : user?.role === "entrepreneur"
+                  ? "Back to My Ideas"
+                  : "Back to Dashboard"}
+              </span>
             </button>
 
             {isAdminView ? (
@@ -198,7 +207,7 @@ const IdeaDetailPage = () => {
                 <button
                   onClick={handleDelete}
                   disabled={actionLoading}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors disabled:opacity-50"
                 >
                   {actionLoading ? (
                     <FaSpinner className="w-4 h-4 animate-spin" />
@@ -215,8 +224,8 @@ const IdeaDetailPage = () => {
                   disabled={actionLoading}
                   className={`btn rounded-lg px-6 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
                     isInterested
-                      ? "bg-red-500 hover:bg-red-600 text-white"
-                      : "bg-pink-500 hover:bg-pink-600 text-white"
+                      ? "bg-white/20 hover:bg-white/30 text-white"
+                      : "bg-white/20 hover:bg-white/30 text-white"
                   }`}
                 >
                   {actionLoading ? (
@@ -248,11 +257,11 @@ const IdeaDetailPage = () => {
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-4 mb-4">
-                  <div className="flex items-center gap-1 text-blue-400">
+                  <div className="flex items-center gap-1 text-white/90">
                     <FaTag className="w-4 h-4" />
                     <span className="font-manrope">{idea.category}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-green-400">
+                  <div className="flex items-center gap-1 text-white/90">
                     <FaUser className="w-4 h-4" />
                     <span className="font-manrope">
                       {idea.owner?.name || "Anonymous"}
@@ -265,7 +274,7 @@ const IdeaDetailPage = () => {
                     </span>
                   </div>
                   {idea.analysis?.score && (
-                    <div className="flex items-center gap-1 text-yellow-400">
+                    <div className="flex items-center gap-1 text-white/70">
                       <FaStar className="w-4 h-4" />
                       <span className="font-manrope font-semibold">
                         Score: {idea.analysis.score}%
@@ -278,9 +287,9 @@ const IdeaDetailPage = () => {
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium font-manrope ${
                       idea.status === "analyzed"
-                        ? "bg-green-100 text-green-800"
+                        ? "bg-white/20 text-white/90"
                         : idea.status === "submitted"
-                        ? "bg-yellow-100 text-yellow-800"
+                        ? "bg-white/20 text-white/70"
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
@@ -298,11 +307,11 @@ const IdeaDetailPage = () => {
 
         {/* Elevator Pitch */}
         {idea.elevatorPitch && (
-          <div className="bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+          <div className="bg-gradient-to-br from-white/900/20 via-white/20 to-white/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <h2 className="text-2xl font-manrope font-bold text-white mb-4 flex items-center gap-2">
-                <FaBullseye className="w-6 h-6 text-blue-400" />
+                <FaBullseye className="w-6 h-6 text-white/90" />
                 Elevator Pitch
               </h2>
               <p className="text-white/90 font-manrope text-lg leading-relaxed italic">
@@ -320,7 +329,7 @@ const IdeaDetailPage = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
               <div className="relative z-10">
                 <h3 className="text-xl font-manrope font-bold text-white mb-3 flex items-center gap-2">
-                  <FaUser className="w-5 h-5 text-green-400" />
+                  <FaUser className="w-5 h-5 text-white/90" />
                   Target Audience
                 </h3>
                 <p className="text-white/80 font-manrope leading-relaxed">
@@ -336,16 +345,25 @@ const IdeaDetailPage = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
               <div className="relative z-10">
                 <h3 className="text-xl font-manrope font-bold text-white mb-3 flex items-center gap-2">
-                  <FaMoneyBill className="w-5 h-5 text-yellow-400" />
+                  <FaMoneyBill className="w-5 h-5 text-white/70" />
                   Funding Status
                 </h3>
-                <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium font-manrope ${
-                  idea.fundingStatus === "funded" ? "bg-green-100 text-green-800" :
-                  idea.fundingStatus === "seeking" ? "bg-blue-100 text-blue-800" :
-                  idea.fundingStatus === "rejected" ? "bg-red-100 text-red-800" :
-                  "bg-gray-100 text-gray-800"
-                }`}>
-                  {idea.fundingStatus.replace('_', ' ').charAt(0).toUpperCase() + idea.fundingStatus.replace('_', ' ').slice(1)}
+                <span
+                  className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium font-manrope ${
+                    idea.fundingStatus === "funded"
+                      ? "bg-white/20 text-white/90"
+                      : idea.fundingStatus === "seeking"
+                      ? "bg-white/20 text-white/90"
+                      : idea.fundingStatus === "rejected"
+                      ? "bg-white/20 text-white/80"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {idea.fundingStatus
+                    .replace("_", " ")
+                    .charAt(0)
+                    .toUpperCase() +
+                    idea.fundingStatus.replace("_", " ").slice(1)}
                 </span>
               </div>
             </div>
@@ -357,32 +375,38 @@ const IdeaDetailPage = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
           <div className="relative z-10">
             <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-              <FaLightbulb className="w-6 h-6 text-yellow-400" />
+              <FaLightbulb className="w-6 h-6 text-white/70" />
               Problem & Solution
             </h2>
-            
+
             <div className="space-y-6">
               {idea.problemStatement && (
                 <div>
-                  <h3 className="text-lg font-manrope font-semibold text-red-400 mb-2">Problem Statement</h3>
+                  <h3 className="text-lg font-manrope font-semibold text-white/80 mb-2">
+                    Problem Statement
+                  </h3>
                   <p className="text-white/80 font-manrope leading-relaxed">
                     {idea.problemStatement}
                   </p>
                 </div>
               )}
-              
+
               {idea.solution && (
                 <div>
-                  <h3 className="text-lg font-manrope font-semibold text-green-400 mb-2">Our Solution</h3>
+                  <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                    Our Solution
+                  </h3>
                   <p className="text-white/80 font-manrope leading-relaxed">
                     {idea.solution}
                   </p>
                 </div>
               )}
-              
+
               {idea.competitors && (
                 <div>
-                  <h3 className="text-lg font-manrope font-semibold text-orange-400 mb-2">Competitive Landscape</h3>
+                  <h3 className="text-lg font-manrope font-semibold text-white/80 mb-2">
+                    Competitive Landscape
+                  </h3>
                   <p className="text-white/80 font-manrope leading-relaxed">
                     {idea.competitors}
                   </p>
@@ -393,37 +417,45 @@ const IdeaDetailPage = () => {
         </div>
 
         {/* Business Model Section */}
-        {(idea.revenueStreams || idea.pricingStrategy || idea.keyPartnerships) && (
+        {(idea.revenueStreams ||
+          idea.pricingStrategy ||
+          idea.keyPartnerships) && (
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaMoneyBill className="w-6 h-6 text-green-400" />
+                <FaMoneyBill className="w-6 h-6 text-white/90" />
                 Business Model
               </h2>
-              
+
               <div className="space-y-6">
                 {idea.revenueStreams && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-green-400 mb-2">Revenue Streams</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Revenue Streams
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.revenueStreams}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.pricingStrategy && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-blue-400 mb-2">Pricing Strategy</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Pricing Strategy
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.pricingStrategy}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.keyPartnerships && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-purple-400 mb-2">Key Partnerships</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Key Partnerships
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.keyPartnerships}
                     </p>
@@ -435,37 +467,45 @@ const IdeaDetailPage = () => {
         )}
 
         {/* Market & Growth Section */}
-        {(idea.marketSize || idea.goToMarketStrategy || idea.scalabilityPlan) && (
+        {(idea.marketSize ||
+          idea.goToMarketStrategy ||
+          idea.scalabilityPlan) && (
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaChartLine className="w-6 h-6 text-blue-400" />
+                <FaChartLine className="w-6 h-6 text-white/90" />
                 Market & Growth Strategy
               </h2>
-              
+
               <div className="space-y-6">
                 {idea.marketSize && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-blue-400 mb-2">Market Size & Opportunity</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Market Size & Opportunity
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.marketSize}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.goToMarketStrategy && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-cyan-400 mb-2">Go-to-Market Strategy</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Go-to-Market Strategy
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.goToMarketStrategy}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.scalabilityPlan && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-purple-400 mb-2">Scalability Plan</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Scalability Plan
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.scalabilityPlan}
                     </p>
@@ -477,37 +517,45 @@ const IdeaDetailPage = () => {
         )}
 
         {/* Technical Requirements Section */}
-        {(idea.technologyStack || idea.developmentRoadmap || idea.challengesAnticipated) && (
+        {(idea.technologyStack ||
+          idea.developmentRoadmap ||
+          idea.challengesAnticipated) && (
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaCogs className="w-6 h-6 text-purple-400" />
+                <FaCogs className="w-6 h-6 text-white/90" />
                 Technical Details
               </h2>
-              
+
               <div className="space-y-6">
                 {idea.technologyStack && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-purple-400 mb-2">Technology Stack</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Technology Stack
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.technologyStack}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.developmentRoadmap && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-blue-400 mb-2">Development Roadmap</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Development Roadmap
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.developmentRoadmap}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.challengesAnticipated && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-orange-400 mb-2">Challenges & Mitigation</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/80 mb-2">
+                      Challenges & Mitigation
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.challengesAnticipated}
                     </p>
@@ -520,27 +568,31 @@ const IdeaDetailPage = () => {
 
         {/* Sustainability & Impact Section */}
         {(idea.ecoFriendlyPractices || idea.socialImpact) && (
-          <div className="bg-gradient-to-br from-green-900/20 via-emerald-900/20 to-teal-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+          <div className="bg-gradient-to-br from-white/20 via-white/20 to-white/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaLeaf className="w-6 h-6 text-green-400" />
+                <FaLeaf className="w-6 h-6 text-white/90" />
                 Sustainability & Social Impact
               </h2>
-              
+
               <div className="space-y-6">
                 {idea.ecoFriendlyPractices && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-green-400 mb-2">Environmental Practices</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Environmental Practices
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.ecoFriendlyPractices}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.socialImpact && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-teal-400 mb-2">Social Impact</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Social Impact
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.socialImpact}
                     </p>
@@ -553,36 +605,42 @@ const IdeaDetailPage = () => {
 
         {/* Funding & Investment Section */}
         {(idea.fundingRequirements || idea.useOfFunds || idea.equityOffer) && (
-          <div className="bg-gradient-to-br from-yellow-900/20 via-amber-900/20 to-orange-900/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
+          <div className="bg-gradient-to-br from-white/20 via-white/20 to-white/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
               <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaDollarSign className="w-6 h-6 text-yellow-400" />
+                <FaDollarSign className="w-6 h-6 text-white/70" />
                 Funding & Investment
               </h2>
-              
+
               <div className="space-y-6">
                 {idea.fundingRequirements && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-yellow-400 mb-2">Funding Requirements</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/70 mb-2">
+                      Funding Requirements
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.fundingRequirements}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.useOfFunds && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-orange-400 mb-2">Use of Funds</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/80 mb-2">
+                      Use of Funds
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.useOfFunds}
                     </p>
                   </div>
                 )}
-                
+
                 {idea.equityOffer && (
                   <div>
-                    <h3 className="text-lg font-manrope font-semibold text-amber-400 mb-2">Equity Offer</h3>
+                    <h3 className="text-lg font-manrope font-semibold text-white/90 mb-2">
+                      Equity Offer
+                    </h3>
                     <p className="text-white/80 font-manrope leading-relaxed">
                       {idea.equityOffer}
                     </p>
@@ -602,7 +660,7 @@ const IdeaDetailPage = () => {
                 <FaPaperclip className="w-6 h-6 text-gray-400" />
                 Attachments ({idea.attachments.length})
               </h2>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {idea.attachments.map((attachment, index) => (
                   <a
@@ -612,7 +670,7 @@ const IdeaDetailPage = () => {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-4 bg-white/[0.02] border border-white/10 rounded-lg hover:bg-white/[0.05] transition-colors"
                   >
-                    <FaFileAlt className="w-5 h-5 text-blue-400" />
+                    <FaFileAlt className="w-5 h-5 text-white/90" />
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-manrope font-medium truncate">
                         {attachment.originalname}
@@ -644,8 +702,8 @@ const IdeaDetailPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {idea.analysis.swot?.strengths && (
-                    <div className="bg-white/[0.02] border border-green-500/20 rounded-lg p-6">
-                      <h3 className="text-green-400 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
+                    <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
+                      <h3 className="text-white/90 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
                         <FaCheckCircle className="w-5 h-5" />
                         Strengths
                       </h3>
@@ -656,8 +714,8 @@ const IdeaDetailPage = () => {
                   )}
 
                   {idea.analysis.swot?.weaknesses && (
-                    <div className="bg-white/[0.02] border border-orange-500/20 rounded-lg p-6">
-                      <h3 className="text-orange-400 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
+                    <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
+                      <h3 className="text-white/80 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
                         <FaExclamationTriangle className="w-5 h-5" />
                         Weaknesses
                       </h3>
@@ -668,8 +726,8 @@ const IdeaDetailPage = () => {
                   )}
 
                   {idea.analysis.swot?.opportunities && (
-                    <div className="bg-white/[0.02] border border-blue-500/20 rounded-lg p-6">
-                      <h3 className="text-blue-400 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
+                    <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
+                      <h3 className="text-white/90 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
                         <FaBullseye className="w-5 h-5" />
                         Opportunities
                       </h3>
@@ -680,8 +738,8 @@ const IdeaDetailPage = () => {
                   )}
 
                   {idea.analysis.swot?.threats && (
-                    <div className="bg-white/[0.02] border border-red-500/20 rounded-lg p-6">
-                      <h3 className="text-red-400 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
+                    <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
+                      <h3 className="text-white/80 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
                         <FaExclamationTriangle className="w-5 h-5" />
                         Threats
                       </h3>
@@ -711,7 +769,7 @@ const IdeaDetailPage = () => {
                         key={index}
                         className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-lg"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-manrope font-bold text-sm">
+                        <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white font-manrope font-bold text-sm">
                           {index + 1}
                         </div>
                         <div className="flex-1">
@@ -746,7 +804,7 @@ const IdeaDetailPage = () => {
                         <div className="text-2xl font-manrope font-bold text-white mb-1">
                           {trend.year}
                         </div>
-                        <div className="text-blue-400 font-manrope font-semibold">
+                        <div className="text-white/90 font-manrope font-semibold">
                           {trend.popularity}%
                         </div>
                         <div className="text-white/60 text-sm font-manrope">

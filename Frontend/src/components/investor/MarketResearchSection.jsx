@@ -148,13 +148,13 @@ const MarketResearchSection = () => {
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
           <div className="relative">
-            <div className="absolute inset-0 bg-blue-500/30 blur-xl rounded-full"></div>
-            <div className="relative bg-gradient-to-br from-blue-500 to-indigo-600 p-4 rounded-xl shadow-lg">
+            <div className="absolute inset-0 bg-white/20/30 blur-xl rounded-full"></div>
+            <div className="relative bg-gradient-to-br from-white/500 to-white p-4 rounded-xl shadow-lg">
               <FaBook className="w-7 h-7 text-white" />
             </div>
           </div>
           <div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-white font-manrope bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white font-manrope bg-gradient-to-r from-white via-white to-white bg-clip-text text-transparent">
               Market Research Notes
             </h1>
             <p className="text-white/60 text-sm font-manrope mt-1">
@@ -175,7 +175,7 @@ const MarketResearchSection = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
-                className="w-full pl-12 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope"
+                className="w-full pl-12 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope"
               />
             </div>
 
@@ -185,7 +185,7 @@ const MarketResearchSection = () => {
               <select
                 value={sectorFilter}
                 onChange={(e) => setSectorFilter(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 font-manrope appearance-none cursor-pointer"
+                className="w-full pl-12 pr-4 py-3 bg-white/[0.05] border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope appearance-none cursor-pointer"
               >
                 <option value="" className="bg-gray-800">
                   All Sectors
@@ -202,7 +202,7 @@ const MarketResearchSection = () => {
             <div className="flex gap-2">
               <button
                 onClick={handleSearch}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 font-manrope font-semibold hover:scale-105 hover:shadow-xl hover:shadow-blue-500/30 border border-blue-400/30 flex items-center gap-2"
+                className="px-6 py-3 bg-gradient-to-r from-white/500 to-white text-white rounded-xl hover:from-white/600 hover:to-white transition-all duration-300 font-manrope font-semibold hover:scale-105 hover:shadow-xl hover:shadow-white/30 border border-white/30 flex items-center gap-2"
               >
                 <FaSearch className="w-4 h-4" />
                 <span className="hidden sm:inline">Search</span>
@@ -222,7 +222,7 @@ const MarketResearchSection = () => {
           {/* Create New Button */}
           <button
             onClick={handleCreateNew}
-            className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-manrope font-semibold flex items-center gap-2 hover:scale-105 hover:shadow-xl hover:shadow-green-500/30 border border-green-400/30"
+            className="px-6 py-3 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all duration-300 font-manrope font-semibold flex items-center gap-2 hover:scale-105 hover:shadow-xl hover:shadow-white/30 border border-white/30"
           >
             <FaPlus className="w-4 h-4" />
             New Research Note
@@ -233,15 +233,15 @@ const MarketResearchSection = () => {
       {/* Loading State */}
       {loading && (
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white"></div>
         </div>
       )}
 
       {/* Error State */}
       {error && !loading && (
-        <div className="bg-gradient-to-r from-red-500/20 to-red-600/20 border-2 border-red-500/40 rounded-xl p-6 text-red-300 font-manrope backdrop-blur-sm">
+        <div className="bg-gradient-to-r from-white/20 to-white/20 border-2 border-white/40 rounded-xl p-6 text-white/80 font-manrope backdrop-blur-sm">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
             {error}
           </div>
         </div>
@@ -251,9 +251,9 @@ const MarketResearchSection = () => {
       {!loading && !error && researchNotes.length === 0 && (
         <div className="bg-gradient-to-br from-white/[0.03] to-white/[0.01] border-2 border-white/10 rounded-2xl p-12 text-center backdrop-blur-sm">
           <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full"></div>
-            <div className="relative bg-gradient-to-br from-blue-500/20 to-indigo-500/20 p-8 rounded-full border border-blue-400/30">
-              <FaBook className="w-16 h-16 text-blue-400" />
+            <div className="absolute inset-0 bg-white/20/20 blur-2xl rounded-full"></div>
+            <div className="relative bg-gradient-to-br from-white/500/20 to-white/20 p-8 rounded-full border border-white/30">
+              <FaBook className="w-16 h-16 text-white/90" />
             </div>
           </div>
           <h3 className="text-2xl font-bold text-white mb-3 font-manrope">
@@ -265,7 +265,7 @@ const MarketResearchSection = () => {
           </p>
           <button
             onClick={handleCreateNew}
-            className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-manrope font-semibold inline-flex items-center gap-2 hover:scale-105 hover:shadow-xl hover:shadow-green-500/30 border border-green-400/30"
+            className="px-8 py-3 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all duration-300 font-manrope font-semibold inline-flex items-center gap-2 hover:scale-105 hover:shadow-xl hover:shadow-white/30 border border-white/30"
           >
             <FaPlus className="w-5 h-5" />
             Create Your First Research Note
@@ -279,22 +279,22 @@ const MarketResearchSection = () => {
           {researchNotes.map((research, index) => (
             <div
               key={research._id}
-              className="group bg-gradient-to-br from-white/[0.08] to-white/[0.03] border border-white/20 rounded-xl p-6 hover:from-white/[0.12] hover:to-white/[0.06] hover:border-blue-400/40 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 backdrop-blur-sm animate-fade-in cursor-pointer"
+              className="group bg-gradient-to-br from-white/[0.08] to-white/[0.03] border border-white/20 rounded-xl p-6 hover:from-white/[0.12] hover:to-white/[0.06] hover:border-white/40 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-white/10 backdrop-blur-sm animate-fade-in cursor-pointer"
               style={{ animationDelay: `${index * 50}ms` }}
               onClick={() => handleViewDetails(research)}
             >
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
               <div className="relative">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-2 font-manrope line-clamp-2 group-hover:text-blue-300 transition-colors">
+                    <h3 className="text-xl font-bold text-white mb-2 font-manrope line-clamp-2 group-hover:text-white/90 transition-colors">
                       {research.title}
                     </h3>
                     <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <FaTag className="w-3 h-3 text-blue-400" />
+                      <FaTag className="w-3 h-3 text-white/90" />
                       <span className="font-manrope">{research.sector}</span>
                     </div>
                   </div>
@@ -327,9 +327,9 @@ const MarketResearchSection = () => {
 
                   {research.relatedIdeas &&
                     research.relatedIdeas.length > 0 && (
-                      <div className="flex items-center gap-1 bg-green-500/20 px-2 py-1 rounded-lg border border-green-400/30">
-                        <FaLightbulb className="w-3 h-3 text-green-400" />
-                        <span className="text-green-400 text-xs font-bold font-manrope">
+                      <div className="flex items-center gap-1 bg-white/10/20 px-2 py-1 rounded-lg border border-white/30">
+                        <FaLightbulb className="w-3 h-3 text-white/90" />
+                        <span className="text-white/90 text-xs font-bold font-manrope">
                           {research.relatedIdeas.length}{" "}
                           {research.relatedIdeas.length === 1
                             ? "Idea"
@@ -346,7 +346,7 @@ const MarketResearchSection = () => {
                       e.stopPropagation();
                       handleViewDetails(research);
                     }}
-                    className="flex-1 px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-all duration-300 font-manrope font-medium text-sm flex items-center justify-center gap-2 border border-blue-400/30"
+                    className="flex-1 px-4 py-2 bg-white/20/20 text-white/90 rounded-lg hover:bg-white/20/30 transition-all duration-300 font-manrope font-medium text-sm flex items-center justify-center gap-2 border border-white/30"
                   >
                     <FaEye className="w-4 h-4" />
                     View
@@ -356,7 +356,7 @@ const MarketResearchSection = () => {
                       e.stopPropagation();
                       handleEdit(research);
                     }}
-                    className="flex-1 px-4 py-2 bg-yellow-500/20 text-yellow-300 rounded-lg hover:bg-yellow-500/30 transition-all duration-300 font-manrope font-medium text-sm flex items-center justify-center gap-2 border border-yellow-400/30"
+                    className="flex-1 px-4 py-2 bg-white/20 text-white/70 rounded-lg hover:bg-white/30 transition-all duration-300 font-manrope font-medium text-sm flex items-center justify-center gap-2 border border-white/30"
                   >
                     <FaEdit className="w-4 h-4" />
                     Edit
@@ -366,9 +366,9 @@ const MarketResearchSection = () => {
                       e.stopPropagation();
                       handleDelete(research._id);
                     }}
-                    className="px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300 font-manrope font-medium text-sm flex items-center justify-center gap-2 border border-red-400/30"
+                    className="px-4 py-2 bg-white/20 text-white/80 rounded-lg hover:bg-white/30 transition-all duration-300 font-manrope font-medium text-sm flex items-center justify-center gap-2 border border-white/30"
                   >
-                    <FaTrash className="w-4 h-4" />
+                    <FaTrash className="w-4 h-4 text-red-400" />
                   </button>
                 </div>
               </div>

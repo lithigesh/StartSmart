@@ -105,7 +105,7 @@ module.exports = {
           "0%": { transform: "translateY(20px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
-        "shake": {
+        shake: {
           "0%, 100%": { transform: "translateX(0)" },
           "10%, 30%, 50%, 70%, 90%": { transform: "translateX(-5px)" },
           "20%, 40%, 60%, 80%": { transform: "translateX(5px)" },
@@ -114,6 +114,66 @@ module.exports = {
           "0%": { transform: "translateX(100%)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" },
         },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-20px)" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0) translateX(0)" },
+          "50%": { transform: "translateY(-30px) translateX(10px)" },
+        },
+        "particle-1": {
+          "0%": { transform: "translate(0, 0)", opacity: "0.6" },
+          "50%": { transform: "translate(50px, -80px)", opacity: "1" },
+          "100%": { transform: "translate(100px, -160px)", opacity: "0" },
+        },
+        "particle-2": {
+          "0%": { transform: "translate(0, 0)", opacity: "0.4" },
+          "50%": { transform: "translate(-40px, -60px)", opacity: "0.8" },
+          "100%": { transform: "translate(-80px, -120px)", opacity: "0" },
+        },
+        "particle-3": {
+          "0%": { transform: "translate(0, 0)", opacity: "0.5" },
+          "50%": { transform: "translate(60px, -70px)", opacity: "0.9" },
+          "100%": { transform: "translate(120px, -140px)", opacity: "0" },
+        },
+        "particle-4": {
+          "0%": { transform: "translate(0, 0)", opacity: "0.5" },
+          "50%": { transform: "translate(-50px, -90px)", opacity: "1" },
+          "100%": { transform: "translate(-100px, -180px)", opacity: "0" },
+        },
+        "grid-move": {
+          "0%": { backgroundPosition: "0 0" },
+          "100%": { backgroundPosition: "50px 50px" },
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px rgba(255, 255, 255, 0.1)",
+            transform: "scale(1)",
+          },
+          "50%": {
+            boxShadow: "0 0 40px rgba(255, 255, 255, 0.2)",
+            transform: "scale(1.05)",
+          },
+        },
+        "scroll-reveal": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(50px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "marquee-fast": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "marquee-mobile": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -121,10 +181,30 @@ module.exports = {
         marquee: "marquee var(--duration, 20s) linear infinite",
         "marquee-vertical":
           "marquee-vertical var(--duration, 20s) linear infinite",
+        "marquee-fast": "marquee-fast 30s linear infinite",
+        "marquee-mobile": "marquee-mobile 20s linear infinite",
         "fade-in": "fade-in 0.6s ease-out forwards",
         "slide-up": "slide-up 0.8s ease-out forwards",
-        "shake": "shake 0.5s ease-in-out",
+        shake: "shake 0.5s ease-in-out",
         "slide-in-right": "slide-in-right 0.3s ease-out forwards",
+        float: "float 3s ease-in-out infinite",
+        "float-slow": "float-slow 4s ease-in-out infinite",
+        "particle-1": "particle-1 3s ease-out infinite",
+        "particle-2": "particle-2 3.5s ease-out infinite",
+        "particle-3": "particle-3 2.8s ease-out infinite",
+        "particle-4": "particle-4 3.2s ease-out infinite",
+        "grid-move": "grid-move 20s linear infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "scroll-reveal": "scroll-reveal 0.6s ease-out forwards",
+      },
+      transitionDelay: {
+        100: "100ms",
+        200: "200ms",
+        300: "300ms",
+        400: "400ms",
+        500: "500ms",
+        700: "700ms",
+        1000: "1000ms",
       },
     },
     container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },

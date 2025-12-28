@@ -182,26 +182,26 @@ const ComparisonModal = ({
       {/* Modal */}
       <div className="absolute inset-4 md:inset-8 lg:inset-12 xl:inset-16 bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-white/20 rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-scale-up">
         {/* Animated Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500/[0.08] via-transparent to-emerald-500/[0.08] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-white/[0.08] pointer-events-none"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(16,185,129,0.15),transparent_50%)] pointer-events-none"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(52,211,153,0.1),transparent_50%)] pointer-events-none"></div>
 
         {/* Animated Border Glow */}
         <div className="absolute inset-0 rounded-3xl">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-green-500/20 blur-xl animate-border-glow"></div>
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-white/20 via-white/20 to-white/20 blur-xl animate-border-glow"></div>
         </div>
 
         {/* Header */}
         <div className="relative z-10 flex items-center justify-between p-6 lg:p-8 border-b border-white/10 bg-gradient-to-r from-white/[0.05] to-transparent backdrop-blur-sm">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="absolute inset-0 bg-green-500/30 blur-xl rounded-full"></div>
-              <div className="relative bg-gradient-to-br from-green-500 to-emerald-600 p-3 rounded-xl shadow-lg">
+              <div className="absolute inset-0 bg-white/10/30 blur-xl rounded-full"></div>
+              <div className="relative bg-gradient-to-br from-white to-white p-3 rounded-xl shadow-lg">
                 <FaChartLine className="w-6 h-6 text-white" />
               </div>
             </div>
             <div>
-              <h2 className="text-2xl lg:text-3xl font-bold text-white font-manrope bg-gradient-to-r from-white via-green-100 to-white bg-clip-text text-transparent">
+              <h2 className="text-2xl lg:text-3xl font-bold text-white font-manrope bg-gradient-to-r from-white via-white to-white bg-clip-text text-transparent">
                 {isEditing
                   ? "Edit Comparison"
                   : readOnly
@@ -218,7 +218,7 @@ const ComparisonModal = ({
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="p-3 text-white/70 hover:text-white hover:bg-red-500/20 rounded-xl transition-all duration-300 hover:scale-110 border border-white/10 hover:border-red-500/30"
+              className="p-3 text-white/70 hover:text-white hover:bg-white/20 rounded-xl transition-all duration-300 hover:scale-110 border border-white/10 hover:border-white/30"
               title="Close"
             >
               <FaTimes className="w-5 h-5" />
@@ -230,9 +230,9 @@ const ComparisonModal = ({
         <div className="relative z-10 flex-1 overflow-y-auto p-6 lg:p-8 space-y-8 custom-scrollbar">
           {/* Error Message */}
           {saveError && (
-            <div className="bg-gradient-to-r from-red-500/20 to-red-600/20 border-2 border-red-500/40 rounded-xl p-4 text-red-300 font-manrope animate-shake backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-white/20 to-white/20 border-2 border-white/40 rounded-xl p-4 text-white/80 font-manrope animate-shake backdrop-blur-sm">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 {saveError}
               </div>
             </div>
@@ -243,37 +243,37 @@ const ComparisonModal = ({
             {ideas.map((idea, index) => (
               <div
                 key={idea._id}
-                className="group bg-gradient-to-br from-white/[0.08] to-white/[0.03] border border-white/20 rounded-xl p-5 hover:from-white/[0.12] hover:to-white/[0.06] hover:border-green-400/40 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-green-500/10 backdrop-blur-sm animate-fade-in"
+                className="group bg-gradient-to-br from-white/[0.08] to-white/[0.03] border border-white/20 rounded-xl p-5 hover:from-white/[0.12] hover:to-white/[0.06] hover:border-white/40 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-white/10 backdrop-blur-sm animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative">
                   <div className="flex items-start justify-between mb-3">
-                    <div className="bg-green-500/20 p-2 rounded-lg border border-green-400/30">
-                      <FaTag className="w-4 h-4 text-green-400" />
+                    <div className="bg-white/10/20 p-2 rounded-lg border border-white/30">
+                      <FaTag className="w-4 h-4 text-white/90" />
                     </div>
                     {idea.analysis?.score && (
-                      <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-2 py-1 rounded-lg border border-yellow-400/30">
-                        <span className="text-yellow-400 text-xs font-bold font-manrope">
+                      <div className="bg-gradient-to-r from-white/20 to-white/20 px-2 py-1 rounded-lg border border-white/30">
+                        <span className="text-white/70 text-xs font-bold font-manrope">
                           {idea.analysis.score}%
                         </span>
                       </div>
                     )}
                   </div>
-                  <h3 className="text-white font-manrope font-bold text-base mb-2 line-clamp-2 group-hover:text-green-300 transition-colors">
+                  <h3 className="text-white font-manrope font-bold text-base mb-2 line-clamp-2 group-hover:text-white/90 transition-colors">
                     {idea.title}
                   </h3>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <FaTag className="w-3 h-3 text-green-400" />
+                      <FaTag className="w-3 h-3 text-white/90" />
                       <span className="font-manrope">{idea.category}</span>
                     </div>
                     {idea.analysis?.score && (
                       <div className="flex items-center gap-2">
-                        <FaStar className="w-3 h-3 text-yellow-400" />
+                        <FaStar className="w-3 h-3 text-white/70" />
                         <div className="flex-1 bg-white/10 rounded-full h-2 overflow-hidden">
                           <div
-                            className="bg-gradient-to-r from-green-500 to-emerald-500 h-full rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-white to-white h-full rounded-full transition-all duration-500"
                             style={{ width: `${idea.analysis.score}%` }}
                           ></div>
                         </div>
@@ -287,9 +287,9 @@ const ComparisonModal = ({
 
           {/* Comparison Table */}
           <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border-2 border-white/20 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm">
-            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 px-6 py-4 border-b border-white/10">
+            <div className="bg-gradient-to-r from-white/10 to-white/10 px-6 py-4 border-b border-white/10">
               <h3 className="text-xl font-bold text-white font-manrope flex items-center gap-2">
-                <div className="w-1 h-6 bg-gradient-to-b from-green-400 to-emerald-500 rounded-full"></div>
+                <div className="w-1 h-6 bg-gradient-to-b from-white to-white rounded-full"></div>
                 Key Metrics Comparison
               </h3>
             </div>
@@ -299,7 +299,7 @@ const ComparisonModal = ({
                   <tr className="border-b-2 border-white/20 bg-gradient-to-r from-white/[0.08] to-white/[0.04]">
                     <th className="text-left p-5 text-white/90 font-manrope font-bold sticky left-0 bg-gradient-to-r from-black/80 to-black/60 backdrop-blur-xl z-10 border-r border-white/10">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
                         Metric
                       </div>
                     </th>
@@ -309,7 +309,7 @@ const ComparisonModal = ({
                         className="text-left p-5 text-white font-manrope font-bold min-w-[220px] border-r border-white/5"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 px-2 py-1 rounded text-xs font-mono border border-green-400/30">
+                          <span className="bg-gradient-to-br from-white/20 to-white/20 px-2 py-1 rounded text-xs font-mono border border-white/30">
                             #{index + 1}
                           </span>
                           <div className="line-clamp-1">{idea.title}</div>
@@ -322,11 +322,11 @@ const ComparisonModal = ({
                   {comparisonMetrics.map((metric, metricIndex) => (
                     <tr
                       key={metric.key}
-                      className="border-b border-white/5 hover:bg-gradient-to-r hover:from-green-500/5 hover:to-transparent transition-all duration-300 group"
+                      className="border-b border-white/5 hover:bg-gradient-to-r hover:from-white/5 hover:to-transparent transition-all duration-300 group"
                     >
                       <td className="p-5 text-white/80 font-manrope font-semibold sticky left-0 bg-gradient-to-r from-black/90 to-black/70 backdrop-blur-xl z-10 border-r border-white/10 group-hover:from-black/95 group-hover:to-black/80">
                         <div className="flex items-center gap-3">
-                          <div className="text-green-400 bg-green-500/10 p-2 rounded-lg border border-green-400/20">
+                          <div className="text-white/90 bg-white/10/10 p-2 rounded-lg border border-white/20">
                             {metric.icon}
                           </div>
                           <span>{metric.label}</span>
@@ -397,7 +397,7 @@ const ComparisonModal = ({
             {/* Choose Leader */}
             <div className="bg-white/[0.03] border border-white/10 rounded-lg p-6">
               <div className="flex items-center gap-2 mb-4">
-                <FaTrophy className="w-5 h-5 text-orange-400" />
+                <FaTrophy className="w-5 h-5 text-white/80" />
                 <h3 className="text-xl font-semibold text-white font-manrope">
                   Choose Leader
                 </h3>
@@ -406,7 +406,7 @@ const ComparisonModal = ({
                 value={chosenLeader}
                 onChange={(e) => setChosenLeader(e.target.value)}
                 disabled={readOnly && !isEditing}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="" className="bg-gray-800">
                   Select the best idea...
@@ -433,7 +433,7 @@ const ComparisonModal = ({
                 onChange={(e) => setRationale(e.target.value)}
                 placeholder="Why did you choose this idea as the leader?"
                 disabled={readOnly && !isEditing}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none disabled:opacity-60 disabled:cursor-not-allowed"
                 rows={3}
               ></textarea>
             </div>
@@ -449,7 +449,7 @@ const ComparisonModal = ({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add your general notes about this comparison..."
               disabled={readOnly && !isEditing}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none disabled:opacity-60 disabled:cursor-not-allowed"
               rows={4}
             ></textarea>
           </div>
@@ -491,7 +491,7 @@ const ComparisonModal = ({
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-6 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-manrope font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2 bg-white/20 text-white hover:bg-white/30 rounded-lg transition-all duration-300 font-manrope font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {saving ? (
                   <>

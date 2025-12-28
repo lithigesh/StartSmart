@@ -157,8 +157,8 @@ const AnalyticsDashboard = () => {
 
   if (error) {
     return (
-      <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4">
-        <p className="text-red-300">Error: {error}</p>
+      <div className="bg-white/20 border border-white/50 rounded-lg p-4">
+        <p className="text-white/80">Error: {error}</p>
       </div>
     );
   }

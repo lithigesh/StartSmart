@@ -197,7 +197,7 @@ const IdeathonUpdateForm = ({ registration, onClose, onSuccess }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors ${
+                            className={`flex-1 px-6 py-3 bg-white/20 text-white rounded-lg font-medium hover:bg-white/20 transition-colors ${
                                 loading ? 'opacity-50 cursor-not-allowed' : ''
                             }`}
                         >

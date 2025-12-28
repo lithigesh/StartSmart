@@ -130,7 +130,7 @@ const IdeasSection = ({
                   flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-manrope font-medium min-h-[44px] touch-manipulation
                   ${
                     comparisonMode
-                      ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                      ? "bg-white/10/20 text-white/90 border border-white/30"
                       : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
                   }
                 `}
@@ -168,7 +168,7 @@ const IdeasSection = ({
                     placeholder="Search ideas..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation"
+                    className="w-full pl-10 pr-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation"
                   />
                 </div>
 
@@ -176,7 +176,7 @@ const IdeasSection = ({
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto"
+                  className="px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto"
                 >
                   <option value="all" className="bg-gray-800">
                     All Categories
@@ -196,7 +196,7 @@ const IdeasSection = ({
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto"
+                  className="px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto"
                 >
                   <option value="newest" className="bg-gray-800">
                     Newest First
@@ -215,14 +215,14 @@ const IdeasSection = ({
                     onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto justify-center sm:justify-start ${
                       isAdvancedOpen
-                        ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                        ? "bg-white/10/20 text-white/90 border border-white/30"
                         : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
                     }`}
                   >
                     <FaFilter className="w-4 h-4" />
                     <span className="whitespace-nowrap">Advanced</span>
                     {activeAdvancedFilters > 0 && (
-                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center">
+                      <span className="bg-white/10 text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center">
                         {activeAdvancedFilters}
                       </span>
                     )}
@@ -240,7 +240,7 @@ const IdeasSection = ({
                     {activeAdvancedFilters > 0 && (
                       <button
                         onClick={clearAdvancedFilters}
-                        className="flex items-center gap-2 px-3 py-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors duration-300 font-manrope"
+                        className="flex items-center gap-2 px-3 py-1 text-white/80 hover:text-white/80 hover:bg-white/10 rounded-lg transition-colors duration-300 font-manrope"
                       >
                         <FaTimes className="w-4 h-4" />
                         Clear Advanced
@@ -300,7 +300,7 @@ const IdeasSection = ({
                         onChange={(e) =>
                           setFundingRange && setFundingRange(e.target.value)
                         }
-                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope"
                       >
                         {fundingRanges.map((range) => (
                           <option
@@ -324,7 +324,7 @@ const IdeasSection = ({
                         onChange={(e) =>
                           setStatusFilter && setStatusFilter(e.target.value)
                         }
-                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope"
+                        className="w-full px-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope"
                       >
                         {statusOptions.map((status) => (
                           <option
@@ -351,7 +351,7 @@ const IdeasSection = ({
                           onClick={() => handleTagToggle(tag)}
                           className={`px-3 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 font-manrope min-h-[36px] touch-manipulation whitespace-nowrap ${
                             selectedTags.includes(tag)
-                              ? "bg-green-500 text-white"
+                              ? "bg-white/10 text-white"
                               : "bg-white/10 text-white/70 hover:bg-white/20"
                           }`}
                         >

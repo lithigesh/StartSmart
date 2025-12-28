@@ -260,11 +260,11 @@ const InvestorDealsPage = () => {
 
   const getColumnColor = (color) => {
     const colors = {
-      blue: "border-blue-500/30 bg-blue-600/5",
-      purple: "border-purple-500/30 bg-purple-600/5",
-      yellow: "border-yellow-500/30 bg-yellow-600/5",
-      green: "border-green-500/30 bg-green-600/5",
-      red: "border-red-500/30 bg-red-600/5",
+      blue: "border-white/30 bg-white/20/5",
+      purple: "border-white/30 bg-white/5",
+      yellow: "border-white/30 bg-white/5",
+      green: "border-white/30 bg-white/10/5",
+      red: "border-white/30 bg-white/5",
     };
     return colors[color] || colors.blue;
   };
@@ -273,7 +273,7 @@ const InvestorDealsPage = () => {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-950">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading your deal pipeline...</p>
         </div>
       </div>
@@ -287,7 +287,7 @@ const InvestorDealsPage = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-              <FaBriefcase className="text-blue-400" />
+              <FaBriefcase className="text-white/90" />
               Deal Management
             </h1>
             <p className="text-gray-400 mt-2">
@@ -340,7 +340,7 @@ const InvestorDealsPage = () => {
                 placeholder="Search by idea or entrepreneur..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent"
               />
             </div>
           </div>
@@ -348,7 +348,7 @@ const InvestorDealsPage = () => {
           <select
             value={fundingStageFilter}
             onChange={(e) => setFundingStageFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
           >
             <option value="all">All Stages</option>
             <option value="seed">Seed</option>
@@ -362,7 +362,7 @@ const InvestorDealsPage = () => {
           <select
             value={investmentTypeFilter}
             onChange={(e) => setInvestmentTypeFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
           >
             <option value="all">All Types</option>
             <option value="equity">Equity</option>
@@ -439,17 +439,17 @@ const InvestorDealsPage = () => {
 // Stats Card Component
 const StatsCard = ({ label, value, icon: Icon, color }) => {
   const colorClasses = {
-    blue: "from-blue-600/20 to-blue-600/5 border-blue-500/30",
-    yellow: "from-yellow-600/20 to-yellow-600/5 border-yellow-500/30",
-    green: "from-green-600/20 to-green-600/5 border-green-500/30",
-    purple: "from-purple-600/20 to-purple-600/5 border-purple-500/30",
+    blue: "from-white/600/20 to-white/600/5 border-white/30",
+    yellow: "from-white/20 to-white/5 border-white/30",
+    green: "from-white/20 to-white/5 border-white/30",
+    purple: "from-white/20 to-white/5 border-white/30",
   };
 
   const iconColorClasses = {
-    blue: "text-blue-400",
-    yellow: "text-yellow-400",
-    green: "text-green-400",
-    purple: "text-purple-400",
+    blue: "text-white/90",
+    yellow: "text-white/70",
+    green: "text-white/90",
+    purple: "text-white/90",
   };
 
   return (

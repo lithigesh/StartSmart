@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import {
   FaTimes,
   FaUpload,
@@ -8,7 +8,7 @@ import {
   FaExclamationTriangle,
   FaSpinner,
   FaCheck,
-  FaPlus
+  FaPlus,
 } from "react-icons/fa";
 import RegistrationSuccessScreen from "./RegistrationSuccessScreen";
 import { ideasAPI } from "../../services/ideas.api";
@@ -18,14 +18,20 @@ import { ideathonRegistrationAPI } from "../../services/ideathonRegistration";
 /**
  * IdeathonRegistrationForm Component
  * Handles registration for ideathons with idea selection and pitch submission
- * 
+ *
  * Props:
  * - isOpen: Boolean to control modal visibility
  * - onClose: Function to close the modal
  * - ideathonId: ID of the ideathon to register for
  * - ideathonTitle: Title of the ideathon for display
  */
-const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, onSuccess }) => {
+const IdeathonRegistrationForm = ({
+  isOpen,
+  onClose,
+  ideathonId,
+  ideathonTitle,
+  onSuccess,
+}) => {
   // State for form data
   const defaultFormData = {
     selectedIdeaId: "",
@@ -39,7 +45,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
     problemStatement: "",
     pitchDetails: "",
     documents: [],
-    confirmation: false
+    confirmation: false,
   };
 
   const [formData, setFormData] = useState(defaultFormData);
@@ -61,30 +67,43 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
     try {
       setIsLoadingIdeas(true);
       setError("");
-      
+
       console.log("Fetching user ideas...");
       // API call to get user's ideas
       const response = await ideasAPI.getUserIdeas();
-      
+
       console.log("API Response:", response);
-      
+
       // Check if response has data regardless of success flag
-      if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+      if (
+        response &&
+        response.data &&
+        Array.isArray(response.data) &&
+        response.data.length > 0
+      ) {
         // Ensure each idea has an _id field (some might have just id)
-        const normalizedIdeas = response.data.map(idea => ({
+        const normalizedIdeas = response.data.map((idea) => ({
           ...idea,
-          _id: idea._id || idea.id
+          _id: idea._id || idea.id,
         }));
         setUserIdeas(normalizedIdeas);
-        console.log("Successfully loaded ideas:", normalizedIdeas.length, normalizedIdeas);
+        console.log(
+          "Successfully loaded ideas:",
+          normalizedIdeas.length,
+          normalizedIdeas
+        );
       } else if (response && Array.isArray(response) && response.length > 0) {
         // Handle case where response is directly an array
-        const normalizedIdeas = response.map(idea => ({
+        const normalizedIdeas = response.map((idea) => ({
           ...idea,
-          _id: idea._id || idea.id
+          _id: idea._id || idea.id,
         }));
         setUserIdeas(normalizedIdeas);
-        console.log("Successfully loaded ideas (direct array):", normalizedIdeas.length, normalizedIdeas);
+        console.log(
+          "Successfully loaded ideas (direct array):",
+          normalizedIdeas.length,
+          normalizedIdeas
+        );
       } else {
         // No ideas found
         console.log("No ideas found in response");
@@ -119,9 +138,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
    */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -130,9 +149,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
    */
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      documents: [...prev.documents, ...files]
+      documents: [...prev.documents, ...files],
     }));
   };
 
@@ -140,9 +159,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
    * Remove uploaded file
    */
   const removeFile = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      documents: prev.documents.filter((_, i) => i !== index)
+      documents: prev.documents.filter((_, i) => i !== index),
     }));
   };
 
@@ -160,14 +179,14 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       abstractDetails,
       problemStatement,
       pitchDetails,
-      confirmation
+      confirmation,
     } = formData;
 
     // Clear any previous error
     setError("");
 
     // Helper function to safely trim strings
-    const safeTrim = (str) => str?.trim() || '';
+    const safeTrim = (str) => str?.trim() || "";
 
     if (!selectedIdeaId) {
       setError("Please select an idea to register with.");
@@ -193,8 +212,13 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       setError("Please provide a valid 10-digit phone number.");
       return false;
     }
-    if (githubUrl && !githubUrl.match(/^https:\/\/github\.com\/[\w-]+\/[\w-]+$/)) {
-      setError("Please provide a valid GitHub repository URL or leave it empty.");
+    if (
+      githubUrl &&
+      !githubUrl.match(/^https:\/\/github\.com\/[\w-]+\/[\w-]+$/)
+    ) {
+      setError(
+        "Please provide a valid GitHub repository URL or leave it empty."
+      );
       return false;
     }
     if (!safeTrim(projectTitle)) {
@@ -226,7 +250,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       return false;
     }
     if (!confirmation) {
-      setError("Please confirm that you agree to the ideathon rules and guidelines.");
+      setError(
+        "Please confirm that you agree to the ideathon rules and guidelines."
+      );
       return false;
     }
     return true;
@@ -252,7 +278,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       }
 
       // Get JWT token
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         setError("Please login to register");
         setIsSubmitting(false);
@@ -261,7 +287,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
 
       // Prepare registration data
       const registrationData = {
-        idea: formData.selectedIdeaId,  // Changed from ideaId to idea to match backend schema
+        idea: formData.selectedIdeaId, // Changed from ideaId to idea to match backend schema
         teamName: formData.teamName.trim(),
         email: formData.email.trim(),
         phoneNumber: formData.phoneNumber.trim(),
@@ -270,29 +296,36 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
         abstractDetails: formData.abstractDetails.trim(),
         problemStatement: formData.problemStatement.trim(),
         pitchDetails: formData.pitchDetails.trim(),
-        teamMembers: formData.teamMembers ? formData.teamMembers.split(',').map(name => ({
-          name: name.trim(),
-          email: formData.email.trim(),
-          role: 'Team Member'
-        })) : []
+        teamMembers: formData.teamMembers
+          ? formData.teamMembers.split(",").map((name) => ({
+              name: name.trim(),
+              email: formData.email.trim(),
+              role: "Team Member",
+            }))
+          : [],
       };
 
       console.log("Sending registration with data:", registrationData);
 
       let response;
       try {
-        response = await fetch(`${API_URL}/api/ideathons/${ideathonId}/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(registrationData),
-          credentials: 'include' // Include cookies if needed
-        });
+        response = await fetch(
+          `${API_URL}/api/ideathons/${ideathonId}/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(registrationData),
+            credentials: "include", // Include cookies if needed
+          }
+        );
       } catch (networkError) {
         console.error("Network error:", networkError);
-        throw new Error('Unable to connect to server. Please check your internet connection and try again.');
+        throw new Error(
+          "Unable to connect to server. Please check your internet connection and try again."
+        );
       }
 
       let responseData;
@@ -302,23 +335,26 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
           responseData = JSON.parse(text);
         } catch (e) {
           console.error("Invalid JSON response:", text);
-          throw new Error('Server returned an invalid response. Please try again.');
+          throw new Error(
+            "Server returned an invalid response. Please try again."
+          );
         }
       } catch (parseError) {
         console.error("Response parsing error:", parseError);
-        throw new Error('Error processing server response. Please try again.');
+        throw new Error("Error processing server response. Please try again.");
       }
 
       if (!response.ok) {
-        const errorMessage = responseData?.message || response.statusText || 'Registration failed';
-        
+        const errorMessage =
+          responseData?.message || response.statusText || "Registration failed";
+
         // Check if the error is "Already registered"
         if (errorMessage.toLowerCase().includes("already registered")) {
           toast.info("Already registered for this ideathon");
           onClose();
           return;
         }
-        
+
         throw new Error(errorMessage);
       }
 
@@ -333,20 +369,22 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
         projectTitle: formData.projectTitle,
         abstractDetails: formData.abstractDetails,
         problemStatement: formData.problemStatement,
-        selectedIdea: userIdeas.find(idea => idea.id === parseInt(formData.selectedIdeaId)),
-        registrationId: responseData.data?._id
+        selectedIdea: userIdeas.find(
+          (idea) => idea.id === parseInt(formData.selectedIdeaId)
+        ),
+        registrationId: responseData.data?._id,
       };
 
       console.log("Registration successful!", successData);
-      
+
       // Show success toast
       toast.success("Successfully registered for the ideathon!");
-      
+
       setSuccess("Successfully registered for the ideathon!");
       setRegistrationData(successData);
       setRegistrationSuccess(true);
       setFormData(defaultFormData);
-      
+
       // Notify parent component of success
       if (onSuccess) {
         console.log("Calling onSuccess callback");
@@ -354,15 +392,16 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
       }
     } catch (error) {
       console.error("Registration error:", error);
-      
+
       // Check if the error message contains "already registered"
-      const errorMessage = error.message || "Registration failed. Please try again.";
+      const errorMessage =
+        error.message || "Registration failed. Please try again.";
       if (errorMessage.toLowerCase().includes("already registered")) {
         toast.info("Already registered for this ideathon");
         onClose();
         return;
       }
-      
+
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -376,7 +415,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
     onClose();
     // This would typically use React Router to navigate
     // For now, we'll emit a custom event that the parent can listen to
-    window.dispatchEvent(new CustomEvent('navigateToIdeas'));
+    window.dispatchEvent(new CustomEvent("navigateToIdeas"));
   };
 
   // Don't render if modal is not open
@@ -385,7 +424,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
   // Show success screen if registration is successful
   if (registrationSuccess && registrationData) {
     return (
-      <RegistrationSuccessScreen 
+      <RegistrationSuccessScreen
         registrationData={registrationData}
         ideathonTitle={ideathonTitle}
         onClose={() => {
@@ -405,7 +444,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <div>
-            <h2 className="text-2xl font-bold text-white">Register for Ideathon</h2>
+            <h2 className="text-2xl font-bold text-white">
+              Register for Ideathon
+            </h2>
             <p className="text-white/60 mt-1">{ideathonTitle}</p>
           </div>
           <button
@@ -420,17 +461,17 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
         <div className="p-6 max-h-[60vh] overflow-y-auto">
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
-              <FaCheck className="w-5 h-5 text-green-400" />
-              <p className="text-green-400">{success}</p>
+            <div className="mb-6 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+              <FaCheck className="w-5 h-5 text-white/90" />
+              <p className="text-white/90">{success}</p>
             </div>
           )}
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-3">
-              <FaExclamationTriangle className="w-5 h-5 text-red-400" />
-              <p className="text-red-400">{error}</p>
+            <div className="mb-6 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+              <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
+              <p className="text-white/80">{error}</p>
             </div>
           )}
 
@@ -445,16 +486,20 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Idea Selection */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Select Idea to Register <span className="text-red-400">*</span>
+                  Select Idea to Register{" "}
+                  <span className="text-white/80">*</span>
                 </label>
-                
+
                 {userIdeas.length === 0 ? (
                   // No ideas available - show message and link to Ideas page
                   <div className="p-6 bg-gray-900 border border-gray-800 rounded-lg text-center">
                     <FaLightbulb className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-                    <h3 className="text-white font-medium mb-2">No Ideas Found</h3>
+                    <h3 className="text-white font-medium mb-2">
+                      No Ideas Found
+                    </h3>
                     <p className="text-white/60 mb-4">
-                      You need to create at least one idea before registering for ideathons.
+                      You need to create at least one idea before registering
+                      for ideathons.
                     </p>
                     <button
                       type="button"
@@ -488,11 +533,17 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {formData.selectedIdeaId && (
                 <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
                   {(() => {
-                    const selectedIdea = userIdeas.find(idea => idea._id === formData.selectedIdeaId);
+                    const selectedIdea = userIdeas.find(
+                      (idea) => idea._id === formData.selectedIdeaId
+                    );
                     return selectedIdea ? (
                       <div>
-                        <h4 className="text-white font-medium mb-2">{selectedIdea.title}</h4>
-                        <p className="text-white/60 text-sm mb-2">{selectedIdea.elevatorPitch}</p>
+                        <h4 className="text-white font-medium mb-2">
+                          {selectedIdea.title}
+                        </h4>
+                        <p className="text-white/60 text-sm mb-2">
+                          {selectedIdea.elevatorPitch}
+                        </p>
                         <div className="flex items-center gap-4 text-xs text-white/50">
                           <span>Category: {selectedIdea.category}</span>
                           <span>Target: {selectedIdea.targetAudience}</span>
@@ -506,7 +557,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Team Name */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Team Name <span className="text-red-400">*</span>
+                  Team Name <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="text"
@@ -522,7 +573,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Email */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Email <span className="text-red-400">*</span>
+                  Email <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="email"
@@ -538,7 +589,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Phone Number */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Phone Number <span className="text-red-400">*</span>
+                  Phone Number <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="tel"
@@ -572,7 +623,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Project Title */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Project Title <span className="text-red-400">*</span>
+                  Project Title <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="text"
@@ -606,7 +657,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Abstract */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Project Abstract <span className="text-red-400">*</span>
+                  Project Abstract <span className="text-white/80">*</span>
                 </label>
                 <textarea
                   name="abstractDetails"
@@ -625,7 +676,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Problem Statement */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Problem Statement <span className="text-red-400">*</span>
+                  Problem Statement <span className="text-white/80">*</span>
                 </label>
                 <textarea
                   name="problemStatement"
@@ -644,7 +695,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               {/* Pitch Details */}
               <div>
                 <label className="block text-white font-medium mb-3">
-                  Pitch Details <span className="text-red-400">*</span>
+                  Pitch Details <span className="text-white/80">*</span>
                 </label>
                 <textarea
                   name="pitchDetails"
@@ -684,7 +735,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
                     className="cursor-pointer flex flex-col items-center"
                   >
                     <FaUpload className="w-8 h-8 text-gray-500 mb-2" />
-                    <span className="text-white/60">Click to upload documents</span>
+                    <span className="text-white/60">
+                      Click to upload documents
+                    </span>
                     <span className="text-white/40 text-sm mt-1">
                       PDF, DOC, PPT, or images (optional)
                     </span>
@@ -701,7 +754,9 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
                       >
                         <div className="flex items-center gap-3">
                           <FaFileAlt className="w-4 h-4 text-white/60" />
-                          <span className="text-white text-sm">{file.name}</span>
+                          <span className="text-white text-sm">
+                            {file.name}
+                          </span>
                           <span className="text-white/50 text-xs">
                             ({(file.size / 1024).toFixed(1)} KB)
                           </span>
@@ -709,7 +764,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
                         <button
                           type="button"
                           onClick={() => removeFile(index)}
-                          className="p-1 text-white/60 hover:text-red-400 transition-colors"
+                          className="p-1 text-white/60 hover:text-white/80 transition-colors"
                         >
                           <FaTimes className="w-4 h-4" />
                         </button>
@@ -720,7 +775,7 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               </div>
 
               {/* Confirmation Checkbox */}
-              <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+              <div className="mt-6 p-4 bg-white/20 border border-white/30 rounded-lg">
                 <div className="flex items-start gap-3">
                   <div className="pt-1">
                     <input
@@ -728,22 +783,28 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
                       id="confirmation"
                       name="confirmation"
                       checked={formData.confirmation}
-                      onChange={(e) => setFormData(prev => ({
-                        ...prev,
-                        confirmation: e.target.checked
-                      }))}
-                      className="w-4 h-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-900 bg-gray-900"
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          confirmation: e.target.checked,
+                        }))
+                      }
+                      className="w-4 h-4 rounded border-gray-600 text-white/90 focus:ring-white focus:ring-offset-gray-900 bg-gray-900"
                       required
                     />
                   </div>
                   <div>
-                    <label htmlFor="confirmation" className="block text-white font-medium mb-2">
-                      Confirmation <span className="text-red-400">*</span>
+                    <label
+                      htmlFor="confirmation"
+                      className="block text-white font-medium mb-2"
+                    >
+                      Confirmation <span className="text-white/80">*</span>
                     </label>
                     <p className="text-white/70 text-sm leading-relaxed">
-                      I confirm that all the information provided above is accurate and complete. 
-                      I understand and agree to the ideathon rules and guidelines. 
-                      I acknowledge that my team is committed to participating in this event.
+                      I confirm that all the information provided above is
+                      accurate and complete. I understand and agree to the
+                      ideathon rules and guidelines. I acknowledge that my team
+                      is committed to participating in this event.
                     </p>
                   </div>
                 </div>
@@ -768,9 +829,10 @@ const IdeathonRegistrationForm = ({ isOpen, onClose, ideathonId, ideathonTitle, 
               onClick={handleSubmit}
               disabled={isSubmitting}
               className={`px-8 py-3 font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2
-                ${isSubmitting 
-                  ? 'bg-blue-500/50 text-white cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
+                ${
+                  isSubmitting
+                    ? "bg-white/20/50 text-white cursor-not-allowed"
+                    : "bg-white/20 text-white hover:bg-white/20 cursor-pointer"
                 }`}
             >
               {isSubmitting ? (

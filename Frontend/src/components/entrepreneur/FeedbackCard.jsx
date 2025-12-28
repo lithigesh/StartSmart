@@ -102,9 +102,9 @@ const FeedbackCard = () => {
                         size={16}
                         className={`${
                             star <= rating
-                                ? 'text-yellow-400 fill-current'
+                                ? 'text-white/70 fill-current'
                                 : 'text-gray-300'
-                        } ${setRating ? 'cursor-pointer hover:text-yellow-300' : ''}`}
+                        } ${setRating ? 'cursor-pointer hover:text-white/70' : ''}`}
                         onClick={() => setRating && setRating(star)}
                     />
                 ))}
@@ -116,8 +116,8 @@ const FeedbackCard = () => {
         <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-6 text-white">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-blue-500/20 rounded-lg">
-                        <MessageSquare className="h-5 w-5 text-blue-300" />
+                    <div className="p-2 bg-white/20/20 rounded-lg">
+                        <MessageSquare className="h-5 w-5 text-white/90" />
                     </div>
                     <div>
                         <h3 className="font-medium">App Feedback</h3>
@@ -137,13 +137,13 @@ const FeedbackCard = () => {
             {stats && (
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-300">
+                        <div className="text-2xl font-bold text-white/90">
                             {stats.totalFeedback || 0}
                         </div>
                         <div className="text-xs text-gray-300">Total Feedback</div>
                     </div>
                     <div className="text-center">
-                        <div className="text-2xl font-bold text-yellow-300">
+                        <div className="text-2xl font-bold text-white/70">
                             {stats.averageRating ? stats.averageRating.toFixed(1) : '0.0'}
                         </div>
                         <div className="text-xs text-gray-300">Avg Rating</div>
@@ -166,7 +166,7 @@ const FeedbackCard = () => {
                         <select
                             value={quickFeedback.category}
                             onChange={(e) => setQuickFeedback(prev => ({ ...prev, category: e.target.value }))}
-                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
                         >
                             <option value="general">General</option>
                             <option value="bug_report">Bug Report</option>
@@ -184,9 +184,9 @@ const FeedbackCard = () => {
                             value={quickFeedback.comment}
                             onChange={(e) => setQuickFeedback(prev => ({ ...prev, comment: e.target.value }))}
                             rows={3}
-                            className={`w-full px-3 py-2 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                            className={`w-full px-3 py-2 bg-white/10 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white ${
                                 quickFeedback.comment.trim().length > 0 && quickFeedback.comment.trim().length < 10 
-                                    ? 'border-red-400' 
+                                    ? 'border-white' 
                                     : 'border-white/20'
                             }`}
                             placeholder="Share your thoughts... (minimum 10 characters)"
@@ -194,7 +194,7 @@ const FeedbackCard = () => {
                         <div className="flex justify-between items-center mt-1">
                             <div className={`text-xs ${
                                 quickFeedback.comment.trim().length < 10 
-                                    ? 'text-red-300' 
+                                    ? 'text-white/80' 
                                     : 'text-gray-400'
                             }`}>
                                 {quickFeedback.comment.trim().length}/10 minimum
@@ -209,7 +209,7 @@ const FeedbackCard = () => {
                         <button
                             onClick={submitQuickFeedback}
                             disabled={submitting || !quickFeedback.comment.trim() || quickFeedback.comment.trim().length < 10}
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm"
+                            className="flex-1 bg-white/20 hover:bg-white/30 disabled:opacity-50 text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2 text-sm"
                         >
                             {submitting ? (
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -237,7 +237,7 @@ const FeedbackCard = () => {
                 </span>
                 <button
                     onClick={() => window.location.href = '/entrepreneur/feedback'}
-                    className="text-sm text-blue-300 hover:text-blue-200 flex items-center space-x-1"
+                    className="text-sm text-white/90 hover:text-white/90 flex items-center space-x-1"
                 >
                     <span>View All</span>
                     <TrendingUp size={14} />

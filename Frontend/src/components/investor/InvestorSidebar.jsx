@@ -152,7 +152,7 @@ const InvestorSidebar = ({
         <div className="flex-shrink-0 relative z-10">
           {item.icon}
           {item.badge && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold font-manrope">
+            <span className="absolute -top-2 -right-2 bg-white/20 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold font-manrope">
               {item.badge > 9 ? "9+" : item.badge}
             </span>
           )}
@@ -287,7 +287,7 @@ const InvestorSidebar = ({
             onClick={handleLogout}
             className={`
               w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
-              text-red-400 hover:text-red-300 hover:bg-red-900/20 hover:scale-105
+              text-white/80 hover:text-white/80 hover:bg-white/20 hover:scale-105
               ${
                 isCollapsed && window.innerWidth >= 1024 ? "justify-center" : ""
               }

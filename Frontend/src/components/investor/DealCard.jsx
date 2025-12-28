@@ -55,27 +55,26 @@ const DealCard = ({ request, onClick, stage }) => {
   // Get stage color
   const getStageColor = (stage) => {
     const colors = {
-      seed: "bg-green-600/20 text-green-300 border-green-500/30",
-      series_a: "bg-blue-600/20 text-blue-300 border-blue-500/30",
-      series_b: "bg-purple-600/20 text-purple-300 border-purple-500/30",
-      series_c: "bg-pink-600/20 text-pink-300 border-pink-500/30",
-      bridge: "bg-orange-600/20 text-orange-300 border-orange-500/30",
-      other: "bg-gray-600/20 text-gray-300 border-gray-500/30",
+      seed: "bg-white/10 text-white/90 border-white/30",
+      series_a: "bg-white/20 text-white/90 border-white/30",
+      series_b: "bg-white/20 text-white/90 border-white/30",
+      series_c: "bg-white/20 text-white/80 border-white/30",
+      bridge: "bg-white/20 text-white/80 border-white/30",
+      other: "bg-white/20 text-white/70 border-white/30",
     };
     return colors[stage] || colors.seed;
   };
 
   // Get status icon
   const getStatusIcon = () => {
-    if (stage === "new") return <FaClock className="w-4 h-4 text-blue-400" />;
-    if (stage === "viewed")
-      return <FaEye className="w-4 h-4 text-purple-400" />;
+    if (stage === "new") return <FaClock className="w-4 h-4 text-white/90" />;
+    if (stage === "viewed") return <FaEye className="w-4 h-4 text-white/90" />;
     if (stage === "negotiating")
-      return <FaComments className="w-4 h-4 text-yellow-400" />;
+      return <FaComments className="w-4 h-4 text-white/70" />;
     if (stage === "accepted")
-      return <FaCheckCircle className="w-4 h-4 text-green-400" />;
+      return <FaCheckCircle className="w-4 h-4 text-white/90" />;
     if (stage === "declined")
-      return <FaTimesCircle className="w-4 h-4 text-red-400" />;
+      return <FaTimesCircle className="w-4 h-4 text-white/80" />;
     return null;
   };
 
@@ -99,12 +98,12 @@ const DealCard = ({ request, onClick, stage }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-gray-900 border border-gray-700 rounded-lg p-4 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-200 cursor-pointer group"
+      className="bg-gray-900 border border-gray-700 rounded-lg p-4 hover:border-white hover:shadow-lg hover:shadow-white/10 transition-all duration-200 cursor-pointer group"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-white truncate group-hover:text-blue-300 transition-colors">
+          <h3 className="text-base font-semibold text-white truncate group-hover:text-white/90 transition-colors">
             {idea?.title || "Untitled Idea"}
           </h3>
           <p className="text-sm text-gray-400 truncate">
@@ -151,13 +150,13 @@ const DealCard = ({ request, onClick, stage }) => {
       </div>
 
       {/* Valuation */}
-      <div className="mb-3 p-2 bg-gradient-to-r from-green-600/10 to-blue-600/10 border border-green-500/20 rounded">
+      <div className="mb-3 p-2 bg-gradient-to-r from-white/10 to-white/600/10 border border-white/20 rounded">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 text-gray-400">
             <FaBuilding className="w-3 h-3" />
             <p className="text-xs">Valuation</p>
           </div>
-          <p className="text-sm font-semibold text-green-400">
+          <p className="text-sm font-semibold text-white/90">
             $
             {calculatedValuation
               ? (calculatedValuation / 1000000).toFixed(1)
@@ -182,7 +181,7 @@ const DealCard = ({ request, onClick, stage }) => {
 
       {/* Hover Effect Indicator */}
       <div className="mt-3 pt-3 border-t border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity">
-        <p className="text-xs text-center text-blue-400 font-medium">
+        <p className="text-xs text-center text-white/90 font-medium">
           Click to view details →
         </p>
       </div>

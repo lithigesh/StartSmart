@@ -1,5 +1,6 @@
 const InvestorInterest = require("../models/InvestorInterest.model");
 const Idea = require("../models/Idea.model");
+const FundingRequest = require("../models/FundingRequest.model");
 const NotificationService = require("../services/notification.service");
 
 // @desc    Get investor's interested ideas
@@ -12,18 +13,25 @@ exports.getInterestedIdeas = async (req, res, next) => {
     const interests = await InvestorInterest.find({
       investor: investorId,
       status: "interested",
-    }).populate({
-      path: "idea",
-      populate: {
-        path: "owner",
-        select: "name email",
-      },
-    });
+    })
+      .populate({
+        path: "idea",
+        populate: {
+          path: "owner",
+          select: "name email",
+        },
+      })
+      .lean();
 
-    // Extract the ideas from the interest records
+    // Extract the ideas from the interest records and filter out null ideas
     const interestedIdeas = interests
       .filter((interest) => interest.idea) // Filter out any null ideas
       .map((interest) => interest.idea);
+
+    // Log for debugging
+    console.log(
+      `Investor ${investorId} has ${interestedIdeas.length} interested ideas`
+    );
 
     res.json(interestedIdeas);
   } catch (error) {
@@ -80,6 +88,13 @@ exports.markInterest = async (req, res, next) => {
     });
 
     if (existingInterest) {
+      // If status is already 'interested', no need to update
+      if (existingInterest.status === "interested") {
+        return res.json({
+          message: "Interest already marked",
+          interest: existingInterest,
+        });
+      }
       // Update existing interest to 'interested'
       existingInterest.status = "interested";
       await existingInterest.save();
@@ -188,7 +203,6 @@ exports.withdrawInterest = async (req, res, next) => {
 exports.getPortfolioAnalytics = async (req, res, next) => {
   try {
     const investorId = req.user._id || req.user.id;
-    const FundingRequest = require("../models/FundingRequest.model");
 
     // Parallel query execution for better performance
     const [allRequests, interestedIdeasCount, pendingRequests] =
@@ -223,6 +237,17 @@ exports.getPortfolioAnalytics = async (req, res, next) => {
           viewedBy: { $nin: [investorId] },
         }),
       ]);
+
+    // Debug logging
+    console.log(`Portfolio Analytics Debug for investor ${investorId}:`);
+    console.log(`- Interested ideas count: ${interestedIdeasCount}`);
+
+    // Fetch actual records to verify
+    const actualInterests = await InvestorInterest.find({
+      investor: investorId,
+      status: "interested",
+    }).select("idea status");
+    console.log(`- Actual interest records:`, actualInterests);
 
     // Calculate metrics with null safety
     const acceptedDeals = allRequests.filter(

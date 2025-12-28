@@ -142,8 +142,8 @@ const PortfolioSection = () => {
 
   if (error) {
     return (
-      <div className="bg-red-900/20 border border-red-800 rounded-lg p-8 text-center">
-        <FaExclamationCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+      <div className="bg-white/20 border border-white rounded-lg p-8 text-center">
+        <FaExclamationCircle className="w-16 h-16 text-white/80 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-white mb-2">
           Error Loading Portfolio
         </h3>
@@ -204,16 +204,16 @@ const PortfolioSection = () => {
       {/* Overview Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Total Invested */}
-        <div className="bg-gradient-to-br from-blue-900/40 to-blue-800/20 border border-blue-800/50 rounded-lg p-6 hover:border-blue-700 transition-all">
+        <div className="bg-gradient-to-br from-white/900/40 to-white/800/20 border border-white/50 rounded-lg p-6 hover:border-white transition-all">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-blue-600/20 rounded-lg">
-              <FaDollarSign className="w-6 h-6 text-blue-400" />
+            <div className="p-3 bg-white/20/20 rounded-lg">
+              <FaDollarSign className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold text-white">
                 {formatCurrency(overview.totalInvested)}
               </div>
-              <div className="text-sm text-blue-400 mt-1">Total Invested</div>
+              <div className="text-sm text-white/90 mt-1">Total Invested</div>
             </div>
           </div>
           <div className="text-xs text-white/60">
@@ -222,16 +222,16 @@ const PortfolioSection = () => {
         </div>
 
         {/* Active Deals */}
-        <div className="bg-gradient-to-br from-green-900/40 to-green-800/20 border border-green-800/50 rounded-lg p-6 hover:border-green-700 transition-all">
+        <div className="bg-gradient-to-br from-white/40 to-white/20 border border-white/50 rounded-lg p-6 hover:border-white transition-all">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-green-600/20 rounded-lg">
-              <FaHandshake className="w-6 h-6 text-green-400" />
+            <div className="p-3 bg-white/10/20 rounded-lg">
+              <FaHandshake className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold text-white">
                 {overview.activeDeals}
               </div>
-              <div className="text-sm text-green-400 mt-1">Active Deals</div>
+              <div className="text-sm text-white/90 mt-1">Active Deals</div>
             </div>
           </div>
           <div className="text-xs text-white/60">
@@ -241,18 +241,16 @@ const PortfolioSection = () => {
         </div>
 
         {/* Interested Ideas */}
-        <div className="bg-gradient-to-br from-purple-900/40 to-purple-800/20 border border-purple-800/50 rounded-lg p-6 hover:border-purple-700 transition-all">
+        <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-lg p-6 hover:border-white/30 transition-all">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-purple-600/20 rounded-lg">
-              <FaLightbulb className="w-6 h-6 text-purple-400" />
+            <div className="p-3 bg-white/20 rounded-lg">
+              <FaLightbulb className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold text-white">
                 {overview.interestedIdeas}
               </div>
-              <div className="text-sm text-purple-400 mt-1">
-                Interested Ideas
-              </div>
+              <div className="text-sm text-white/90 mt-1">Interested Ideas</div>
             </div>
           </div>
           <div className="text-xs text-white/60">
@@ -261,18 +259,16 @@ const PortfolioSection = () => {
         </div>
 
         {/* Pending Reviews */}
-        <div className="bg-gradient-to-br from-orange-900/40 to-orange-800/20 border border-orange-800/50 rounded-lg p-6 hover:border-orange-700 transition-all">
+        <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-lg p-6 hover:border-white/30 transition-all">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-orange-600/20 rounded-lg">
-              <FaClipboardList className="w-6 h-6 text-orange-400" />
+            <div className="p-3 bg-white/20 rounded-lg">
+              <FaClipboardList className="w-6 h-6 text-white/80" />
             </div>
             <div className="text-right">
               <div className="text-3xl font-bold text-white">
                 {overview.pendingReviews}
               </div>
-              <div className="text-sm text-orange-400 mt-1">
-                Pending Reviews
-              </div>
+              <div className="text-sm text-white/80 mt-1">Pending Reviews</div>
             </div>
           </div>
           <div className="text-xs text-white/60">
@@ -286,7 +282,7 @@ const PortfolioSection = () => {
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-white font-semibold text-lg mb-2 flex items-center gap-2">
-              <FaTrophy className="text-yellow-400" />
+              <FaTrophy className="text-white/70" />
               Conversion Performance
             </h3>
             <p className="text-white/60 text-sm">
@@ -307,7 +303,7 @@ const PortfolioSection = () => {
         {/* Deal Pipeline Funnel */}
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-            <FaChartLine className="text-blue-400" />
+            <FaChartLine className="text-white/90" />
             Deal Pipeline
           </h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -336,7 +332,7 @@ const PortfolioSection = () => {
         {/* Investment Distribution by Category */}
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-            <FaChartPie className="text-green-400" />
+            <FaChartPie className="text-white/90" />
             Investment by Category
           </h3>
           {distribution.byCategory.length > 0 ? (
@@ -350,7 +346,7 @@ const PortfolioSection = () => {
                     labelLine={false}
                     label={renderCustomLabel}
                     outerRadius={100}
-                    fill="#8884d8"
+                    fill="#9CA3AF"
                     dataKey="value"
                   >
                     {distribution.byCategory.map((entry, index) => (
@@ -392,7 +388,7 @@ const PortfolioSection = () => {
       {distribution.byStage.length > 0 && (
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-            <FaChartPie className="text-purple-400" />
+            <FaChartPie className="text-white/90" />
             Investment Distribution by Stage
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -405,7 +401,7 @@ const PortfolioSection = () => {
                   {item.value}
                 </div>
                 <div className="text-sm text-white/60 mb-2">{item.name}</div>
-                <div className="text-xs text-purple-400 font-semibold">
+                <div className="text-xs text-white/90 font-semibold">
                   {item.percentage}%
                 </div>
               </div>
@@ -433,11 +429,11 @@ const PortfolioSection = () => {
                     </h4>
                     <div className="flex items-center gap-4 text-sm text-white/60">
                       <span className="flex items-center gap-1">
-                        <FaDollarSign className="text-green-400" />
+                        <FaDollarSign className="text-white/90" />
                         {formatCurrency(deal.amount)}
                       </span>
                       <span className="flex items-center gap-1">
-                        <FaLightbulb className="text-purple-400" />
+                        <FaLightbulb className="text-white/90" />
                         {deal.category}
                       </span>
                     </div>
@@ -447,7 +443,7 @@ const PortfolioSection = () => {
                       {formatDate(deal.acceptedAt)}
                     </div>
                     <div className="mt-1">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-900/30 text-green-400 border border-green-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-white/30 text-white/90 border border-white">
                         {deal.status}
                       </span>
                     </div>

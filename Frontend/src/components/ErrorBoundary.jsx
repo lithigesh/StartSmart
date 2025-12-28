@@ -79,8 +79,8 @@ class ErrorBoundary extends React.Component {
 
                 {/* Bug Icon */}
                 <div className="mb-6 flex justify-center">
-                  <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center">
-                    <FaBug className="w-10 h-10 text-purple-400" />
+                  <div className="w-20 h-20 bg-white/20/10 rounded-full flex items-center justify-center">
+                    <FaBug className="w-10 h-10 text-white/90" />
                   </div>
                 </div>
 
@@ -99,11 +99,11 @@ class ErrorBoundary extends React.Component {
 
                 {/* Error Details (Development Only) */}
                 {process.env.NODE_ENV === 'development' && this.state.error && (
-                  <div className="mb-8 text-left bg-red-500/5 border border-red-500/20 rounded-lg p-6">
-                    <h3 className="font-manrope font-semibold text-red-400 mb-4">
+                  <div className="mb-8 text-left bg-white/5 border border-white/20 rounded-lg p-6">
+                    <h3 className="font-manrope font-semibold text-white/80 mb-4">
                       Error Details (Development Mode):
                     </h3>
-                    <div className="text-red-300/80 text-xs font-mono overflow-auto max-h-40">
+                    <div className="text-white/80/80 text-xs font-mono overflow-auto max-h-40">
                       <div className="mb-2">
                         <strong>Error:</strong> {this.state.error.toString()}
                       </div>

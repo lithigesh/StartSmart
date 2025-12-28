@@ -75,7 +75,7 @@ const InvestorSelector = ({
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <FaUsers className="text-blue-400" />
+                <FaUsers className="text-white/90" />
                 Select Investors to Target
               </h2>
               <p className="text-white/60 text-sm mt-1">
@@ -100,7 +100,7 @@ const InvestorSelector = ({
                 placeholder="Search investors by name or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white transition-colors"
               />
             </div>
             <button
@@ -146,7 +146,7 @@ const InvestorSelector = ({
                   onClick={() => handleToggle(investor._id)}
                   className={`p-4 rounded-lg border transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-blue-600/10 border-blue-500 shadow-lg shadow-blue-500/20"
+                      ? "bg-white/20/10 border-white shadow-lg shadow-white/20"
                       : "bg-gray-800 border-gray-700 hover:border-gray-600 hover:bg-gray-800/80"
                   }`}
                 >
@@ -156,7 +156,7 @@ const InvestorSelector = ({
                         <div
                           className={`w-10 h-10 rounded-full flex items-center justify-center ${
                             isSelected
-                              ? "bg-blue-600 text-white"
+                              ? "bg-white/20 text-white"
                               : "bg-gray-700 text-white/80"
                           }`}
                         >
@@ -184,7 +184,7 @@ const InvestorSelector = ({
                     <div
                       className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
                         isSelected
-                          ? "bg-blue-600 border-blue-600"
+                          ? "bg-white/20 border-white"
                           : "border-gray-600"
                       }`}
                     >
@@ -202,11 +202,11 @@ const InvestorSelector = ({
           <div className="flex items-center justify-between gap-4">
             <div className="text-sm text-white/60">
               {localSelected.size === 0 ? (
-                <span className="flex items-center gap-2 text-yellow-400">
+                <span className="flex items-center gap-2 text-white/70">
                   ⚠️ No investors selected. Request will be public to all.
                 </span>
               ) : (
-                <span className="flex items-center gap-2 text-green-400">
+                <span className="flex items-center gap-2 text-white/90">
                   ✓ {localSelected.size} investor(s) will be notified
                 </span>
               )}
@@ -220,7 +220,7 @@ const InvestorSelector = ({
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
+                className="px-6 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
               >
                 <FaCheck className="w-4 h-4" />
                 Confirm Selection

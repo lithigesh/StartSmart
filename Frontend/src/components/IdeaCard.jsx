@@ -80,8 +80,8 @@ const IdeaCard = ({
               disabled={loading}
               className={`btn btn-sm rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
                 isInterested
-                  ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
-                  : "bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/30"
+                  ? "bg-white/20 text-white/80 hover:bg-white/30 border border-white/30"
+                  : "bg-white/20 text-white/90 hover:bg-white/30 border border-white/30"
               }`}
             >
               {loading ? (
@@ -107,14 +107,14 @@ const IdeaCard = ({
             </button>
             <button
               onClick={() => onEdit(idea)}
-              className="btn btn-sm bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white/20 text-white/90 hover:bg-white/30 border border-white/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <FaEdit className="w-3 h-3" />
               Edit
             </button>
             <button
               onClick={() => onDelete(idea._id || idea.id, idea.title)}
-              className="btn btn-sm bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white/20 text-white/80 hover:bg-white/30 border border-white/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <FaTrash className="w-3 h-3" />
               Delete
@@ -154,9 +154,9 @@ const IdeaCard = ({
         <span
           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium font-manrope ${
             idea.status === "analyzed"
-              ? "bg-green-100 text-green-800"
+              ? "bg-white/20 text-white/90"
               : idea.status === "submitted"
-              ? "bg-yellow-100 text-yellow-800"
+              ? "bg-white/20 text-white/70"
               : "bg-gray-100 text-gray-800"
           }`}
         >

@@ -16,11 +16,11 @@ export const Header = () => {
   const getRoleColor = () => {
     switch (user?.role) {
       case "entrepreneur":
-        return "text-yellow-400";
+        return "text-white/70";
       case "investor":
-        return "text-green-400";
+        return "text-white/90";
       default:
-        return "text-blue-400";
+        return "text-white/90";
     }
   };
 

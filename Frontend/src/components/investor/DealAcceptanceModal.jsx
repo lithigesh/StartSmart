@@ -133,7 +133,7 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
                       finalAmount: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
                   required
                   min="0"
                 />
@@ -157,7 +157,7 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
                       finalEquity: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
                   required
                   min="0"
                   max="100"
@@ -166,13 +166,13 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
             </div>
 
             {/* Calculated Valuation */}
-            <div className="bg-blue-600/10 border border-blue-500/30 rounded-lg p-4">
+            <div className="bg-white/20/10 border border-white/30 rounded-lg p-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-blue-300">
+                <div className="flex items-center gap-2 text-white/90">
                   <FaBuilding className="w-5 h-5" />
                   <span className="font-medium">Implied Valuation:</span>
                 </div>
-                <span className="text-2xl font-bold text-blue-300">
+                <span className="text-2xl font-bold text-white/90">
                   ${calculatedValuation.toLocaleString()}
                 </span>
               </div>
@@ -193,7 +193,7 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
                 }
                 placeholder="Any additional terms or conditions..."
                 rows={4}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent resize-none"
               />
             </div>
 
@@ -212,24 +212,24 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
                   })
                 }
                 placeholder="Type your full name"
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent"
                 required
               />
             </div>
           </div>
 
           {/* Terms Agreement */}
-          <div className="bg-yellow-600/10 border border-yellow-500/30 rounded-lg p-4">
+          <div className="bg-white/10 border border-white/30 rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <FaExclamationTriangle className="w-5 h-5 text-yellow-400 mt-1 flex-shrink-0" />
+              <FaExclamationTriangle className="w-5 h-5 text-white/70 mt-1 flex-shrink-0" />
               <div className="flex-1">
-                <h4 className="text-yellow-300 font-semibold mb-2">
+                <h4 className="text-white/70 font-semibold mb-2">
                   Important Notice
                 </h4>
-                <p className="text-yellow-200 text-sm mb-3">
+                <p className="text-white/70 text-sm mb-3">
                   By accepting this investment deal, you agree to:
                 </p>
-                <ul className="text-yellow-200 text-sm space-y-1 list-disc list-inside">
+                <ul className="text-white/70 text-sm space-y-1 list-disc list-inside">
                   <li>Commit the specified investment amount</li>
                   <li>Acquire the stated equity percentage</li>
                   <li>Abide by all terms and conditions</li>
@@ -240,9 +240,9 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
                     type="checkbox"
                     checked={agreedToTerms}
                     onChange={(e) => setAgreedToTerms(e.target.checked)}
-                    className="w-5 h-5 rounded border-yellow-500 bg-gray-800 text-yellow-500 focus:ring-2 focus:ring-yellow-500"
+                    className="w-5 h-5 rounded border-white bg-gray-800 text-white/70 focus:ring-2 focus:ring-white"
                   />
-                  <span className="text-yellow-200 font-medium">
+                  <span className="text-white/70 font-medium">
                     I understand and agree to these terms
                   </span>
                 </label>
@@ -252,8 +252,8 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-600/10 border border-red-500/30 rounded-lg p-4">
-              <div className="flex items-center gap-2 text-red-300">
+            <div className="bg-white/10 border border-white/30 rounded-lg p-4">
+              <div className="flex items-center gap-2 text-white/80">
                 <FaExclamationTriangle className="w-5 h-5" />
                 <span>{error}</span>
               </div>
@@ -277,7 +277,7 @@ const DealAcceptanceModal = ({ isOpen, onClose, fundingRequest, onAccept }) => {
                 !agreedToTerms ||
                 !acceptanceTerms.digitalSignature.trim()
               }
-              className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/30 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors font-medium flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

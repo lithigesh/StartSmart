@@ -9,11 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import {
-  FaChartLine,
-  FaSpinner,
-  FaChartArea,
-} from "react-icons/fa";
+import { FaChartLine, FaSpinner, FaChartArea } from "react-icons/fa";
 
 const COLORS = [
   "#3B82F6",
@@ -140,7 +136,7 @@ const IdeaComparisonCharts = ({ ideas, comparisonData, loading }) => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-semibold text-white flex items-center gap-2 font-manrope">
-            <FaChartLine className="w-5 h-5 text-blue-400" />
+            <FaChartLine className="w-5 h-5 text-white/90" />
             Comparison Analytics
           </h3>
           <div className="text-sm text-white/60 font-manrope">
@@ -158,7 +154,7 @@ const IdeaComparisonCharts = ({ ideas, comparisonData, loading }) => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium font-manrope transition-all duration-300 ${
                   activeTab === tab.id
-                    ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                    ? "bg-white/20/20 text-white/90 border border-white/30"
                     : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
                 }`}
               >

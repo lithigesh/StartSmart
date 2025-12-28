@@ -123,7 +123,7 @@ const FeedbackPage = () => {
               {/* Title */}
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
-                  Title <span className="text-red-400">*</span>
+                  Title <span className="text-white/80">*</span>
                 </label>
                 <input
                   type="text"
@@ -139,7 +139,7 @@ const FeedbackPage = () => {
               {/* Category */}
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
-                  Feedback Category <span className="text-red-400">*</span>
+                  Feedback Category <span className="text-white/80">*</span>
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                   {categories.map((cat) => (
@@ -164,7 +164,7 @@ const FeedbackPage = () => {
               {/* Description */}
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
-                  Your Feedback <span className="text-red-400">*</span>
+                  Your Feedback <span className="text-white/80">*</span>
                 </label>
                 <textarea
                   value={formData.description}
@@ -181,7 +181,7 @@ const FeedbackPage = () => {
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
                   Overall Experience Rating{" "}
-                  <span className="text-red-400">*</span>
+                  <span className="text-white/80">*</span>
                 </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -198,7 +198,7 @@ const FeedbackPage = () => {
                       <FaStar
                         className={`w-10 h-10 transition-colors duration-200 ${
                           star <= (hoveredRating || formData.overallRating)
-                            ? "text-yellow-400"
+                            ? "text-white/70"
                             : "text-white/20"
                         }`}
                       />
@@ -211,7 +211,7 @@ const FeedbackPage = () => {
               <div>
                 <label className="block text-white font-manrope font-medium mb-3">
                   How likely are you to recommend StartSmart?{" "}
-                  <span className="text-red-400">*</span>
+                  <span className="text-white/80">*</span>
                 </label>
                 <div className="flex gap-2 flex-wrap">
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
@@ -227,10 +227,10 @@ const FeedbackPage = () => {
                         score <=
                         (hoveredRecommendation || formData.recommendationScore)
                           ? score <= 6
-                            ? "bg-red-400/20 border-red-400/30 text-red-400"
+                            ? "bg-white/20 border-white/30 text-white/80"
                             : score <= 8
-                            ? "bg-yellow-400/20 border-yellow-400/30 text-yellow-400"
-                            : "bg-green-400/20 border-green-400/30 text-green-400"
+                            ? "bg-white/20 border-white/30 text-white/70"
+                            : "bg-white/20 border-white/30 text-white/90"
                           : "bg-white/[0.03] border-white/10 text-white/70"
                       } hover:scale-110`}
                     >
@@ -273,8 +273,8 @@ const FeedbackPage = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-blue-400/10 flex items-center justify-center mb-4">
-                <FaCheckCircle className="w-6 h-6 text-blue-400" />
+              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                <FaCheckCircle className="w-6 h-6 text-white/90" />
               </div>
               <h4 className="text-white font-manrope font-semibold text-lg mb-2">
                 We Listen
@@ -291,8 +291,8 @@ const FeedbackPage = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-green-400/10 flex items-center justify-center mb-4">
-                <FaCheckCircle className="w-6 h-6 text-green-400" />
+              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                <FaCheckCircle className="w-6 h-6 text-white/90" />
               </div>
               <h4 className="text-white font-manrope font-semibold text-lg mb-2">
                 We Improve
@@ -309,8 +309,8 @@ const FeedbackPage = () => {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-purple-400/10 flex items-center justify-center mb-4">
-                <FaCheckCircle className="w-6 h-6 text-purple-400" />
+              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
+                <FaCheckCircle className="w-6 h-6 text-white/90" />
               </div>
               <h4 className="text-white font-manrope font-semibold text-lg mb-2">
                 We Respond

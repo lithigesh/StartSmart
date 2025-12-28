@@ -22,12 +22,12 @@ const RegistrationSuccessScreen = ({ registrationData, ideathonTitle, onClose })
       {/* Success Card */}
       <div className="relative w-full max-w-2xl mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[80]">
         {/* Success Header */}
-        <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 p-8 text-center border-b border-green-500/30">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
-            <FaCheck className="w-8 h-8 text-green-400" />
+        <div className="bg-gradient-to-r from-white/20 to-white/20 p-8 text-center border-b border-white/30">
+          <div className="w-16 h-16 bg-white/10/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+            <FaCheck className="w-8 h-8 text-white/90" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Registration Successful!</h2>
-          <p className="text-green-400">You've successfully registered for {ideathonTitle}</p>
+          <p className="text-white/90">You've successfully registered for {ideathonTitle}</p>
         </div>
 
         {/* Registration Details */}
@@ -35,7 +35,7 @@ const RegistrationSuccessScreen = ({ registrationData, ideathonTitle, onClose })
           {/* Team Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <FaUsers className="text-blue-400" />
+              <FaUsers className="text-white/90" />
               Team Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,7 +53,7 @@ const RegistrationSuccessScreen = ({ registrationData, ideathonTitle, onClose })
           {/* Contact Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <FaIdCard className="text-blue-400" />
+              <FaIdCard className="text-white/90" />
               Contact Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,7 +77,7 @@ const RegistrationSuccessScreen = ({ registrationData, ideathonTitle, onClose })
           {/* Project Details */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <FaTrophy className="text-blue-400" />
+              <FaTrophy className="text-white/90" />
               Project Details
             </h3>
             <div className="space-y-4">
@@ -110,7 +110,7 @@ const RegistrationSuccessScreen = ({ registrationData, ideathonTitle, onClose })
                       href={registrationData.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 font-medium break-all"
+                      className="text-white/90 hover:text-white/90 font-medium break-all"
                     >
                       {registrationData.githubUrl}
                     </a>
@@ -124,7 +124,7 @@ const RegistrationSuccessScreen = ({ registrationData, ideathonTitle, onClose })
           {registrationData.documents && registrationData.documents.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <FaFileAlt className="text-blue-400" />
+                <FaFileAlt className="text-white/90" />
                 Uploaded Documents
               </h3>
               <div className="grid grid-cols-1 gap-3">

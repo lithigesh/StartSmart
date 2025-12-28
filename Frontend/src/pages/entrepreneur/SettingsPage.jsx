@@ -196,8 +196,8 @@ const SettingsPage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-              <FaInfoCircle className="w-5 h-5 text-blue-400" />
+            <div className="w-10 h-10 rounded-lg bg-white/20/20 flex items-center justify-center">
+              <FaInfoCircle className="w-5 h-5 text-white/90" />
             </div>
             <h2 className="text-2xl font-bold text-white font-manrope">
               Account Information
@@ -227,8 +227,8 @@ const SettingsPage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-              <FaUser className="w-5 h-5 text-green-400" />
+            <div className="w-10 h-10 rounded-lg bg-white/10/20 flex items-center justify-center">
+              <FaUser className="w-5 h-5 text-white/90" />
             </div>
             <h2 className="text-2xl font-bold text-white font-manrope">
               Profile Information
@@ -249,7 +249,7 @@ const SettingsPage = () => {
                   onChange={(e) =>
                     setProfileData({ ...profileData, name: e.target.value })
                   }
-                  className="w-full pl-12 pr-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope transition-all duration-300"
+                  className="w-full pl-12 pr-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope transition-all duration-300"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -268,7 +268,7 @@ const SettingsPage = () => {
                   onChange={(e) =>
                     setProfileData({ ...profileData, email: e.target.value })
                   }
-                  className="w-full pl-12 pr-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-manrope transition-all duration-300"
+                  className="w-full pl-12 pr-4 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope transition-all duration-300"
                   placeholder="Enter your email address"
                 />
               </div>
@@ -276,14 +276,14 @@ const SettingsPage = () => {
 
             {/* Error/Success Messages */}
             {profileError && (
-              <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm font-manrope animate-shake">
+              <div className="flex items-center gap-2 p-4 bg-white/10 border border-white/30 rounded-lg text-white/80 text-sm font-manrope animate-shake">
                 <FaExclamationTriangle className="w-5 h-5 flex-shrink-0" />
                 <span>{profileError}</span>
               </div>
             )}
 
             {profileSuccess && (
-              <div className="flex items-center gap-2 p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm font-manrope animate-fade-in">
+              <div className="flex items-center gap-2 p-4 bg-white/10/10 border border-white/30 rounded-lg text-white/90 text-sm font-manrope animate-fade-in">
                 <FaCheckCircle className="w-5 h-5 flex-shrink-0" />
                 <span>{profileSuccess}</span>
               </div>
@@ -293,11 +293,11 @@ const SettingsPage = () => {
             <button
               type="submit"
               disabled={isUpdatingProfile}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-green-500/20 hover:bg-green-500/30 disabled:bg-gray-500/20 disabled:cursor-not-allowed text-green-400 disabled:text-gray-400 rounded-lg transition-all duration-300 font-medium font-manrope group hover:scale-105 transform"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white/10/20 hover:bg-white/10/30 disabled:bg-gray-500/20 disabled:cursor-not-allowed text-white/90 disabled:text-gray-400 rounded-lg transition-all duration-300 font-medium font-manrope group hover:scale-105 transform"
             >
               {isUpdatingProfile ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-green-400 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Updating...
                 </>
               ) : (
@@ -319,8 +319,8 @@ const SettingsPage = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-              <FaLock className="w-5 h-5 text-purple-400" />
+            <div className="w-10 h-10 rounded-lg bg-white/20/20 flex items-center justify-center">
+              <FaLock className="w-5 h-5 text-white/90" />
             </div>
             <h2 className="text-2xl font-bold text-white font-manrope">
               Change Password
@@ -344,7 +344,7 @@ const SettingsPage = () => {
                       currentPassword: e.target.value,
                     })
                   }
-                  className="w-full pl-12 pr-12 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-manrope transition-all duration-300"
+                  className="w-full pl-12 pr-12 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope transition-all duration-300"
                   placeholder="Enter current password"
                 />
                 <button
@@ -382,7 +382,7 @@ const SettingsPage = () => {
                       newPassword: e.target.value,
                     })
                   }
-                  className="w-full pl-12 pr-12 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-manrope transition-all duration-300"
+                  className="w-full pl-12 pr-12 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope transition-all duration-300"
                   placeholder="Enter new password (min. 6 characters)"
                 />
                 <button
@@ -420,7 +420,7 @@ const SettingsPage = () => {
                       confirmPassword: e.target.value,
                     })
                   }
-                  className="w-full pl-12 pr-12 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent font-manrope transition-all duration-300"
+                  className="w-full pl-12 pr-12 py-3 bg-white/[0.03] border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent font-manrope transition-all duration-300"
                   placeholder="Confirm new password"
                 />
                 <button
@@ -444,14 +444,14 @@ const SettingsPage = () => {
 
             {/* Error/Success Messages */}
             {passwordError && (
-              <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm font-manrope animate-shake">
+              <div className="flex items-center gap-2 p-4 bg-white/10 border border-white/30 rounded-lg text-white/80 text-sm font-manrope animate-shake">
                 <FaExclamationTriangle className="w-5 h-5 flex-shrink-0" />
                 <span>{passwordError}</span>
               </div>
             )}
 
             {passwordSuccess && (
-              <div className="flex items-center gap-2 p-4 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm font-manrope animate-fade-in">
+              <div className="flex items-center gap-2 p-4 bg-white/10/10 border border-white/30 rounded-lg text-white/90 text-sm font-manrope animate-fade-in">
                 <FaCheckCircle className="w-5 h-5 flex-shrink-0" />
                 <span>{passwordSuccess}</span>
               </div>
@@ -461,11 +461,11 @@ const SettingsPage = () => {
             <button
               type="submit"
               disabled={isUpdatingPassword}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-purple-500/20 hover:bg-purple-500/30 disabled:bg-gray-500/20 disabled:cursor-not-allowed text-purple-400 disabled:text-gray-400 rounded-lg transition-all duration-300 font-medium font-manrope group hover:scale-105 transform"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-white/20/20 hover:bg-white/20/30 disabled:bg-gray-500/20 disabled:cursor-not-allowed text-white/90 disabled:text-gray-400 rounded-lg transition-all duration-300 font-medium font-manrope group hover:scale-105 transform"
             >
               {isUpdatingPassword ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></div>
                   Updating...
                 </>
               ) : (

@@ -48,8 +48,8 @@ const ServerErrorPage = () => {
 
             {/* 500 Icon */}
             <div className="mb-6 flex justify-center">
-              <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center">
-                <FaExclamationCircle className="w-10 h-10 text-orange-400" />
+              <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center">
+                <FaExclamationCircle className="w-10 h-10 text-white/80" />
               </div>
             </div>
 

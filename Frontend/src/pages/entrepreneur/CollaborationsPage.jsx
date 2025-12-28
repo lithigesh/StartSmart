@@ -148,7 +148,7 @@ const CollaborationsPage = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <FaSpinner className="animate-spin text-4xl text-blue-400" />
+        <FaSpinner className="animate-spin text-4xl text-white/90" />
       </div>
     );
   }
@@ -180,7 +180,7 @@ const CollaborationsPage = () => {
                   onClick={() => setActiveTab(tab.value)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     activeTab === tab.value
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-white/20 text-white'
                       : 'bg-gray-800 text-white/70 hover:bg-gray-700'
                   }`}
                 >
@@ -242,7 +242,7 @@ const CollaborationsPage = () => {
                     className="bg-gray-900 rounded-lg border border-gray-800 p-6 hover:border-gray-700 transition-colors"
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                      <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                         <FaUser className="text-white" />
                       </div>
                       <div className="flex-1">
@@ -270,7 +270,7 @@ const CollaborationsPage = () => {
                           {entrepreneur.skills.slice(0, 3).map((skill, index) => (
                             <span 
                               key={index}
-                              className="px-2 py-1 bg-blue-600/20 text-blue-400 rounded text-xs"
+                              className="px-2 py-1 bg-white/20/20 text-white/90 rounded text-xs"
                             >
                               {skill}
                             </span>
@@ -294,19 +294,19 @@ const CollaborationsPage = () => {
                       </button>
                       
                       {isConnected(entrepreneur._id) ? (
-                        <span className="inline-flex items-center gap-2 px-3 py-2 bg-green-600/20 text-green-400 rounded-lg text-sm font-medium">
+                        <span className="inline-flex items-center gap-2 px-3 py-2 bg-white/10/20 text-white/90 rounded-lg text-sm font-medium">
                           <FaCheck className="w-4 h-4" />
                           Connected
                         </span>
                       ) : hasPendingRequest(entrepreneur._id) ? (
-                        <span className="inline-flex items-center gap-2 px-3 py-2 bg-yellow-600/20 text-yellow-400 rounded-lg text-sm font-medium">
+                        <span className="inline-flex items-center gap-2 px-3 py-2 bg-white/20 text-white/70 rounded-lg text-sm font-medium">
                           <FaSpinner className="w-4 h-4" />
                           Pending
                         </span>
                       ) : (
                         <button
                           onClick={() => handleSendConnectionRequest(entrepreneur._id)}
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                          className="inline-flex items-center gap-2 px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                         >
                           <FaUserPlus className="w-4 h-4" />
                           Connect
@@ -324,7 +324,7 @@ const CollaborationsPage = () => {
         {activeTab === 'requests' && (
           <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <FaUserPlus className="text-blue-400" />
+              <FaUserPlus className="text-white/90" />
               Connection Requests
             </h3>
             
@@ -338,7 +338,7 @@ const CollaborationsPage = () => {
                 {pendingRequests.map((request) => (
                   <div key={request._id} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                         <FaUser className="text-white text-sm" />
                       </div>
                       <div>
@@ -349,14 +349,14 @@ const CollaborationsPage = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleAcceptConnectionRequest(request._id)}
-                        className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                       >
                         <FaCheck className="w-4 h-4" />
                         Accept
                       </button>
                       <button
                         onClick={() => handleDeclineConnectionRequest(request._id)}
-                        className="inline-flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                       >
                         <FaTimes className="w-4 h-4" />
                         Decline
@@ -373,7 +373,7 @@ const CollaborationsPage = () => {
         {activeTab === 'connections' && (
           <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
             <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <FaNetworkWired className="text-green-400" />
+              <FaNetworkWired className="text-white/90" />
               My Network
             </h3>
             
@@ -387,7 +387,7 @@ const CollaborationsPage = () => {
                 {connections.map((connection) => (
                   <div key={connection._id} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
                         <FaUser className="text-white text-sm" />
                       </div>
                       <div>
@@ -396,7 +396,7 @@ const CollaborationsPage = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="inline-flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium">
+                      <button className="inline-flex items-center gap-2 px-3 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium">
                         <FaComment className="w-4 h-4" />
                         Message
                       </button>
@@ -425,7 +425,7 @@ const CollaborationsPage = () => {
             
             <div className="space-y-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                   <FaUser className="text-white text-xl" />
                 </div>
                 <div>
@@ -454,7 +454,7 @@ const CollaborationsPage = () => {
                     {selectedEntrepreneur.skills.map((skill, index) => (
                       <span 
                         key={index}
-                        className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-lg text-sm"
+                        className="px-3 py-1 bg-white/20/20 text-white/90 rounded-lg text-sm"
                       >
                         {skill}
                       </span>
@@ -476,7 +476,7 @@ const CollaborationsPage = () => {
                       handleSendConnectionRequest(selectedEntrepreneur._id);
                       setShowDetails(false);
                     }}
-                    className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    className="flex-1 px-4 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
                   >
                     Send Connection Request
                   </button>

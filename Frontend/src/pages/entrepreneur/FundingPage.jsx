@@ -339,13 +339,13 @@ const FundingPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "text-yellow-400 bg-yellow-400/10";
+        return "text-white/70 bg-white/10";
       case "accepted":
-        return "text-green-400 bg-green-400/10";
+        return "text-white/90 bg-white/10";
       case "declined":
-        return "text-red-400 bg-red-400/10";
+        return "text-white/80 bg-white/10";
       case "negotiated":
-        return "text-blue-400 bg-blue-400/10";
+        return "text-white/90 bg-white/10";
       case "withdrawn":
         return "text-white/60 bg-white/10";
       default:
@@ -397,7 +397,7 @@ const FundingPage = () => {
                 <div className="text-white/70">
                   <FaDollarSign className="w-6 h-6" />
                 </div>
-                <span className="text-2xl font-bold text-green-400 font-manrope">
+                <span className="text-2xl font-bold text-white/90 font-manrope">
                   {formatCurrency(dashboardData.fundingReceived)}
                 </span>
               </div>
@@ -421,7 +421,7 @@ const FundingPage = () => {
                 <div className="text-white/70">
                   <FaFileAlt className="w-6 h-6" />
                 </div>
-                <span className="text-2xl font-bold text-blue-400 font-manrope">
+                <span className="text-2xl font-bold text-white/90 font-manrope">
                   {fundingRequests.length}
                 </span>
               </div>
@@ -532,8 +532,8 @@ const FundingPage = () => {
 
                     {/* Investor Details - Show when accepted */}
                     {request.status === "accepted" && (
-                      <div className="mb-4 p-4 bg-green-600/10 border border-green-500/30 rounded-lg">
-                        <h5 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                      <div className="mb-4 p-4 bg-white/10/10 border border-white/30 rounded-lg">
+                        <h5 className="text-white/90 font-semibold mb-3 flex items-center gap-2">
                           <FaCheckCircle className="w-4 h-4" />
                           Funding Accepted
                         </h5>
@@ -561,7 +561,7 @@ const FundingPage = () => {
                                   Contact Email
                                 </p>
                                 <p className="text-white font-medium flex items-center gap-2">
-                                  <FaEnvelope className="w-3 h-3 text-green-400" />
+                                  <FaEnvelope className="w-3 h-3 text-white/90" />
                                   {request.acceptedBy?.email ||
                                   request.investorResponses?.find(
                                     (r) => r.status === "accepted"
@@ -573,7 +573,7 @@ const FundingPage = () => {
                                           (r) => r.status === "accepted"
                                         )?.investor?.email
                                       }`}
-                                      className="hover:text-green-400 transition-colors break-all"
+                                      className="hover:text-white/90 transition-colors break-all"
                                     >
                                       {request.acceptedBy?.email ||
                                         request.investorResponses?.find(
@@ -620,7 +620,7 @@ const FundingPage = () => {
                               )}
                             </div>
                             {request.acceptanceTerms?.conditions && (
-                              <div className="mt-3 pt-3 border-t border-green-500/20">
+                              <div className="mt-3 pt-3 border-t border-white/20">
                                 <p className="text-white/60 text-xs mb-1">
                                   Terms & Conditions
                                 </p>
@@ -677,19 +677,21 @@ const FundingPage = () => {
                           e.stopPropagation();
                           handleViewFundingRequest(request);
                         }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                       >
                         <FaEye className="w-4 h-4" />
                         Show Details
                       </button>
-                      
-                      {(request.status === "pending" || request.status === "negotiated" || request.status === "accepted") && (
+
+                      {(request.status === "pending" ||
+                        request.status === "negotiated" ||
+                        request.status === "accepted") && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleShowContact(request);
                           }}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                         >
                           <FaEnvelope className="w-4 h-4" />
                           Contact
@@ -713,21 +715,21 @@ const FundingPage = () => {
                               e.stopPropagation();
                               handleWithdrawFundingRequest(request._id);
                             }}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                           >
-                            <FaTrash className="w-4 h-4" />
+                            <FaTrash className="w-4 h-4 text-red-400" />
                             Delete
                           </button>
                         </>
                       )}
                       {request.status === "accepted" && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-600/20 text-green-400 rounded-lg text-sm font-medium">
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10/20 text-white/90 rounded-lg text-sm font-medium">
                           <FaCheckCircle className="w-4 h-4" />
                           Accepted
                         </span>
                       )}
                       {request.status === "declined" && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 rounded-lg text-sm font-medium">
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 text-white/80 rounded-lg text-sm font-medium">
                           <FaTimesCircle className="w-4 h-4" />
                           Declined
                         </span>
@@ -755,7 +757,10 @@ const FundingPage = () => {
           onSuccess={() => {
             setShowFundingModal(false);
             loadDashboardData();
-            addNotification("Funding request submitted successfully!", "success");
+            addNotification(
+              "Funding request submitted successfully!",
+              "success"
+            );
           }}
         />
       )}

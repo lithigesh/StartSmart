@@ -188,7 +188,7 @@ const ChatInterface = ({
     if (msg.status === "failed") {
       return {
         icon: FaExclamationTriangle,
-        color: "text-red-400",
+        color: "text-white/80",
         text: "Failed",
       };
     }
@@ -196,7 +196,7 @@ const ChatInterface = ({
       return { icon: FaClock, color: "text-gray-400", text: "Sending..." };
     }
     if (msg.status === "sent" || msg.status === "delivered") {
-      return { icon: FaCheck, color: "text-green-400", text: "Sent" };
+      return { icon: FaCheck, color: "text-white/90", text: "Sent" };
     }
     return null;
   };
@@ -223,7 +223,7 @@ const ChatInterface = ({
               if (isSystem) {
                 return (
                   <div key={msg._id || index} className="flex justify-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600/20 border border-blue-500/30 rounded-full text-blue-300 text-sm">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20/20 border border-white/30 rounded-full text-white/90 text-sm">
                       {msg.message?.startsWith("✅") ? (
                         <FaCheckCircle className="w-4 h-4" />
                       ) : (
@@ -269,8 +269,8 @@ const ChatInterface = ({
                     <div
                       className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
                         senderRole === "investor"
-                          ? "bg-blue-600"
-                          : "bg-purple-600"
+                          ? "bg-white/20"
+                          : "bg-white"
                       }`}
                     >
                       {senderRole === "investor" ? (
@@ -290,7 +290,7 @@ const ChatInterface = ({
                       <div
                         className={`px-4 py-3 rounded-2xl break-words ${
                           isOwn
-                            ? "bg-blue-600 text-white rounded-tr-none"
+                            ? "bg-white/20 text-white rounded-tr-none"
                             : "bg-gray-800 border border-gray-700 text-white rounded-tl-none"
                         }`}
                       >
@@ -304,7 +304,7 @@ const ChatInterface = ({
                             msg.proposalData.equity) && (
                             <div
                               className={`mt-3 pt-3 border-t ${
-                                isOwn ? "border-blue-500" : "border-gray-600"
+                                isOwn ? "border-white" : "border-gray-600"
                               }`}
                             >
                               <div className="text-sm font-semibold mb-2 flex items-center gap-2">
@@ -371,7 +371,7 @@ const ChatInterface = ({
                         {isOwn && msg.status === "failed" && onRetryMessage && (
                           <button
                             onClick={() => onRetryMessage(msg)}
-                            className="ml-2 text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                            className="ml-2 text-white/90 hover:text-white/90 flex items-center gap-1"
                           >
                             <FaRedo className="w-3 h-3" />
                             Retry
@@ -403,7 +403,7 @@ const ChatInterface = ({
                   value={proposedAmount}
                   onChange={(e) => setProposedAmount(e.target.value)}
                   placeholder="e.g., 250000"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
                 />
               </div>
               <div>
@@ -416,7 +416,7 @@ const ChatInterface = ({
                   value={proposedEquity}
                   onChange={(e) => setProposedEquity(e.target.value)}
                   placeholder="e.g., 15"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
                 />
               </div>
             </div>
@@ -426,7 +426,7 @@ const ChatInterface = ({
           <div className="space-y-2">
             {/* Error Message */}
             {error && (
-              <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+              <div className="flex items-center gap-2 p-3 bg-white/20 border border-white/30 rounded-lg text-white/80 text-sm">
                 <FaExclamationTriangle className="w-4 h-4 flex-shrink-0" />
                 <span>{error}</span>
               </div>
@@ -446,7 +446,7 @@ const ChatInterface = ({
                   }}
                   placeholder="Type your message... (Shift+Enter for new line)"
                   rows={3}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent resize-none"
                   disabled={isSending}
                   maxLength={MAX_MESSAGE_LENGTH}
                 />
@@ -455,7 +455,7 @@ const ChatInterface = ({
                   <span
                     className={`text-xs ${
                       message.length > MAX_MESSAGE_LENGTH * 0.9
-                        ? "text-yellow-400"
+                        ? "text-white/70"
                         : "text-gray-500"
                     }`}
                   >
@@ -473,7 +473,7 @@ const ChatInterface = ({
                     type="button"
                     className={`px-4 py-2 rounded-lg border transition-colors ${
                       showProposalFields
-                        ? "bg-blue-600 border-blue-500 text-white"
+                        ? "bg-white/20 border-white text-white"
                         : "bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
                     }`}
                     title="Add proposed terms"
@@ -489,7 +489,7 @@ const ChatInterface = ({
                     isSending ||
                     (!message.trim() && !proposedAmount && !proposedEquity)
                   }
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   {isSending ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

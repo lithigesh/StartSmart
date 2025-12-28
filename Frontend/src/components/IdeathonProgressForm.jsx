@@ -314,7 +314,7 @@ const IdeathonProgressForm = ({ registration, onClose, onSuccess }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`flex-1 px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors ${
+                className={`flex-1 px-6 py-2.5 bg-white/20 text-white rounded-lg font-medium hover:bg-white/20 transition-colors ${
                   loading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
               >
@@ -335,7 +335,7 @@ const IdeathonProgressForm = ({ registration, onClose, onSuccess }) => {
               <button
                 type="button"
                 onClick={() => setShowFinalSubmission(true)}
-                className="w-full px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-6 py-2.5 bg-white/20 text-white rounded-lg font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
               >
                 <span className="text-lg">🚀</span>
                 Submit Final Project
@@ -483,7 +483,7 @@ const IdeathonProgressForm = ({ registration, onClose, onSuccess }) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`flex-1 px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors ${
+                  className={`flex-1 px-6 py-2.5 bg-white/20 text-white rounded-lg font-medium hover:bg-white/20 transition-colors ${
                     loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
