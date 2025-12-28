@@ -1528,9 +1528,20 @@ exports.getInvestorPipeline = async (req, res, next) => {
       accepted: pipeline.accepted.length,
       declined: pipeline.declined.length,
       totalInvested: pipeline.accepted.reduce((sum, r) => {
-        return sum + (r.acceptanceTerms?.finalAmount || r.amount);
+        const amount = r.acceptanceTerms?.finalAmount || r.amount || 0;
+        return sum + amount;
       }, 0),
     };
+
+    console.log('Pipeline Stats:', {
+      acceptedCount: pipeline.accepted.length,
+      totalInvested: stats.totalInvested,
+      acceptedDeals: pipeline.accepted.map(r => ({
+        id: r._id,
+        amount: r.amount,
+        finalAmount: r.acceptanceTerms?.finalAmount
+      }))
+    });
 
     res.json({
       success: true,

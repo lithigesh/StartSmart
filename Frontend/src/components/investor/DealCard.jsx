@@ -178,12 +178,6 @@ const DealCard = ({ request, onClick, stage }) => {
       {/* Footer Info */}
       <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-800">
         <span>{formatDate(createdAt)}</span>
-        {negotiationHistory.length > 0 && (
-          <span className="flex items-center gap-1 text-yellow-400">
-            <FaComments className="w-3 h-3" />
-            {negotiationHistory.length}
-          </span>
-        )}
       </div>
 
       {/* Hover Effect Indicator */}

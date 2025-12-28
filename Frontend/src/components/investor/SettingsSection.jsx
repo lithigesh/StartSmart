@@ -281,16 +281,6 @@ const SettingsSection = () => {
               {user?.role || "N/A"}
             </p>
           </div>
-          <div>
-            <label className="block text-white/60 text-sm mb-1 font-manrope">
-              Member Since
-            </label>
-            <p className="text-white font-medium font-manrope">
-              {user?.createdAt
-                ? new Date(user.createdAt).toLocaleDateString()
-                : "N/A"}
-            </p>
-          </div>
         </div>
       </div>
 

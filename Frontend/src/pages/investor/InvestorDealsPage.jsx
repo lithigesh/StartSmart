@@ -97,7 +97,37 @@ const InvestorDealsPage = () => {
       // If pipeline loaded successfully, use it as base
       if (pipelineResponse.success) {
         finalPipeline = pipelineResponse.data;
-        finalStats = pipelineResponse.stats;
+        finalStats = pipelineResponse.stats || {
+          total: 0,
+          new: 0,
+          viewed: 0,
+          negotiating: 0,
+          accepted: 0,
+          declined: 0,
+          totalInvested: 0,
+        };
+        
+        console.log('Pipeline Response:', {
+          stats: pipelineResponse.stats,
+          acceptedCount: finalPipeline.accepted?.length,
+          acceptedDeals: finalPipeline.accepted?.map(d => ({
+            id: d._id,
+            amount: d.amount,
+            finalAmount: d.acceptanceTerms?.finalAmount
+          }))
+        });
+        
+        // Calculate total invested from accepted deals if not provided or is 0
+        if (!finalStats.totalInvested || finalStats.totalInvested === 0) {
+          finalStats.totalInvested = (finalPipeline.accepted || []).reduce(
+            (total, deal) => {
+              const amount = deal.acceptanceTerms?.finalAmount || deal.amount || 0;
+              return total + amount;
+            },
+            0
+          );
+          console.log('Recalculated totalInvested:', finalStats.totalInvested);
+        }
       } else {
         console.warn("Pipeline API failed, showing available requests only");
         addNotification("Some deal data may be incomplete", "warning");
@@ -288,7 +318,13 @@ const InvestorDealsPage = () => {
           />
           <StatsCard
             label="Total Invested"
-            value={`$${(stats.totalInvested / 1000000).toFixed(1)}M`}
+            value={
+              stats.totalInvested >= 1000000
+                ? `$${(stats.totalInvested / 1000000).toFixed(1)}M`
+                : stats.totalInvested >= 1000
+                ? `$${(stats.totalInvested / 1000).toFixed(0)}K`
+                : `$${stats.totalInvested.toFixed(0)}`
+            }
             icon={FaDollarSign}
             color="purple"
           />

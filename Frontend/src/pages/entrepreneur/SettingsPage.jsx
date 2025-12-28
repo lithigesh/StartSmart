@@ -215,19 +215,6 @@ const SettingsPage = () => {
                 {user?.role}
               </p>
             </div>
-            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/10">
-              <div className="flex items-center gap-2 mb-1">
-                <FaCalendar className="w-4 h-4 text-white/60" />
-                <span className="text-white/60 text-sm font-manrope">
-                  Member Since
-                </span>
-              </div>
-              <p className="text-white font-medium font-manrope">
-                {user?.createdAt
-                  ? new Date(user.createdAt).toLocaleDateString()
-                  : "N/A"}
-              </p>
-            </div>
           </div>
         </div>
       </div>
