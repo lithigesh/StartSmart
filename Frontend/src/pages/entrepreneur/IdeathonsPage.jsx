@@ -91,7 +91,7 @@ const IdeathonsPage = () => {
   // Fetch user's registered ideathons
   const fetchRegisteredIdeathons = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/ideathon-registrations/my-registrations`, {
+      const res = await fetch(`${API_BASE}/api/ideathons/my-registrations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -357,8 +357,22 @@ const IdeathonsPage = () => {
                   </p>
                 )}
 
-                {/* Register Button */}
-                <div className="mt-auto pt-4">
+                {/* Action Buttons */}
+                <div className="mt-auto pt-4 space-y-2">
+                  {/* View Details Button */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.location.href = `/entrepreneur/ideathon/${ideathon._id}`;
+                    }}
+                    className="w-full px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 bg-white/5 text-white/90 border border-white/20 hover:bg-white/10 hover:border-white/30"
+                  >
+                    <FaInfoCircle />
+                    View Details
+                  </button>
+
+                  {/* Register Button */}
                   <button
                     onClick={(e) => {
                       e.preventDefault();

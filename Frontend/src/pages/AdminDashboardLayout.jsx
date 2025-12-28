@@ -31,7 +31,6 @@ const AdminDashboard = () => {
     { id: 'users', label: 'Manage Users', icon: FaUsers, path: '/admin/users' },
     { id: 'ideas', label: 'Manage Ideas', icon: FaLightbulb, path: '/admin/ideas' },
     { id: 'ideathons', label: 'Ideathons', icon: FaTrophy, path: '/admin/ideathons' },
-    { id: 'registration-master', label: 'Registration Master', icon: FaTrophy, path: '/admin/registration-master' },
     { id: 'feedback', label: 'Ideas Feedback', icon: FaEdit, path: '/admin/feedback' },
   ];
 

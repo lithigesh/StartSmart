@@ -5,7 +5,7 @@ import EmptyState from './EmptyState';
 import IdeathonUpdateForm from './IdeathonUpdateForm';
 import IdeathonProgressForm from './IdeathonProgressForm';
 import IdeathonRegistrationStats from './IdeathonRegistrationStats';
-import { FaChevronDown, FaChevronUp, FaEdit, FaChartBar, FaTasks } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaEdit, FaChartBar, FaTasks, FaSignOutAlt } from 'react-icons/fa';
 
 const MyRegisteredIdeathons = () => {
     const [registrations, setRegistrations] = useState([]);
@@ -48,6 +48,33 @@ const MyRegisteredIdeathons = () => {
             toast.error(error.response?.data?.message || 'Failed to fetch registrations');
             setRegistrations([]);
             setLoading(false);
+        }
+    };
+
+    const handleWithdraw = async (registrationId, ideathonTitle) => {
+        if (!window.confirm(`Are you sure you want to withdraw from "${ideathonTitle}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found');
+            }
+
+            const response = await axios.delete(`${API_BASE}/api/ideathons/registrations/${registrationId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.data.success) {
+                toast.success('Successfully withdrawn from ideathon');
+                fetchRegistrations(); // Refresh the list
+            }
+        } catch (error) {
+            console.error('Error withdrawing from ideathon:', error);
+            toast.error(error.response?.data?.message || 'Failed to withdraw from ideathon');
         }
     };
 
@@ -108,18 +135,17 @@ const MyRegisteredIdeathons = () => {
                                     className="px-3 py-1 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold hover:bg-blue-500/30 transition-colors flex items-center gap-1 whitespace-nowrap"
                                 >
                                     <FaEdit size={12} />
-                                    Update
+                                    Edit Details
                                 </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        setSelectedRegistration(registration);
-                                        setShowProgressForm(true);
+                                        handleWithdraw(registration._id, registration.ideathon?.title);
                                     }}
-                                    className="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-semibold hover:bg-emerald-500/30 transition-colors flex items-center gap-1 whitespace-nowrap"
+                                    className="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-xs font-semibold hover:bg-red-500/30 transition-colors flex items-center gap-1 whitespace-nowrap"
                                 >
-                                    <FaTasks size={12} />
-                                    Track Progress
+                                    <FaSignOutAlt size={12} />
+                                    Withdraw
                                 </button>
                             </div>
                         </div>
@@ -141,19 +167,6 @@ const MyRegisteredIdeathons = () => {
                             
                             <div className="text-white/80 bg-white/5 p-3 rounded-lg">
                                 <span className="font-medium text-white/90">Project:</span> {registration.projectTitle}
-                            </div>
-
-                            <div className="text-white/80 bg-white/5 p-3 rounded-lg">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="font-medium text-white/90 flex items-center gap-2">
-                                        <FaChartBar />
-                                        Registration & Tech Stack Statistics
-                                    </span>
-                                </div>
-                                <IdeathonRegistrationStats 
-                                    registrations={registrations} 
-                                    techStack={registration.techStack} 
-                                />
                             </div>
 
                             {registration.techStack && (

@@ -121,28 +121,14 @@ export const ideasAPI = {
   // Get user's ideas
   getUserIdeas: async () => {
     try {
-      // First get the current user info to get userId
       let token = localStorage.getItem("token");
 
       if (!token) {
         throw new Error("No authentication token found. Please log in.");
       }
 
-      // Decode token to get user ID (simple base64 decode of JWT payload)
-      let userId;
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        userId = payload.id || payload.userId || payload.sub;
-
-        if (!userId) {
-          throw new Error("Invalid token structure");
-        }
-      } catch (tokenError) {
-        throw new Error("Invalid token format");
-      }
-
       const response = await Promise.race([
-        fetch(`${API_URL}/api/ideas/user/${userId}`, {
+        fetch(`${API_URL}/api/ideas/user`, {
           headers: getAuthHeaders(),
         }),
         new Promise(
@@ -255,7 +241,7 @@ export const entrepreneurAPI = {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const userId = payload.id;
 
-    const response = await fetch(`${API_URL}/api/ideas/user/${userId}`, {
+    const response = await fetch(`${API_URL}/api/ideas/user`, {
       headers: getAuthHeaders(),
     });
     return handleResponse(response);
