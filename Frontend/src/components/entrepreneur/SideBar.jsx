@@ -53,13 +53,6 @@ const SideBar = ({
       path: "/entrepreneur/funding",
     },
     {
-      id: "investors",
-      label: "Investors",
-      icon: <FaBriefcase className="w-5 h-5" />,
-      description: "Connect with investors",
-      path: "/entrepreneur/investors",
-    },
-    {
       id: "ideathons",
       label: "Ideathons",
       icon: <FaTrophy className="w-5 h-5" />,
@@ -79,9 +72,9 @@ const SideBar = ({
     },
     {
       id: "settings",
-      label: "Settings",
+      label: "Account",
       icon: <FaCog className="w-5 h-5" />,
-      description: "Account settings",
+      description: "Account details",
       path: "/entrepreneur/settings",
     },
     {

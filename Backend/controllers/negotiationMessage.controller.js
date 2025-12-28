@@ -136,6 +136,12 @@ exports.sendMessage = async (req, res) => {
       await fundingRequest.save();
     }
 
+    // Emit socket event to funding request room
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`funding:${fundingRequestId}`).emit('newMessage', message);
+    }
+
     res.status(201).json({
       success: true,
       message: "Message sent successfully",

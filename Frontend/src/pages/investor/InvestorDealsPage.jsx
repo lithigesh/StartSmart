@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 import DealCard from "../../components/investor/DealCard";
 import InvestorFundingRequestModal from "../../components/investor/InvestorFundingRequestModal";
-import FundingAnalyticsCharts from "../../components/charts/FundingAnalyticsCharts";
+
 import { investorDealAPI } from "../../services/api";
 import { useNotifications } from "../../hooks/useNotifications";
 
@@ -294,23 +294,6 @@ const InvestorDealsPage = () => {
           />
         </div>
 
-        {/* Funding Analytics */}
-        {stats.total > 0 && (
-          <div className="mb-6">
-            <FundingAnalyticsCharts
-              fundingRequests={[
-                ...pipeline.new,
-                ...pipeline.viewed,
-                ...pipeline.negotiating,
-                ...pipeline.accepted,
-                ...pipeline.declined,
-              ]}
-              loading={isLoading}
-              userRole="investor"
-            />
-          </div>
-        )}
-
         {/* Filters */}
         <div className="flex flex-wrap gap-3 bg-gray-900 border border-gray-800 rounded-lg p-4">
           <div className="flex-1 min-w-[200px]">
@@ -355,13 +338,12 @@ const InvestorDealsPage = () => {
         </div>
       </div>
 
-      {/* Pipeline Board */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {columns.map((column) => {
+      {/* Pipeline Board - Vertical Layout */}
+      <div className="space-y-4">{columns.map((column) => {
           const filteredRequests = filterRequests(pipeline[column.id] || []);
 
           return (
-            <div key={column.id} className="flex flex-col">
+            <div key={column.id} className="w-full">
               {/* Column Header */}
               <div
                 className={`border rounded-t-lg p-4 ${getColumnColor(
@@ -382,20 +364,22 @@ const InvestorDealsPage = () => {
               </div>
 
               {/* Column Content */}
-              <div className="flex-1 bg-gray-900/30 border-x border-b border-gray-800 rounded-b-lg p-3 space-y-3 min-h-[500px] overflow-y-auto">
+              <div className="bg-gray-900/30 border-x border-b border-gray-800 rounded-b-lg p-3">
                 {filteredRequests.length === 0 ? (
-                  <div className="flex items-center justify-center h-40 text-gray-500 text-sm">
+                  <div className="flex items-center justify-center h-20 text-gray-500 text-sm">
                     No deals in this stage
                   </div>
                 ) : (
-                  filteredRequests.map((request) => (
-                    <DealCard
-                      key={request._id}
-                      request={request}
-                      onClick={() => handleCardClick(request)}
-                      stage={column.id}
-                    />
-                  ))
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    {filteredRequests.map((request) => (
+                      <DealCard
+                        key={request._id}
+                        request={request}
+                        onClick={() => handleCardClick(request)}
+                        stage={column.id}
+                      />
+                    ))}
+                  </div>
                 )}
               </div>
             </div>

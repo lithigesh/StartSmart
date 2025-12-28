@@ -7,118 +7,119 @@ import {
   FaLightbulb,
   FaDollarSign,
   FaPercentage,
-  FaPlus
+  FaPlus,
+  FaFileContract,
+  FaBullseye,
+  FaChartLine,
+  FaUsers,
+  FaArrowRight,
+  FaArrowLeft,
+  FaPhone,
+  FaEnvelope,
+  FaGlobe,
+  FaLinkedin,
 } from "react-icons/fa";
 import { ideasAPI, fundingAPI } from "../../services/api";
 
 /**
- * FundingRequestForm Component
- * Handles creating new funding requests with comprehensive validation
- * 
- * Props:
- * - isOpen: Boolean to control modal visibility
- * - onClose: Function to close the modal
- * - onSuccess: Function called after successful submission to refresh data
+ * FundingRequestForm Component - Multi-step Wizard
+ * 4 Steps: Overview, Business Details, Financial, Team & Contact
  */
 const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
-  // State for form data
+  const [currentStep, setCurrentStep] = useState(0);
+  
   const [formData, setFormData] = useState({
     selectedIdeaId: "",
     amount: "",
     equity: "",
-    message: ""
+    message: "",
+    fundingStage: "seed",
+    investmentType: "equity",
+    businessPlan: "",
+    targetMarket: "",
+    revenueModel: "",
+    competitiveAdvantage: "",
+    customerTraction: "",
+    financialProjections: "",
+    useOfFunds: "",
+    timeline: "",
+    milestones: "",
+    riskFactors: "",
+    exitStrategy: "",
+    currentRevenue: "",
+    previousFunding: "",
+    teamSize: "",
+    contactPhone: "",
+    contactEmail: "",
+    companyWebsite: "",
+    linkedinProfile: "",
+    intellectualProperty: "",
+    additionalDocuments: "",
   });
 
-  // State for managing data and UI
-  const [userIdeas, setUserIdeas] = useState([]); // User's existing ideas from database
-  const [isLoadingIdeas, setIsLoadingIdeas] = useState(false); // Loading state for fetching ideas
-  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state for form submission
-  const [error, setError] = useState(""); // Error message display
-  const [success, setSuccess] = useState(""); // Success message display
-  const [validationErrors, setValidationErrors] = useState({}); // Field-specific validation errors
+  const [userIdeas, setUserIdeas] = useState([]);
+  const [isLoadingIdeas, setIsLoadingIdeas] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
-  /**
-   * Fetch user's existing ideas from the database
-   * Called when component mounts or modal opens
-   */
+  const steps = [
+    { id: "overview", label: "Overview", icon: <FaFileContract className="w-4 h-4" /> },
+    { id: "business", label: "Business Details", icon: <FaBullseye className="w-4 h-4" /> },
+    { id: "financial", label: "Financial", icon: <FaChartLine className="w-4 h-4" /> },
+    { id: "team", label: "Team & Contact", icon: <FaUsers className="w-4 h-4" /> },
+  ];
+
   const fetchUserIdeas = async () => {
     try {
       setIsLoadingIdeas(true);
       setError("");
-      
-      // API call to get user's ideas - will fallback to demo data if API unavailable
       const response = await ideasAPI.getUserIdeas();
-      
-      // Check if response has data regardless of success flag
       if (response && response.data && Array.isArray(response.data)) {
         setUserIdeas(response.data);
-        console.log("Successfully loaded ideas:", response.data.length);
       } else {
-        // If no data, fall back to hardcoded demo data
-        const demoIdeas = [
-          {
-            id: 1,
-            title: "AI-Powered Marketing Platform",
-            category: "Technology",
-            elevatorPitch: "Transform marketing with AI-driven automation",
-            targetAudience: "Small to medium businesses"
-          },
-          {
-            id: 2,
-            title: "Smart Home Automation",
-            category: "IoT",
-            elevatorPitch: "Smart homes that adapt to save energy",
-            targetAudience: "Homeowners and property managers"
-          },
-          {
-            id: 3,
-            title: "Sustainable Fashion Marketplace",
-            category: "E-commerce",
-            elevatorPitch: "Connect conscious consumers with sustainable fashion",
-            targetAudience: "Eco-conscious millennials"
-          }
-        ];
-        setUserIdeas(demoIdeas);
-        console.log("Using fallback demo ideas:", demoIdeas.length);
+        setUserIdeas([]);
       }
     } catch (err) {
       console.error("Error fetching user ideas:", err);
-      // Even if there's an error, provide demo data
-      const demoIdeas = [
-        {
-          id: 1,
-          title: "AI-Powered Marketing Platform",
-          category: "Technology",
-          elevatorPitch: "Transform marketing with AI-driven automation",
-          targetAudience: "Small to medium businesses"
-        },
-        {
-          id: 2,
-          title: "Smart Home Automation",
-          category: "IoT",
-          elevatorPitch: "Smart homes that adapt to save energy",
-          targetAudience: "Homeowners and property managers"
-        }
-      ];
-      setUserIdeas(demoIdeas);
-      console.log("Error occurred, using demo ideas:", demoIdeas.length);
+      setUserIdeas([]);
     } finally {
       setIsLoadingIdeas(false);
     }
   };
 
-  /**
-   * useEffect to fetch ideas when modal opens
-   */
   useEffect(() => {
     if (isOpen) {
       fetchUserIdeas();
-      // Reset form when modal opens
+      setCurrentStep(0);
       setFormData({
         selectedIdeaId: "",
         amount: "",
         equity: "",
-        message: ""
+        message: "",
+        fundingStage: "seed",
+        investmentType: "equity",
+        businessPlan: "",
+        targetMarket: "",
+        revenueModel: "",
+        competitiveAdvantage: "",
+        customerTraction: "",
+        financialProjections: "",
+        useOfFunds: "",
+        timeline: "",
+        milestones: "",
+        riskFactors: "",
+        exitStrategy: "",
+        currentRevenue: "",
+        previousFunding: "",
+        teamSize: "",
+        contactPhone: "",
+        contactEmail: "",
+        companyWebsite: "",
+        linkedinProfile: "",
+        intellectualProperty: "",
+        additionalDocuments: "",
       });
       setError("");
       setSuccess("");
@@ -126,86 +127,86 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
     }
   }, [isOpen]);
 
-  /**
-   * Handle input changes for form fields
-   */
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
-    // Clear field-specific validation error when user starts typing
     if (validationErrors[name]) {
-      setValidationErrors(prev => ({
-        ...prev,
-        [name]: ""
-      }));
+      setValidationErrors(prev => ({ ...prev, [name]: "" }));
     }
-    
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  /**
-   * Validate individual form fields
-   */
-  const validateField = (name, value) => {
-    switch (name) {
-      case "selectedIdeaId":
-        return !value ? "Please select an idea for funding." : "";
-      
-      case "amount":
-        if (!value) return "Amount is required.";
-        const numValue = parseFloat(value);
-        if (isNaN(numValue) || numValue <= 0) return "Amount must be a positive number.";
-        if (numValue > 50000000) return "Amount cannot exceed $50 million.";
-        return "";
-      
-      case "equity":
-        if (!value) return "Equity percentage is required.";
-        const equityValue = parseFloat(value);
-        if (isNaN(equityValue) || equityValue < 0 || equityValue > 100) {
-          return "Equity must be between 0 and 100 percent.";
-        }
-        return "";
-      
-      default:
-        return "";
-    }
-  };
-
-  /**
-   * Validate entire form before submission
-   */
-  const validateForm = () => {
+  const validateCurrentStep = () => {
     const errors = {};
     
-    // Validate all required fields
-    errors.selectedIdeaId = validateField("selectedIdeaId", formData.selectedIdeaId);
-    errors.amount = validateField("amount", formData.amount);
-    errors.equity = validateField("equity", formData.equity);
+    if (currentStep === 0) {
+      // Overview - Required fields
+      if (!formData.selectedIdeaId) errors.selectedIdeaId = "Please select an idea";
+      if (!formData.amount) {
+        errors.amount = "Amount is required";
+      } else if (parseFloat(formData.amount) <= 0) {
+        errors.amount = "Amount must be positive";
+      }
+      if (!formData.equity) {
+        errors.equity = "Equity is required";
+      } else {
+        const eq = parseFloat(formData.equity);
+        if (eq <= 0 || eq > 100) {
+          errors.equity = "Equity must be between 0 and 100";
+        }
+      }
+      if (!formData.message) errors.message = "Please provide a brief message";
+    } else if (currentStep === 1) {
+      // Business Details - All required
+      if (!formData.businessPlan) errors.businessPlan = "Business plan is required";
+      if (!formData.targetMarket) errors.targetMarket = "Target market is required";
+      if (!formData.revenueModel) errors.revenueModel = "Revenue model is required";
+      if (!formData.competitiveAdvantage) errors.competitiveAdvantage = "Competitive advantage is required";
+      if (!formData.customerTraction) errors.customerTraction = "Customer traction is required";
+    } else if (currentStep === 2) {
+      // Financial - All required
+      if (!formData.financialProjections) errors.financialProjections = "Financial projections are required";
+      if (!formData.useOfFunds) errors.useOfFunds = "Use of funds is required";
+      if (!formData.timeline) errors.timeline = "Timeline is required";
+      if (!formData.milestones) errors.milestones = "Milestones are required";
+      if (!formData.riskFactors) errors.riskFactors = "Risk factors are required";
+      if (!formData.exitStrategy) errors.exitStrategy = "Exit strategy is required";
+      if (!formData.currentRevenue && formData.currentRevenue !== "0") errors.currentRevenue = "Current revenue is required";
+      if (!formData.previousFunding && formData.previousFunding !== "0") errors.previousFunding = "Previous funding is required (enter 0 if none)";
+    } else if (currentStep === 3) {
+      // Team & Contact - All required
+      if (!formData.teamSize) errors.teamSize = "Team size is required";
+      if (!formData.contactPhone) errors.contactPhone = "Contact phone is required";
+      if (!formData.contactEmail) {
+        errors.contactEmail = "Contact email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
+        errors.contactEmail = "Please enter a valid email";
+      }
+      if (!formData.companyWebsite) errors.companyWebsite = "Company website is required";
+      if (!formData.linkedinProfile) errors.linkedinProfile = "LinkedIn profile is required";
+      if (!formData.intellectualProperty) errors.intellectualProperty = "Intellectual property information is required";
+    }
     
-    // Filter out empty error messages
-    const filteredErrors = Object.fromEntries(
-      Object.entries(errors).filter(([_, value]) => value !== "")
-    );
-    
-    setValidationErrors(filteredErrors);
-    return Object.keys(filteredErrors).length === 0;
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
-  /**
-   * Handle form submission
-   * Sends POST request to /api/funding
-   */
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    console.log("Form submission started"); // Debug log
-    
-    // Validate form data
-    if (!validateForm()) {
-      setError("Please fix the errors below and try again.");
+  const handleNext = () => {
+    if (validateCurrentStep()) {
+      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+      setError("");
+    } else {
+      setError("Please fill in all required fields before proceeding");
+    }
+  };
+
+  const handlePrevious = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 0));
+    setError("");
+  };
+
+  const handleSubmit = async () => {
+    if (!validateCurrentStep()) {
+      setError("Please fill in all required fields");
       return;
     }
 
@@ -214,68 +215,54 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
       setError("");
       setSuccess("");
 
-      // Check authentication
-      let token = localStorage.getItem("token");
-      if (!token) {
-        // Use the real test token for demonstration
-        const realTestToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Y2FmZmE2YWM0Nzc3NTQxMmI2NDViNiIsImlhdCI6MTc1ODEzNDI0OSwiZXhwIjoxNzYwNzI2MjQ5fQ.aW8QwenhAs3Ow8yBcMso74vKfqYPIc3_GwktvMjaUds";
-        localStorage.setItem("token", realTestToken);
-        token = realTestToken;
-        console.log("Using real test token for API testing");
-      }
-
-      // Prepare funding request data
       const requestData = {
-        ideaId: parseInt(formData.selectedIdeaId),
+        ideaId: formData.selectedIdeaId,
         amount: parseFloat(formData.amount),
         equity: parseFloat(formData.equity),
-        message: formData.message.trim() || undefined
+        message: formData.message,
+        fundingStage: formData.fundingStage,
+        investmentType: formData.investmentType,
+        businessPlan: formData.businessPlan,
+        targetMarket: formData.targetMarket,
+        revenueModel: formData.revenueModel,
+        competitiveAdvantage: formData.competitiveAdvantage,
+        customerTraction: formData.customerTraction,
+        financialProjections: formData.financialProjections,
+        useOfFunds: formData.useOfFunds,
+        timeline: formData.timeline,
+        milestones: formData.milestones,
+        riskFactors: formData.riskFactors,
+        exitStrategy: formData.exitStrategy,
+        currentRevenue: parseFloat(formData.currentRevenue) || 0,
+        previousFunding: parseFloat(formData.previousFunding) || 0,
+        teamSize: parseInt(formData.teamSize),
+        contactPhone: formData.contactPhone,
+        contactEmail: formData.contactEmail,
+        companyWebsite: formData.companyWebsite,
+        linkedinProfile: formData.linkedinProfile,
+        intellectualProperty: formData.intellectualProperty,
+        additionalDocuments: formData.additionalDocuments || "",
       };
 
-      console.log("Submitting funding request:", requestData); // Debug log
-
-      // API call to create funding request (POST /api/funding)
       const response = await fundingAPI.createFundingRequest(requestData);
       
-      console.log("API response:", response); // Debug log
-
       if (response && response.success) {
-        setSuccess("Funding request submitted successfully! Investors will be notified.");
-        // Call onSuccess callback to refresh the funding requests list
+        setSuccess("Funding request submitted successfully!");
         if (onSuccess) {
-          setTimeout(() => {
-            onSuccess();
-          }, 1000);
+          setTimeout(() => onSuccess(), 1000);
         }
-        // Close modal after brief delay to show success message
-        setTimeout(() => {
-          onClose();
-        }, 2000);
-      } else if (response && response.data) {
-        // Handle case where response doesn't have success flag but has data
-        setSuccess("Funding request submitted successfully! Investors will be notified.");
-        if (onSuccess) {
-          setTimeout(() => {
-            onSuccess();
-          }, 1000);
-        }
-        setTimeout(() => {
-          onClose();
-        }, 2000);
+        setTimeout(() => onClose(), 2000);
       } else {
-        setError(response?.message || "Failed to submit funding request. Please try again.");
+        setError(response?.message || "Failed to submit funding request");
       }
     } catch (err) {
       console.error("Error submitting funding request:", err);
-      setError("Failed to submit request. Please check your connection and try again.");
+      setError("Failed to submit request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  /**
-   * Format currency display
-   */
   const formatCurrency = (amount) => {
     if (!amount) return "";
     const num = parseFloat(amount);
@@ -288,33 +275,25 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
     }).format(num);
   };
 
-  /**
-   * Navigate to Ideas page to create new ideas
-   */
   const handleCreateIdea = () => {
     onClose();
-    // Emit custom event that parent can listen to
     window.dispatchEvent(new CustomEvent('navigateToIdeas'));
   };
 
-  // Don't render if modal is not open
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
-      {/* Backdrop with blur */}
-      <div 
-        className="absolute inset-0 bg-black/80 backdrop-blur-xl" 
-        onClick={onClose}
-      ></div>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose}></div>
       
-      {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[70]">
+      <div className="relative w-full max-w-5xl max-h-[90vh] bg-black border border-white/20 rounded-2xl overflow-hidden z-[70] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
           <div>
             <h2 className="text-2xl font-bold text-white">Create Funding Request</h2>
-            <p className="text-white/60 mt-1">Submit your idea for investor funding</p>
+            <p className="text-white/60 mt-1">
+              Step {currentStep + 1} of {steps.length}: {steps[currentStep].label}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -324,57 +303,78 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
           </button>
         </div>
 
+        {/* Messages */}
+        {success && (
+          <div className="mx-6 mt-4 p-4 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
+            <FaCheck className="w-5 h-5 text-green-400" />
+            <p className="text-green-400">{success}</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="mx-6 mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-3">
+            <FaExclamationTriangle className="w-5 h-5 text-red-400" />
+            <p className="text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Step Indicators */}
+        <div className="border-b border-white/10 flex-shrink-0">
+          <div className="flex overflow-x-auto">
+            {steps.map((step, index) => (
+              <button
+                key={step.id}
+                onClick={() => index < currentStep && setCurrentStep(index)}
+                disabled={index > currentStep}
+                className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-all duration-200 relative ${
+                  currentStep === index
+                    ? "border-b-2 border-white text-white"
+                    : currentStep > index
+                    ? "text-green-400 hover:text-green-300 cursor-pointer"
+                    : "text-white/40 cursor-not-allowed"
+                }`}
+              >
+                {step.icon}
+                <span className="font-medium">{step.label}</span>
+                {currentStep > index && <FaCheck className="w-3 h-3 text-green-400" />}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Content */}
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
-          {/* Success Message */}
-          {success && (
-            <div className="mb-6 p-4 bg-green-900/20 border border-green-500/30 rounded-lg flex items-center gap-3">
-              <FaCheck className="w-5 h-5 text-green-400" />
-              <p className="text-green-400">{success}</p>
-            </div>
-          )}
-
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg flex items-center gap-3">
-              <FaExclamationTriangle className="w-5 h-5 text-red-400" />
-              <p className="text-red-400">{error}</p>
-            </div>
-          )}
-
-          {/* Loading Ideas */}
+        <div className="p-6 flex-1 overflow-y-auto">
           {isLoadingIdeas ? (
             <div className="flex items-center justify-center py-12">
               <FaSpinner className="w-8 h-8 text-white animate-spin" />
               <span className="ml-3 text-white">Loading your ideas...</span>
             </div>
+          ) : userIdeas.length === 0 && currentStep === 0 ? (
+            <div className="p-6 bg-gray-900 border border-gray-800 rounded-lg text-center">
+              <FaLightbulb className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+              <h3 className="text-white font-medium mb-2">No Ideas Found</h3>
+              <p className="text-white/60 mb-4">
+                You need to create at least one idea before requesting funding.
+              </p>
+              <button
+                type="button"
+                onClick={handleCreateIdea}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200"
+              >
+                <FaPlus className="w-4 h-4" />
+                Create Your First Idea
+              </button>
+            </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Idea Selection */}
-              <div>
-                <label className="block text-white font-medium mb-3">
-                  Select Idea <span className="text-red-400">*</span>
-                </label>
-                
-                {userIdeas.length === 0 ? (
-                  // No ideas available - show message and link to Ideas page
-                  <div className="p-6 bg-gray-900 border border-gray-800 rounded-lg text-center">
-                    <FaLightbulb className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-                    <h3 className="text-white font-medium mb-2">No Ideas Found</h3>
-                    <p className="text-white/60 mb-4">
-                      You need to create at least one idea before requesting funding.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={handleCreateIdea}
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200"
-                    >
-                      <FaPlus className="w-4 h-4" />
-                      Create Your First Idea
-                    </button>
-                  </div>
-                ) : (
+            <div className="space-y-6">
+              {/* STEP 0: Overview */}
+              {currentStep === 0 && (
+                <div className="space-y-6">
+                  {/* Idea Selection */}
                   <div>
+                    <label className="block text-white font-medium mb-3">
+                      Select Idea <span className="text-red-400">*</span>
+                    </label>
                     <select
                       name="selectedIdeaId"
                       value={formData.selectedIdeaId}
@@ -382,11 +382,10 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
                         validationErrors.selectedIdeaId ? 'border-red-500' : 'border-gray-700'
                       }`}
-                      required
                     >
                       <option value="">Choose an idea...</option>
                       {userIdeas.map((idea) => (
-                        <option key={idea.id} value={idea.id}>
+                        <option key={idea._id || idea.id} value={idea._id || idea.id}>
                           {idea.title} - {idea.category}
                         </option>
                       ))}
@@ -395,138 +394,609 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                       <p className="text-red-400 text-sm mt-2">{validationErrors.selectedIdeaId}</p>
                     )}
                   </div>
-                )}
-              </div>
 
-              {/* Show selected idea details */}
-              {formData.selectedIdeaId && userIdeas.length > 0 && (
-                <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
-                  {(() => {
-                    const selectedIdea = userIdeas.find(idea => idea.id === parseInt(formData.selectedIdeaId));
-                    return selectedIdea ? (
-                      <div>
-                        <h4 className="text-white font-medium mb-2">{selectedIdea.title}</h4>
-                        <p className="text-white/60 text-sm mb-2">{selectedIdea.elevatorPitch}</p>
-                        <div className="flex items-center gap-4 text-xs text-white/50">
-                          <span>Category: {selectedIdea.category}</span>
-                          <span>Target: {selectedIdea.targetAudience}</span>
-                        </div>
+                  {/* Selected Idea Details */}
+                  {formData.selectedIdeaId && (
+                    <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+                      {(() => {
+                        const selectedIdea = userIdeas.find(idea => (idea._id || idea.id) === formData.selectedIdeaId);
+                        return selectedIdea ? (
+                          <div>
+                            <h4 className="text-white font-medium mb-2">{selectedIdea.title}</h4>
+                            <p className="text-white/60 text-sm mb-2">{selectedIdea.elevatorPitch}</p>
+                            <div className="flex items-center gap-4 text-xs text-white/50">
+                              <span>Category: {selectedIdea.category}</span>
+                              <span>Target: {selectedIdea.targetAudience}</span>
+                            </div>
+                          </div>
+                        ) : null;
+                      })()}
+                    </div>
+                  )}
+
+                  {/* Amount & Equity */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Amount Required <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="number"
+                          name="amount"
+                          value={formData.amount}
+                          onChange={handleInputChange}
+                          placeholder="250000"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.amount ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
                       </div>
-                    ) : null;
-                  })()}
+                      {formData.amount && !validationErrors.amount && (
+                        <p className="text-white/60 text-sm mt-2">{formatCurrency(formData.amount)}</p>
+                      )}
+                      {validationErrors.amount && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.amount}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Equity Offered <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaPercentage className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="number"
+                          name="equity"
+                          value={formData.equity}
+                          onChange={handleInputChange}
+                          placeholder="15"
+                          step="0.1"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.equity ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.equity && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.equity}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Funding Stage & Investment Type */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Funding Stage <span className="text-red-400">*</span>
+                      </label>
+                      <select
+                        name="fundingStage"
+                        value={formData.fundingStage}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                      >
+                        <option value="seed">Seed</option>
+                        <option value="series_a">Series A</option>
+                        <option value="series_b">Series B</option>
+                        <option value="series_c">Series C</option>
+                        <option value="bridge">Bridge</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Investment Type <span className="text-red-400">*</span>
+                      </label>
+                      <select
+                        name="investmentType"
+                        value={formData.investmentType}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors"
+                      >
+                        <option value="equity">Equity</option>
+                        <option value="convertible_note">Convertible Note</option>
+                        <option value="safe">SAFE</option>
+                        <option value="revenue_share">Revenue Share</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Message */}
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Brief Message for Investors <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      placeholder="Introduce your funding request to potential investors..."
+                      rows={4}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.message ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.message && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.message}</p>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {/* Amount Required */}
-              <div>
-                <label className="block text-white font-medium mb-3">
-                  Amount Required <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
-                  <input
-                    type="number"
-                    name="amount"
-                    value={formData.amount}
-                    onChange={handleInputChange}
-                    placeholder="250000"
-                    min="1"
-                    max="50000000"
-                    step="1000"
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                      validationErrors.amount ? 'border-red-500' : 'border-gray-700'
-                    }`}
-                    required
-                  />
-                </div>
-                {formData.amount && !validationErrors.amount && (
-                  <p className="text-white/60 text-sm mt-2">
-                    Formatted: {formatCurrency(formData.amount)}
-                  </p>
-                )}
-                {validationErrors.amount && (
-                  <p className="text-red-400 text-sm mt-2">{validationErrors.amount}</p>
-                )}
-              </div>
+              {/* STEP 1: Business Details */}
+              {currentStep === 1 && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Business Plan <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="businessPlan"
+                      value={formData.businessPlan}
+                      onChange={handleInputChange}
+                      placeholder="Describe your business model, value proposition, and market strategy in detail..."
+                      rows={4}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.businessPlan ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.businessPlan && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.businessPlan}</p>
+                    )}
+                  </div>
 
-              {/* Equity Percentage */}
-              <div>
-                <label className="block text-white font-medium mb-3">
-                  Equity Percentage Offered <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <FaPercentage className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
-                  <input
-                    type="number"
-                    name="equity"
-                    value={formData.equity}
-                    onChange={handleInputChange}
-                    placeholder="15"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
-                      validationErrors.equity ? 'border-red-500' : 'border-gray-700'
-                    }`}
-                    required
-                  />
-                </div>
-                <p className="text-white/50 text-sm mt-2">
-                  Percentage of your company equity offered to investors
-                </p>
-                {validationErrors.equity && (
-                  <p className="text-red-400 text-sm mt-2">{validationErrors.equity}</p>
-                )}
-              </div>
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Target Market <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="targetMarket"
+                      value={formData.targetMarket}
+                      onChange={handleInputChange}
+                      placeholder="Define your target market, market size, and addressable opportunity..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.targetMarket ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.targetMarket && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.targetMarket}</p>
+                    )}
+                  </div>
 
-              {/* Optional Message */}
-              <div>
-                <label className="block text-white font-medium mb-3">
-                  Additional Message (Optional)
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder="Provide additional details about your funding needs, timeline, or any specific requirements..."
-                  rows={4}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none"
-                />
-                <p className="text-white/50 text-sm mt-2">
-                  Optional details to help investors understand your funding needs
-                </p>
-              </div>
-            </form>
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Revenue Model <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="revenueModel"
+                      value={formData.revenueModel}
+                      onChange={handleInputChange}
+                      placeholder="Explain how your business generates or will generate revenue..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.revenueModel ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.revenueModel && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.revenueModel}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Competitive Advantage <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="competitiveAdvantage"
+                      value={formData.competitiveAdvantage}
+                      onChange={handleInputChange}
+                      placeholder="What sets you apart from competitors? What's your unique value proposition..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.competitiveAdvantage ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.competitiveAdvantage && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.competitiveAdvantage}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Customer Traction <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="customerTraction"
+                      value={formData.customerTraction}
+                      onChange={handleInputChange}
+                      placeholder="Current customers, user base, growth metrics, or traction indicators..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.customerTraction ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.customerTraction && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.customerTraction}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2: Financial */}
+              {currentStep === 2 && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Current Revenue <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="number"
+                          name="currentRevenue"
+                          value={formData.currentRevenue}
+                          onChange={handleInputChange}
+                          placeholder="0"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.currentRevenue ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.currentRevenue && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.currentRevenue}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Previous Funding <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaDollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="number"
+                          name="previousFunding"
+                          value={formData.previousFunding}
+                          onChange={handleInputChange}
+                          placeholder="0"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.previousFunding ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.previousFunding && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.previousFunding}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Financial Projections <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="financialProjections"
+                      value={formData.financialProjections}
+                      onChange={handleInputChange}
+                      placeholder="Revenue projections, growth forecasts, profitability timeline..."
+                      rows={4}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.financialProjections ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.financialProjections && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.financialProjections}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Use of Funds <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="useOfFunds"
+                      value={formData.useOfFunds}
+                      onChange={handleInputChange}
+                      placeholder="Detailed breakdown of how the funding will be allocated..."
+                      rows={4}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.useOfFunds ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.useOfFunds && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.useOfFunds}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Timeline <span className="text-red-400">*</span>
+                      </label>
+                      <textarea
+                        name="timeline"
+                        value={formData.timeline}
+                        onChange={handleInputChange}
+                        placeholder="Project timeline and key dates..."
+                        rows={3}
+                        className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                          validationErrors.timeline ? 'border-red-500' : 'border-gray-700'
+                        }`}
+                      />
+                      {validationErrors.timeline && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.timeline}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Milestones <span className="text-red-400">*</span>
+                      </label>
+                      <textarea
+                        name="milestones"
+                        value={formData.milestones}
+                        onChange={handleInputChange}
+                        placeholder="Key milestones and achievements..."
+                        rows={3}
+                        className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                          validationErrors.milestones ? 'border-red-500' : 'border-gray-700'
+                        }`}
+                      />
+                      {validationErrors.milestones && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.milestones}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Risk Factors <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="riskFactors"
+                      value={formData.riskFactors}
+                      onChange={handleInputChange}
+                      placeholder="Potential risks and mitigation strategies..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.riskFactors ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.riskFactors && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.riskFactors}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Exit Strategy <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="exitStrategy"
+                      value={formData.exitStrategy}
+                      onChange={handleInputChange}
+                      placeholder="Potential exit scenarios (IPO, acquisition, etc.)..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.exitStrategy ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.exitStrategy && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.exitStrategy}</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Team & Contact */}
+              {currentStep === 3 && (
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Team Size <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="teamSize"
+                      value={formData.teamSize}
+                      onChange={handleInputChange}
+                      placeholder="Number of team members"
+                      min="1"
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                        validationErrors.teamSize ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.teamSize && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.teamSize}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Contact Phone <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="tel"
+                          name="contactPhone"
+                          value={formData.contactPhone}
+                          onChange={handleInputChange}
+                          placeholder="+1 (555) 123-4567"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.contactPhone ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.contactPhone && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.contactPhone}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Contact Email <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="email"
+                          name="contactEmail"
+                          value={formData.contactEmail}
+                          onChange={handleInputChange}
+                          placeholder="your@email.com"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.contactEmail ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.contactEmail && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.contactEmail}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        Company Website <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaGlobe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="url"
+                          name="companyWebsite"
+                          value={formData.companyWebsite}
+                          onChange={handleInputChange}
+                          placeholder="https://yourcompany.com"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.companyWebsite ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.companyWebsite && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.companyWebsite}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-white font-medium mb-3">
+                        LinkedIn Profile <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <FaLinkedin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                        <input
+                          type="url"
+                          name="linkedinProfile"
+                          value={formData.linkedinProfile}
+                          onChange={handleInputChange}
+                          placeholder="https://linkedin.com/in/yourprofile"
+                          className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                            validationErrors.linkedinProfile ? 'border-red-500' : 'border-gray-700'
+                          }`}
+                        />
+                      </div>
+                      {validationErrors.linkedinProfile && (
+                        <p className="text-red-400 text-sm mt-2">{validationErrors.linkedinProfile}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Intellectual Property <span className="text-red-400">*</span>
+                    </label>
+                    <textarea
+                      name="intellectualProperty"
+                      value={formData.intellectualProperty}
+                      onChange={handleInputChange}
+                      placeholder="Patents, trademarks, copyrights, trade secrets..."
+                      rows={3}
+                      className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none ${
+                        validationErrors.intellectualProperty ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                    />
+                    {validationErrors.intellectualProperty && (
+                      <p className="text-red-400 text-sm mt-2">{validationErrors.intellectualProperty}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-white font-medium mb-3">
+                      Additional Documents <span className="text-white/40">(Optional)</span>
+                    </label>
+                    <textarea
+                      name="additionalDocuments"
+                      value={formData.additionalDocuments}
+                      onChange={handleInputChange}
+                      placeholder="Links to pitch deck, financial models, or other supporting documents..."
+                      rows={3}
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer with Navigation */}
         {!isLoadingIdeas && userIdeas.length > 0 && (
-          <div className="flex items-center justify-between p-6 border-t border-white/10 bg-black relative z-[75]">
+          <div className="flex items-center justify-between p-6 border-t border-white/10 bg-black flex-shrink-0">
             <button
-              onClick={onClose}
-              className="px-6 py-3 text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+              type="button"
+              onClick={currentStep === 0 ? onClose : handlePrevious}
+              className="px-6 py-3 text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/10 flex items-center gap-2"
             >
-              Cancel
-            </button>
-
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting || !formData.selectedIdeaId || !formData.amount || !formData.equity}
-              className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
-            >
-              {isSubmitting ? (
+              {currentStep === 0 ? (
                 <>
-                  <FaSpinner className="w-4 h-4 animate-spin" />
-                  Submitting...
+                  <FaTimes className="w-4 h-4" />
+                  Cancel
                 </>
               ) : (
                 <>
-                  <FaCheck className="w-4 h-4" />
-                  Submit Request
+                  <FaArrowLeft className="w-4 h-4" />
+                  Previous
                 </>
               )}
             </button>
+
+            {currentStep < steps.length - 1 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+              >
+                Next
+                <FaArrowRight className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <FaSpinner className="w-4 h-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <FaCheck className="w-4 h-4" />
+                    Submit Request
+                  </>
+                )}
+              </button>
+            )}
           </div>
         )}
       </div>

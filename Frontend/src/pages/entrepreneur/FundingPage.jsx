@@ -4,8 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { entrepreneurAPI, fundingAPI, ideasAPI } from "../../services/api";
 import FundingRequestDetailsModal from "../../components/entrepreneur/FundingRequestDetailsModal";
+import FundingRequestForm from "../../components/entrepreneur/FundingRequestForm";
 import InvestorSelector from "../../components/entrepreneur/InvestorSelector";
-import FundingAnalyticsCharts from "../../components/charts/FundingAnalyticsCharts";
+import ContactModal from "../../components/entrepreneur/ContactModal";
 import {
   FaDollarSign,
   FaFileAlt,
@@ -23,6 +24,7 @@ import {
   FaGlobe,
   FaLinkedin,
   FaUserPlus,
+  FaEye,
 } from "react-icons/fa";
 
 const FundingPage = () => {
@@ -42,6 +44,7 @@ const FundingPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedFundingRequest, setSelectedFundingRequest] = useState(null);
   const [showInvestorSelector, setShowInvestorSelector] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
   const [interestedInvestors, setInterestedInvestors] = useState([]);
   const [selectedInvestors, setSelectedInvestors] = useState([]);
   const [accessType, setAccessType] = useState("public");
@@ -253,6 +256,11 @@ const FundingPage = () => {
     setShowEditModal(true);
   };
 
+  const handleShowContact = (request) => {
+    setSelectedFundingRequest(request);
+    setShowContactModal(true);
+  };
+
   const handleUpdateFundingRequest = async (requestId) => {
     try {
       // Refresh the specific funding request to get latest data
@@ -345,6 +353,25 @@ const FundingPage = () => {
     }
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div className="mb-6">
+          <h2 className="text-2xl font-manrope font-bold text-white mb-2">
+            Funding Overview
+          </h2>
+          <p className="text-white/60 font-manrope">
+            Track your funding progress and investor relationships
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <FaSpinner className="w-12 h-12 text-white/40 animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in" key="funding-page">
       <div>
@@ -407,17 +434,6 @@ const FundingPage = () => {
             </div>
           </div>
         </div>
-
-        {/* Funding Analytics Charts */}
-        {fundingRequests.length > 0 && (
-          <div className="mb-8">
-            <FundingAnalyticsCharts
-              fundingRequests={fundingRequests}
-              loading={loading}
-              userRole="entrepreneur"
-            />
-          </div>
-        )}
 
         {/* Create Funding Request Button */}
         <div className="mb-6">
@@ -656,6 +672,30 @@ const FundingPage = () => {
 
                     {/* Action buttons */}
                     <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewFundingRequest(request);
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                      >
+                        <FaEye className="w-4 h-4" />
+                        Show Details
+                      </button>
+                      
+                      {(request.status === "pending" || request.status === "negotiated" || request.status === "accepted") && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShowContact(request);
+                          }}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                        >
+                          <FaEnvelope className="w-4 h-4" />
+                          Contact
+                        </button>
+                      )}
+
                       {request.status === "pending" && (
                         <>
                           <button
@@ -663,7 +703,7 @@ const FundingPage = () => {
                               e.stopPropagation();
                               handleEditFundingRequest(request);
                             }}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                           >
                             <FaEdit className="w-4 h-4" />
                             Edit
@@ -698,16 +738,6 @@ const FundingPage = () => {
                           Withdrawn
                         </span>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewFundingRequest(request);
-                        }}
-                        className="ml-auto inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/10 text-white rounded-lg transition-colors duration-200 text-sm font-medium border border-white/10"
-                      >
-                        <FaFileAlt className="w-4 h-4" />
-                        View Details
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -717,252 +747,17 @@ const FundingPage = () => {
         </div>
       </div>
 
-      {/* Funding Request Modal */}
+      {/* Funding Request Form Modal */}
       {showFundingModal && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-semibold text-white">
-                  Request Funding
-                </h2>
-                <button
-                  onClick={() => setShowFundingModal(false)}
-                  className="text-white/70 hover:text-white transition-colors hover:bg-white/10 rounded-lg p-2"
-                >
-                  <FaTimes />
-                </button>
-              </div>
-              <form onSubmit={handleFundingFormSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Select Idea *
-                    </label>
-                    <select
-                      value={fundingFormData.ideaId}
-                      onChange={(e) =>
-                        handleFundingFormChange("ideaId", e.target.value)
-                      }
-                      className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white focus:border-white/40 focus:outline-none backdrop-blur-sm"
-                      required
-                    >
-                      <option value="">Choose an idea...</option>
-                      {userIdeas.map((idea) => (
-                        <option key={idea.id} value={idea.id}>
-                          {idea.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-white/80 text-sm font-medium mb-2">
-                      Funding Amount Requested *
-                    </label>
-                    <input
-                      type="number"
-                      value={fundingFormData.amount}
-                      onChange={(e) =>
-                        handleFundingFormChange("amount", e.target.value)
-                      }
-                      placeholder="Enter amount in USD"
-                      className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-white/80 text-sm font-medium mb-2">
-                    Equity Percentage Offered *
-                  </label>
-                  <input
-                    type="number"
-                    value={fundingFormData.equity}
-                    onChange={(e) =>
-                      handleFundingFormChange("equity", e.target.value)
-                    }
-                    placeholder="e.g., 10 for 10%"
-                    min="0"
-                    max="100"
-                    step="0.1"
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none backdrop-blur-sm"
-                    required
-                  />
-                  <p className="text-white/50 text-xs mt-1">
-                    Percentage of your company equity offered to investors
-                  </p>
-                </div>
-
-                <div>
-                  <label className="block text-white/80 text-sm font-medium mb-2">
-                    Message to Investors
-                  </label>
-                  <textarea
-                    value={fundingFormData.message}
-                    onChange={(e) =>
-                      handleFundingFormChange("message", e.target.value)
-                    }
-                    placeholder="Tell investors why you need funding and what you plan to achieve..."
-                    rows={4}
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:border-white/40 focus:outline-none resize-none backdrop-blur-sm"
-                  />
-                </div>
-
-                {/* Investor Targeting Section */}
-                {fundingFormData.ideaId && (
-                  <div className="space-y-4 p-4 bg-white/[0.05] border border-white/10 rounded-lg backdrop-blur-sm">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-white font-semibold flex items-center gap-2">
-                          <FaUserPlus className="text-blue-400" />
-                          Target Specific Investors
-                        </h3>
-                        <p className="text-white/60 text-sm mt-1">
-                          {interestedInvestors.length > 0
-                            ? `${interestedInvestors.length} investor(s) have shown interest in this idea`
-                            : "No investors have shown interest yet"}
-                        </p>
-                      </div>
-                      {interestedInvestors.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => setShowInvestorSelector(true)}
-                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium"
-                        >
-                          <FaUsers className="w-4 h-4" />
-                          Select Investors ({selectedInvestors.length})
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Access Type Selector */}
-                    <div>
-                      <label className="block text-white/80 text-sm font-medium mb-2">
-                        Request Visibility
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <label className="relative flex items-center p-3 bg-white/[0.05] border border-white/10 rounded-lg cursor-pointer hover:bg-white/[0.08] transition-colors backdrop-blur-sm">
-                          <input
-                            type="radio"
-                            name="accessType"
-                            value="public"
-                            checked={accessType === "public"}
-                            onChange={(e) => setAccessType(e.target.value)}
-                            className="mr-3"
-                          />
-                          <div>
-                            <div className="text-white font-medium text-sm">
-                              Public
-                            </div>
-                            <div className="text-white/60 text-xs">
-                              Visible to all investors
-                            </div>
-                          </div>
-                        </label>
-
-                        <label
-                          className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
-                            interestedInvestors.length === 0
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="accessType"
-                            value="invited"
-                            checked={accessType === "invited"}
-                            onChange={(e) => setAccessType(e.target.value)}
-                            disabled={interestedInvestors.length === 0}
-                            className="mr-3"
-                          />
-                          <div>
-                            <div className="text-white font-medium text-sm">
-                              Invited Only
-                            </div>
-                            <div className="text-white/60 text-xs">
-                              Only selected investors
-                            </div>
-                          </div>
-                        </label>
-
-                        <label
-                          className={`relative flex items-center p-3 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors ${
-                            interestedInvestors.length === 0
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="accessType"
-                            value="private"
-                            checked={accessType === "private"}
-                            onChange={(e) => setAccessType(e.target.value)}
-                            disabled={interestedInvestors.length === 0}
-                            className="mr-3"
-                          />
-                          <div>
-                            <div className="text-white font-medium text-sm">
-                              Private
-                            </div>
-                            <div className="text-white/60 text-xs">
-                              Strictly selected only
-                            </div>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Selected Investors Display */}
-                    {selectedInvestors.length > 0 && (
-                      <div className="p-3 bg-blue-600/10 border border-blue-500/30 rounded-lg">
-                        <p className="text-blue-400 text-sm font-medium mb-2">
-                          ✓ {selectedInvestors.length} investor(s) selected
-                        </p>
-                        <p className="text-white/60 text-xs">
-                          These investors will be notified and can view your
-                          funding request.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                <div className="flex gap-3 pt-4 border-t border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setShowFundingModal(false)}
-                    className="flex-1 px-4 py-3 bg-white/[0.05] hover:bg-white/[0.08] text-white rounded-lg transition-colors border border-white/10"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
-                    disabled={submittingFunding}
-                    className="flex-1 px-4 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
-                  >
-                    {submittingFunding ? (
-                      <>
-                        <FaSpinner className="animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        <FaCheckCircle />
-                        Submit Funding Request
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>{" "}
-            </div>{" "}
-          </div>
-        </div>
+        <FundingRequestForm
+          isOpen={showFundingModal}
+          onClose={() => setShowFundingModal(false)}
+          onSuccess={() => {
+            setShowFundingModal(false);
+            loadDashboardData();
+            addNotification("Funding request submitted successfully!", "success");
+          }}
+        />
       )}
 
       {/* Funding Request Details Modal */}
@@ -989,6 +784,12 @@ const FundingPage = () => {
           onClose={() => setShowInvestorSelector(false)}
         />
       )}
+      <ContactModal
+        isOpen={showContactModal}
+        onClose={() => setShowContactModal(false)}
+        fundingRequest={selectedFundingRequest}
+        user={user}
+      />
     </div>
   );
 };

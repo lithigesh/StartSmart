@@ -21,7 +21,7 @@ const OverviewPage = () => {
   const [dashboardData, setDashboardData] = useState({
     totalIdeas: 0,
     fundingReceived: 0,
-    interestedInvestors: 0,
+    activeFundingRequests: 0,
     ideas: []
   });
 
@@ -38,7 +38,15 @@ const OverviewPage = () => {
         fundingAPI.getUserFundingRequests()
       ]);
       
-      setDashboardData(metricsData);
+      // Calculate active funding requests
+      const activeFundingCount = fundingData?.data ? 
+        fundingData.data.filter(req => req.status === 'pending' || req.status === 'negotiated').length : 
+        0;
+      
+      setDashboardData({
+        ...metricsData,
+        activeFundingRequests: activeFundingCount
+      });
     } catch (err) {
       console.error('Error loading dashboard data:', err);
       setError('Failed to load dashboard data');
@@ -63,11 +71,11 @@ const OverviewPage = () => {
       onClick: () => window.location.href = '/entrepreneur/funding',
     },
     {
-      title: "Interested Investors",
-      description: "Investors showing interest in your ideas",
-      icon: <FaBriefcase className="w-6 h-6" />,
-      count: dashboardData.interestedInvestors.toString(),
-      onClick: () => window.location.href = '/entrepreneur/investors',
+      title: "Active Funding Requests",
+      description: "Funding requests awaiting investor response",
+      icon: <FaDollarSign className="w-6 h-6" />,
+      count: dashboardData.activeFundingRequests.toString(),
+      onClick: () => window.location.href = '/entrepreneur/funding',
     },
     {
       title: "Notifications",

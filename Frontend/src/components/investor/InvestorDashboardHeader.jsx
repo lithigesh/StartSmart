@@ -1,15 +1,9 @@
 import React from "react";
-import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt, FaBars } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 
 const InvestorDashboardHeader = ({ onToggleSidebar }) => {
-  const { logout } = useAuth();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-  };
 
   const handleLogoClick = () => {
     navigate("/");
@@ -41,16 +35,6 @@ const InvestorDashboardHeader = ({ onToggleSidebar }) => {
               <span className="text-white font-bold text-xl font-manrope hidden sm:block">
                 StartSmart
               </span>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 hover:scale-105 font-manrope min-h-[44px] touch-manipulation"
-            >
-              <FaSignOutAlt className="w-4 h-4" />
-              Logout
             </button>
           </div>
         </div>

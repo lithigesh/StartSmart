@@ -83,9 +83,9 @@ const InvestorSidebar = ({
     },
     {
       id: "settings",
-      label: "Settings",
+      label: "Account",
       icon: <FaCog className="w-5 h-5" />,
-      description: "Account settings",
+      description: "Account details",
     },
   ];
 
@@ -279,6 +279,25 @@ const InvestorSidebar = ({
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Logout Section */}
+        <div className="p-4 border-t border-white/10 relative z-10">
+          <button
+            onClick={handleLogout}
+            className={`
+              w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
+              text-red-400 hover:text-red-300 hover:bg-red-900/20 hover:scale-105
+              ${
+                isCollapsed && window.innerWidth >= 1024 ? "justify-center" : ""
+              }
+            `}
+          >
+            <FaSignOutAlt className="w-5 h-5" />
+            {(!isCollapsed || window.innerWidth < 1024) && (
+              <span className="font-manrope font-medium">Logout</span>
+            )}
+          </button>
         </div>
       </div>
     </>

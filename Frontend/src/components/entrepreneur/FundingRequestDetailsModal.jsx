@@ -22,12 +22,10 @@ import {
   FaFileAlt,
   FaExchangeAlt,
   FaEye,
-  FaComments,
   FaHistory,
   FaClock,
 } from "react-icons/fa";
 import { fundingAPI } from "../../services/api";
-import ChatInterface from "../chat/ChatInterface";
 import { useAuth } from "../../context/AuthContext";
 
 /**
@@ -54,10 +52,6 @@ const FundingRequestDetailsModal = ({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [activeTab, setActiveTab] = useState("overview");
-  const [messages, setMessages] = useState([]);
-
-  // Negotiation chat state (minimal for compatibility)
-  const [sendingMessage, setSendingMessage] = useState(false);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -121,164 +115,8 @@ const FundingRequestDetailsModal = ({
       setIsEditing(false);
       setError("");
       setSuccess("");
-
-      // Auto-switch to negotiation tab if there are messages
-      if (messages.length > 0) {
-        setActiveTab("negotiation");
-      }
     }
   }, [request]);
-
-  // Fetch messages when modal opens or when request changes
-  useEffect(() => {
-    if (request?._id) {
-      fetchMessages();
-    }
-  }, [request]);
-
-  // Poll for new messages when on negotiation tab
-  useEffect(() => {
-    if (!request || activeTab !== "negotiation") return;
-
-    // Initial fetch
-    fetchMessages();
-
-    // Set up polling every 5 seconds
-    const pollInterval = setInterval(() => {
-      fetchMessages();
-    }, 5000);
-
-    return () => clearInterval(pollInterval);
-  }, [request, activeTab]);
-
-  const fetchMessages = async () => {
-    if (!request?._id) return;
-
-    try {
-      const response = await fundingAPI.getMessagesForRequest(request._id);
-      if (response.success && response.data?.messages) {
-        const newMessages = response.data.messages;
-        setMessages(newMessages);
-
-        // Mark new messages as viewed (read receipts)
-        const unviewedMessageIds = newMessages
-          .filter(
-            (msg) =>
-              msg.sender?._id !== user?.id &&
-              !msg.viewedBy?.some((v) => v.user === user?.id)
-          )
-          .map((msg) => msg._id)
-          .filter(Boolean);
-
-        if (unviewedMessageIds.length > 0) {
-          markMessagesAsViewed(unviewedMessageIds);
-        }
-      } else {
-        // Fallback to legacy negotiationHistory if new API fails
-        setMessages(request.negotiationHistory || []);
-      }
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      // Fallback to legacy data
-      setMessages(request.negotiationHistory || []);
-    }
-  };
-
-  const markMessagesAsViewed = async (messageIds) => {
-    try {
-      await fetch(
-        `${
-          import.meta.env.VITE_API_URL || "http://localhost:5001"
-        }/api/messages/funding/${request._id}/viewed`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ messageIds }),
-        }
-      );
-    } catch (error) {
-      console.error("Error marking messages as viewed:", error);
-    }
-  };
-
-  // Handler for sending negotiation messages
-  const handleSendNegotiation = async (messageData) => {
-    const { content, proposalData } = messageData;
-
-    if (!content.trim() && !proposalData) {
-      setError("Please enter a message or counter-proposal");
-      return;
-    }
-
-    // Validate proposal amounts if provided
-    if (proposalData) {
-      if (
-        proposalData.amount &&
-        (isNaN(proposalData.amount) || parseFloat(proposalData.amount) <= 0)
-      ) {
-        setError("Proposed amount must be a valid positive number");
-        return;
-      }
-
-      if (proposalData.equity) {
-        const equity = parseFloat(proposalData.equity);
-        if (isNaN(equity) || equity <= 0 || equity > 100) {
-          setError("Proposed equity must be between 0 and 100 percent");
-          return;
-        }
-      }
-    }
-
-    try {
-      setSendingMessage(true);
-      setError("");
-
-      const response = await fundingAPI.entrepreneurRespondToNegotiation(
-        request._id || request.id,
-        {
-          message: content,
-          proposedAmount: proposalData?.amount
-            ? parseFloat(proposalData.amount)
-            : undefined,
-          proposedEquity: proposalData?.equity
-            ? parseFloat(proposalData.equity)
-            : undefined,
-        }
-      );
-
-      if (response.success) {
-        // Show success message
-        setSuccess("Negotiation message sent successfully!");
-        setTimeout(() => setSuccess(""), 3000);
-
-        // Fetch latest messages immediately after sending
-        setTimeout(() => fetchMessages(), 500);
-
-        // Update the request directly if we got the updated data
-        if (response.data) {
-          // Update the local request state with the new data
-          Object.assign(request, response.data);
-        }
-
-        // Call onUpdate to refresh the request data in parent component
-        if (onUpdate) {
-          await onUpdate(request._id || request.id);
-        }
-      } else {
-        setError(response.message || "Failed to send message");
-        setTimeout(() => setError(""), 5000);
-      }
-    } catch (err) {
-      console.error("Error sending negotiation:", err);
-      setError(err.message || "Failed to send message. Please try again.");
-      setTimeout(() => setError(""), 5000);
-    } finally {
-      setSendingMessage(false);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -414,11 +252,6 @@ const FundingRequestDetailsModal = ({
       label: "Team & Contact",
       icon: <FaUsers className="w-4 h-4" />,
     },
-    {
-      id: "negotiation",
-      label: "Negotiation",
-      icon: <FaComments className="w-4 h-4" />,
-    },
   ];
 
   return (
@@ -515,96 +348,6 @@ const FundingRequestDetailsModal = ({
 
         {/* Content */}
         <div className="p-6 flex-1 overflow-y-auto">
-          {/* Negotiation Tab - Outside form for better layout */}
-          {activeTab === "negotiation" && (
-            <div className="space-y-6 h-full">
-              {/* Negotiation Status Banner */}
-              {request.status === "negotiated" && (
-                <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FaComments className="w-5 h-5 text-blue-400" />
-                    <span className="text-blue-400 font-semibold">
-                      Active Negotiation
-                    </span>
-                  </div>
-                  <p className="text-white/80 text-sm">
-                    You have ongoing negotiations with interested investors.
-                    Respond to their proposals below.
-                  </p>
-                </div>
-              )}
-
-              {/* Investor Interest Summary */}
-              {request.investorResponses &&
-                request.investorResponses.length > 0 && (
-                  <div className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                    <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                      <FaEye className="w-4 h-4 text-purple-400" />
-                      Investor Activity Summary
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-green-400 mb-1">
-                          {
-                            request.investorResponses.filter(
-                              (r) => r.status === "interested"
-                            ).length
-                          }
-                        </div>
-                        <div className="text-xs text-white/60">
-                          Interested Investors
-                        </div>
-                      </div>
-                      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-blue-400 mb-1">
-                          {request.negotiationHistory
-                            ? request.negotiationHistory.filter(
-                                (n) => n.investor
-                              ).length
-                            : 0}
-                        </div>
-                        <div className="text-xs text-white/60">
-                          Investor Messages
-                        </div>
-                      </div>
-                      <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
-                        <div className="text-2xl font-bold text-yellow-400 mb-1">
-                          {request.viewedBy ? request.viewedBy.length : 0}
-                        </div>
-                        <div className="text-xs text-white/60">Total Views</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-              {/* Negotiation Chat Interface */}
-              <div className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden flex-1">
-                <div className="bg-gray-800 border-b border-gray-700 p-4">
-                  <h3 className="text-white font-semibold flex items-center gap-2">
-                    <FaComments className="w-5 h-5" />
-                    Negotiation Messages
-                  </h3>
-                  <p className="text-white/60 text-sm mt-1">
-                    Communicate with investors and send counter-proposals
-                  </p>
-                </div>
-
-                <ChatInterface
-                  messages={messages}
-                  currentUserId={user?.id}
-                  currentUserRole="entrepreneur"
-                  entrepreneurName={
-                    request.entrepreneur?.name || user?.name || "Entrepreneur"
-                  }
-                  onSendMessage={handleSendNegotiation}
-                  disabled={!["pending", "negotiated"].includes(request.status)}
-                  canPropose={true}
-                  height="500px"
-                />
-              </div>
-            </div>
-          )}
-
           {/* Form tabs - Only for editable content */}
           <form onSubmit={handleSave}>
             {/* Overview Tab */}

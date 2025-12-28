@@ -28,7 +28,6 @@ import EntrepreneurLayout from "./pages/entrepreneur/EntrepreneurLayout.jsx";
 import OverviewPage from "./pages/entrepreneur/OverviewPage.jsx";
 import MyIdeasPage from "./pages/entrepreneur/MyIdeasPage.jsx";
 import FundingPage from "./pages/entrepreneur/FundingPage.jsx";
-import InvestorsPage from "./pages/entrepreneur/InvestorsPage.jsx";
 import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
 import IdeathonDetailsPage from "./pages/entrepreneur/IdeathonDetailsPage.jsx";
 import NotificationsPage from "./pages/entrepreneur/NotificationsPage.jsx";
@@ -143,7 +142,6 @@ const App = () => {
                 <Route path="dashboard" element={<OverviewPage />} />
                 <Route path="my-ideas" element={<MyIdeasPage />} />
                 <Route path="funding" element={<FundingPage />} />
-                <Route path="investors" element={<InvestorsPage />} />
                 <Route path="ideathons" element={<IdeathonsPage />} />
                 <Route path="ideathon/:id" element={<IdeathonDetailsPage />} />
                 <Route path="notifications" element={<NotificationsPage />} />

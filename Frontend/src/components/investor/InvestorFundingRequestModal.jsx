@@ -11,10 +11,10 @@ import {
   FaFileAlt,
   FaChartLine,
   FaUsers,
-  FaComments,
   FaEye,
+  FaEnvelope,
+  FaPhone,
 } from "react-icons/fa";
-import ChatInterface from "../chat/ChatInterface";
 import DealAcceptanceModal from "./DealAcceptanceModal";
 import { investorDealAPI } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -31,7 +31,6 @@ const InvestorFundingRequestModal = ({
   onRequestUpdate,
 }) => {
   const [request, setRequest] = useState(initialRequest);
-  const [messages, setMessages] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
   const [isLoading, setIsLoading] = useState(false);
   const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
@@ -39,82 +38,13 @@ const InvestorFundingRequestModal = ({
   const { user } = useAuth();
   const { addNotification } = useNotifications();
 
-  // Fetch messages when modal opens or when on negotiation tab
+  // Mark request as viewed when modal opens
   useEffect(() => {
     if (isOpen && initialRequest) {
       setRequest(initialRequest);
       markAsViewed();
-      fetchMessages();
     }
   }, [isOpen, initialRequest]);
-
-  // Poll for new messages when on negotiation tab
-  useEffect(() => {
-    if (!isOpen || !request || activeTab !== "negotiation") return;
-
-    // Initial fetch
-    fetchMessages();
-
-    // Set up polling every 5 seconds
-    const pollInterval = setInterval(() => {
-      fetchMessages();
-    }, 5000);
-
-    return () => clearInterval(pollInterval);
-  }, [isOpen, request, activeTab]);
-
-  const fetchMessages = async () => {
-    if (!request?._id) return;
-
-    try {
-      const response = await investorDealAPI.getMessagesForRequest(request._id);
-      if (response.success && response.data?.messages) {
-        const newMessages = response.data.messages;
-        setMessages(newMessages);
-
-        // Mark new messages as viewed (read receipts)
-        const unviewedMessageIds = newMessages
-          .filter(
-            (msg) =>
-              msg.sender?._id !== user?.id &&
-              !msg.viewedBy?.some((v) => v.user === user?.id)
-          )
-          .map((msg) => msg._id)
-          .filter(Boolean);
-
-        if (unviewedMessageIds.length > 0) {
-          markMessagesAsViewed(unviewedMessageIds);
-        }
-      } else {
-        // Fallback to legacy negotiationHistory if new API fails
-        setMessages(request.negotiationHistory || []);
-      }
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-      // Fallback to legacy data
-      setMessages(request.negotiationHistory || []);
-    }
-  };
-
-  const markMessagesAsViewed = async (messageIds) => {
-    try {
-      await fetch(
-        `${
-          import.meta.env.VITE_API_URL || "http://localhost:5001"
-        }/api/messages/funding/${request._id}/viewed`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ messageIds }),
-        }
-      );
-    } catch (error) {
-      console.error("Error marking messages as viewed:", error);
-    }
-  };
 
   const markAsViewed = async () => {
     try {
@@ -124,25 +54,6 @@ const InvestorFundingRequestModal = ({
     }
   };
 
-  const handleNegotiate = async (negotiationData) => {
-    try {
-      const response = await investorDealAPI.negotiateFundingRequest(
-        request._id,
-        negotiationData
-      );
-
-      if (response.success) {
-        setRequest(response.data);
-        addNotification("Negotiation message sent successfully", "success");
-        // Fetch latest messages immediately after sending
-        setTimeout(() => fetchMessages(), 500);
-      } else {
-        addNotification(response.message || "Failed to send message", "error");
-      }
-    } catch (error) {
-      addNotification("Error sending negotiation message", "error");
-    }
-  };
 
   const handleAccept = async (acceptanceTerms) => {
     setIsResponding(true);
@@ -208,7 +119,7 @@ const InvestorFundingRequestModal = ({
     { id: "business", label: "Business Plan", icon: FaFileAlt },
     { id: "financials", label: "Financials", icon: FaChartLine },
     { id: "team", label: "Team", icon: FaUsers },
-    { id: "negotiation", label: "Negotiation", icon: FaComments },
+    { id: "contact", label: "Contact", icon: FaEnvelope },
   ];
 
   const calculatedValuation =
@@ -278,20 +189,83 @@ const InvestorFundingRequestModal = ({
             {activeTab === "business" && <BusinessTab request={request} />}
             {activeTab === "financials" && <FinancialsTab request={request} />}
             {activeTab === "team" && <TeamTab request={request} />}
-            {activeTab === "negotiation" && (
-              <div className="h-[500px]">
-                <ChatInterface
-                  messages={messages}
-                  currentUserId={user?.id}
-                  currentUserRole="investor"
-                  entrepreneurName={
-                    request.entrepreneur?.name || "Entrepreneur"
-                  }
-                  onSendMessage={handleNegotiate}
-                  disabled={!["pending", "negotiated"].includes(request.status)}
-                  canPropose={true}
-                  height="500px"
-                />
+            {activeTab === "contact" && (
+              <div className="space-y-6">
+                {/* Entrepreneur Contact Information */}
+                <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <FaUsers className="w-5 h-5 text-blue-400" />
+                    Entrepreneur Contact
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+                        {(request.entrepreneur?.name || "E").charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-semibold text-lg">{request.entrepreneur?.name || "Entrepreneur"}</p>
+                        {request.entrepreneur?.email && (
+                          <div className="flex items-center gap-2 mt-1">
+                            <FaEnvelope className="w-4 h-4 text-white/40" />
+                            <p className="text-white/60">{request.entrepreneur.email}</p>
+                          </div>
+                        )}
+                      </div>
+                      {request.entrepreneur?.email && (
+                        <a
+                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${request.entrepreneur.email}&su=Regarding ${request.idea?.title || 'Your Funding Request'}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                          <FaEnvelope className="w-4 h-4" />
+                          Email
+                        </a>
+                      )}
+                    </div>
+
+                    {request.contactEmail && (
+                      <div className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+                        <FaEnvelope className="w-5 h-5 text-white/40" />
+                        <div className="flex-1">
+                          <p className="text-white/60 text-xs mb-1">Contact Email</p>
+                          <p className="text-white font-medium">{request.contactEmail}</p>
+                        </div>
+                        <a
+                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${request.contactEmail}&su=Regarding ${request.idea?.title || 'Funding Request'}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                        >
+                          Email
+                        </a>
+                      </div>
+                    )}
+
+                    {request.contactPhone && (
+                      <div className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+                        <FaPhone className="w-5 h-5 text-white/40" />
+                        <div className="flex-1">
+                          <p className="text-white/60 text-xs mb-1">Contact Phone</p>
+                          <p className="text-white font-medium">{request.contactPhone}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Additional Info */}
+                <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20">
+                  <div className="flex items-start gap-4">
+                    <FaHandshake className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
+                    <div>
+                      <h4 className="text-white font-semibold mb-2">Ready to Connect?</h4>
+                      <p className="text-white/70 text-sm leading-relaxed">
+                        Use the email buttons above to reach out to the entrepreneur directly. Discuss terms, ask questions, and negotiate the details of this investment opportunity.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>

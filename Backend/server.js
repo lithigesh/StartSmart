@@ -3,10 +3,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
+const server = http.createServer(app);
 
 // Initialize database connection with retries
 const initializeDB = async () => {
@@ -30,14 +33,62 @@ const initializeDB = async () => {
 };
 
 initializeDB();
+
 // Configure CORS
-app.use(cors({
+const corsOptions = {
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
-}));
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Configure Socket.IO with CORS
+const io = new Server(server, {
+  cors: corsOptions
+});
+
+// Socket.IO connection handling
+const connectedUsers = new Map(); // Map of userId -> socketId
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  // Authenticate and register user
+  socket.on('authenticate', (userId) => {
+    if (userId) {
+      connectedUsers.set(userId, socket.id);
+      socket.userId = userId;
+      console.log(`User ${userId} authenticated with socket ${socket.id}`);
+    }
+  });
+
+  // Join a funding request room
+  socket.on('joinFundingRoom', (fundingRequestId) => {
+    socket.join(`funding:${fundingRequestId}`);
+    console.log(`Socket ${socket.id} joined room funding:${fundingRequestId}`);
+  });
+
+  // Leave a funding request room
+  socket.on('leaveFundingRoom', (fundingRequestId) => {
+    socket.leave(`funding:${fundingRequestId}`);
+    console.log(`Socket ${socket.id} left room funding:${fundingRequestId}`);
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    if (socket.userId) {
+      connectedUsers.delete(socket.userId);
+      console.log(`User ${socket.userId} disconnected`);
+    }
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// Make io available to routes
+app.set('io', io);
 
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -111,4 +162,4 @@ app.get('/', (req, res) => {
 
 
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
