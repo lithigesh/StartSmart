@@ -10,24 +10,34 @@ const IdeaMasterForm = ({
 }) => {
   // Sample data for quick testing and demonstration
   const sampleData = {
-    title: "FamryEasy - AI-Powered Vertical Farming Solution",
+    title: "Zepto – 10–20 Minute Grocery Delivery Platform",
+
     description:
-      "EcoSmart Urban Gardens revolutionizes urban agriculture through AI-powered vertical farming systems that maximize food production in minimal space. Our innovative solution combines IoT sensors, machine learning algorithms, and sustainable growing techniques to enable anyone to grow fresh, organic produce year-round in urban environments. The system automatically monitors and adjusts lighting, watering, nutrients, and environmental conditions to optimize plant growth while minimizing resource consumption. Perfect for apartments, offices, schools, and community spaces, our solution addresses food security, reduces carbon footprint, and promotes sustainable living in cities.",
-    category: "Agriculture",
-    stage: "Prototype",
+      "Zepto is a hyperlocal quick-commerce platform that delivers groceries and everyday essentials within 10–20 minutes. Using a dense network of tech-enabled dark stores, real-time inventory systems, and AI-driven logistics, Zepto ensures ultra-fast order fulfillment with high accuracy. The platform offers a wide assortment of daily-use items including fresh produce, dairy, snacks, beverages, personal care, and household essentials. With competitive pricing, reliable delivery speed, and strong in-app user experience, Zepto is transforming the grocery retail landscape for urban consumers.",
+
+    category: "Quick Commerce / E-commerce",
+
+    stage: "Growth / Late-Stage Startup",
+
     targetAudience:
-      "Urban dwellers, apartment owners, office buildings, schools, restaurants, and community organizations looking for sustainable food production solutions",
+      "Urban millennials, Gen Z users, busy professionals, students, and families in major Indian metropolitan cities who prioritize convenience and speed. Core markets include Tier-1 cities and fast-growing Tier-2 cities with high digital adoption and demand for instant delivery.",
+
     problemStatement:
-      "Urban populations face limited access to fresh, locally-grown produce due to space constraints, high costs, and long supply chains. Traditional farming requires large land areas and is often located far from cities, leading to environmental impact from transportation, food waste, and reduced nutritional value. Many people want to grow their own food but lack the space, knowledge, or time to maintain traditional gardens.",
+      "Traditional grocery shopping requires travel, waiting in queues, and limited store timings, making it inefficient for busy urban consumers. Standard online grocery platforms typically offer scheduled deliveries with lead times of several hours or even a full day. This leaves customers without fast access to essentials during urgent or unplanned needs. Urban households increasingly require rapid, reliable, and time-saving solutions for everyday purchases.",
+
     solution:
-      "Our AI-powered vertical farming system provides an automated, space-efficient solution that uses 95% less water and 90% less space than traditional farming. The system includes smart sensors that monitor soil moisture, pH levels, light exposure, and plant health, automatically adjusting conditions for optimal growth. Users can monitor and control their gardens through a mobile app, receive notifications, and access personalized growing guides. The modular design allows for easy scaling from small personal units to large commercial installations.",
+      "Zepto provides a mobile-first platform that enables customers to order essentials with delivery in 10–20 minutes through a network of strategically located dark stores. The company uses real-time inventory management, AI-powered demand prediction, and optimized delivery routing. Store locations are chosen based on population density and delivery radius constraints to maintain speed and accuracy. The app offers fast search, personalized recommendations, secure payments, and a seamless checkout experience.",
+
     uniqueValueProposition:
-      "EcoSmart Urban Gardens is the only vertical farming solution that combines AI optimization, plug-and-play setup, and mobile app integration at an affordable price point. Our proprietary algorithms learn from each garden to continuously improve growing conditions, while our subscription service provides seeds, nutrients, and expert support, making urban farming accessible to everyone regardless of experience level.",
+      "Zepto differentiates itself through ultra-fast delivery, high product availability, strong operational efficiency, and superior user experience. Its dense dark-store network, tech-driven forecasting systems, and optimized last-mile logistics enable consistent delivery reliability. Zepto’s focus on operational discipline and cost control has improved unit economics, setting it apart from competitors facing profitability challenges in quick commerce.",
+
     marketSize:
-      "$4.2B vertical farming market growing at 24% CAGR, with 5.2B urban population globally",
+      "The Indian e-grocery market is valued at $15B+ and is growing at ~30–40% CAGR. The quick-commerce segment is one of the fastest-growing categories, projected to reach $5B+ by 2025 as urban consumers increasingly adopt instant delivery for routine purchases. Large expansion opportunities remain across Tier-2/3 Indian cities and select Asian markets.",
+
     competitiveAdvantage:
-      "Our competitive advantages include proprietary AI algorithms trained on 50,000+ growing cycles, 60% lower cost than existing solutions, plug-and-play setup requiring no technical expertise, partnerships with seed suppliers and urban planning organizations, and a sustainable business model combining hardware sales with recurring subscription revenue.",
+      "Zepto’s competitive strengths include its proprietary logistics and inventory software, optimized dark-store operations, improving unit economics, strong repeat purchase behavior (high retention and order frequency), data-driven assortment planning, and rapid expansion capability. Its focus on disciplined execution, customer experience, and operational efficiency positions it strongly in India’s quick-commerce ecosystem."
   };
+
 
   const [formData, setFormData] = useState({
     title: initialData.title || sampleData.title,
@@ -93,6 +103,7 @@ const IdeaMasterForm = ({
     "Sports",
     "Energy",
     "Agriculture",
+    "Quick-commerce",
     "Other",
   ];
 
