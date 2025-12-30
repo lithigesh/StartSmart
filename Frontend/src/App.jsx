@@ -28,6 +28,7 @@ import EntrepreneurLayout from "./pages/entrepreneur/EntrepreneurLayout.jsx";
 import OverviewPage from "./pages/entrepreneur/OverviewPage.jsx";
 import MyIdeasPage from "./pages/entrepreneur/MyIdeasPage.jsx";
 import FundingPage from "./pages/entrepreneur/FundingPage.jsx";
+import FundingRequestPage from "./pages/entrepreneur/FundingRequestPage.jsx";
 import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
 import IdeathonDetailsPage from "./pages/entrepreneur/IdeathonDetailsPage.jsx";
 import NotificationsPage from "./pages/entrepreneur/NotificationsPage.jsx";
@@ -148,6 +149,16 @@ const App = () => {
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="feedback" element={<FeedbackPage />} />
               </Route>
+
+              {/* Funding Request - Full Screen (outside layout) */}
+              <Route
+                path="/entrepreneur/request-funding"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <FundingRequestPage />
+                  </RoleBasedRoute>
+                }
+              />
               <Route
                 path="/submit-idea"
                 element={

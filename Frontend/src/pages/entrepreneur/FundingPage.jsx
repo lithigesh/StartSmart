@@ -1,5 +1,6 @@
 // pages/entrepreneur/FundingPage.jsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
 import { entrepreneurAPI, fundingAPI, ideasAPI } from "../../services/api";
@@ -30,6 +31,7 @@ import {
 const FundingPage = () => {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
+  const navigate = useNavigate();
 
   // State management
   const [loading, setLoading] = useState(false);
@@ -118,8 +120,8 @@ const FundingPage = () => {
       );
       return;
     }
-    console.log("Opening funding modal");
-    setShowFundingModal(true);
+    console.log("Navigating to funding request form");
+    navigate("/entrepreneur/request-funding");
   };
 
   const handleFundingFormSubmit = async (e) => {

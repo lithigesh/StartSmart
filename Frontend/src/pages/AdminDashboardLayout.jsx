@@ -93,12 +93,14 @@ const AdminDashboard = () => {
         <div className="absolute bottom-1/6 right-1/5 w-14 h-14 bg-white/[0.02] rounded-full animate-bounce blur-xl"></div>
       </div>
 
-      {/* Sidebar - Enhanced with lighter theme and wider width */}
+      {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-72 min-w-72 max-w-72 h-screen bg-gradient-to-b from-white/[0.15] via-white/[0.08] to-white/[0.12] backdrop-blur-xl border-r border-white/20 transform ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 min-w-72 max-w-72 h-screen bg-white/[0.03] backdrop-blur-xl border-r border-white/10 transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:w-72 lg:min-w-72 lg:max-w-72 lg:h-screen flex flex-col shadow-2xl`}
+        } transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 lg:w-72 lg:min-w-72 lg:max-w-72 lg:h-screen flex flex-col`}
       >
+        {/* Glass morphism overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] pointer-events-none"></div>
         <div className="flex items-center justify-between h-16 px-6 border-b border-white/20 flex-shrink-0 w-full">
           <Link
             to="/admin/dashboard"
@@ -130,24 +132,27 @@ const AdminDashboard = () => {
                 key={item.id}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`w-full flex items-center gap-4 px-4 py-4 text-left transition-all duration-300 relative overflow-hidden group rounded-xl mb-2 ${
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-300 relative overflow-hidden group rounded-lg mb-2 ${
                   isActive
-                    ? "bg-gradient-to-r from-white/[0.25] to-white/[0.15] text-white border border-white/30 shadow-xl transform scale-105"
-                    : "text-white/80 hover:text-white hover:bg-white/[0.12] hover:translate-x-1 hover:scale-102 hover:shadow-lg"
+                    ? "bg-white/20 border-l-4 border-white text-white"
+                    : "text-white/80 hover:text-white hover:bg-white/10 hover:scale-105"
                 }`}
               >
+                {/* Glass morphism hover effect */}
+                {!isActive && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                )}
+
                 <Icon
                   className={`text-xl flex-shrink-0 transition-all duration-300 ${
-                    isActive
-                      ? "text-white scale-110"
-                      : "group-hover:scale-110 group-hover:rotate-6"
+                    isActive ? "text-white" : "group-hover:scale-110"
                   }`}
                 />
                 <span className="font-manrope font-medium transition-all duration-300 truncate flex-1 min-w-0 text-base">
                   {item.label}
                 </span>
                 {isActive && (
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 )}
                 {/* Enhanced hover effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.05] to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
@@ -159,7 +164,7 @@ const AdminDashboard = () => {
         <div className="p-4 border-t border-white/20 flex-shrink-0 w-full">
           <button
             onClick={() => logout("/admin/login")}
-            className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white/20 text-white rounded-xl font-manrope font-semibold hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/10 text-white rounded-lg font-manrope font-semibold hover:bg-white/20 transition-all duration-300"
           >
             <FaSignOutAlt className="text-lg" />
             Logout
