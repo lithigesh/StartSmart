@@ -22,7 +22,6 @@ const SavedComparisonsSection = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [selectedComparison, setSelectedComparison] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     loadComparisons();
@@ -66,20 +65,6 @@ const SavedComparisonsSection = () => {
     try {
       const result = await investorAPI.comparisons.getById(comparisonId);
       setSelectedComparison(result);
-      setIsEditMode(false);
-      setShowViewModal(true);
-    } catch (err) {
-      console.error("Error loading comparison details:", err);
-      setError("Failed to load comparison details");
-      setTimeout(() => setError(null), 3000);
-    }
-  };
-
-  const handleEdit = async (comparisonId) => {
-    try {
-      const result = await investorAPI.comparisons.getById(comparisonId);
-      setSelectedComparison(result);
-      setIsEditMode(true);
       setShowViewModal(true);
     } catch (err) {
       console.error("Error loading comparison details:", err);
@@ -93,7 +78,6 @@ const SavedComparisonsSection = () => {
     await loadComparisons();
     setShowViewModal(false);
     setSelectedComparison(null);
-    setIsEditMode(false);
   };
 
   const formatDate = (dateString) => {
@@ -256,22 +240,15 @@ const SavedComparisonsSection = () => {
               <div className="flex items-center gap-3 pt-2">
                 <button
                   onClick={() => handleView(comparison._id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-white/20 to-white/20 text-white/90 hover:from-white/30 hover:to-white/30 rounded-xl transition-all duration-300 font-manrope font-bold min-h-[48px] touch-manipulation border-2 border-white/30 hover:border-white/50 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-white/[0.08] to-white/[0.05] text-white hover:from-white/[0.15] hover:to-white/[0.10] rounded-xl transition-all duration-300 font-manrope font-bold min-h-[48px] touch-manipulation border-2 border-white/30 hover:border-white/50 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
                 >
                   <FaEye className="w-4 h-4" />
                   <span>View</span>
                 </button>
                 <button
-                  onClick={() => handleEdit(comparison._id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-white/20 to-white/20 text-white/70 hover:from-white/30 hover:to-white/30 rounded-xl transition-all duration-300 font-manrope font-bold min-h-[48px] touch-manipulation border-2 border-white/30 hover:border-white/50 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
-                >
-                  <FaEdit className="w-4 h-4" />
-                  <span>Edit</span>
-                </button>
-                <button
                   onClick={() => handleDelete(comparison._id)}
                   disabled={deletingId === comparison._id}
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-white/20 to-white/20 text-white/80 hover:from-white/30 hover:to-white/30 rounded-xl transition-all duration-300 font-manrope font-bold disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] touch-manipulation border-2 border-white/30 hover:border-white/50 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-white/[0.08] to-white/[0.05] text-white/80 hover:from-white/[0.15] hover:to-white/[0.10] hover:text-red-400 rounded-xl transition-all duration-300 font-manrope font-bold disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] touch-manipulation border-2 border-white/30 hover:border-white/50 hover:scale-105 hover:shadow-lg hover:shadow-white/20"
                   title="Delete comparison"
                 >
                   {deletingId === comparison._id ? (
@@ -293,11 +270,10 @@ const SavedComparisonsSection = () => {
           onClose={() => {
             setShowViewModal(false);
             setSelectedComparison(null);
-            setIsEditMode(false);
           }}
           ideas={selectedComparison.ideas || []}
-          readOnly={!isEditMode}
-          editMode={isEditMode}
+          readOnly={false}
+          editMode={true}
           comparisonId={selectedComparison._id}
           onSave={handleSaveEdit}
           initialData={{

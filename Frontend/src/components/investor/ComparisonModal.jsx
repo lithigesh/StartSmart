@@ -87,7 +87,6 @@ const ComparisonModal = ({
           onSave(result.comparison);
         }
 
-        setIsEditing(false);
         onClose();
       } else {
         // Create new comparison
@@ -202,15 +201,11 @@ const ComparisonModal = ({
             </div>
             <div>
               <h2 className="text-2xl lg:text-3xl font-bold text-white font-manrope bg-gradient-to-r from-white via-white to-white bg-clip-text text-transparent">
-                {isEditing
-                  ? "Edit Comparison"
-                  : readOnly
-                  ? "View Comparison"
-                  : "Compare Ideas"}
+                {editMode ? "View & Edit Comparison" : "Compare Ideas"}
               </h2>
               <p className="text-white/60 text-sm font-manrope mt-1">
-                {isEditing
-                  ? "Update notes, rationale, and chosen leader"
+                {editMode
+                  ? "View details and update notes, rationale, or chosen leader"
                   : `Analyzing ${ideas.length} startup ideas side-by-side`}
               </p>
             </div>
@@ -352,32 +347,66 @@ const ComparisonModal = ({
           </div>
 
           {/* Detailed Metrics */}
-          <div className="bg-white/[0.03] border border-white/10 rounded-lg p-6">
-            <h3 className="text-xl font-semibold text-white mb-4 font-manrope">
-              Detailed Information
-            </h3>
-            <div className="space-y-4">
-              {detailedMetrics.map((metric) => (
-                <div key={metric.key} className="space-y-2">
-                  <h4 className="text-white/70 font-manrope font-semibold">
-                    {metric.label}
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {ideas.map((idea) => (
-                      <div
-                        key={idea._id}
-                        className="bg-white/[0.02] border border-white/5 rounded-lg p-3"
-                      >
-                        <p className="text-white/80 text-sm font-manrope line-clamp-3">
-                          {metric.transform
-                            ? metric.transform(idea)
-                            : idea[metric.key] || "N/A"}
-                        </p>
+          <div className="bg-gradient-to-br from-white/[0.06] to-white/[0.02] border-2 border-white/20 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-white/10 to-white/10 px-6 py-4 border-b border-white/10">
+              <h3 className="text-xl font-bold text-white font-manrope flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-white to-white rounded-full"></div>
+                Detailed Information
+              </h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b-2 border-white/20 bg-gradient-to-r from-white/[0.08] to-white/[0.04]">
+                    <th className="text-left p-5 text-white/90 font-manrope font-bold sticky left-0 bg-gradient-to-r from-black/80 to-black/60 backdrop-blur-xl z-10 border-r border-white/10">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                        Detail
                       </div>
+                    </th>
+                    {ideas.map((idea, index) => (
+                      <th
+                        key={idea._id}
+                        className="text-left p-5 text-white font-manrope font-bold min-w-[280px] border-r border-white/5"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="bg-gradient-to-br from-white/20 to-white/20 px-2 py-1 rounded text-xs font-mono border border-white/30">
+                            #{index + 1}
+                          </span>
+                          <div className="line-clamp-1">{idea.title}</div>
+                        </div>
+                      </th>
                     ))}
-                  </div>
-                </div>
-              ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {detailedMetrics.map((metric, metricIndex) => (
+                    <tr
+                      key={metric.key}
+                      className="border-b border-white/5 hover:bg-gradient-to-r hover:from-white/5 hover:to-transparent transition-all duration-300 group"
+                    >
+                      <td className="p-5 text-white/80 font-manrope font-semibold sticky left-0 bg-gradient-to-r from-black/90 to-black/70 backdrop-blur-xl z-10 border-r border-white/10 group-hover:from-black/95 group-hover:to-black/80 align-top">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-white/60 rounded-full flex-shrink-0"></div>
+                          <span>{metric.label}</span>
+                        </div>
+                      </td>
+                      {ideas.map((idea) => (
+                        <td
+                          key={idea._id}
+                          className="p-5 text-white/90 font-manrope border-r border-white/5 align-top"
+                        >
+                          <div className="text-sm leading-relaxed">
+                            {metric.transform
+                              ? metric.transform(idea)
+                              : idea[metric.key] || "N/A"}
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -405,8 +434,7 @@ const ComparisonModal = ({
               <select
                 value={chosenLeader}
                 onChange={(e) => setChosenLeader(e.target.value)}
-                disabled={readOnly && !isEditing}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope"
               >
                 <option value="" className="bg-gray-800">
                   Select the best idea...
@@ -432,8 +460,7 @@ const ComparisonModal = ({
                 value={rationale}
                 onChange={(e) => setRationale(e.target.value)}
                 placeholder="Why did you choose this idea as the leader?"
-                disabled={readOnly && !isEditing}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
                 rows={3}
               ></textarea>
             </div>
@@ -448,8 +475,7 @@ const ComparisonModal = ({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add your general notes about this comparison..."
-              disabled={readOnly && !isEditing}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/50 focus:ring-2 focus:ring-white/20 transition-all duration-300 font-manrope resize-none"
               rows={4}
             ></textarea>
           </div>
@@ -458,54 +484,34 @@ const ComparisonModal = ({
         {/* Footer */}
         <div className="relative z-10 flex items-center justify-between p-6 border-t border-white/10">
           <p className="text-white/60 text-sm font-manrope">
-            {isEditing
-              ? "Edit comparison details"
-              : readOnly
-              ? "Viewing saved comparison"
+            {editMode
+              ? "View and edit comparison details"
               : `Comparing ${ideas.length} ideas • Scroll for more details`}
           </p>
           <div className="flex items-center gap-3">
-            {isEditing && (
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                  // Reset to initial values
-                  setNotes(initialData.notes || "");
-                  setRationale(initialData.rationale || "");
-                  setChosenLeader(initialData.chosenLeader || "");
-                }}
-                className="px-4 py-2 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white rounded-lg transition-all duration-300 font-manrope font-medium"
-              >
-                Cancel Edit
-              </button>
-            )}
-            {!isEditing && (
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white rounded-lg transition-all duration-300 font-manrope font-medium"
-              >
-                {readOnly ? "Close" : "Cancel"}
-              </button>
-            )}
-            {(isEditing || !readOnly) && (
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="px-6 py-2 bg-white/20 text-white hover:bg-white/30 rounded-lg transition-all duration-300 font-manrope font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {saving ? (
-                  <>
-                    <FaSpinner className="w-4 h-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <FaSave className="w-4 h-4" />
-                    {isEditing ? "Update" : "Save"} Comparison
-                  </>
-                )}
-              </button>
-            )}
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-white/10 text-white/70 hover:bg-white/20 hover:text-white rounded-lg transition-all duration-300 font-manrope font-medium"
+            >
+              {editMode ? "Close" : "Cancel"}
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2 bg-white/20 text-white hover:bg-white/30 rounded-lg transition-all duration-300 font-manrope font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {saving ? (
+                <>
+                  <FaSpinner className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <FaSave className="w-4 h-4" />
+                  {editMode ? "Update" : "Save"} Comparison
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
