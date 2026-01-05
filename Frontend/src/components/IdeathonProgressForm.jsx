@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { FaTimes, FaPlus, FaTrash } from "react-icons/fa";
+import { Rocket } from "lucide-react";
 
 const IdeathonProgressForm = ({ registration, onClose, onSuccess }) => {
   const [showFinalSubmission, setShowFinalSubmission] = useState(false);
@@ -337,7 +338,7 @@ const IdeathonProgressForm = ({ registration, onClose, onSuccess }) => {
                 onClick={() => setShowFinalSubmission(true)}
                 className="w-full px-6 py-2.5 bg-white/20 text-white rounded-lg font-medium hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
               >
-                <span className="text-lg">🚀</span>
+                <Rocket className="w-5 h-5" />
                 Submit Final Project
               </button>
               <p className="text-white/60 text-sm text-center mt-2">

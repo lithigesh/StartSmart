@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import ErrorBoundary from '../../components/ErrorBoundary';
-import IdeaMasterForm from './components/IdeaMasterForm';
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import ErrorBoundary from "../../components/ErrorBoundary";
+import IdeaMasterForm from "./components/IdeaMasterForm";
+import toast from "react-hot-toast";
+import { Lightbulb } from "lucide-react";
 
 const IdeaSubmissionPage = () => {
   const navigate = useNavigate();
@@ -14,44 +15,43 @@ const IdeaSubmissionPage = () => {
   const handleFormSuccess = (result) => {
     if (result.success && result.data) {
       // Show success toast with transparency
-      toast.success('Idea submitted successfully!', {
+      toast.success("Idea submitted successfully!", {
         duration: 3000,
-        position: 'bottom-right',
+        position: "bottom-right",
         style: {
-          background: 'rgba(16, 185, 129, 0.9)',
-          color: '#fff',
-          borderRadius: '12px',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          background: "rgba(16, 185, 129, 0.9)",
+          color: "#fff",
+          borderRadius: "12px",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
         },
-        icon: '✓',
       });
-      
+
       // Navigate back to entrepreneur dashboard after brief delay
       setTimeout(() => {
-        navigate('/entrepreneur');
+        navigate("/entrepreneur");
       }, 1500);
     }
   };
 
   // Handle form submission errors
   const handleFormError = (error) => {
-    toast.error(error || 'Failed to submit idea', {
+    toast.error(error || "Failed to submit idea", {
       duration: 4000,
-      position: 'bottom-right',
+      position: "bottom-right",
       style: {
-        background: 'rgba(239, 68, 68, 0.9)',
-        color: '#fff',
-        borderRadius: '12px',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        background: "rgba(239, 68, 68, 0.9)",
+        color: "#fff",
+        borderRadius: "12px",
+        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(255, 255, 255, 0.2)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
       },
     });
   };
 
-  if (!user || user.role !== 'entrepreneur') {
+  if (!user || user.role !== "entrepreneur") {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -72,15 +72,16 @@ const IdeaSubmissionPage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-                    <span className="text-5xl">💡</span>
+                    <Lightbulb className="w-12 h-12 text-yellow-400" />
                     Submit Your Idea
                   </h1>
                   <p className="mt-2 text-gray-300 text-lg">
-                    Share your innovative concept and start your entrepreneurial journey
+                    Share your innovative concept and start your entrepreneurial
+                    journey
                   </p>
                 </div>
                 <button
-                  onClick={() => navigate('/entrepreneur')}
+                  onClick={() => navigate(-1)}
                   className="px-6 py-3 text-gray-300 hover:text-white focus:outline-none transition-all hover:scale-105 flex items-center gap-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10"
                 >
                   ← Back

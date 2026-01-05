@@ -302,7 +302,7 @@ exports.createFundingRequest = async (req, res, next) => {
         try {
           await NotificationService.createNotification(
             invitedInvestor.investor,
-            `🎯 You've been invited to review a funding request for "${idea.title}"`,
+            `You've been invited to review a funding request for "${idea.title}"`,
             "funding_invitation",
             request._id,
             {
@@ -1031,11 +1031,11 @@ exports.investorRespondToRequest = async (req, res, next) => {
     let notificationMessage = "";
 
     if (responseStatus === "accepted") {
-      notificationMessage = `🎉 Great news! An investor has accepted your funding request for "${request.idea.title}"!`;
+      notificationMessage = `Great news! An investor has accepted your funding request for "${request.idea.title}"!`;
     } else if (responseStatus === "declined") {
       notificationMessage = `An investor has declined your funding request for "${request.idea.title}".`;
     } else if (responseStatus === "interested") {
-      notificationMessage = `💡 An investor is interested in your funding request for "${request.idea.title}".`;
+      notificationMessage = `An investor is interested in your funding request for "${request.idea.title}".`;
     }
 
     await NotificationService.createNotification(
@@ -1172,15 +1172,15 @@ exports.investorNegotiate = async (req, res, next) => {
     // Also add to legacy negotiationHistory for backward compatibility
     let negotiationMessage = message;
     if (proposedAmount || proposedEquity) {
-      negotiationMessage += "\n\n📊 Proposed Terms:\n";
+      negotiationMessage += "\n\nProposed Terms:\n";
       if (proposedAmount) {
-        negotiationMessage += `💰 Amount: $${proposedAmount.toLocaleString()}\n`;
+        negotiationMessage += `Amount: $${proposedAmount.toLocaleString()}\n`;
       }
       if (proposedEquity) {
-        negotiationMessage += `📈 Equity: ${proposedEquity}%\n`;
+        negotiationMessage += `Equity: ${proposedEquity}%\n`;
       }
       if (proposalData.valuation) {
-        negotiationMessage += `🏢 Implied Valuation: $${proposalData.valuation.toLocaleString()}`;
+        negotiationMessage += `Implied Valuation: $${proposalData.valuation.toLocaleString()}`;
       }
     }
     request.negotiationHistory.push({
@@ -1223,7 +1223,7 @@ exports.investorNegotiate = async (req, res, next) => {
     const NotificationService = require("../services/notification.service");
     await NotificationService.createNotification(
       request.entrepreneur._id || request.entrepreneur,
-      `💬 An investor has sent a negotiation message for your funding request "${request.idea.title}"`,
+      `An investor has sent a negotiation message for your funding request "${request.idea.title}"`,
       "funding",
       request._id
     );
@@ -1355,15 +1355,15 @@ exports.entrepreneurRespond = async (req, res, next) => {
     // Also add to legacy negotiationHistory for backward compatibility
     let responseMessage = message;
     if (proposedAmount || proposedEquity) {
-      responseMessage += "\n\n📊 Counter Proposal:\n";
+      responseMessage += "\n\nCounter Proposal:\n";
       if (proposedAmount) {
-        responseMessage += `💰 Amount: $${proposedAmount.toLocaleString()}\n`;
+        responseMessage += `Amount: $${proposedAmount.toLocaleString()}\n`;
       }
       if (proposedEquity) {
-        responseMessage += `📈 Equity: ${proposedEquity}%\n`;
+        responseMessage += `Equity: ${proposedEquity}%\n`;
       }
       if (proposalData.valuation) {
-        responseMessage += `🏢 Implied Valuation: $${proposalData.valuation.toLocaleString()}`;
+        responseMessage += `Implied Valuation: $${proposalData.valuation.toLocaleString()}`;
       }
     }
     request.negotiationHistory.push({
@@ -1390,7 +1390,7 @@ exports.entrepreneurRespond = async (req, res, next) => {
       // Notify specific investor
       await NotificationService.createNotification(
         investorId,
-        `💬 The entrepreneur has responded to your negotiation for "${request.idea.title}"`,
+        `The entrepreneur has responded to your negotiation for "${request.idea.title}"`,
         "funding",
         request._id
       );
@@ -1403,7 +1403,7 @@ exports.entrepreneurRespond = async (req, res, next) => {
       for (const investor of interestedInvestors) {
         await NotificationService.createNotification(
           investor,
-          `💬 The entrepreneur has updated the negotiation for "${request.idea.title}"`,
+          `The entrepreneur has updated the negotiation for "${request.idea.title}"`,
           "funding",
           request._id
         );
@@ -1533,14 +1533,14 @@ exports.getInvestorPipeline = async (req, res, next) => {
       }, 0),
     };
 
-    console.log('Pipeline Stats:', {
+    console.log("Pipeline Stats:", {
       acceptedCount: pipeline.accepted.length,
       totalInvested: stats.totalInvested,
-      acceptedDeals: pipeline.accepted.map(r => ({
+      acceptedDeals: pipeline.accepted.map((r) => ({
         id: r._id,
         amount: r.amount,
-        finalAmount: r.acceptanceTerms?.finalAmount
-      }))
+        finalAmount: r.acceptanceTerms?.finalAmount,
+      })),
     });
 
     res.json({

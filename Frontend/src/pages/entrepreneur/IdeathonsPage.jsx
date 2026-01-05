@@ -17,7 +17,7 @@ import {
   FaArrowRight,
   FaClock,
   FaMapMarkerAlt,
-  FaInfoCircle
+  FaInfoCircle,
 } from "react-icons/fa";
 
 const IdeathonsPage = () => {
@@ -28,16 +28,16 @@ const IdeathonsPage = () => {
   const [registeredIdeathons, setRegisteredIdeathons] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   // Search and filter
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [locationFilter, setLocationFilter] = useState('all');
-  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
+
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+
   // Registration modal
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [selectedIdeathon, setSelectedIdeathon] = useState(null);
@@ -53,36 +53,41 @@ const IdeathonsPage = () => {
 
       const queryParams = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '9',
+        limit: "9",
       });
 
-      if (searchTerm) queryParams.append('search', searchTerm);
-      if (statusFilter && statusFilter !== 'all') queryParams.append('status', statusFilter);
-      if (locationFilter && locationFilter !== 'all') queryParams.append('location', locationFilter);
+      if (searchTerm) queryParams.append("search", searchTerm);
+      if (statusFilter && statusFilter !== "all")
+        queryParams.append("status", statusFilter);
+      if (locationFilter && locationFilter !== "all")
+        queryParams.append("location", locationFilter);
 
       const res = await fetch(`${API_BASE}/api/ideathons?${queryParams}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) throw new Error('Failed to fetch ideathons');
+      if (!res.ok) throw new Error("Failed to fetch ideathons");
 
       const response = await res.json();
-      
+
       if (response.success && response.data) {
         // Filter out ideathons that the user has already registered for
-        const filteredIdeathons = Array.isArray(response.data) 
-          ? response.data.filter(ideathon => 
-              !registeredIdeathons.some(reg => reg.ideathon._id === ideathon._id)
+        const filteredIdeathons = Array.isArray(response.data)
+          ? response.data.filter(
+              (ideathon) =>
+                !registeredIdeathons.some(
+                  (reg) => reg.ideathon._id === ideathon._id
+                )
             )
           : [];
-        
+
         setIdeathons(filteredIdeathons);
         setTotalPages(response.totalPages || 1);
         setCurrentPage(response.currentPage || 1);
       }
     } catch (err) {
-      console.error('Error fetching ideathons:', err);
-      setError('Failed to load ideathons. Please try again.');
+      console.error("Error fetching ideathons:", err);
+      setError("Failed to load ideathons. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -95,15 +100,15 @@ const IdeathonsPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) throw new Error('Failed to fetch registrations');
+      if (!res.ok) throw new Error("Failed to fetch registrations");
 
       const response = await res.json();
-      
+
       if (response.success && response.data) {
         setRegisteredIdeathons(response.data);
       }
     } catch (err) {
-      console.error('Error fetching registrations:', err);
+      console.error("Error fetching registrations:", err);
     }
   };
 
@@ -138,7 +143,7 @@ const IdeathonsPage = () => {
 
   // Check if user is already registered for an ideathon
   const isRegistered = (ideathonId) => {
-    return registeredIdeathons.some(reg => reg.ideathonId === ideathonId);
+    return registeredIdeathons.some((reg) => reg.ideathonId === ideathonId);
   };
 
   // Get ideathon status
@@ -146,60 +151,64 @@ const IdeathonsPage = () => {
     const now = new Date();
     const startDate = new Date(ideathon.startDate);
     const endDate = new Date(ideathon.endDate);
-    
+
     if (now < startDate) {
-      return { status: 'upcoming', label: 'Upcoming', color: 'blue' };
+      return { status: "upcoming", label: "Upcoming", color: "blue" };
     } else if (now >= startDate && now <= endDate) {
-      return { status: 'active', label: 'Active Now', color: 'green' };
+      return { status: "active", label: "Active Now", color: "green" };
     } else {
-      return { status: 'expired', label: 'Ended', color: 'gray' };
+      return { status: "expired", label: "Ended", color: "gray" };
     }
   };
 
   const getStatusColor = (statusInfo) => {
     switch (statusInfo.color) {
-      case 'green': return 'bg-white/10/20 text-white/90 border-white/30';
-      case 'blue': return 'bg-white/20/20 text-white/90 border-white/30';
-      case 'gray': return 'bg-white/10 text-white/60 border-white/20';
-      default: return 'bg-white/10 text-white/60 border-white/20';
+      case "green":
+        return "bg-white/10/20 text-white/90 border-white/30";
+      case "blue":
+        return "bg-white/20/20 text-white/90 border-white/30";
+      case "gray":
+        return "bg-white/10 text-white/60 border-white/20";
+      default:
+        return "bg-white/10 text-white/60 border-white/20";
     }
   };
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const handleRegisterClick = (ideathon) => {
     console.log("Register button clicked for ideathon:", ideathon);
-    
+
     // Check if already registered
     if (isRegistered(ideathon._id)) {
       addNotification("You are already registered for this ideathon", "info");
       return;
     }
-    
+
     // Directly set the states
     setSelectedIdeathon(ideathon);
     setShowRegistrationModal(true);
-    console.log('Opening registration modal for:', ideathon.title);
+    console.log("Opening registration modal for:", ideathon.title);
   };
 
   const handleRegistrationSuccess = (registrationData) => {
     setShowRegistrationModal(false);
     setSelectedIdeathon(null);
     fetchRegisteredIdeathons();
-    
+
     // Show success notification with more details
     addNotification(
       `Successfully registered team "${registrationData.teamName}" for ${selectedIdeathon.title}! ` +
-      "You'll receive a confirmation email shortly.",
+        "You'll receive a confirmation email shortly.",
       "success"
     );
-    
+
     // Refetch ideathons list to update registration status
     fetchIdeathons();
   };
@@ -222,7 +231,9 @@ const IdeathonsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <div className="md:col-span-2">
-            <label className="block text-white/70 text-sm font-medium mb-2">Search Ideathons</label>
+            <label className="block text-white/70 text-sm font-medium mb-2">
+              Search Ideathons
+            </label>
             <div className="relative">
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50" />
               <input
@@ -237,26 +248,34 @@ const IdeathonsPage = () => {
 
           {/* Status Filter */}
           <div>
-            <label className="block text-white/70 text-sm font-medium mb-2">Status</label>
+            <label className="block text-white/70 text-sm font-medium mb-2">
+              Status
+            </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full px-3 py-2 bg-white/[0.08] border border-white/30 rounded-lg text-white focus:outline-none focus:border-white/50 transition-all duration-300 cursor-pointer"
             >
-              <option value="all" className="bg-black">All Status</option>
-              <option value="upcoming" className="bg-black">Upcoming</option>
-              <option value="active" className="bg-black">Active Now</option>
+              <option value="all" className="bg-black">
+                All Status
+              </option>
+              <option value="upcoming" className="bg-black">
+                Upcoming
+              </option>
+              <option value="active" className="bg-black">
+                Active Now
+              </option>
             </select>
           </div>
         </div>
 
         {/* Clear Filters */}
-        {(searchTerm || statusFilter !== 'all') && (
+        {(searchTerm || statusFilter !== "all") && (
           <div className="mt-4 flex justify-end">
             <button
               onClick={() => {
-                setSearchTerm('');
-                setStatusFilter('all');
+                setSearchTerm("");
+                setStatusFilter("all");
               }}
               className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 flex items-center gap-2 border border-white/20"
             >
@@ -279,8 +298,12 @@ const IdeathonsPage = () => {
         {ideathons.length === 0 ? (
           <div className="col-span-full text-center py-12 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] backdrop-blur-xl border border-white/10 rounded-2xl">
             <FaTrophy className="text-6xl text-white/30 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No Ideathons Available</h3>
-            <p className="text-white/60">Check back later for new competitions!</p>
+            <h3 className="text-xl font-bold text-white mb-2">
+              No Ideathons Available
+            </h3>
+            <p className="text-white/60">
+              Check back later for new competitions!
+            </p>
           </div>
         ) : (
           ideathons.map((ideathon) => {
@@ -294,7 +317,11 @@ const IdeathonsPage = () => {
               >
                 {/* Status Badge */}
                 <div className="flex justify-between items-start mb-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(statusInfo)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(
+                      statusInfo
+                    )}`}
+                  >
                     {statusInfo.label}
                   </span>
                   {registered && (
@@ -321,7 +348,9 @@ const IdeathonsPage = () => {
                 {ideathon.organizers && (
                   <div className="flex items-center gap-2 mb-3">
                     <FaBuilding className="text-white/50 text-sm" />
-                    <p className="text-white/80 text-sm truncate">{ideathon.organizers}</p>
+                    <p className="text-white/80 text-sm truncate">
+                      {ideathon.organizers}
+                    </p>
                   </div>
                 )}
 
@@ -329,7 +358,10 @@ const IdeathonsPage = () => {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-white/70 text-sm">
                     <FaCalendarAlt className="text-white/50" />
-                    <span>{formatDate(ideathon.startDate)} - {formatDate(ideathon.endDate)}</span>
+                    <span>
+                      {formatDate(ideathon.startDate)} -{" "}
+                      {formatDate(ideathon.endDate)}
+                    </span>
                   </div>
                   {ideathon.location && (
                     <div className="flex items-center gap-2 text-white/70 text-sm">
@@ -344,9 +376,13 @@ const IdeathonsPage = () => {
                   <div className="mb-4 p-3 bg-white/5 border border-white/10 rounded-lg">
                     <div className="flex items-center gap-2 mb-1">
                       <FaTrophy className="text-white/70 text-sm" />
-                      <span className="text-white/70 text-xs font-semibold uppercase">Prize Pool</span>
+                      <span className="text-white/70 text-xs font-semibold uppercase">
+                        Prize Pool
+                      </span>
                     </div>
-                    <p className="text-white font-medium text-sm">{ideathon.fundingPrizes}</p>
+                    <p className="text-white font-medium text-sm">
+                      {ideathon.fundingPrizes}
+                    </p>
                   </div>
                 )}
 
@@ -377,17 +413,17 @@ const IdeathonsPage = () => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('Register button clicked');
-                      setShowRegistrationModal(true);
-                      setSelectedIdeathon(ideathon);
+                      if (!registered && statusInfo.status !== "expired") {
+                        window.location.href = `/entrepreneur/ideathon/${ideathon._id}/register`;
+                      }
                     }}
-                    disabled={registered || statusInfo.status === 'expired'}
+                    disabled={registered || statusInfo.status === "expired"}
                     className={`w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
                       registered
-                        ? 'bg-white/10/20 text-white/90 border border-white/30 cursor-not-allowed'
-                        : statusInfo.status === 'expired'
-                        ? 'bg-white/10 text-white/60 border border-white/20 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-white/500/80 to-white/600/80 text-white border border-white/30 hover:from-white/400/90 hover:to-white/500/90'
+                        ? "bg-white/10/20 text-white/90 border border-white/30 cursor-not-allowed"
+                        : statusInfo.status === "expired"
+                        ? "bg-white/10 text-white/60 border border-white/20 cursor-not-allowed"
+                        : "bg-gradient-to-r from-white/500/80 to-white/600/80 text-white border border-white/30 hover:from-white/400/90 hover:to-white/500/90"
                     }`}
                   >
                     {registered ? (
@@ -395,7 +431,7 @@ const IdeathonsPage = () => {
                         <FaCheckCircle />
                         Already Registered
                       </>
-                    ) : statusInfo.status === 'expired' ? (
+                    ) : statusInfo.status === "expired" ? (
                       <>
                         <FaClock />
                         Registration Closed
@@ -418,7 +454,7 @@ const IdeathonsPage = () => {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-6">
           <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
             className="px-3 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
@@ -431,7 +467,9 @@ const IdeathonsPage = () => {
           </span>
 
           <button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             className="px-3 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
@@ -442,10 +480,10 @@ const IdeathonsPage = () => {
       )}
 
       {/* Registration Modal */}
-      <IdeathonRegistrationModal 
-        isOpen={showRegistrationModal} 
+      <IdeathonRegistrationModal
+        isOpen={showRegistrationModal}
         onClose={() => {
-          console.log('Closing modal');
+          console.log("Closing modal");
           setShowRegistrationModal(false);
           setSelectedIdeathon(null);
         }}
@@ -454,7 +492,7 @@ const IdeathonsPage = () => {
           <IdeathonRegistrationForm
             isOpen={showRegistrationModal}
             onClose={() => {
-              console.log('Closing registration form');
+              console.log("Closing registration form");
               setShowRegistrationModal(false);
               setSelectedIdeathon(null);
             }}

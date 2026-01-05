@@ -26,6 +26,7 @@ import {
   FaLinkedin,
   FaUserPlus,
   FaEye,
+  FaCheck,
 } from "react-icons/fa";
 
 const FundingPage = () => {
@@ -387,7 +388,7 @@ const FundingPage = () => {
         </div>
 
         {/* Funding Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
           <div
             key="stat-total-funding"
             className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden animate-slide-up"
@@ -658,8 +659,9 @@ const FundingPage = () => {
                               </div>
                             </div>
                             <div className="text-white/80 text-sm bg-white/5 p-3 rounded-lg">
-                              <p className="mb-1">
-                                ✅ Your funding request has been accepted!
+                              <p className="mb-1 flex items-center gap-2">
+                                <FaCheck className="w-4 h-4 text-green-400" />
+                                Your funding request has been accepted!
                               </p>
                               <p className="text-white/60 text-xs">
                                 Investor contact details will be available soon.

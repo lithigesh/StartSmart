@@ -126,16 +126,16 @@ NegotiationMessageSchema.methods.getFormattedContent = function () {
   if (this.messageType === "proposal" && this.proposalData) {
     const { amount, equity, valuation } = this.proposalData;
 
-    content += "\n\n📊 Proposed Terms:\n";
+    content += "\n\nProposed Terms:\n";
     if (amount) {
-      content += `💰 Amount: $${amount.toLocaleString()}\n`;
+      content += `Amount: $${amount.toLocaleString()}\n`;
     }
     if (equity) {
-      content += `📈 Equity: ${equity}%\n`;
+      content += `Equity: ${equity}%\n`;
     }
     if (valuation || (amount && equity)) {
       const val = valuation || Math.round((amount / equity) * 100);
-      content += `🏢 Implied Valuation: $${val.toLocaleString()}`;
+      content += `Implied Valuation: $${val.toLocaleString()}`;
     }
   }
 

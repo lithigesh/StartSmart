@@ -6,12 +6,7 @@ import { entrepreneurAPI, fundingAPI, ideasAPI } from "../../services/api";
 import WelcomeSection from "../../components/entrepreneur/WelcomeSection";
 import RecentActivitySection from "../../components/entrepreneur/RecentActivitySection";
 import FeedbackCard from "../../components/entrepreneur/FeedbackCard";
-import {
-  FaLightbulb,
-  FaDollarSign,
-  FaBriefcase,
-  FaBell,
-} from "react-icons/fa";
+import { FaLightbulb, FaDollarSign, FaBriefcase, FaBell } from "react-icons/fa";
 
 const OverviewPage = () => {
   const { user } = useAuth();
@@ -22,7 +17,7 @@ const OverviewPage = () => {
     totalIdeas: 0,
     fundingReceived: 0,
     activeFundingRequests: 0,
-    ideas: []
+    ideas: [],
   });
 
   useEffect(() => {
@@ -35,21 +30,23 @@ const OverviewPage = () => {
       const [metricsData, ideasData, fundingData] = await Promise.all([
         entrepreneurAPI.getDashboardMetrics(),
         ideasAPI.getUserIdeas(),
-        fundingAPI.getUserFundingRequests()
+        fundingAPI.getUserFundingRequests(),
       ]);
-      
+
       // Calculate active funding requests
-      const activeFundingCount = fundingData?.data ? 
-        fundingData.data.filter(req => req.status === 'pending' || req.status === 'negotiated').length : 
-        0;
-      
+      const activeFundingCount = fundingData?.data
+        ? fundingData.data.filter(
+            (req) => req.status === "pending" || req.status === "negotiated"
+          ).length
+        : 0;
+
       setDashboardData({
         ...metricsData,
-        activeFundingRequests: activeFundingCount
+        activeFundingRequests: activeFundingCount,
       });
     } catch (err) {
-      console.error('Error loading dashboard data:', err);
-      setError('Failed to load dashboard data');
+      console.error("Error loading dashboard data:", err);
+      setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -61,28 +58,28 @@ const OverviewPage = () => {
       description: "Startup ideas you've submitted",
       icon: <FaLightbulb className="w-6 h-6" />,
       count: dashboardData.totalIdeas.toString(),
-      onClick: () => window.location.href = '/entrepreneur/my-ideas',
+      onClick: () => (window.location.href = "/entrepreneur/my-ideas"),
     },
     {
       title: "Funding Received",
       description: "Total funding received from investors",
       icon: <FaDollarSign className="w-6 h-6" />,
       count: `$${(dashboardData.fundingReceived / 1000).toFixed(0)}K`,
-      onClick: () => window.location.href = '/entrepreneur/funding',
+      onClick: () => (window.location.href = "/entrepreneur/funding"),
     },
     {
       title: "Active Funding Requests",
       description: "Funding requests awaiting investor response",
       icon: <FaDollarSign className="w-6 h-6" />,
       count: dashboardData.activeFundingRequests.toString(),
-      onClick: () => window.location.href = '/entrepreneur/funding',
+      onClick: () => (window.location.href = "/entrepreneur/funding"),
     },
     {
       title: "Notifications",
       description: "New notifications requiring your attention",
       icon: <FaBell className="w-6 h-6" />,
       count: unreadCount.toString(),
-      onClick: () => window.location.href = '/entrepreneur/notifications',
+      onClick: () => (window.location.href = "/entrepreneur/notifications"),
     },
   ];
 
@@ -94,7 +91,7 @@ const OverviewPage = () => {
       </div>
 
       {/* Dashboard Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {dashboardCards.map((card, index) => (
           <div
             key={index}
@@ -104,7 +101,7 @@ const OverviewPage = () => {
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-            
+
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className="text-white/70 group-hover:text-white transition-all duration-500 group-hover:scale-110 transform">
@@ -126,7 +123,10 @@ const OverviewPage = () => {
       </div>
 
       {/* Recent Activity Section */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up" style={{ animationDelay: '400ms' }}>
+      <div
+        className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden animate-slide-up"
+        style={{ animationDelay: "400ms" }}
+      >
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
           <RecentActivitySection />

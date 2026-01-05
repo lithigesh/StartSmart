@@ -141,7 +141,7 @@ const FeedbackPage = () => {
                 <label className="block text-white font-manrope font-medium mb-3">
                   Feedback Category <span className="text-white/80">*</span>
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                   {categories.map((cat) => (
                     <button
                       key={cat.value}

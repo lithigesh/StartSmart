@@ -54,7 +54,6 @@ const InvestorFundingRequestModal = ({
     }
   };
 
-
   const handleAccept = async (acceptanceTerms) => {
     setIsResponding(true);
     try {
@@ -67,7 +66,7 @@ const InvestorFundingRequestModal = ({
       );
 
       if (response.success) {
-        addNotification("🎉 Investment deal accepted successfully!", "success");
+        addNotification("Investment deal accepted successfully!", "success");
         setRequest(response.data);
         if (onRequestUpdate) onRequestUpdate();
         setTimeout(() => onClose(), 1500);
@@ -200,20 +199,30 @@ const InvestorFundingRequestModal = ({
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
                       <div className="w-16 h-16 bg-gradient-to-br from-white/500 to-white rounded-full flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
-                        {(request.entrepreneur?.name || "E").charAt(0).toUpperCase()}
+                        {(request.entrepreneur?.name || "E")
+                          .charAt(0)
+                          .toUpperCase()}
                       </div>
                       <div className="flex-1">
-                        <p className="text-white font-semibold text-lg">{request.entrepreneur?.name || "Entrepreneur"}</p>
+                        <p className="text-white font-semibold text-lg">
+                          {request.entrepreneur?.name || "Entrepreneur"}
+                        </p>
                         {request.entrepreneur?.email && (
                           <div className="flex items-center gap-2 mt-1">
                             <FaEnvelope className="w-4 h-4 text-white/40" />
-                            <p className="text-white/60">{request.entrepreneur.email}</p>
+                            <p className="text-white/60">
+                              {request.entrepreneur.email}
+                            </p>
                           </div>
                         )}
                       </div>
                       {request.entrepreneur?.email && (
                         <a
-                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${request.entrepreneur.email}&su=Regarding ${request.idea?.title || 'Your Funding Request'}`}
+                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${
+                            request.entrepreneur.email
+                          }&su=Regarding ${
+                            request.idea?.title || "Your Funding Request"
+                          }`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
@@ -228,11 +237,19 @@ const InvestorFundingRequestModal = ({
                       <div className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
                         <FaEnvelope className="w-5 h-5 text-white/40" />
                         <div className="flex-1">
-                          <p className="text-white/60 text-xs mb-1">Contact Email</p>
-                          <p className="text-white font-medium">{request.contactEmail}</p>
+                          <p className="text-white/60 text-xs mb-1">
+                            Contact Email
+                          </p>
+                          <p className="text-white font-medium">
+                            {request.contactEmail}
+                          </p>
                         </div>
                         <a
-                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${request.contactEmail}&su=Regarding ${request.idea?.title || 'Funding Request'}`}
+                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${
+                            request.contactEmail
+                          }&su=Regarding ${
+                            request.idea?.title || "Funding Request"
+                          }`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition-colors"
@@ -246,8 +263,12 @@ const InvestorFundingRequestModal = ({
                       <div className="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
                         <FaPhone className="w-5 h-5 text-white/40" />
                         <div className="flex-1">
-                          <p className="text-white/60 text-xs mb-1">Contact Phone</p>
-                          <p className="text-white font-medium">{request.contactPhone}</p>
+                          <p className="text-white/60 text-xs mb-1">
+                            Contact Phone
+                          </p>
+                          <p className="text-white font-medium">
+                            {request.contactPhone}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -259,9 +280,13 @@ const InvestorFundingRequestModal = ({
                   <div className="flex items-start gap-4">
                     <FaHandshake className="w-6 h-6 text-white/90 flex-shrink-0 mt-1" />
                     <div>
-                      <h4 className="text-white font-semibold mb-2">Ready to Connect?</h4>
+                      <h4 className="text-white font-semibold mb-2">
+                        Ready to Connect?
+                      </h4>
                       <p className="text-white/70 text-sm leading-relaxed">
-                        Use the email buttons above to reach out to the entrepreneur directly. Discuss terms, ask questions, and negotiate the details of this investment opportunity.
+                        Use the email buttons above to reach out to the
+                        entrepreneur directly. Discuss terms, ask questions, and
+                        negotiate the details of this investment opportunity.
                       </p>
                     </div>
                   </div>
@@ -528,11 +553,9 @@ const TeamTab = ({ request }) => (
 // Helper Components
 const MetricCard = ({ icon: Icon, label, value, color }) => {
   const colorClasses = {
-    green:
-      "from-white/20 to-white/5 border-white/30 text-white/90",
+    green: "from-white/20 to-white/5 border-white/30 text-white/90",
     blue: "from-white/600/20 to-white/600/5 border-white/30 text-white/90",
-    purple:
-      "from-white/20 to-white/5 border-white/30 text-white/90",
+    purple: "from-white/20 to-white/5 border-white/30 text-white/90",
   };
 
   return (

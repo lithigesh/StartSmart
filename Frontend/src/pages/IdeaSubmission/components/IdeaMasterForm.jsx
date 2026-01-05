@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ideasAPI } from "../../../services/api";
+import { Lightbulb, Trash2, Rocket } from "lucide-react";
 
 const IdeaMasterForm = ({
   onDataChange,
@@ -35,9 +36,8 @@ const IdeaMasterForm = ({
       "The Indian e-grocery market is valued at $15B+ and is growing at ~30–40% CAGR. The quick-commerce segment is one of the fastest-growing categories, projected to reach $5B+ by 2025 as urban consumers increasingly adopt instant delivery for routine purchases. Large expansion opportunities remain across Tier-2/3 Indian cities and select Asian markets.",
 
     competitiveAdvantage:
-      "Zepto’s competitive strengths include its proprietary logistics and inventory software, optimized dark-store operations, improving unit economics, strong repeat purchase behavior (high retention and order frequency), data-driven assortment planning, and rapid expansion capability. Its focus on disciplined execution, customer experience, and operational efficiency positions it strongly in India’s quick-commerce ecosystem."
+      "Zepto’s competitive strengths include its proprietary logistics and inventory software, optimized dark-store operations, improving unit economics, strong repeat purchase behavior (high retention and order frequency), data-driven assortment planning, and rapid expansion capability. Its focus on disciplined execution, customer experience, and operational efficiency positions it strongly in India’s quick-commerce ecosystem.",
   };
-
 
   const [formData, setFormData] = useState({
     title: initialData.title || sampleData.title,
@@ -363,10 +363,13 @@ const IdeaMasterForm = ({
               </p>
               {!isEditMode && (
                 <div className="mt-4 p-4 bg-white/5 border border-white/20 rounded-xl">
-                  <p className="text-white/80 font-manrope text-sm">
-                    💡 <strong>Sample data has been pre-loaded</strong> to help
-                    you get started quickly. You can modify any field or use the
-                    "Clear Form" button to start fresh.
+                  <p className="text-white/80 font-manrope text-sm flex items-start gap-2">
+                    <Lightbulb className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                    <span>
+                      <strong>Sample data has been pre-loaded</strong> to help
+                      you get started quickly. You can modify any field or use
+                      the "Clear Form" button to start fresh.
+                    </span>
                   </p>
                 </div>
               )}
@@ -378,16 +381,18 @@ const IdeaMasterForm = ({
                 <button
                   type="button"
                   onClick={clearForm}
-                  className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope"
+                  className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope flex items-center gap-2"
                 >
-                  🗑️ Clear Form
+                  <Trash2 className="w-4 h-4" />
+                  Clear Form
                 </button>
                 <button
                   type="button"
                   onClick={loadSampleData}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center gap-2"
                 >
-                  🚀 Load Sample Data
+                  <Rocket className="w-4 h-4" />
+                  Load Sample Data
                 </button>
               </div>
             )}

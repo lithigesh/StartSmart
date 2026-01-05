@@ -93,7 +93,10 @@ const NegotiationChat = ({
   };
 
   const isSystemMessage = (msg) => {
-    return msg.message?.startsWith("✅") || msg.message?.startsWith("❌");
+    return (
+      msg.message?.startsWith("ACCEPTED:") ||
+      msg.message?.startsWith("REJECTED:")
+    );
   };
 
   const isInvestorMessage = (msg) => {

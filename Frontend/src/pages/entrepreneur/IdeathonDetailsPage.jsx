@@ -131,7 +131,8 @@ const IdeathonDetailsPage = () => {
   };
 
   const handleRegisterClick = () => {
-    setShowRegistrationModal(true);
+    // Navigate to the standalone registration page
+    navigate(`/entrepreneur/ideathon/${id}/register`);
   };
 
   const handleRegistrationSuccess = () => {
@@ -164,7 +165,7 @@ const IdeathonDetailsPage = () => {
               {error || "Ideathon not found"}
             </p>
             <button
-              onClick={() => navigate("/entrepreneur/ideathons")}
+              onClick={() => navigate(-1)}
               className="px-6 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 border border-white/20"
             >
               Back to Ideathons
@@ -182,7 +183,7 @@ const IdeathonDetailsPage = () => {
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <button
-          onClick={() => navigate("/entrepreneur/ideathons")}
+          onClick={() => navigate(-1)}
           className="mb-6 flex items-center gap-2 text-white/70 hover:text-white transition-all duration-300"
         >
           <FaArrowLeft />

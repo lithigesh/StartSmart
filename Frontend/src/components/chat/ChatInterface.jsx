@@ -10,6 +10,7 @@ import {
   FaExclamationTriangle,
   FaRedo,
   FaClock,
+  FaDollarSign,
 } from "react-icons/fa";
 
 const MAX_MESSAGE_LENGTH = 2000;
@@ -268,9 +269,7 @@ const ChatInterface = ({
                     {/* Avatar */}
                     <div
                       className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                        senderRole === "investor"
-                          ? "bg-white/20"
-                          : "bg-white"
+                        senderRole === "investor" ? "bg-white/20" : "bg-white"
                       }`}
                     >
                       {senderRole === "investor" ? (
@@ -308,7 +307,7 @@ const ChatInterface = ({
                               }`}
                             >
                               <div className="text-sm font-semibold mb-2 flex items-center gap-2">
-                                💰{" "}
+                                <FaDollarSign className="w-4 h-4" />{" "}
                                 {msg.messageType === "proposal"
                                   ? "Proposed Terms"
                                   : "Counter Proposal"}
@@ -479,7 +478,7 @@ const ChatInterface = ({
                     title="Add proposed terms"
                     disabled={isSending}
                   >
-                    💰
+                    <FaDollarSign />
                   </button>
                 )}
                 <button

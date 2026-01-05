@@ -1,18 +1,18 @@
-
 # StartSmart – AI-Powered Startup Evaluation & Funding Ecosystem
 
 ## Table of Contents
-1. [Introduction](#1-introduction)  
-2. [Problem Statement](#2-problem-statement)  
-3. [Objective of the Project](#3-objective-of-the-project)  
-4. [How the Platform Works](#4-how-the-platform-works)  
-5. [Key Features](#5-key-features)  
-6. [User Roles and Access Levels](#6-user-roles-and-access-levels)  
-7. [Real-World Use Cases](#7-real-world-use-cases)  
-8. [Current Progress and Status](#8-current-progress-and-status)  
-9. [Future Scope and Enhancements](#9-future-scope-and-enhancements)  
-10. [Sample Login Credentials (Demo Access)](#10-sample-login-credentials-demo-access)  
-11. [Contributors](#11-contributors)  
+
+1. [Introduction](#1-introduction)
+2. [Problem Statement](#2-problem-statement)
+3. [Objective of the Project](#3-objective-of-the-project)
+4. [How the Platform Works](#4-how-the-platform-works)
+5. [Key Features](#5-key-features)
+6. [User Roles and Access Levels](#6-user-roles-and-access-levels)
+7. [Real-World Use Cases](#7-real-world-use-cases)
+8. [Current Progress and Status](#8-current-progress-and-status)
+9. [Future Scope and Enhancements](#9-future-scope-and-enhancements)
+10. [Sample Login Credentials (Demo Access)](#10-sample-login-credentials-demo-access)
+11. [Contributors](#11-contributors)
 
 ---
 
@@ -32,43 +32,43 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 
 ## 3 Objective of the Project
 
-* Provide an AI-based evaluation system for startup ideas.
-* Create a platform where entrepreneurs and investors can interact digitally.
-* Introduce a structured and fair way to conduct ideathons and funding competitions.
-* Reduce delays and manual work in idea selection and funding allocation.
-* Make startup innovation more accessible in educational and entrepreneurial environments.
+- Provide an AI-based evaluation system for startup ideas.
+- Create a platform where entrepreneurs and investors can interact digitally.
+- Introduce a structured and fair way to conduct ideathons and funding competitions.
+- Reduce delays and manual work in idea selection and funding allocation.
+- Make startup innovation more accessible in educational and entrepreneurial environments.
 
 ---
 
 ## 4 How the Platform Works
 
-1. User registers and selects a role (Entrepreneur, Investor, Admin).  
-2. Entrepreneurs submit their business ideas through a structured form.  
-3. The platform analyzes submissions using AI and generates an evaluation report.  
-4. Entrepreneurs can raise funding requests based on the evaluation.  
-5. Investors view idea reports and decide whether to fund or reject requests.  
-6. Admins manage users, submissions, ideathons, and platform activities.  
+1. User registers and selects a role (Entrepreneur, Investor, Admin).
+2. Entrepreneurs submit their business ideas through a structured form.
+3. The platform analyzes submissions using AI and generates an evaluation report.
+4. Entrepreneurs can raise funding requests based on the evaluation.
+5. Investors view idea reports and decide whether to fund or reject requests.
+6. Admins manage users, submissions, ideathons, and platform activities.
 
 ---
 
 ## 5 Key Features
 
-* **AI-based Idea Evaluation** - Comprehensive analysis with market viability, SWOT analysis, and growth roadmap using GPT-4o-mini and Gemini 2.0 Flash
-* **Multi-Role Dashboard System** - Separate dashboards for Entrepreneurs, Investors, and Administrators with role-based access control
-* **Intelligent Funding Platform** - Automated funding request management with investor matching and negotiation system
-* **Ideathon Competition System** - Full-featured competition management with registration, submission tracking, and automated notifications
-* **Real-time Notifications** - Toast notifications and live updates for registrations, funding status, and investor interest
-* **Detailed Ideathon Pages** - Comprehensive ideathon information including eligibility criteria, judging criteria, submission formats, and contact details
-* **Withdrawal Management** - Allow users to withdraw from competitions with confirmation dialogs
-* **Secure Authentication** - JWT-based authentication with protected routes and role-based middleware
-* **Responsive Glassmorphism Design** - Modern UI with Tailwind CSS, fully responsive for mobile and desktop  
+- **AI-based Idea Evaluation** - Comprehensive analysis with market viability, SWOT analysis, and growth roadmap using GPT-4o-mini and Gemini 2.0 Flash
+- **Multi-Role Dashboard System** - Separate dashboards for Entrepreneurs, Investors, and Administrators with role-based access control
+- **Intelligent Funding Platform** - Automated funding request management with investor matching and negotiation system
+- **Ideathon Competition System** - Full-featured competition management with registration, submission tracking, and automated notifications
+- **Real-time Notifications** - Toast notifications and live updates for registrations, funding status, and investor interest
+- **Detailed Ideathon Pages** - Comprehensive ideathon information including eligibility criteria, judging criteria, submission formats, and contact details
+- **Withdrawal Management** - Allow users to withdraw from competitions with confirmation dialogs
+- **Secure Authentication** - JWT-based authentication with protected routes and role-based middleware
+- **Responsive Glassmorphism Design** - Modern UI with Tailwind CSS, fully responsive for mobile and desktop
 
 ---
 
 ## 6 User Roles and Access Levels
 
 | Role         | Key Permissions                                         |
-|--------------|---------------------------------------------------------|
+| ------------ | ------------------------------------------------------- |
 | Entrepreneur | Submit ideas, view reports, request funding             |
 | Investor     | Analyze ideas, approve funding, track investments       |
 | Admin        | Manage users, content, ideathons, and platform settings |
@@ -77,11 +77,11 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 
 ## 7 Real-World Use Cases
 
-* Students participating in startup-based events or hackathons.  
-* Colleges conducting ideathons or entrepreneurship competitions.  
-* Freelance entrepreneurs looking for validation and investor visibility.  
-* Investors searching for early-stage innovative ideas to support.  
-* Incubation centers tracking and evaluating startup pipelines.  
+- Students participating in startup-based events or hackathons.
+- Colleges conducting ideathons or entrepreneurship competitions.
+- Freelance entrepreneurs looking for validation and investor visibility.
+- Investors searching for early-stage innovative ideas to support.
+- Incubation centers tracking and evaluating startup pipelines.
 
 ---
 
@@ -90,24 +90,26 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 This project is fully completed and production-ready. All core modules are implemented and tested:
 
 **Completed Features:**
-* ✅ User authentication and role-based access control
-* ✅ AI-powered idea evaluation with multiple models (GPT-4o-mini, Gemini 2.0 Flash)
-* ✅ Comprehensive funding request and investor matching system
-* ✅ Full ideathon management with registration, tracking, and withdrawal
-* ✅ Real-time notification system with toast messages
-* ✅ Detailed ideathon pages with all submission requirements
-* ✅ PDF report generation for idea analysis
-* ✅ Admin panel with user, idea, and competition management
-* ✅ Responsive design with modern glassmorphism UI
-* ✅ Email notifications via SendGrid integration
+
+- User authentication and role-based access control
+- AI-powered idea evaluation with multiple models (GPT-4o-mini, Gemini 2.0 Flash)
+- Comprehensive funding request and investor matching system
+- Full ideathon management with registration, tracking, and withdrawal
+- Real-time notification system with toast messages
+- Detailed ideathon pages with all submission requirements
+- PDF report generation for idea analysis
+- Admin panel with user, idea, and competition management
+- Responsive design with modern glassmorphism UI
+- Email notifications via SendGrid integration
 
 **Recent Updates (December 2025):**
-* Fixed ideathon registration API endpoints
-* Added dedicated ideathon details pages
-* Implemented toast notifications for all user actions
-* Enhanced idea loading with proper error handling
-* Removed deprecated registration master page from admin
-* Added comprehensive submission format, eligibility, and judging criteria display
+
+- Fixed ideathon registration API endpoints
+- Added dedicated ideathon details pages
+- Implemented toast notifications for all user actions
+- Enhanced idea loading with proper error handling
+- Removed deprecated registration master page from admin
+- Added comprehensive submission format, eligibility, and judging criteria display
 
 The platform is ready for real-world deployment and use by entrepreneurs, investors, and organizations.
 
@@ -115,21 +117,22 @@ The platform is ready for real-world deployment and use by entrepreneurs, invest
 
 ## 9 Future Scope and Enhancements
 
-* Integration with real payment gateways for automated funding.  
-* Support for video pitch submissions and feedback.  
-* Public idea leaderboard and community voting system.  
-* Additional AI insights such as market fit and risk analysis.  
-* Multilingual support for wider audience reach.  
+- Integration with real payment gateways for automated funding.
+- Support for video pitch submissions and feedback.
+- Public idea leaderboard and community voting system.
+- Additional AI insights such as market fit and risk analysis.
+- Multilingual support for wider audience reach.
 
 ---
 
 ## 10 Sample Login Credentials (Demo Access)
 
 #### Admin Account
+
 ```txt
 Email: admin@startsmart.com
 Password: StartSmart@Admin2025
-````
+```
 
 #### Investor Account
 

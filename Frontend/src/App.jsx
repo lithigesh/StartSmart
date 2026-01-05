@@ -31,6 +31,7 @@ import FundingPage from "./pages/entrepreneur/FundingPage.jsx";
 import FundingRequestPage from "./pages/entrepreneur/FundingRequestPage.jsx";
 import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
 import IdeathonDetailsPage from "./pages/entrepreneur/IdeathonDetailsPage.jsx";
+import IdeathonRegistrationPage from "./pages/entrepreneur/IdeathonRegistrationPage.jsx";
 import NotificationsPage from "./pages/entrepreneur/NotificationsPage.jsx";
 import FeedbackPage from "./pages/entrepreneur/FeedbackPage.jsx";
 import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
@@ -164,6 +165,15 @@ const App = () => {
                 element={
                   <RoleBasedRoute allowedRole="entrepreneur">
                     <IdeaSubmissionPage />
+                  </RoleBasedRoute>
+                }
+              />
+              {/* Ideathon Registration - Full Screen (outside layout) */}
+              <Route
+                path="/entrepreneur/ideathon/:id/register"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <IdeathonRegistrationPage />
                   </RoleBasedRoute>
                 }
               />

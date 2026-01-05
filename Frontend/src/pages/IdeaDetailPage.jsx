@@ -189,7 +189,7 @@ const IdeaDetailPage = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <button
-              onClick={() => navigate(getDashboardUrl())}
+              onClick={() => navigate(-1)}
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <FaArrowLeft className="w-4 h-4" />

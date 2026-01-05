@@ -324,7 +324,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-                  <span className="text-5xl">💰</span>
+                  <FaDollarSign className="w-12 h-12 text-green-400" />
                   Create Funding Request
                 </h1>
                 <p className="mt-2 text-gray-300 text-lg">

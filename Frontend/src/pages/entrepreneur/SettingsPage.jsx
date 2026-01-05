@@ -174,15 +174,15 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Section */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 relative overflow-hidden animate-fade-in">
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 relative overflow-hidden animate-fade-in">
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white font-manrope mb-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white font-manrope mb-2">
             Account Settings
           </h1>
-          <p className="text-white/60 font-manrope">
+          <p className="text-sm sm:text-base text-white/60 font-manrope">
             Manage your account information and security settings
           </p>
         </div>
@@ -190,24 +190,24 @@ const SettingsPage = () => {
 
       {/* Account Information Card */}
       <div
-        className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 relative overflow-hidden animate-slide-up"
+        className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 relative overflow-hidden animate-slide-up"
         style={{ animationDelay: "100ms" }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-white/20/20 flex items-center justify-center">
-              <FaInfoCircle className="w-5 h-5 text-white/90" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/20/20 flex items-center justify-center flex-shrink-0">
+              <FaInfoCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white/90" />
             </div>
-            <h2 className="text-2xl font-bold text-white font-manrope">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white font-manrope">
               Account Information
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white/[0.02] rounded-lg p-4 border border-white/10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="bg-white/[0.02] rounded-lg p-3 sm:p-4 border border-white/10">
               <div className="flex items-center gap-2 mb-1">
-                <FaUserCircle className="w-4 h-4 text-white/60" />
-                <span className="text-white/60 text-sm font-manrope">
+                <FaUserCircle className="w-3 h-3 sm:w-4 sm:h-4 text-white/60" />
+                <span className="text-white/60 text-xs sm:text-sm font-manrope">
                   Account Type
                 </span>
               </div>
@@ -221,28 +221,28 @@ const SettingsPage = () => {
 
       {/* Profile Information Card */}
       <div
-        className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 relative overflow-hidden animate-slide-up"
+        className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 relative overflow-hidden animate-slide-up"
         style={{ animationDelay: "200ms" }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-lg bg-white/10/20 flex items-center justify-center">
-              <FaUser className="w-5 h-5 text-white/90" />
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/10/20 flex items-center justify-center flex-shrink-0">
+              <FaUser className="w-4 h-4 sm:w-5 sm:h-5 text-white/90" />
             </div>
-            <h2 className="text-2xl font-bold text-white font-manrope">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white font-manrope">
               Profile Information
             </h2>
           </div>
 
-          <form onSubmit={handleProfileUpdate} className="space-y-4">
+          <form onSubmit={handleProfileUpdate} className="space-y-3 sm:space-y-4">
             {/* Name Field */}
             <div>
-              <label className="block text-white/80 font-medium mb-2 font-manrope text-sm">
+              <label className="block text-white/80 font-medium mb-2 font-manrope text-xs sm:text-sm">
                 Full Name
               </label>
               <div className="relative">
-                <FaUser className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/40 w-4 h-4" />
+                <FaUser className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-white/40 w-3 h-3 sm:w-4 sm:h-4" />
                 <input
                   type="text"
                   value={profileData.name}

@@ -335,7 +335,7 @@ const AdminIdeathonDetailsPage = () => {
     <div className="space-y-6">
       {/* Back Button */}
       <button
-        onClick={() => navigate("/admin/registration-master")}
+        onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
       >
         <FaArrowLeft />
