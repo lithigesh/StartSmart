@@ -1,4 +1,4 @@
-// pages/entrepreneur/FeedbackPage.jsx
+// pages/investor/InvestorFeedbackPage.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNotifications } from "../../hooks/useNotifications";
@@ -6,7 +6,7 @@ import { appFeedbackAPI } from "../../services/api";
 import toast from "react-hot-toast";
 import { FaComment, FaPaperPlane, FaStar, FaCheckCircle } from "react-icons/fa";
 
-const FeedbackPage = () => {
+const InvestorFeedbackPage = () => {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
 
@@ -334,4 +334,4 @@ const FeedbackPage = () => {
   );
 };
 
-export default FeedbackPage;
+export default InvestorFeedbackPage;

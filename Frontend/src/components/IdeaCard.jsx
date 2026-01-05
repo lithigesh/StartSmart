@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import {
   FaLightbulb,
   FaStar,
@@ -29,6 +30,7 @@ const IdeaCard = ({
   onDelete,
 }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -42,7 +44,7 @@ const IdeaCard = ({
   const isOwnIdea = onEdit && onDelete;
 
   return (
-    <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 hover:bg-white/[0.05] transition-all duration-300 group relative">
+    <div className="bg-white/[0.02] border border-white/10 rounded-lg p-4 sm:p-6 hover:bg-white/[0.05] transition-all duration-300 group relative">
       {/* Comparison Checkbox */}
       {comparisonMode && (
         <ComparisonButton
@@ -54,31 +56,37 @@ const IdeaCard = ({
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <h4 className="text-white font-manrope font-semibold text-lg mb-2 group-hover:text-gray-200 transition-colors">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-0 mb-4">
+        <div className="flex-1 min-w-0">
+          <h4 className="text-white font-manrope font-semibold text-base sm:text-lg mb-2 group-hover:text-gray-200 transition-colors line-clamp-2">
             {idea.title}
           </h4>
-          <p className="text-white/70 font-manrope mb-3 line-clamp-2">
+          <p className="text-white/70 font-manrope text-sm line-clamp-2">
             {idea.description}
           </p>
         </div>
 
         {showInterestButton && !isOwnIdea && (
-          <div className="flex items-center gap-2 ml-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 sm:ml-4">
             <button
-              onClick={() => navigate(`/idea/${idea._id}`)}
-              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              onClick={() => {
+                const route = user?.role === "investor" 
+                  ? `/investor/idea/${idea._id}` 
+                  : `/entrepreneur/idea/${idea._id}`;
+                navigate(route);
+              }}
+              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-3 sm:px-4 py-2 font-manrope font-medium text-sm transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap"
             >
-              <FaEye className="w-3 h-3" />
-              View Details
+              <FaEye className="w-3 h-3 flex-shrink-0" />
+              <span className="hidden sm:inline">View Details</span>
+              <span className="sm:hidden">View</span>
             </button>
             <button
               onClick={() =>
                 onInterest(idea._id, isInterested ? "remove" : "add")
               }
               disabled={loading}
-              className={`btn btn-sm rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
+              className={`btn btn-sm rounded-lg px-3 sm:px-4 py-2 font-manrope font-medium text-sm transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap ${
                 isInterested
                   ? "bg-white/20 text-white/80 hover:bg-white/30 border border-white/30"
                   : "bg-white/20 text-white/90 hover:bg-white/30 border border-white/30"
@@ -87,19 +95,20 @@ const IdeaCard = ({
               {loading ? (
                 <FaSpinner className="w-3 h-3 animate-spin" />
               ) : isInterested ? (
-                <FaHeartBroken className="w-3 h-3" />
+                <FaHeartBroken className="w-3 h-3 flex-shrink-0" />
               ) : (
-                <FaHeart className="w-3 h-3" />
+                <FaHeart className="w-3 h-3 flex-shrink-0" />
               )}
-              {isInterested ? "Remove" : "Interest"}
+              <span className="hidden sm:inline">{isInterested ? "Remove" : "Interest"}</span>
+              <span className="sm:hidden">{isInterested ? "Remove" : "Add"}</span>
             </button>
           </div>
         )}
 
         {isOwnIdea && (
-          <div className="flex items-center gap-2 ml-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 sm:ml-4">
             <button
-              onClick={() => navigate(`/idea/${idea._id || idea.id}`)}
+              onClick={() => navigate(`/entrepreneur/idea/${idea._id || idea.id}`)}
               className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               <FaEye className="w-3 h-3" />

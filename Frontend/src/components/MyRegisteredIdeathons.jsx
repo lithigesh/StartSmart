@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import EmptyState from "./EmptyState";
@@ -15,6 +16,7 @@ import {
 } from "react-icons/fa";
 
 const MyRegisteredIdeathons = () => {
+  const navigate = useNavigate();
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -163,8 +165,9 @@ const MyRegisteredIdeathons = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedRegistration(registration);
-                    setShowUpdateForm(true);
+                    navigate(
+                      `/entrepreneur/ideathon/${registration.ideathon?._id}/register/${registration._id}`
+                    );
                   }}
                   className="px-3 py-1 bg-white/20/20 text-white/90 border border-white/30 rounded-full text-xs font-semibold hover:bg-white/20/30 transition-colors flex items-center gap-1 whitespace-nowrap"
                 >

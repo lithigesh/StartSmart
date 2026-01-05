@@ -197,7 +197,7 @@ const SettingsPage = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/20/20 flex items-center justify-center flex-shrink-0">
-              <FaInfoCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white/90" />
+              <FaUserCircle className="w-4 h-4 sm:w-5 sm:h-5 text-white/90" />
             </div>
             <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white font-manrope">
               Account Information

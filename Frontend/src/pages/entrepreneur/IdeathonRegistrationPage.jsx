@@ -23,20 +23,23 @@ import IdeaSubmissionForm from "../../components/entrepreneur/IdeaSubmissionForm
  * Standalone page for registering to an ideathon
  */
 const IdeathonRegistrationPage = () => {
-  const { id: ideathonId } = useParams();
+  const { id: ideathonId, registrationId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  // Determine if this is edit mode
+  const isEditMode = !!registrationId;
 
   // State for form data
   const [formData, setFormData] = useState({
     selectedIdeaId: "",
     pitchDetails: "",
+    projectTitle: "",
     teamName: "",
     teamMembers: "",
     mobileNumber: "",
     email: user?.email || "",
     githubUrl: "",
-    documents: [],
     acceptedTerms: false,
   });
 
@@ -53,8 +56,11 @@ const IdeathonRegistrationPage = () => {
     if (ideathonId) {
       fetchIdeathonDetails();
       fetchUserIdeas();
+      if (isEditMode) {
+        fetchRegistrationData();
+      }
     }
-  }, [ideathonId]);
+  }, [ideathonId, registrationId]);
 
   // Fetch ideathon details
   const fetchIdeathonDetails = async () => {
@@ -98,6 +104,49 @@ const IdeathonRegistrationPage = () => {
     }
   };
 
+  // Fetch existing registration data for edit mode
+  const fetchRegistrationData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
+
+      const response = await fetch(
+        `${API_BASE}/api/ideathons/${ideathonId}/registrations/${registrationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch registration data");
+      }
+
+      const data = await response.json();
+      const registration = data.data || data;
+
+      // Populate form with existing data
+      setFormData((prev) => ({
+        ...prev,
+        selectedIdeaId: registration.idea?._id || registration.ideaId || "",
+        pitchDetails: registration.pitchDetails || "",
+        projectTitle: registration.projectTitle || "",
+        teamName: registration.teamName || "",
+        teamMembers: Array.isArray(registration.teamMembers)
+          ? registration.teamMembers.map((m) => m.name || m).join("\n")
+          : registration.teamMembers || "",
+        mobileNumber: registration.mobileNumber || "",
+        email: registration.email || user?.email || "",
+        githubUrl: registration.githubUrl || "",
+        acceptedTerms: true, // Already accepted during registration
+      }));
+    } catch (err) {
+      console.error("Error fetching registration data:", err);
+      toast.error("Failed to load registration data");
+    }
+  };
+
   // Handle form field changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -105,27 +154,6 @@ const IdeathonRegistrationPage = () => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-  };
-
-  // Handle file upload
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setFormData((prev) => ({
-        ...prev,
-        documents: [...prev.documents, ...files],
-      }));
-      toast.success(`${files.length} file(s) added`);
-    }
-  };
-
-  // Remove uploaded document
-  const removeDocument = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      documents: prev.documents.filter((_, i) => i !== index),
-    }));
-    toast.success("File removed");
   };
 
   // Handle form submission
@@ -139,6 +167,10 @@ const IdeathonRegistrationPage = () => {
     }
     if (!formData.teamName.trim()) {
       toast.error("Please enter your team name");
+      return;
+    }
+    if (!formData.projectTitle.trim()) {
+      toast.error("Please enter your project title");
       return;
     }
     if (!formData.pitchDetails.trim()) {
@@ -157,40 +189,53 @@ const IdeathonRegistrationPage = () => {
       const token = localStorage.getItem("token");
       const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
-      // Prepare form data for submission
-      const submissionData = new FormData();
-      submissionData.append("ideaId", formData.selectedIdeaId);
-      submissionData.append("pitchDetails", formData.pitchDetails);
-      submissionData.append("teamName", formData.teamName);
-      submissionData.append("teamMembers", formData.teamMembers);
-      submissionData.append("mobileNumber", formData.mobileNumber);
-      submissionData.append("email", formData.email);
-      submissionData.append("githubUrl", formData.githubUrl);
+      // Prepare JSON data for submission
+      const submissionData = {
+        ideaId: formData.selectedIdeaId,
+        pitchDetails: formData.pitchDetails,
+        projectTitle: formData.projectTitle,
+        projectDescription: formData.pitchDetails,
+        teamName: formData.teamName,
+        teamMembers: formData.teamMembers,
+        mobileNumber: formData.mobileNumber,
+        email: formData.email,
+        githubUrl: formData.githubUrl,
+      };
 
-      // Add documents
-      formData.documents.forEach((file) => {
-        submissionData.append("documents", file);
+      let url;
+      let method;
+
+      if (isEditMode) {
+        // Update existing registration
+        url = `${API_BASE}/api/ideathons/${ideathonId}/registrations/${registrationId}`;
+        method = "PUT";
+      } else {
+        // Create new registration
+        url = `${API_BASE}/api/ideathons/${ideathonId}/register`;
+        method = "POST";
+      }
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(submissionData),
       });
-
-      const response = await fetch(
-        `${API_BASE}/api/ideathons/${ideathonId}/register`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: submissionData,
-        }
-      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+        throw new Error(errorData.message || "Operation failed");
       }
 
       const result = await response.json();
 
-      toast.success("Successfully registered for ideathon!");
+      toast.success(
+        isEditMode
+          ? "Successfully updated registration!"
+          : "Successfully registered for ideathon!"
+      );
       setTimeout(() => {
         navigate(`/entrepreneur/ideathon/${ideathonId}`);
       }, 1500);
@@ -270,7 +315,8 @@ const IdeathonRegistrationPage = () => {
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2 break-words">
-                Register for {ideathonDetails.title}
+                {isEditMode ? "Edit Registration" : "Register for"}{" "}
+                {ideathonDetails.title}
               </h1>
               <p className="text-sm sm:text-base text-white/70 mb-3 sm:mb-4 line-clamp-3 sm:line-clamp-none">
                 {ideathonDetails.description}
@@ -401,6 +447,22 @@ const IdeathonRegistrationPage = () => {
             />
           </div>
 
+          {/* Project Title */}
+          <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] border border-white/10 rounded-xl p-4 sm:p-6">
+            <label className="block mb-2 text-white font-semibold text-sm sm:text-base">
+              Project Title <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              name="projectTitle"
+              value={formData.projectTitle}
+              onChange={handleChange}
+              placeholder="Give your project a catchy title"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-yellow-400/50 focus:ring-2 focus:ring-yellow-400/20"
+              required
+            />
+          </div>
+
           {/* Team Information */}
           <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] border border-white/10 rounded-xl p-4 sm:p-6 space-y-4">
             <h2 className="text-lg sm:text-xl font-semibold text-white mb-4">
@@ -481,51 +543,6 @@ const IdeathonRegistrationPage = () => {
             </div>
           </div>
 
-          {/* Document Upload */}
-          <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] border border-white/10 rounded-xl p-4 sm:p-6">
-            <label className="block mb-4 text-white font-semibold flex items-center gap-2 text-sm sm:text-base">
-              <FaFileAlt className="text-white/70" />
-              Supporting Documents
-            </label>
-
-            <div className="mb-4">
-              <label className="flex items-center justify-center gap-3 px-6 py-4 bg-white/5 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:bg-white/10 hover:border-white/30 transition-all">
-                <FaUpload className="text-white/70" />
-                <span className="text-white/70">Click to upload files</span>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  accept=".pdf,.doc,.docx,.ppt,.pptx"
-                />
-              </label>
-            </div>
-
-            {formData.documents.length > 0 && (
-              <div className="space-y-2">
-                {formData.documents.map((file, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FaFileAlt className="text-white/70" />
-                      <span className="text-white text-sm">{file.name}</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeDocument(index)}
-                      className="text-red-400 hover:text-red-300 transition-colors"
-                    >
-                      <FaTimes />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
           {/* Terms and Conditions */}
           <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.04] border border-white/10 rounded-xl p-4 sm:p-6">
             <label className="flex items-start gap-3 cursor-pointer">
@@ -570,12 +587,12 @@ const IdeathonRegistrationPage = () => {
               {isSubmitting ? (
                 <>
                   <FaSpinner className="animate-spin" />
-                  Submitting...
+                  {isEditMode ? "Updating..." : "Submitting..."}
                 </>
               ) : (
                 <>
                   <FaCheck />
-                  Register for Ideathon
+                  {isEditMode ? "Update Registration" : "Register for Ideathon"}
                 </>
               )}
             </button>

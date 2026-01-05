@@ -48,7 +48,7 @@ const AdminDashboard = () => {
     },
     {
       id: "feedback",
-      label: "Ideas Feedback",
+      label: "Feedback",
       icon: FaEdit,
       path: "/admin/feedback",
     },

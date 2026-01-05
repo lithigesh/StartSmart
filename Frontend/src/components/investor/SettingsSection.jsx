@@ -11,6 +11,7 @@ import {
   FaCheck,
   FaTimes,
   FaInfoCircle,
+  FaUserCircle,
 } from "react-icons/fa";
 
 const SettingsSection = () => {
@@ -264,7 +265,7 @@ const SettingsSection = () => {
       <div className="bg-white/[0.03] backdrop-blur-xl rounded-2xl p-6 border border-white/10">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-lg bg-white/20/20 flex items-center justify-center">
-            <FaInfoCircle className="w-5 h-5 text-white/90" />
+            <FaUserCircle className="w-5 h-5 text-white/90" />
           </div>
           <div>
             <h3 className="text-white font-semibold text-lg font-manrope">

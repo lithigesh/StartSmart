@@ -17,9 +17,9 @@ import {
   SavedComparisonsSection,
   MarketResearchSection,
   PortfolioSection,
-  InvestorAppFeedbackPage,
 } from "../components/investor";
 import InvestorDealsPage from "./investor/InvestorDealsPage";
+import InvestorFeedbackPage from "./investor/InvestorFeedbackPage";
 import { FaLightbulb, FaHeart, FaBell } from "react-icons/fa";
 
 const InvestorDashboard = () => {
@@ -498,7 +498,7 @@ const InvestorDashboard = () => {
         return <SettingsSection />;
 
       case "feedback":
-        return <InvestorAppFeedbackPage />;
+        return <InvestorFeedbackPage />;
 
       default:
         return (

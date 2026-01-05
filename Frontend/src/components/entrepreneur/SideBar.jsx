@@ -10,7 +10,7 @@ import {
   FaChartBar,
   FaTrophy,
   FaUsers,
-  FaCog,
+  FaUserCircle,
   FaBell,
   FaSignOutAlt,
   FaBars,
@@ -73,7 +73,7 @@ const SideBar = ({
     {
       id: "settings",
       label: "Account",
-      icon: <FaCog className="w-5 h-5" />,
+      icon: <FaUserCircle className="w-5 h-5" />,
       description: "Account details",
       path: "/entrepreneur/settings",
     },
@@ -242,7 +242,7 @@ const SideBar = ({
             </div>
           </div>
 
-          <div className="px-4 mt-8">
+          <div className="px-4">
             <div className="space-y-2">
               {bottomItems.map((item) => (
                 <SidebarItem

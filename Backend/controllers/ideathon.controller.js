@@ -638,6 +638,40 @@ exports.getIdeathonRegistrations = async (req, res, next) => {
     }
 };
 
+// @desc    Get single registration by ID
+// @route   GET /api/ideathons/:id/registrations/:registrationId
+exports.getRegistrationById = async (req, res, next) => {
+    try {
+        const registration = await IdeathonRegistration.findById(req.params.registrationId)
+            .populate('entrepreneur', 'name email')
+            .populate('idea', 'title description category')
+            .populate('ideathon', 'title startDate endDate');
+        
+        if (!registration) {
+            return res.status(404).json({
+                success: false,
+                message: 'Registration not found'
+            });
+        }
+
+        // Verify user has permission to view this registration
+        if (registration.entrepreneur._id.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to view this registration'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: registration
+        });
+    } catch (error) {
+        console.error('Get registration by ID error:', error);
+        next(error);
+    }
+};
+
 // @desc    Update ideathon registration
 // @route   PUT /api/ideathons/:id/registrations/:registrationId
 exports.updateRegistration = async (req, res, next) => {
