@@ -1,10 +1,10 @@
 import React from "react";
-import FeedbackFormsSection from "../../components/admin/FeedbackFormsSection";
+import AdminAppFeedbackSection from "../../components/admin/AdminAppFeedbackSection";
 
 const AdminFeedbackPage = () => {
   return (
     <div className="space-y-6">
-      <FeedbackFormsSection />
+      <AdminAppFeedbackSection />
     </div>
   );
 };

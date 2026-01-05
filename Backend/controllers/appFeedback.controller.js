@@ -37,6 +37,7 @@ exports.createAppFeedback = async (req, res, next) => {
         // Create feedback
         const feedback = new AppFeedback({
             user: req.user.id,
+            userRole: req.user.role, // Automatically set user role
             category,
             title,
             description,
@@ -264,6 +265,51 @@ exports.getFeedbackStats = async (req, res, next) => {
             ...stats,
             statusCounts,
             categoryCounts
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Get all feedback (Admin only)
+// @route   GET /api/app-feedback/admin/all
+// @access  Admin
+exports.getAllFeedbackAdmin = async (req, res, next) => {
+    try {
+        const { page = 1, limit = 10, category, status, userRole } = req.query;
+
+        const filter = {};
+        if (category) filter.category = category;
+        if (status) filter.status = status;
+        if (userRole) filter.userRole = userRole;
+
+        const feedback = await AppFeedback.find(filter)
+            .populate('user', 'name email role')
+            .populate('adminResponse.respondedBy', 'name email')
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        const total = await AppFeedback.countDocuments(filter);
+
+        // Get stats by user role
+        const roleStats = await AppFeedback.aggregate([
+            {
+                $group: {
+                    _id: '$userRole',
+                    count: { $sum: 1 },
+                    avgRating: { $avg: '$overallRating' },
+                    avgRecommendation: { $avg: '$recommendationScore' }
+                }
+            }
+        ]);
+
+        res.json({
+            feedback,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            total,
+            roleStats
         });
     } catch (error) {
         next(error);

@@ -16,6 +16,7 @@ export { default as MarketResearchSection } from "./MarketResearchSection";
 export { default as MarketResearchModal } from "./MarketResearchModal";
 export { default as MarketResearchDetailView } from "./MarketResearchDetailView";
 export { default as PortfolioSection } from "./PortfolioSection";
+export { default as InvestorAppFeedbackPage } from "./InvestorAppFeedbackPage";
 
 // Deal Management Components
 export { default as DealCard } from "./DealCard";

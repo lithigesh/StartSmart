@@ -16,6 +16,7 @@ import {
   FaBalanceScale,
   FaBook,
   FaBriefcase,
+  FaComment,
 } from "react-icons/fa";
 
 const InvestorSidebar = ({
@@ -80,6 +81,12 @@ const InvestorSidebar = ({
       icon: <FaBell className="w-5 h-5" />,
       badge: unreadCount > 0 ? unreadCount : null,
       description: "Your notifications",
+    },
+    {
+      id: "feedback",
+      label: "App Feedback",
+      icon: <FaComment className="w-5 h-5" />,
+      description: "Share platform feedback",
     },
     {
       id: "settings",
