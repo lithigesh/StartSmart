@@ -8,9 +8,11 @@ const {
     updateFeedback,
     deleteFeedback,
     markAsHelpful,
-    getFeedbackStats
+    getFeedbackStats,
+    getAllFeedbackAdmin
 } = require('../controllers/appFeedback.controller');
 const { protect } = require('../middlewares/auth.middleware');
+const { isAdmin } = require('../middlewares/role.middleware');
 
 // Apply authentication to all routes
 router.use(protect);
@@ -24,6 +26,10 @@ router.route('/my-feedback')
 
 router.route('/stats')
     .get(getFeedbackStats);
+
+// Admin routes
+router.route('/admin/all')
+    .get(isAdmin, getAllFeedbackAdmin);
 
 router.route('/:id')
     .get(getFeedback)

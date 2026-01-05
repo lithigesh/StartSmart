@@ -7,10 +7,18 @@ const AppFeedbackSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    
+    // User Role (for better categorization)
+    userRole: {
+        type: String,
+        enum: ['entrepreneur', 'investor', 'admin'],
+        required: false // Make optional to maintain backward compatibility
+    },
+    
     // Feedback Categories
     category: {
         type: String,
-        enum: ['general', 'bug_report', 'feature_request', 'ui_ux', 'performance', 'security', 'other'],
+        enum: ['general', 'bug_report', 'feature_request', 'ui_ux', 'performance', 'security', 'analytics', 'other'],
         required: true,
         default: 'general'
     },
