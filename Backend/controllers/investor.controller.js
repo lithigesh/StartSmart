@@ -28,11 +28,6 @@ exports.getInterestedIdeas = async (req, res, next) => {
       .filter((interest) => interest.idea) // Filter out any null ideas
       .map((interest) => interest.idea);
 
-    // Log for debugging
-    console.log(
-      `Investor ${investorId} has ${interestedIdeas.length} interested ideas`
-    );
-
     res.json(interestedIdeas);
   } catch (error) {
     next(error);
@@ -238,16 +233,11 @@ exports.getPortfolioAnalytics = async (req, res, next) => {
         }),
       ]);
 
-    // Debug logging
-    console.log(`Portfolio Analytics Debug for investor ${investorId}:`);
-    console.log(`- Interested ideas count: ${interestedIdeasCount}`);
-
     // Fetch actual records to verify
     const actualInterests = await InvestorInterest.find({
       investor: investorId,
       status: "interested",
     }).select("idea status");
-    console.log(`- Actual interest records:`, actualInterests);
 
     // Calculate metrics with null safety
     const acceptedDeals = allRequests.filter(

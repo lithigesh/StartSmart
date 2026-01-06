@@ -456,20 +456,36 @@ exports.getInterestedIdeasForInvestor = async (req, res, next) => {
 // @access  Private (Owner only)
 exports.getIdeaById = async (req, res, next) => {
   try {
-    const idea = await Idea.findById(req.params.id);
+    const FundingRequest = require("../models/FundingRequest.model");
+    
+    const idea = await Idea.findById(req.params.id).populate("owner", "name email phone");
 
     if (!idea) {
       return res.status(404).json({ message: "Idea not found" });
     }
 
     // Allow access if user is the owner OR an investor
-    if (idea.owner.toString() !== req.user.id && req.user.role !== "investor") {
+    if (idea.owner._id.toString() !== req.user.id && req.user.role !== "investor") {
       return res
         .status(403)
         .json({ message: "Not authorized to view this idea" });
     }
 
-    res.json(idea);
+    // Fetch ALL funding requests for this idea (not filtered by status)
+    // This ensures we get the latest funding data regardless of status
+    const fundingRequests = await FundingRequest.find({
+      idea: req.params.id
+    })
+      .populate("entrepreneur", "name email phone")
+      .populate("acceptedBy", "name email")
+      .sort({ createdAt: -1 })
+      .limit(10); // Get the latest 10 requests
+
+    // Include funding requests in the response
+    const ideaWithFunding = idea.toObject();
+    ideaWithFunding.fundingRequests = fundingRequests;
+
+    res.json(ideaWithFunding);
   } catch (error) {
     next(error);
   }

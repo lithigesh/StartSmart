@@ -23,10 +23,12 @@ import AdminFeedbackPage from "./pages/admin/AdminFeedbackPage.jsx";
 import { IdeaSubmissionPage } from "./pages/IdeaSubmission";
 import AppFeedbackPage from "./components/AppFeedbackPage.jsx";
 
-// Entrepreneur Pages
+// Entrepreneur PagesEntrepreneur
 import EntrepreneurLayout from "./pages/entrepreneur/EntrepreneurLayout.jsx";
 import OverviewPage from "./pages/entrepreneur/OverviewPage.jsx";
+import EntrepreneurIdeasPage from "./pages/entrepreneur/EntrepreneurIdeaViewPage.jsx";
 import MyIdeasPage from "./pages/entrepreneur/MyIdeasPage.jsx";
+
 import FundingPage from "./pages/entrepreneur/FundingPage.jsx";
 import FundingRequestPage from "./pages/entrepreneur/FundingRequestPage.jsx";
 import IdeathonsPage from "./pages/entrepreneur/IdeathonsPage.jsx";
@@ -38,6 +40,7 @@ import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
 
 // Investor Pages
 import InvestorDealsPage from "./pages/investor/InvestorDealsPage.jsx";
+import InvestorIdeaViewPage from "./pages/investor/InvestorIdeaViewPage.jsx";
 
 import {
   NotFoundPage,
@@ -177,6 +180,15 @@ const App = () => {
                   </RoleBasedRoute>
                 }
               />
+              {/* Ideathon Registration Edit - Full Screen (outside layout) */}
+              <Route
+                path="/entrepreneur/ideathon/:id/register/:registrationId"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <IdeathonRegistrationPage />
+                  </RoleBasedRoute>
+                }
+              />
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route path="/admin" element={<AdminLoginPage />} />
@@ -207,11 +219,23 @@ const App = () => {
                   </RoleBasedRoute>
                 }
               />
+              {/* Entrepreneur Idea View Route */}
+          
+              {/* Investor Idea View Route */}
               <Route
-                path="/idea/:ideaId"
+                path="/investor/idea/:ideaId"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorIdeaViewPage />
+                  </RoleBasedRoute>
+                }
+              />
+              {/* Legacy route - kept for backward compatibility */}
+              <Route
+                path="/entrepreneur/idea/:ideaId"
                 element={
                   <ProtectedRoute>
-                    <IdeaDetailPage />
+                    <EntrepreneurIdeasPage />
                   </ProtectedRoute>
                 }
               />

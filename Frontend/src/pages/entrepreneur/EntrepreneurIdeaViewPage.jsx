@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { investorAPI } from "../services/api";
+import { useAuth } from "../../context/AuthContext";
+import { investorAPI } from "../../services/api";
 import {
   FaArrowLeft,
   FaLightbulb,
@@ -310,8 +310,8 @@ const IdeaDetailPage = () => {
           <div className="bg-gradient-to-br from-white/900/20 via-white/20 to-white/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl font-manrope font-bold text-white mb-4 flex items-center gap-2">
-                <FaBullseye className="w-6 h-6 text-white/90" />
+              <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent mb-4 flex items-center gap-2">
+                <FaBullseye className="w-6 h-6 text-yellow-400" />
                 Elevator Pitch
               </h2>
               <p className="text-white/90 font-manrope text-lg leading-relaxed italic">
@@ -328,8 +328,8 @@ const IdeaDetailPage = () => {
             <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
               <div className="relative z-10">
-                <h3 className="text-xl font-manrope font-bold text-white mb-3 flex items-center gap-2">
-                  <FaUser className="w-5 h-5 text-white/90" />
+                <h3 className="text-xl font-manrope font-bold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent mb-3 flex items-center gap-2">
+                  <FaUser className="w-5 h-5 text-blue-400" />
                   Target Audience
                 </h3>
                 <p className="text-white/80 font-manrope leading-relaxed">
@@ -374,8 +374,8 @@ const IdeaDetailPage = () => {
         <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
           <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
           <div className="relative z-10">
-            <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-              <FaLightbulb className="w-6 h-6 text-white/70" />
+            <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-orange-400 to-orange-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+              <FaLightbulb className="w-6 h-6 text-orange-400" />
               Problem & Solution
             </h2>
 
@@ -423,8 +423,8 @@ const IdeaDetailPage = () => {
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaMoneyBill className="w-6 h-6 text-white/90" />
+              <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                <FaMoneyBill className="w-6 h-6 text-green-400" />
                 Business Model
               </h2>
 
@@ -473,8 +473,8 @@ const IdeaDetailPage = () => {
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaChartLine className="w-6 h-6 text-white/90" />
+              <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                <FaChartLine className="w-6 h-6 text-cyan-400" />
                 Market & Growth Strategy
               </h2>
 
@@ -523,8 +523,8 @@ const IdeaDetailPage = () => {
           <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaCogs className="w-6 h-6 text-white/90" />
+              <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                <FaCogs className="w-6 h-6 text-purple-400" />
                 Technical Details
               </h2>
 
@@ -571,8 +571,8 @@ const IdeaDetailPage = () => {
           <div className="bg-gradient-to-br from-white/20 via-white/20 to-white/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaLeaf className="w-6 h-6 text-white/90" />
+              <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                <FaLeaf className="w-6 h-6 text-emerald-400" />
                 Sustainability & Social Impact
               </h2>
 
@@ -608,8 +608,8 @@ const IdeaDetailPage = () => {
           <div className="bg-gradient-to-br from-white/20 via-white/20 to-white/20 backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">
             <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] via-white/[0.02] to-white/[0.05] rounded-2xl pointer-events-none"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                <FaDollarSign className="w-6 h-6 text-white/70" />
+              <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                <FaDollarSign className="w-6 h-6 text-amber-400" />
                 Funding & Investment
               </h2>
 
@@ -695,8 +695,8 @@ const IdeaDetailPage = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
 
               <div className="relative z-10">
-                <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                  <FaChartLine className="w-6 h-6" />
+                <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-rose-400 to-rose-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                  <FaChartLine className="w-6 h-6 text-rose-400" />
                   SWOT Analysis
                 </h2>
 
@@ -704,8 +704,8 @@ const IdeaDetailPage = () => {
                   {idea.analysis.swot?.strengths && (
                     <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
                       <h3 className="text-white/90 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
-                        <FaCheckCircle className="w-5 h-5" />
-                        Strengths
+                        <FaCheckCircle className="w-5 h-5 text-green-400" />
+                        <span className="bg-gradient-to-r from-green-400 to-green-300 bg-clip-text text-transparent">Strengths</span>
                       </h3>
                       <p className="text-white/80 font-manrope leading-relaxed">
                         {idea.analysis.swot.strengths}
@@ -716,8 +716,8 @@ const IdeaDetailPage = () => {
                   {idea.analysis.swot?.weaknesses && (
                     <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
                       <h3 className="text-white/80 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
-                        <FaExclamationTriangle className="w-5 h-5" />
-                        Weaknesses
+                        <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
+                        <span className="bg-gradient-to-r from-yellow-400 to-yellow-300 bg-clip-text text-transparent">Weaknesses</span>
                       </h3>
                       <p className="text-white/80 font-manrope leading-relaxed">
                         {idea.analysis.swot.weaknesses}
@@ -728,8 +728,8 @@ const IdeaDetailPage = () => {
                   {idea.analysis.swot?.opportunities && (
                     <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
                       <h3 className="text-white/90 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
-                        <FaBullseye className="w-5 h-5" />
-                        Opportunities
+                        <FaBullseye className="w-5 h-5 text-blue-400" />
+                        <span className="bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent">Opportunities</span>
                       </h3>
                       <p className="text-white/80 font-manrope leading-relaxed">
                         {idea.analysis.swot.opportunities}
@@ -740,8 +740,8 @@ const IdeaDetailPage = () => {
                   {idea.analysis.swot?.threats && (
                     <div className="bg-white/[0.02] border border-white/20 rounded-lg p-6">
                       <h3 className="text-white/80 font-manrope font-semibold text-lg mb-3 flex items-center gap-2">
-                        <FaExclamationTriangle className="w-5 h-5" />
-                        Threats
+                        <FaExclamationTriangle className="w-5 h-5 text-red-400" />
+                        <span className="bg-gradient-to-r from-red-400 to-red-300 bg-clip-text text-transparent">Threats</span>
                       </h3>
                       <p className="text-white/80 font-manrope leading-relaxed">
                         {idea.analysis.swot.threats}
@@ -758,18 +758,27 @@ const IdeaDetailPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
 
                 <div className="relative z-10">
-                  <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                    <FaRocket className="w-6 h-6" />
+                  <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-sky-400 to-sky-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                    <FaRocket className="w-6 h-6 text-sky-400" />
                     Development Roadmap
                   </h2>
 
                   <div className="space-y-4">
-                    {idea.analysis.roadmap.map((step, index) => (
+                    {idea.analysis.roadmap.map((step, index) => {
+                      const colors = [
+                        'bg-gradient-to-br from-cyan-500 to-cyan-600',
+                        'bg-gradient-to-br from-violet-500 to-violet-600',
+                        'bg-gradient-to-br from-pink-500 to-pink-600',
+                        'bg-gradient-to-br from-lime-500 to-lime-600',
+                      ];
+                      const colorClass = colors[index % colors.length];
+                      
+                      return (
                       <div
                         key={index}
                         className="flex items-start gap-4 p-4 bg-white/[0.02] border border-white/10 rounded-lg"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white font-manrope font-bold text-sm">
+                        <div className={`flex-shrink-0 w-8 h-8 ${colorClass} rounded-full flex items-center justify-center text-white font-manrope font-bold text-sm`}>
                           {index + 1}
                         </div>
                         <div className="flex-1">
@@ -778,7 +787,8 @@ const IdeaDetailPage = () => {
                           </p>
                         </div>
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 </div>
               </div>
@@ -790,8 +800,8 @@ const IdeaDetailPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
 
                 <div className="relative z-10">
-                  <h2 className="text-2xl font-manrope font-bold text-white mb-6 flex items-center gap-2">
-                    <FaChartLine className="w-6 h-6" />
+                  <h2 className="text-2xl font-manrope font-bold bg-gradient-to-r from-indigo-400 to-indigo-300 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+                    <FaChartLine className="w-6 h-6 text-indigo-400" />
                     Market Trends
                   </h2>
 

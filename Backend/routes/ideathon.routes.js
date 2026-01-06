@@ -10,6 +10,7 @@ const {
     deleteIdeathon,
     registerForIdeathon,
     getIdeathonRegistrations,
+    getRegistrationById,
     postIdeathonWinners,
     getMyRegisteredIdeathons,
     updateRegistration,
@@ -33,6 +34,7 @@ router.get('/registrations', protect, isAdmin, getIdeathonRegistrations);
 
 // Registration management routes
 router.put('/:id/registrations/:registrationId', protect, updateRegistration);
+router.get('/:id/registrations/:registrationId', protect, getRegistrationById);
 router.post('/:id/register', protect, registerForIdeathon); // Allow both admin and entrepreneur
 router.get('/:id/registrations', protect, isAdmin, getIdeathonRegistrations);
 router.put('/:id/results', protect, isAdmin, postIdeathonWinners);
