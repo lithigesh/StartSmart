@@ -29,6 +29,7 @@ const PortfolioSection = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [portfolioData, setPortfolioData] = useState(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   // Color palette for charts
   const COLORS = {
@@ -37,6 +38,16 @@ const PortfolioSection = () => {
 
   useEffect(() => {
     loadPortfolioData();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 640);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const loadPortfolioData = async () => {
@@ -79,12 +90,28 @@ const PortfolioSection = () => {
   // Custom tooltip for charts
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const title =
+        label ||
+        payload?.[0]?.name ||
+        payload?.[0]?.payload?.name ||
+        payload?.[0]?.payload?.stage ||
+        "";
+
+      const hasValues = payload.some((e) => e && typeof e.value !== "undefined");
+      if (!title && !hasValues) return null;
+
       return (
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-xl">
-          <p className="text-white font-semibold mb-1">{label}</p>
+        <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl p-3 shadow-xl">
+          {title ? (
+            <p className="text-white font-semibold mb-1">{title}</p>
+          ) : null}
           {payload.map((entry, index) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.name}:{" "}
+            <p
+              key={index}
+              className="text-sm text-white/80"
+              style={{ color: entry?.color || "rgba(255,255,255,0.8)" }}
+            >
+              {entry?.name ? `${entry.name}: ` : ""}
               {entry.dataKey === "value" || entry.name === "Amount"
                 ? formatCurrency(entry.value)
                 : entry.value}
@@ -97,10 +124,24 @@ const PortfolioSection = () => {
   };
 
   // Custom label for pie chart
-  const renderCustomLabel = ({ name, percentage }) => {
+  const renderCustomLabel = ({ name, percent, x, y, cx }) => {
+    const safeName = typeof name === "string" ? name : "";
     const truncatedName =
-      name.length > 12 ? name.substring(0, 12) + "..." : name;
-    return `${truncatedName} ${percentage}%`;
+      safeName.length > 12 ? safeName.substring(0, 12) + "..." : safeName;
+    const pct = `${Math.round((percent || 0) * 100)}%`;
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="rgba(255,255,255,0.75)"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+        fontSize={12}
+      >
+        {`${truncatedName} ${pct}`}
+      </text>
+    );
   };
 
   if (loading) {
@@ -114,7 +155,7 @@ const PortfolioSection = () => {
 
   if (error) {
     return (
-      <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center">
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 text-center">
         <FaExclamationCircle className="w-16 h-16 text-white/80 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-white mb-2">
           Error Loading Portfolio
@@ -122,7 +163,7 @@ const PortfolioSection = () => {
         <p className="text-white/70 mb-4">{error}</p>
         <button
           onClick={loadPortfolioData}
-          className="px-6 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white rounded-lg transition-colors"
+          className="px-6 py-2 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 text-white rounded-lg transition-colors"
         >
           Retry
         </button>
@@ -164,7 +205,7 @@ const PortfolioSection = () => {
           <button
             onClick={loadPortfolioData}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             title="Refresh data"
           >
             <FaSync className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
@@ -176,9 +217,9 @@ const PortfolioSection = () => {
       {/* Overview Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Total Invested */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+            <div className="p-3 bg-white/[0.03] border border-white/10 rounded-lg">
               <FaDollarSign className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
@@ -194,9 +235,9 @@ const PortfolioSection = () => {
         </div>
 
         {/* Active Deals */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+            <div className="p-3 bg-white/[0.03] border border-white/10 rounded-lg">
               <FaHandshake className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
@@ -213,9 +254,9 @@ const PortfolioSection = () => {
         </div>
 
         {/* Interested Ideas */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+            <div className="p-3 bg-white/[0.03] border border-white/10 rounded-lg">
               <FaLightbulb className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
@@ -231,9 +272,9 @@ const PortfolioSection = () => {
         </div>
 
         {/* Pending Reviews */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+            <div className="p-3 bg-white/[0.03] border border-white/10 rounded-lg">
               <FaClipboardList className="w-6 h-6 text-white/80" />
             </div>
             <div className="text-right">
@@ -250,7 +291,7 @@ const PortfolioSection = () => {
       </div>
 
       {/* Conversion Rate Metric */}
-      <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-white font-semibold text-lg mb-2 flex items-center gap-2">
@@ -273,7 +314,7 @@ const PortfolioSection = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Deal Pipeline Funnel */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
             <FaChartLine className="text-white/90" />
             Deal Pipeline
@@ -291,7 +332,7 @@ const PortfolioSection = () => {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          <div className="mt-4 pt-4 border-t border-gray-800">
+          <div className="mt-4 pt-4 border-t border-white/10">
             <div className="text-sm text-white/60">
               Total Pipeline:{" "}
               <span className="text-white font-semibold">
@@ -302,22 +343,22 @@ const PortfolioSection = () => {
         </div>
 
         {/* Investment Distribution by Category */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
             <FaChartPie className="text-white/90" />
             Investment by Category
           </h3>
           {distribution.byCategory.length > 0 ? (
             <>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={isSmallScreen ? 240 : 300}>
                 <PieChart>
                   <Pie
                     data={distribution.byCategory}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={renderCustomLabel}
-                    outerRadius={100}
+                    label={!isSmallScreen ? renderCustomLabel : false}
+                    outerRadius={isSmallScreen ? 80 : 100}
                     fill="#9CA3AF"
                     dataKey="value"
                   >
@@ -331,12 +372,12 @@ const PortfolioSection = () => {
                   <Tooltip content={<CustomTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="mt-4 pt-4 border-t border-gray-800">
+              <div className="mt-4 pt-4 border-t border-white/10">
                 <div className="grid grid-cols-2 gap-2">
                   {distribution.byCategory.map((item, index) => (
                     <div
                       key={item.name || index}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 min-w-0"
                     >
                       <div
                         className="w-3 h-3 rounded-full"
@@ -345,7 +386,7 @@ const PortfolioSection = () => {
                             COLORS.primary[index % COLORS.primary.length],
                         }}
                       />
-                      <span className="text-sm text-white/80">{item.name}</span>
+                      <span className="text-sm text-white/80 truncate">{item.name}</span>
                     </div>
                   ))}
                 </div>
@@ -359,35 +400,9 @@ const PortfolioSection = () => {
         </div>
       </div>
 
-      {/* Investment Distribution by Stage */}
-      {distribution.byStage.length > 0 && (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 mb-8">
-          <h3 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-            <FaChartPie className="text-white/90" />
-            Investment Distribution by Stage
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {distribution.byStage.map((item, index) => (
-              <div
-                key={item.name || index}
-                className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-colors"
-              >
-                <div className="text-2xl font-bold text-white mb-1">
-                  {item.value}
-                </div>
-                <div className="text-sm text-white/60 mb-2">{item.name}</div>
-                <div className="text-xs text-white/90 font-semibold">
-                  {item.percentage}%
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Recent Deals */}
       {recentDeals.length > 0 && (
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4">
             Recent Accepted Deals
           </h3>
@@ -397,7 +412,7 @@ const PortfolioSection = () => {
                 key={
                   deal._id || deal.id || `${deal.ideaTitle || "deal"}-${index}`
                 }
-                className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-colors"
+                className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 hover:border-white/20 transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">

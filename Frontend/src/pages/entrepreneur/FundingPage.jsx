@@ -259,9 +259,36 @@ const FundingPage = () => {
     setShowEditModal(true);
   };
 
-  const handleShowContact = (request) => {
-    setSelectedFundingRequest(request);
-    setShowContactModal(true);
+  const handleShowContact = async (request) => {
+    try {
+      const requestId = request?._id || request?.id;
+      if (!requestId) {
+        setSelectedFundingRequest(request);
+        setShowContactModal(true);
+        return;
+      }
+
+      const result = await fundingAPI.getFundingRequestById(requestId);
+      if (result?.success && result.data) {
+        setSelectedFundingRequest(result.data);
+      } else {
+        setSelectedFundingRequest(request);
+        addNotification(
+          result?.message || "Unable to load investor contact details",
+          "error"
+        );
+      }
+
+      setShowContactModal(true);
+    } catch (err) {
+      console.error("Error loading funding request details:", err);
+      setSelectedFundingRequest(request);
+      setShowContactModal(true);
+      addNotification(
+        err?.message || "Unable to load investor contact details",
+        "error"
+      );
+    }
   };
 
   const handleUpdateFundingRequest = async (requestId) => {
@@ -407,7 +434,7 @@ const FundingPage = () => {
               <h3 className="text-white font-manrope font-semibold text-lg mb-2">
                 Total Funding
               </h3>
-              <p className="text-white/60 text-sm font-manrope">
+              <p className="text-white/60 text-base font-manrope">
                 Received from investors
               </p>
             </div>
@@ -431,7 +458,7 @@ const FundingPage = () => {
               <h3 className="text-white font-manrope font-semibold text-lg mb-2">
                 Funding Requests
               </h3>
-              <p className="text-white/60 text-sm font-manrope">
+              <p className="text-white/60 text-base font-manrope">
                 Total submitted requests
               </p>
             </div>
@@ -442,7 +469,7 @@ const FundingPage = () => {
         <div className="mb-6">
           <button
             onClick={handleCreateFundingRequest}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200 font-medium"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-black hover:bg-white/90 rounded-lg transition-colors duration-200 font-medium"
           >
             <FaPlus className="w-4 h-4" />
             Request Funding
@@ -485,14 +512,14 @@ const FundingPage = () => {
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
                   <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-4">
+                      <div className="flex-1 min-w-0">
                         <h4 className="text-white font-semibold text-lg mb-2">
                           {request.idea?.title ||
                             request.ideaTitle ||
                             "Untitled"}
                         </h4>
-                        <p className="text-white/70 text-sm mb-3">
+                        <p className="text-white/70 text-base mb-3">
                           {request.idea?.description ||
                             request.description ||
                             "No description available"}
@@ -509,7 +536,7 @@ const FundingPage = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-white/60 text-xs mb-1">
+                        <p className="text-white/60 text-sm mb-1">
                           Amount Requested
                         </p>
                         <p className="text-white font-semibold">
@@ -517,21 +544,12 @@ const FundingPage = () => {
                         </p>
                       </div>
                       <div>
-                        <p className="text-white/60 text-xs mb-1">Submitted</p>
+                        <p className="text-white/60 text-sm mb-1">Submitted</p>
                         <p className="text-white font-semibold">
                           {formatDate(request.createdAt)}
                         </p>
                       </div>
                     </div>
-
-                    {request.message && (
-                      <div className="mb-4">
-                        <p className="text-white/60 text-xs mb-1">Message</p>
-                        <p className="text-white/80 text-sm">
-                          {request.message}
-                        </p>
-                      </div>
-                    )}
 
                     {/* Investor Details - Show when accepted */}
                     {request.status === "accepted" && (
@@ -548,7 +566,7 @@ const FundingPage = () => {
                           <>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               <div>
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Investor Name
                                 </p>
                                 <p className="text-white font-medium">
@@ -560,7 +578,7 @@ const FundingPage = () => {
                                 </p>
                               </div>
                               <div>
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Contact Email
                                 </p>
                                 <p className="text-white font-medium flex items-center gap-2">
@@ -591,7 +609,7 @@ const FundingPage = () => {
                                 </p>
                               </div>
                               <div>
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Amount
                                 </p>
                                 <p className="text-white font-medium">
@@ -602,7 +620,7 @@ const FundingPage = () => {
                                 </p>
                               </div>
                               <div>
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Equity
                                 </p>
                                 <p className="text-white font-medium">
@@ -613,7 +631,7 @@ const FundingPage = () => {
                               </div>
                               {request.acceptedAt && (
                                 <div>
-                                  <p className="text-white/60 text-xs mb-1">
+                                  <p className="text-white/60 text-sm mb-1">
                                     Accepted On
                                   </p>
                                   <p className="text-white font-medium">
@@ -624,10 +642,10 @@ const FundingPage = () => {
                             </div>
                             {request.acceptanceTerms?.conditions && (
                               <div className="mt-3 pt-3 border-t border-white/20">
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Terms & Conditions
                                 </p>
-                                <p className="text-white/80 text-sm">
+                                <p className="text-white/80 text-base">
                                   {request.acceptanceTerms.conditions}
                                 </p>
                               </div>
@@ -637,7 +655,7 @@ const FundingPage = () => {
                           <div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                               <div>
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Amount
                                 </p>
                                 <p className="text-white font-medium">
@@ -648,7 +666,7 @@ const FundingPage = () => {
                                 </p>
                               </div>
                               <div>
-                                <p className="text-white/60 text-xs mb-1">
+                                <p className="text-white/60 text-sm mb-1">
                                   Equity
                                 </p>
                                 <p className="text-white font-medium">
@@ -658,12 +676,12 @@ const FundingPage = () => {
                                 </p>
                               </div>
                             </div>
-                            <div className="text-white/80 text-sm bg-white/5 p-3 rounded-lg">
+                            <div className="text-white/80 text-base bg-white/5 p-3 rounded-lg">
                               <p className="mb-1 flex items-center gap-2">
                                 <FaCheck className="w-4 h-4 text-green-400" />
                                 Your funding request has been accepted!
                               </p>
-                              <p className="text-white/60 text-xs">
+                              <p className="text-white/60 text-sm">
                                 Investor contact details will be available soon.
                                 Please check your email or contact support for
                                 assistance.
@@ -675,13 +693,13 @@ const FundingPage = () => {
                     )}
 
                     {/* Action buttons */}
-                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 pt-4 border-t border-white/10">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleViewFundingRequest(request);
                         }}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-base font-medium"
                       >
                         <FaEye className="w-4 h-4" />
                         Show Details
@@ -695,7 +713,7 @@ const FundingPage = () => {
                             e.stopPropagation();
                             handleShowContact(request);
                           }}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                         >
                           <FaEnvelope className="w-4 h-4" />
                           Contact
@@ -709,7 +727,7 @@ const FundingPage = () => {
                               e.stopPropagation();
                               handleEditFundingRequest(request);
                             }}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                           >
                             <FaEdit className="w-4 h-4" />
                             Edit
@@ -719,7 +737,7 @@ const FundingPage = () => {
                               e.stopPropagation();
                               handleWithdrawFundingRequest(request._id);
                             }}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
+                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 text-sm font-medium"
                           >
                             <FaTrash className="w-4 h-4 text-red-400" />
                             Delete
@@ -727,19 +745,19 @@ const FundingPage = () => {
                         </>
                       )}
                       {request.status === "accepted" && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/10/20 text-white/90 rounded-lg text-sm font-medium">
+                        <span className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/10/20 text-white/90 rounded-lg text-sm font-medium">
                           <FaCheckCircle className="w-4 h-4" />
                           Accepted
                         </span>
                       )}
                       {request.status === "declined" && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 text-white/80 rounded-lg text-sm font-medium">
+                        <span className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/20 text-white/80 rounded-lg text-sm font-medium">
                           <FaTimesCircle className="w-4 h-4" />
                           Declined
                         </span>
                       )}
                       {request.status === "withdrawn" && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] text-white/50 rounded-lg text-sm font-medium border border-white/10">
+                        <span className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/[0.05] text-white/50 rounded-lg text-sm font-medium border border-white/10">
                           <FaMinusCircle className="w-4 h-4" />
                           Withdrawn
                         </span>

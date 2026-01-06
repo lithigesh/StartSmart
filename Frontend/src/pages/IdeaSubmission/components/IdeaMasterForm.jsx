@@ -350,15 +350,15 @@ const IdeaMasterForm = ({
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header Section */}
-      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 mb-8 relative overflow-hidden">
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
         <div className="relative z-10">
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:justify-between lg:items-start mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-white font-manrope mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white font-manrope mb-3">
                 {isEditMode ? "Edit Your Idea" : "Submit Your Innovative Idea"}
               </h2>
-              <p className="text-white/70 font-manrope text-lg">
+              <p className="text-white/70 font-manrope text-base sm:text-lg">
                 Define the core concept, problem, and solution for your
                 innovative startup idea.
               </p>
@@ -378,11 +378,11 @@ const IdeaMasterForm = ({
 
             {/* Quick Action Buttons */}
             {!isEditMode && (
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 w-full lg:w-auto">
                 <button
                   type="button"
                   onClick={clearForm}
-                  className="px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope flex items-center gap-2"
+                  className="w-full sm:w-auto px-4 py-2 bg-white/[0.05] hover:bg-white/[0.08] text-white/70 hover:text-white text-sm rounded-lg transition-all duration-300 border border-white/10 hover:border-white/20 font-manrope flex items-center justify-center gap-2"
                 >
                   <Trash2 className="w-4 h-4" />
                   Clear Form
@@ -390,7 +390,7 @@ const IdeaMasterForm = ({
                 <button
                   type="button"
                   onClick={loadSampleData}
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center gap-2"
+                  className="w-full sm:w-auto px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm rounded-lg transition-all duration-300 font-manrope shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2"
                 >
                   <Rocket className="w-4 h-4" />
                   Load Sample Data
@@ -404,7 +404,7 @@ const IdeaMasterForm = ({
       {/* Form Section */}
       <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
-        <div className="relative z-10 p-8">
+        <div className="relative z-10 p-4 sm:p-6 lg:p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Information Section */}
             <div className="space-y-6">

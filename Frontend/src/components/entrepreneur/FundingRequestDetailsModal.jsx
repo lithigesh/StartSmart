@@ -265,13 +265,13 @@ const FundingRequestDetailsModal = ({
       {/* Modal Container */}
       <div className="relative w-full max-w-5xl max-h-[90vh] mx-4 bg-black border border-white/20 rounded-2xl overflow-hidden z-[70] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/10 flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <div>
-              <h2 className="text-2xl font-bold text-white">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-white/10 flex-shrink-0">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 min-w-0">
+            <div className="min-w-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-white">
                 Funding Request Details
               </h2>
-              <p className="text-white/60 mt-1">
+              <p className="text-white/60 mt-1 break-words">
                 {request.idea?.title || request.ideaTitle || "Unknown Idea"}
               </p>
             </div>
@@ -284,11 +284,11 @@ const FundingRequestDetailsModal = ({
                 request.status?.slice(1)}
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 w-full sm:w-auto">
             {canEdit && !isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 flex items-center gap-2 font-manrope"
+                className="w-full sm:w-auto px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-2 font-manrope"
               >
                 <FaEdit className="w-4 h-4" />
                 Edit
@@ -296,7 +296,7 @@ const FundingRequestDetailsModal = ({
             )}
             <button
               onClick={onClose}
-              className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="w-full sm:w-auto p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center justify-center"
             >
               <FaTimes className="w-5 h-5" />
             </button>
@@ -305,14 +305,14 @@ const FundingRequestDetailsModal = ({
 
         {/* Success/Error Messages */}
         {success && (
-          <div className="mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+          <div className="mx-4 sm:mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
             <FaCheck className="w-5 h-5 text-white/90" />
             <p className="text-white/90">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
+          <div className="mx-4 sm:mx-6 mt-4 p-4 bg-white/20 border border-white/30 rounded-lg flex items-center gap-3">
             <FaExclamationTriangle className="w-5 h-5 text-yellow-400" />
             <p className="text-white/80">{error}</p>
           </div>
@@ -325,7 +325,7 @@ const FundingRequestDetailsModal = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap transition-all duration-200 relative ${
+                className={`flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap transition-all duration-200 relative ${
                   activeTab === tab.id
                     ? "border-b-2 border-white text-white"
                     : "text-white/60 hover:text-white"
@@ -347,7 +347,7 @@ const FundingRequestDetailsModal = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 flex-1 overflow-y-auto">
+        <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
           {/* Form tabs - Only for editable content */}
           <form onSubmit={handleSave}>
             {/* Overview Tab */}
@@ -984,10 +984,10 @@ const FundingRequestDetailsModal = ({
 
         {/* Footer - Show edit controls when editing */}
         {isEditing && (
-          <div className="flex items-center justify-between p-6 border-t border-white/10 bg-black">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-t border-white/10 bg-black">
             <button
               onClick={handleCancel}
-              className="px-6 py-3 text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/10"
+              className="w-full sm:w-auto px-6 py-3 text-white/60 hover:text-white transition-colors rounded-lg hover:bg-white/10"
             >
               Cancel
             </button>
@@ -995,7 +995,7 @@ const FundingRequestDetailsModal = ({
             <button
               onClick={handleSave}
               disabled={isSubmitting}
-              className="px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center gap-2"
+              className="w-full sm:w-auto px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

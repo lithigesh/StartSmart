@@ -62,21 +62,21 @@ const IdeaSubmissionPage = () => {
         {/* Header */}
         <div className="bg-black/95 backdrop-blur-xl border-b border-white/20 sticky top-0 z-10">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="py-8">
-              <div className="flex items-center justify-between">
+            <div className="py-5 sm:py-8">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Lightbulb className="w-12 h-12 text-yellow-400" />
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                    <Lightbulb className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-yellow-400 flex-shrink-0" />
                     Submit Your Idea
                   </h1>
-                  <p className="mt-2 text-gray-300 text-lg">
+                  <p className="mt-2 text-gray-300 text-base sm:text-lg">
                     Share your innovative concept and start your entrepreneurial
                     journey
                   </p>
                 </div>
                 <button
                   onClick={() => navigate(-1)}
-                  className="px-6 py-3 text-gray-300 hover:text-white focus:outline-none transition-all hover:scale-105 flex items-center gap-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10"
+                  className="w-full sm:w-auto px-6 py-3 text-gray-300 hover:text-white focus:outline-none transition-all hover:scale-105 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10"
                 >
                   ← Back
                 </button>
@@ -86,7 +86,7 @@ const IdeaSubmissionPage = () => {
         </div>
 
         {/* Form Content */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12">
           <IdeaMasterForm
             onSuccess={handleFormSuccess}
             onError={handleFormError}

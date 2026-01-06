@@ -98,7 +98,7 @@ const DealCard = ({ request, onClick, stage }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-gray-900 border border-gray-700 rounded-lg p-4 hover:border-white hover:shadow-lg hover:shadow-white/10 transition-all duration-200 cursor-pointer group"
+      className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-4 hover:bg-white/[0.05] hover:border-white/20 hover:shadow-lg hover:shadow-white/10 transition-all duration-200 cursor-pointer group"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -106,7 +106,7 @@ const DealCard = ({ request, onClick, stage }) => {
           <h3 className="text-base font-semibold text-white truncate group-hover:text-white/90 transition-colors">
             {idea?.title || "Untitled Idea"}
           </h3>
-          <p className="text-sm text-gray-400 truncate">
+          <p className="text-sm text-white/60 truncate">
             {entrepreneur?.name || "Unknown Entrepreneur"}
           </p>
         </div>
@@ -116,7 +116,7 @@ const DealCard = ({ request, onClick, stage }) => {
       {/* Category & Stage Badge */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         {idea?.category && (
-          <span className="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs">
+          <span className="px-2 py-1 bg-white/[0.03] border border-white/10 text-white/70 rounded text-xs">
             {idea.category}
           </span>
         )}
@@ -131,8 +131,8 @@ const DealCard = ({ request, onClick, stage }) => {
 
       {/* Financial Info */}
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <div className="bg-gray-800/50 rounded p-2">
-          <div className="flex items-center gap-1 text-gray-400 mb-1">
+        <div className="bg-white/[0.03] border border-white/10 rounded-lg p-2">
+          <div className="flex items-center gap-1 text-white/60 mb-1">
             <FaDollarSign className="w-3 h-3" />
             <p className="text-xs">Amount</p>
           </div>
@@ -140,8 +140,8 @@ const DealCard = ({ request, onClick, stage }) => {
             ${amount ? (amount / 1000).toFixed(0) : "0"}K
           </p>
         </div>
-        <div className="bg-gray-800/50 rounded p-2">
-          <div className="flex items-center gap-1 text-gray-400 mb-1">
+        <div className="bg-white/[0.03] border border-white/10 rounded-lg p-2">
+          <div className="flex items-center gap-1 text-white/60 mb-1">
             <FaPercentage className="w-3 h-3" />
             <p className="text-xs">Equity</p>
           </div>
@@ -150,9 +150,9 @@ const DealCard = ({ request, onClick, stage }) => {
       </div>
 
       {/* Valuation */}
-      <div className="mb-3 p-2 bg-gradient-to-r from-white/10 to-white/600/10 border border-white/20 rounded">
+      <div className="mb-3 p-2 bg-white/[0.03] border border-white/10 rounded-lg">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-gray-400">
+          <div className="flex items-center gap-1 text-white/60">
             <FaBuilding className="w-3 h-3" />
             <p className="text-xs">Valuation</p>
           </div>
@@ -168,19 +168,19 @@ const DealCard = ({ request, onClick, stage }) => {
 
       {/* Investment Type */}
       <div className="mb-3">
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-white/50">
           Type:{" "}
-          <span className="text-gray-300">{formatType(investmentType)}</span>
+          <span className="text-white/70">{formatType(investmentType)}</span>
         </p>
       </div>
 
       {/* Footer Info */}
-      <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-800">
+      <div className="flex items-center justify-between text-xs text-white/50 pt-3 border-t border-white/10">
         <span>{formatDate(createdAt)}</span>
       </div>
 
       {/* Hover Effect Indicator */}
-      <div className="mt-3 pt-3 border-t border-gray-800 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="mt-3 pt-3 border-t border-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
         <p className="text-xs text-center text-white/90 font-medium">
           Click to view details →
         </p>

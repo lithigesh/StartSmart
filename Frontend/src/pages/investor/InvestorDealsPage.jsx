@@ -262,11 +262,11 @@ const InvestorDealsPage = () => {
 
   const getColumnColor = (color) => {
     const colors = {
-      blue: "border-white/30 bg-white/20/5",
-      purple: "border-white/30 bg-white/5",
-      yellow: "border-white/30 bg-white/5",
-      green: "border-white/30 bg-white/10/5",
-      red: "border-white/30 bg-white/5",
+      blue: "border-white/10 bg-white/[0.03] backdrop-blur-xl",
+      purple: "border-white/10 bg-white/[0.03] backdrop-blur-xl",
+      yellow: "border-white/10 bg-white/[0.03] backdrop-blur-xl",
+      green: "border-white/10 bg-white/[0.03] backdrop-blur-xl",
+      red: "border-white/10 bg-white/[0.03] backdrop-blur-xl",
     };
     return colors[color] || colors.blue;
   };
@@ -275,13 +275,13 @@ const InvestorDealsPage = () => {
     return (
       <LoadingSpinner
         message="Loading your deal pipeline..."
-        containerClassName="min-h-screen bg-gray-950 flex items-center justify-center text-white"
+        containerClassName="min-h-screen bg-black flex items-center justify-center text-white"
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 p-6">
+    <div className="min-h-screen bg-black p-6">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
@@ -290,7 +290,7 @@ const InvestorDealsPage = () => {
               <FaBriefcase className="text-white/90" />
               Deal Management
             </h1>
-            <p className="text-gray-400 mt-2">
+            <p className="text-white/60 mt-2">
               Manage your investment pipeline and opportunities
             </p>
           </div>
@@ -331,16 +331,16 @@ const InvestorDealsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 bg-gray-900 border border-gray-800 rounded-lg p-4">
+        <div className="flex flex-wrap gap-3 bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-4">
           <div className="flex-1 min-w-[200px]">
             <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60" />
               <input
                 type="text"
                 placeholder="Search by idea or entrepreneur..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-white focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-white/40 focus:ring-2 focus:ring-white/30 focus:border-white/20"
               />
             </div>
           </div>
@@ -348,7 +348,7 @@ const InvestorDealsPage = () => {
           <select
             value={fundingStageFilter}
             onChange={(e) => setFundingStageFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
+            className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-white/30 focus:border-white/20"
           >
             <option value="all">All Stages</option>
             <option value="seed">Seed</option>
@@ -362,7 +362,7 @@ const InvestorDealsPage = () => {
           <select
             value={investmentTypeFilter}
             onChange={(e) => setInvestmentTypeFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-white focus:border-transparent"
+            className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-lg text-white focus:ring-2 focus:ring-white/30 focus:border-white/20"
           >
             <option value="all">All Types</option>
             <option value="equity">Equity</option>
@@ -383,27 +383,25 @@ const InvestorDealsPage = () => {
             <div key={column.id} className="w-full">
               {/* Column Header */}
               <div
-                className={`border rounded-t-lg p-4 ${getColumnColor(
+                className={`border rounded-t-2xl p-4 ${getColumnColor(
                   column.color
                 )}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <column.icon
-                      className={`w-5 h-5 text-${column.color}-400`}
-                    />
+                    <column.icon className="w-5 h-5 text-white/80" />
                     <h3 className="font-semibold text-white">{column.title}</h3>
                   </div>
-                  <span className="px-2 py-1 bg-gray-800 rounded text-sm font-medium text-white">
+                  <span className="px-2 py-1 bg-white/[0.03] border border-white/10 rounded-lg text-sm font-medium text-white">
                     {column.count}
                   </span>
                 </div>
               </div>
 
               {/* Column Content */}
-              <div className="bg-gray-900/30 border-x border-b border-gray-800 rounded-b-lg p-3">
+              <div className="bg-white/[0.03] backdrop-blur-xl border-x border-b border-white/10 rounded-b-2xl p-3">
                 {filteredRequests.length === 0 ? (
-                  <div className="flex items-center justify-center h-20 text-gray-500 text-sm">
+                  <div className="flex items-center justify-center h-20 text-white/50 text-sm">
                     No deals in this stage
                   </div>
                 ) : (
@@ -439,13 +437,6 @@ const InvestorDealsPage = () => {
 
 // Stats Card Component
 const StatsCard = ({ label, value, icon: Icon, color }) => {
-  const colorClasses = {
-    blue: "from-white/600/20 to-white/600/5 border-white/30",
-    yellow: "from-white/20 to-white/5 border-white/30",
-    green: "from-white/20 to-white/5 border-white/30",
-    purple: "from-white/20 to-white/5 border-white/30",
-  };
-
   const iconColorClasses = {
     blue: "text-white/90",
     yellow: "text-white/70",
@@ -454,11 +445,9 @@ const StatsCard = ({ label, value, icon: Icon, color }) => {
   };
 
   return (
-    <div
-      className={`bg-gradient-to-br ${colorClasses[color]} border rounded-lg p-4`}
-    >
+    <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-4">
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm text-gray-300">{label}</p>
+        <p className="text-sm text-white/70">{label}</p>
         <Icon className={`w-5 h-5 ${iconColorClasses[color]}`} />
       </div>
       <p className={`text-2xl font-bold ${iconColorClasses[color]}`}>{value}</p>

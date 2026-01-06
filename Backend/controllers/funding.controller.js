@@ -466,8 +466,9 @@ exports.getFundingRequestById = async (req, res, next) => {
     const request = await FundingRequest.findById(req.params.id)
       .populate("idea", "title description category stage owner")
       .populate("entrepreneur", "name email")
-      .populate("negotiationHistory.investor", "name email")
-      .populate("investorResponses.investor", "name email");
+      .populate("acceptedBy", "name email role")
+      .populate("negotiationHistory.investor", "name email role")
+      .populate("investorResponses.investor", "name email role");
 
     if (!request) {
       return res.status(404).json({
