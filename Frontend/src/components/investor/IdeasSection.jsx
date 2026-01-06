@@ -111,13 +111,13 @@ const IdeasSection = ({
   return (
     <div
       ref={sectionRef}
-      className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8"
+      className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 lg:p-8 relative overflow-hidden mb-8"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-white/[0.06] rounded-2xl pointer-events-none"></div>
 
       <div className="relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-3">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-manrope font-bold text-white">
               {title} ({filteredIdeas.length} of {ideas.length})
             </h3>
@@ -130,7 +130,7 @@ const IdeasSection = ({
                   flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 font-manrope font-medium min-h-[44px] touch-manipulation
                   ${
                     comparisonMode
-                      ? "bg-white/10/20 text-white/90 border border-white/30"
+                      ? "bg-white/10 text-white/90 border border-white/30"
                       : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
                   }
                 `}
@@ -157,9 +157,9 @@ const IdeasSection = ({
 
           {/* Filter Controls */}
           {showFilters && (
-            <div className="space-y-4">
+            <div className="space-y-4 w-full xl:w-auto">
               {/* Basic Filters Row */}
-              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 w-full">
                 {/* Search */}
                 <div className="relative min-w-0 flex-1 sm:flex-initial sm:w-64">
                   <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 w-4 h-4 pointer-events-none" />
@@ -215,7 +215,7 @@ const IdeasSection = ({
                     onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
                     className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-300 font-manrope min-h-[44px] touch-manipulation w-full sm:w-auto justify-center sm:justify-start ${
                       isAdvancedOpen
-                        ? "bg-white/10/20 text-white/90 border border-white/30"
+                        ? "bg-white/10 text-white/90 border border-white/30"
                         : "bg-white/[0.03] text-white/70 border border-white/10 hover:bg-white/[0.05]"
                     }`}
                   >
@@ -232,7 +232,7 @@ const IdeasSection = ({
 
               {/* Advanced Filters Panel */}
               {showAdvancedFilters && isAdvancedOpen && (
-                <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-lg p-6 space-y-6">
+                <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-lg p-4 sm:p-6 space-y-6">
                   <div className="flex items-center justify-between">
                     <h4 className="text-white font-semibold text-lg font-manrope">
                       Advanced Filters
@@ -393,8 +393,8 @@ const IdeasSection = ({
         ) : (
           <div className="relative">
             <div
-              className="overflow-y-auto pr-8 custom-scrollbar"
-              style={{ maxHeight }}
+              className="overflow-visible sm:overflow-y-auto pr-0 sm:pr-4 lg:pr-8 custom-scrollbar max-h-none sm:max-h-[var(--ideas-max-h)]"
+              style={{ "--ideas-max-h": maxHeight }}
             >
               <div className="grid gap-6">
                 {filteredIdeas.map((idea) => (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { investorAPI } from "../../services/api";
+import LoadingSpinner from "../LoadingSpinner";
 import {
   FaDollarSign,
   FaHandshake,
@@ -104,45 +105,16 @@ const PortfolioSection = () => {
 
   if (loading) {
     return (
-      <div className="space-y-6">
-        {/* Header Skeleton */}
-        <div className="mb-8">
-          <div className="h-10 w-64 bg-gray-800 rounded animate-pulse mb-2"></div>
-          <div className="h-4 w-96 bg-gray-800 rounded animate-pulse"></div>
-        </div>
-
-        {/* Cards Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-6"
-            >
-              <div className="h-20 bg-gray-800 rounded animate-pulse mb-4"></div>
-              <div className="h-4 bg-gray-800 rounded animate-pulse"></div>
-            </div>
-          ))}
-        </div>
-
-        {/* Charts Skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="bg-gray-900 border border-gray-800 rounded-lg p-6"
-            >
-              <div className="h-6 w-48 bg-gray-800 rounded animate-pulse mb-4"></div>
-              <div className="h-64 bg-gray-800 rounded animate-pulse"></div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <LoadingSpinner
+        message="Loading portfolio analytics..."
+        containerClassName="w-full flex items-center justify-center py-24 text-white"
+      />
     );
   }
 
   if (error) {
     return (
-      <div className="bg-white/20 border border-white rounded-lg p-8 text-center">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center">
         <FaExclamationCircle className="w-16 h-16 text-white/80 mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-white mb-2">
           Error Loading Portfolio
@@ -150,7 +122,7 @@ const PortfolioSection = () => {
         <p className="text-white/70 mb-4">{error}</p>
         <button
           onClick={loadPortfolioData}
-          className="px-6 py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors"
+          className="px-6 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white rounded-lg transition-colors"
         >
           Retry
         </button>
@@ -204,9 +176,9 @@ const PortfolioSection = () => {
       {/* Overview Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Total Invested */}
-        <div className="bg-gradient-to-br from-white/900/40 to-white/800/20 border border-white/50 rounded-lg p-6 hover:border-white transition-all">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-white/20/20 rounded-lg">
+            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
               <FaDollarSign className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
@@ -222,9 +194,9 @@ const PortfolioSection = () => {
         </div>
 
         {/* Active Deals */}
-        <div className="bg-gradient-to-br from-white/40 to-white/20 border border-white/50 rounded-lg p-6 hover:border-white transition-all">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-white/10/20 rounded-lg">
+            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
               <FaHandshake className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
@@ -241,9 +213,9 @@ const PortfolioSection = () => {
         </div>
 
         {/* Interested Ideas */}
-        <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-lg p-6 hover:border-white/30 transition-all">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-white/20 rounded-lg">
+            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
               <FaLightbulb className="w-6 h-6 text-white/90" />
             </div>
             <div className="text-right">
@@ -259,9 +231,9 @@ const PortfolioSection = () => {
         </div>
 
         {/* Pending Reviews */}
-        <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 rounded-lg p-6 hover:border-white/30 transition-all">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-gray-700 transition-colors">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-white/20 rounded-lg">
+            <div className="p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
               <FaClipboardList className="w-6 h-6 text-white/80" />
             </div>
             <div className="text-right">
@@ -362,7 +334,10 @@ const PortfolioSection = () => {
               <div className="mt-4 pt-4 border-t border-gray-800">
                 <div className="grid grid-cols-2 gap-2">
                   {distribution.byCategory.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                    <div
+                      key={item.name || index}
+                      className="flex items-center gap-2"
+                    >
                       <div
                         className="w-3 h-3 rounded-full"
                         style={{
@@ -394,7 +369,7 @@ const PortfolioSection = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {distribution.byStage.map((item, index) => (
               <div
-                key={index}
+                key={item.name || index}
                 className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-colors"
               >
                 <div className="text-2xl font-bold text-white mb-1">
@@ -417,9 +392,11 @@ const PortfolioSection = () => {
             Recent Accepted Deals
           </h3>
           <div className="space-y-3">
-            {recentDeals.map((deal) => (
+            {recentDeals.map((deal, index) => (
               <div
-                key={deal._id}
+                key={
+                  deal._id || deal.id || `${deal.ideaTitle || "deal"}-${index}`
+                }
                 className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-colors"
               >
                 <div className="flex items-center justify-between">

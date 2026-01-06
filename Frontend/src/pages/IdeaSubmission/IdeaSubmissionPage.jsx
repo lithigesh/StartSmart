@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import IdeaMasterForm from "./components/IdeaMasterForm";
 import toast from "react-hot-toast";
 import { Lightbulb } from "lucide-react";
@@ -52,14 +53,7 @@ const IdeaSubmissionPage = () => {
   };
 
   if (!user || user.role !== "entrepreneur") {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white">Loading...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner fullScreen message="Loading..." />;
   }
 
   return (

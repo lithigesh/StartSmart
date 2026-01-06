@@ -21,7 +21,7 @@ const ComparisonButton = ({
         backdrop-blur-md
         ${
           isSelected
-            ? "bg-gradient-to-br from-white to-white border-white scale-110 shadow-lg shadow-white/30 rotate-6"
+            ? "bg-white/20 border-white/50 scale-110 shadow-lg shadow-white/10"
             : disabled
             ? "bg-white/5 border-white/20 cursor-not-allowed opacity-50"
             : "bg-white/10 border-white/30 hover:bg-white/20 hover:border-white/50 hover:scale-110 hover:shadow-lg hover:shadow-white/10"
@@ -36,7 +36,7 @@ const ComparisonButton = ({
       }
     >
       {isSelected && (
-        <FaCheck className="w-5 h-5 text-white drop-shadow-lg animate-bounce-in" />
+        <FaCheck className="w-5 h-5 text-white drop-shadow-lg" />
       )}
       {!isSelected && !disabled && (
         <div className="w-4 h-4 border-2 border-white/40 rounded transition-all duration-300 group-hover:border-white"></div>

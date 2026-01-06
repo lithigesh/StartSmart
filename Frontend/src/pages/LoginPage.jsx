@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import {
-  FaEye,
-  FaEyeSlash,
-  FaArrowRight,
-} from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaArrowRight } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 import StartSmartIcon from "/w_startSmart_icon.png";
 
 const LoginPage = () => {
@@ -16,7 +13,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login, isAuthenticated, loading, error, clearErrors, user } = useAuth();
+  const { login, isAuthenticated, loading, error, clearErrors, user } =
+    useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,9 +33,12 @@ const LoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated && user && !loading) {
-      const dashboardUrl = user.role === "admin" ? "/admin/dashboard" 
-                         : user.role === "investor" ? "/investor/dashboard" 
-                         : "/entrepreneur/dashboard";
+      const dashboardUrl =
+        user.role === "admin"
+          ? "/admin/dashboard"
+          : user.role === "investor"
+          ? "/investor/dashboard"
+          : "/entrepreneur/dashboard";
       navigate(dashboardUrl, { replace: true });
     }
   }, [isAuthenticated, user, loading, navigate]);
@@ -55,7 +56,7 @@ const LoginPage = () => {
 
     try {
       const result = await login(formData);
-      
+
       if (result && result.success) {
         console.log("Login successful, redirecting to:", result.redirectUrl);
         // Direct navigation after successful login
@@ -140,7 +141,9 @@ const LoginPage = () => {
             {/* Error message from navigation state */}
             {errorMessage && (
               <div className="mb-6 p-4 bg-white/10 border border-white/20 rounded-lg">
-                <p className="text-white/80 text-sm font-manrope">{errorMessage}</p>
+                <p className="text-white/80 text-sm font-manrope">
+                  {errorMessage}
+                </p>
               </div>
             )}
 
@@ -208,7 +211,7 @@ const LoginPage = () => {
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {isLoading ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                      <LoadingSpinner size="md" />
                       Signing In...
                     </>
                   ) : (
@@ -232,8 +235,6 @@ const LoginPage = () => {
                   Sign up here
                 </Link>
               </p>
-              
-             
             </div>
           </div>
         </div>

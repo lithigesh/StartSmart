@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ideasAPI } from "../../../services/api";
 import { Lightbulb, Trash2, Rocket } from "lucide-react";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const IdeaMasterForm = ({
   onDataChange,
@@ -812,7 +813,7 @@ const IdeaMasterForm = ({
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <LoadingSpinner size="sm" spinnerClassName="text-white" />
                     Saving...
                   </div>
                 ) : isEditMode ? (

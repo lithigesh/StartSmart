@@ -24,6 +24,12 @@ const IdeaComparisonCharts = ({ ideas, comparisonData, loading }) => {
   const [activeTab, setActiveTab] = useState("radar");
   const [chartData, setChartData] = useState(null);
 
+  const getIdeaLabel = (idea, maxLength = 18) => {
+    const raw = (idea?.title || idea?.ideaTitle || "Untitled").trim();
+    if (raw.length <= maxLength) return raw;
+    return `${raw.slice(0, Math.max(0, maxLength - 1))}…`;
+  };
+
   useEffect(() => {
     if (ideas && ideas.length > 0) {
       prepareChartData();
@@ -87,7 +93,7 @@ const IdeaComparisonCharts = ({ ideas, comparisonData, loading }) => {
           {payload.map((entry, index) => (
             <p key={index} className="text-white/80 font-manrope text-sm">
               <span style={{ color: entry.color }}>●</span>
-              {` Idea ${index + 1}: ${entry.value}/100`}
+              {` ${entry.name}: ${entry.value}/100`}
             </p>
           ))}
         </div>
@@ -189,8 +195,8 @@ const IdeaComparisonCharts = ({ ideas, comparisonData, loading }) => {
               />
               {ideas.map((idea, index) => (
                 <Radar
-                  key={`idea${index}`}
-                  name={`Idea ${index + 1}`}
+                  key={idea._id || idea.id || `idea-${index}`}
+                  name={getIdeaLabel(idea)}
                   dataKey={`idea${index}`}
                   stroke={COLORS[index % COLORS.length]}
                   fill={COLORS[index % COLORS.length]}

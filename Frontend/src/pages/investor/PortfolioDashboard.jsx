@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../../hooks/useNotifications";
 import { investorAPI } from "../../services/api";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import {
   InvestorDashboardHeader,
   InvestorSidebar,
@@ -181,37 +182,10 @@ const PortfolioDashboard = () => {
 
           {/* Page Content */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-            {/* Header Skeleton */}
-            <div className="mb-8">
-              <div className="h-10 w-64 bg-gray-800 rounded animate-pulse mb-2"></div>
-              <div className="h-4 w-96 bg-gray-800 rounded animate-pulse"></div>
-            </div>
-
-            {/* Cards Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="bg-gray-900 border border-gray-800 rounded-lg p-6"
-                >
-                  <div className="h-20 bg-gray-800 rounded animate-pulse mb-4"></div>
-                  <div className="h-4 bg-gray-800 rounded animate-pulse"></div>
-                </div>
-              ))}
-            </div>
-
-            {/* Charts Skeleton */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {[1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="bg-gray-900 border border-gray-800 rounded-lg p-6"
-                >
-                  <div className="h-6 w-48 bg-gray-800 rounded animate-pulse mb-4"></div>
-                  <div className="h-64 bg-gray-800 rounded animate-pulse"></div>
-                </div>
-              ))}
-            </div>
+            <LoadingSpinner
+              message="Loading portfolio analytics..."
+              containerClassName="w-full flex items-center justify-center py-24 text-white"
+            />
           </div>
         </div>
       </div>
@@ -572,7 +546,7 @@ const PortfolioDashboard = () => {
                       <h4 className="text-white font-semibold">
                         {deal.ideaTitle}
                       </h4>
-                      <span className="px-3 py-1 bg-white/10/20 text-white/90 rounded-full text-xs font-medium">
+                      <span className="px-3 py-1 bg-white/10 text-white/90 rounded-full text-xs font-medium">
                         {deal.status}
                       </span>
                     </div>

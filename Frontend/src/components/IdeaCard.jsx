@@ -42,20 +42,24 @@ const IdeaCard = ({
   const isOwnIdea = onEdit && onDelete;
 
   return (
-    <div className="bg-white/[0.02] border border-white/10 rounded-lg p-6 hover:bg-white/[0.05] transition-all duration-300 group relative">
+    <div
+      className={`bg-white/[0.02] border border-white/10 rounded-lg p-6 hover:bg-white/[0.05] transition-all duration-300 group relative${
+        comparisonMode ? " pt-16 pl-16" : ""
+      }`}
+    >
       {/* Comparison Checkbox */}
       {comparisonMode && (
         <ComparisonButton
           isSelected={isSelectedForComparison}
           onToggle={onToggleComparison}
           disabled={maxComparisonReached && !isSelectedForComparison}
-          ideaId={idea._id}
+          ideaId={idea._id || idea.id}
         />
       )}
 
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
+        <div className="flex-1 min-w-0">
           <h4 className="text-white font-manrope font-semibold text-lg mb-2 group-hover:text-gray-200 transition-colors">
             {idea.title}
           </h4>
@@ -65,10 +69,10 @@ const IdeaCard = ({
         </div>
 
         {showInterestButton && !isOwnIdea && (
-          <div className="flex items-center gap-2 ml-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:ml-4 w-full sm:w-auto">
             <button
               onClick={() => navigate(`/idea/${idea._id}`)}
-              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-4 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               <FaEye className="w-3 h-3" />
               View Details
@@ -82,7 +86,7 @@ const IdeaCard = ({
                 isInterested
                   ? "bg-white/20 text-white/80 hover:bg-white/30 border border-white/30"
                   : "bg-white/20 text-white/90 hover:bg-white/30 border border-white/30"
-              }`}
+              } w-full sm:w-auto justify-center`}
             >
               {loading ? (
                 <FaSpinner className="w-3 h-3 animate-spin" />
@@ -97,24 +101,24 @@ const IdeaCard = ({
         )}
 
         {isOwnIdea && (
-          <div className="flex items-center gap-2 ml-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:ml-4 w-full sm:w-auto">
             <button
               onClick={() => navigate(`/idea/${idea._id || idea.id}`)}
-              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white text-black hover:bg-white/90 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               <FaEye className="w-3 h-3" />
               View
             </button>
             <button
               onClick={() => onEdit(idea)}
-              className="btn btn-sm bg-white/20 text-white/90 hover:bg-white/30 border border-white/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white/20 text-white/90 hover:bg-white/30 border border-white/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               <FaEdit className="w-3 h-3" />
               Edit
             </button>
             <button
               onClick={() => onDelete(idea._id || idea.id, idea.title)}
-              className="btn btn-sm bg-white/20 text-white/80 hover:bg-white/30 border border-white/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2"
+              className="btn btn-sm bg-white/20 text-white/80 hover:bg-white/30 border border-white/30 rounded-lg px-3 py-2 font-manrope font-medium transition-all duration-300 hover:scale-105 flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               <FaTrash className="w-3 h-3" />
               Delete

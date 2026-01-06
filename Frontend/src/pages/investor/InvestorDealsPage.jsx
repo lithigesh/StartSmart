@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import DealCard from "../../components/investor/DealCard";
 import InvestorFundingRequestModal from "../../components/investor/InvestorFundingRequestModal";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 import { investorDealAPI } from "../../services/api";
 import { useNotifications } from "../../hooks/useNotifications";
@@ -106,27 +107,28 @@ const InvestorDealsPage = () => {
           declined: 0,
           totalInvested: 0,
         };
-        
-        console.log('Pipeline Response:', {
+
+        console.log("Pipeline Response:", {
           stats: pipelineResponse.stats,
           acceptedCount: finalPipeline.accepted?.length,
-          acceptedDeals: finalPipeline.accepted?.map(d => ({
+          acceptedDeals: finalPipeline.accepted?.map((d) => ({
             id: d._id,
             amount: d.amount,
-            finalAmount: d.acceptanceTerms?.finalAmount
-          }))
+            finalAmount: d.acceptanceTerms?.finalAmount,
+          })),
         });
-        
+
         // Calculate total invested from accepted deals if not provided or is 0
         if (!finalStats.totalInvested || finalStats.totalInvested === 0) {
           finalStats.totalInvested = (finalPipeline.accepted || []).reduce(
             (total, deal) => {
-              const amount = deal.acceptanceTerms?.finalAmount || deal.amount || 0;
+              const amount =
+                deal.acceptanceTerms?.finalAmount || deal.amount || 0;
               return total + amount;
             },
             0
           );
-          console.log('Recalculated totalInvested:', finalStats.totalInvested);
+          console.log("Recalculated totalInvested:", finalStats.totalInvested);
         }
       } else {
         console.warn("Pipeline API failed, showing available requests only");
@@ -271,12 +273,10 @@ const InvestorDealsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-950">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading your deal pipeline...</p>
-        </div>
-      </div>
+      <LoadingSpinner
+        message="Loading your deal pipeline..."
+        containerClassName="min-h-screen bg-gray-950 flex items-center justify-center text-white"
+      />
     );
   }
 
@@ -375,7 +375,8 @@ const InvestorDealsPage = () => {
       </div>
 
       {/* Pipeline Board - Vertical Layout */}
-      <div className="space-y-4">{columns.map((column) => {
+      <div className="space-y-4">
+        {columns.map((column) => {
           const filteredRequests = filterRequests(pipeline[column.id] || []);
 
           return (
