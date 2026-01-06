@@ -143,11 +143,12 @@ export const ideasAPI = {
       const data = await response.json();
 
       // Check if backend returned success format {success, data} or direct array
-      const ideasArray = data.success && Array.isArray(data.data) 
-        ? data.data 
-        : Array.isArray(data) 
-        ? data 
-        : [];
+      const ideasArray =
+        data.success && Array.isArray(data.data)
+          ? data.data
+          : Array.isArray(data)
+          ? data
+          : [];
 
       // Transform the data to include required fields
       const transformedData = ideasArray.map((idea) => ({
@@ -1331,11 +1332,15 @@ export const notificationsAPI = {
 
 // Investor Interest API
 export const investorInterestAPI = {
-  // Get investors interested in user's ideas
-  getInterestedInvestors: async () => {
+  // Get investors interested in a specific idea (entrepreneur-only)
+  // Backend route: GET /api/ideas/:id/investors
+  getInterestedInvestors: async (ideaId) => {
     try {
+      if (!ideaId) {
+        throw new Error("ideaId is required");
+      }
       const response = await Promise.race([
-        fetch(`${API_URL}/api/investor-interest/user`, {
+        fetch(`${API_URL}/api/ideas/${ideaId}/investors`, {
           headers: getAuthHeaders(),
         }),
         new Promise((_, reject) =>
@@ -1410,10 +1415,12 @@ export const investorInterestAPI = {
   },
 
   // Update investor interest status
-  updateInvestorInterestStatus: async (interestId, status) => {
+  // Backend route: PUT /api/investor/:ideaId/interest
+  // Note: despite the name, this updates the logged-in investor's interest for an idea.
+  updateInvestorInterestStatus: async (ideaId, status) => {
     try {
       const response = await Promise.race([
-        fetch(`${API_URL}/api/investor-interest/${interestId}`, {
+        fetch(`${API_URL}/api/investor/${ideaId}/interest`, {
           method: "PUT",
           headers: getAuthHeaders(),
           body: JSON.stringify({ status }),
@@ -1427,7 +1434,7 @@ export const investorInterestAPI = {
       return {
         success: true,
         data: {
-          id: interestId,
+          id: ideaId,
           status: status,
           updatedAt: new Date().toISOString(),
         },
@@ -1442,7 +1449,7 @@ export const analyticsAPI = {
   getDashboardAnalytics: async () => {
     try {
       const response = await Promise.race([
-        fetch(`${API_URL}/api/analytics/dashboard`, {
+        fetch(`${API_URL}/api/admin/analytics/dashboard`, {
           headers: getAuthHeaders(),
         }),
         new Promise((_, reject) =>
@@ -1536,7 +1543,7 @@ export const analyticsAPI = {
   getIdeaAnalytics: async (ideaId) => {
     try {
       const response = await Promise.race([
-        fetch(`${API_URL}/api/analytics/idea/${ideaId}`, {
+        fetch(`${API_URL}/api/chart/idea/${ideaId}`, {
           headers: getAuthHeaders(),
         }),
         new Promise((_, reject) =>
@@ -1685,7 +1692,7 @@ export const ideathonsAPI = {
   getUserRegistrations: async () => {
     try {
       const response = await Promise.race([
-        fetch(`${API_URL}/api/ideathons/user/registrations`, {
+        fetch(`${API_URL}/api/ideathons/my-registrations`, {
           headers: getAuthHeaders(),
         }),
         new Promise((_, reject) =>

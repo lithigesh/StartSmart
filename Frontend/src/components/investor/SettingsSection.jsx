@@ -111,7 +111,9 @@ const SettingsSection = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/update-profile`,
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:5001"
+        }/api/auth/update-profile`,
         {
           method: "PUT",
           headers: {
@@ -188,7 +190,9 @@ const SettingsSection = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/update-password`,
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:5001"
+        }/api/auth/update-password`,
         {
           method: "PUT",
           headers: {

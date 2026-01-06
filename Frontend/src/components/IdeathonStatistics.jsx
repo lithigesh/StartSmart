@@ -42,7 +42,7 @@ const IdeathonStatistics = () => {
         const API_BASE =
           import.meta.env.VITE_API_URL || "http://localhost:5001";
         const response = await axios.get(
-          `${API_BASE}/api/charts/tech-stack-distribution`,
+          `${API_BASE}/api/chart/tech-stack-distribution`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
