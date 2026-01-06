@@ -164,7 +164,7 @@ const AdminDashboard = () => {
         <div className="p-4 border-t border-white/20 flex-shrink-0 w-full">
           <button
             onClick={() => logout("/admin/login")}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white/10 text-white rounded-lg font-manrope font-semibold hover:bg-white/20 transition-all duration-300"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-red-600 text-white rounded-lg font-manrope font-semibold hover:bg-red-700 transition-all duration-300"
           >
             <FaSignOutAlt className="text-lg" />
             Logout

@@ -1,29 +1,90 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
 import {
   FaBell,
-  FaSpinner,
-  FaCheck,
   FaLightbulb,
-  FaSync,
-  FaHeart,
   FaDollarSign,
+  FaUsers,
+  FaCheck,
   FaTimes,
+  FaTrash,
 } from "react-icons/fa";
 
-const NotificationsSection = () => {
-  const {
-    notifications,
-    unreadCount,
-    loading: notificationsLoading,
-    error: notificationsError,
-    loadNotifications,
-    markAsRead,
-    markAllAsRead,
-    deleteNotification,
-    clearAllNotifications,
-    clearError: clearNotificationsError,
-  } = useNotifications();
+const NotificationsPopup = ({ 
+  showNotifications, 
+  setShowNotifications, 
+  isFullPage = false 
+}) => {
+  const { notifications, markAsRead, deleteNotification, unreadCount } = useNotifications();
+  const [selectedNotifications, setSelectedNotifications] = useState([]);
+  const [filter, setFilter] = useState("all"); // all, unread, read
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "new_idea":
+        return <FaLightbulb className="w-4 h-4 text-white/70" />;
+      case "funding_update":
+        return <FaDollarSign className="w-4 h-4 text-white/90" />;
+      case "interest_confirmation":
+        return <FaUsers className="w-4 h-4 text-white/90" />;
+      case "analysis_complete":
+        return <FaLightbulb className="w-4 h-4 text-white/90" />;
+      default:
+        return <FaBell className="w-4 h-4 text-gray-400" />;
+    }
+  };
+
+  const formatTimeAgo = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / 60000);
+
+    if (diffInMinutes < 1) return "Just now";
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+  };
+
+  const filteredNotifications = notifications.filter((notification) => {
+    if (filter === "unread") return !notification.read;
+    if (filter === "read") return notification.read;
+    return true;
+  });
+
+  const handleNotificationClick = async (notification) => {
+    if (!notification.read) {
+      await markAsRead(notification._id);
+    }
+    
+    if (notification.actionUrl && !isFullPage) {
+      // Navigate to the action URL if needed
+      // You can implement navigation logic here
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    const unreadNotifications = notifications.filter(n => !n.read);
+    for (const notification of unreadNotifications) {
+      await markAsRead(notification._id);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    for (const notificationId of selectedNotifications) {
+      await deleteNotification(notificationId);
+    }
+    setSelectedNotifications([]);
+  };
+
+  const toggleSelectNotification = (notificationId) => {
+    setSelectedNotifications(prev => 
+      prev.includes(notificationId)
+        ? prev.filter(id => id !== notificationId)
+        : [...prev, notificationId]
+    );
+  };
+
+  if (!isFullPage && !showNotifications) return null;
 
   return (
     <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-8 relative overflow-hidden mb-8">

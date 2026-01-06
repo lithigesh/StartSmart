@@ -24,8 +24,17 @@ import { ideasAPI, fundingAPI } from "../../services/api";
 /**
  * FundingRequestForm Component - Multi-step Wizard
  * 4 Steps: Overview, Business Details, Financial, Team & Contact
+ * Supports: Create, Edit, and View modes
  */
-const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
+const FundingRequestForm = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  isEditMode = false,
+  isViewMode = false,
+  initialData = null,
+  fundingRequestId = null,
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const [formData, setFormData] = useState({
@@ -106,42 +115,76 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen || isEditMode || isViewMode) {
       fetchUserIdeas();
       setCurrentStep(0);
-      setFormData({
-        selectedIdeaId: "",
-        amount: "",
-        equity: "",
-        message: "",
-        fundingStage: "seed",
-        investmentType: "equity",
-        businessPlan: "",
-        targetMarket: "",
-        revenueModel: "",
-        competitiveAdvantage: "",
-        customerTraction: "",
-        financialProjections: "",
-        useOfFunds: "",
-        timeline: "",
-        milestones: "",
-        riskFactors: "",
-        exitStrategy: "",
-        currentRevenue: "",
-        previousFunding: "",
-        teamSize: "",
-        contactPhone: "",
-        contactEmail: "",
-        companyWebsite: "",
-        linkedinProfile: "",
-        intellectualProperty: "",
-        additionalDocuments: "",
-      });
+
+      // Load initial data for edit/view mode
+      if ((isEditMode || isViewMode) && initialData) {
+        setFormData({
+          selectedIdeaId: initialData.idea?._id || initialData.ideaId || "",
+          amount: initialData.amount || "",
+          equity: initialData.equity || "",
+          message: initialData.message || "",
+          fundingStage: initialData.fundingStage || "seed",
+          investmentType: initialData.investmentType || "equity",
+          businessPlan: initialData.businessPlan || "",
+          targetMarket: initialData.targetMarket || "",
+          revenueModel: initialData.revenueModel || "",
+          competitiveAdvantage: initialData.competitiveAdvantage || "",
+          customerTraction: initialData.customerTraction || "",
+          financialProjections: initialData.financialProjections || "",
+          useOfFunds: initialData.useOfFunds || "",
+          timeline: initialData.timeline || "",
+          milestones: initialData.milestones || "",
+          riskFactors: initialData.riskFactors || "",
+          exitStrategy: initialData.exitStrategy || "",
+          currentRevenue: initialData.currentRevenue || "",
+          previousFunding: initialData.previousFunding || "",
+          teamSize: initialData.teamSize || "",
+          contactPhone: initialData.contactPhone || "",
+          contactEmail: initialData.contactEmail || "",
+          companyWebsite: initialData.companyWebsite || "",
+          linkedinProfile: initialData.linkedinProfile || "",
+          intellectualProperty: initialData.intellectualProperty || "",
+          additionalDocuments: initialData.additionalDocuments || "",
+        });
+      } else {
+        // Clear form for new request
+        setFormData({
+          selectedIdeaId: "",
+          amount: "",
+          equity: "",
+          message: "",
+          fundingStage: "seed",
+          investmentType: "equity",
+          businessPlan: "",
+          targetMarket: "",
+          revenueModel: "",
+          competitiveAdvantage: "",
+          customerTraction: "",
+          financialProjections: "",
+          useOfFunds: "",
+          timeline: "",
+          milestones: "",
+          riskFactors: "",
+          exitStrategy: "",
+          currentRevenue: "",
+          previousFunding: "",
+          teamSize: "",
+          contactPhone: "",
+          contactEmail: "",
+          companyWebsite: "",
+          linkedinProfile: "",
+          intellectualProperty: "",
+          additionalDocuments: "",
+        });
+      }
       setError("");
       setSuccess("");
       setValidationErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, isEditMode, isViewMode, initialData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -277,10 +320,22 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
         additionalDocuments: formData.additionalDocuments || "",
       };
 
-      const response = await fundingAPI.createFundingRequest(requestData);
+      let response;
+      if (isEditMode && fundingRequestId) {
+        // Update existing funding request
+        response = await fundingAPI.updateFundingRequestDetails(fundingRequestId, requestData);
+        if (response && response.success) {
+          setSuccess("Funding request updated successfully!");
+        }
+      } else {
+        // Create new funding request
+        response = await fundingAPI.createFundingRequest(requestData);
+        if (response && response.success) {
+          setSuccess("Funding request submitted successfully!");
+        }
+      }
 
       if (response && response.success) {
-        setSuccess("Funding request submitted successfully!");
         if (onSuccess) {
           setTimeout(() => onSuccess(), 1000);
         }
@@ -325,11 +380,10 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
               <div>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-3">
                   <FaDollarSign className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-green-400 flex-shrink-0" />
-                  Create Funding Request
+                  {isViewMode ? "Funding Request Details" : isEditMode ? "Edit Funding Request" : "Create Funding Request"}
                 </h1>
                 <p className="mt-2 text-gray-300 text-base sm:text-lg">
-                  Step {currentStep + 1} of {steps.length}:{" "}
-                  {steps[currentStep].label}
+                  {isViewMode ? "Review your funding request" : `Step ${currentStep + 1} of ${steps.length}: ${steps[currentStep].label}`}
                 </p>
               </div>
               <button
@@ -425,7 +479,10 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                         name="selectedIdeaId"
                         value={formData.selectedIdeaId}
                         onChange={handleInputChange}
+                        disabled={isViewMode}
                         className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-colors ${
+                          isViewMode ? "opacity-50 cursor-not-allowed" : ""
+                        } ${
                           validationErrors.selectedIdeaId
                             ? "border-white"
                             : "border-gray-700"
@@ -1096,7 +1153,7 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
 
                     <div>
                       <label className="block text-white font-medium mb-3">
-                        Additional Documents{" "}
+                        Additional Links{" "}
                         <span className="text-white/40">(Optional)</span>
                       </label>
                       <textarea
@@ -1135,7 +1192,15 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
                 )}
               </button>
 
-              {currentStep < steps.length - 1 ? (
+              {isViewMode && currentStep === steps.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  Close
+                </button>
+              ) : currentStep < steps.length - 1 ? (
                 <button
                   type="button"
                   onClick={handleNext}
@@ -1147,19 +1212,21 @@ const FundingRequestForm = ({ isOpen, onClose, onSuccess }) => {
               ) : (
                 <button
                   type="button"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
+                  onClick={isViewMode ? onClose : handleSubmit}
+                  disabled={isSubmitting && !isViewMode}
                   className="w-full sm:w-auto px-8 py-3 bg-white text-black hover:bg-white/90 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? (
+                  {isViewMode ? (
+                    "Close"
+                  ) : isSubmitting ? (
                     <>
                       <FaSpinner className="w-4 h-4 animate-spin" />
-                      Submitting...
+                      {isEditMode ? "Updating..." : "Submitting..."}
                     </>
                   ) : (
                     <>
                       <FaCheck className="w-4 h-4" />
-                      Submit Request
+                      {isEditMode ? "Update Request" : "Submit Request"}
                     </>
                   )}
                 </button>

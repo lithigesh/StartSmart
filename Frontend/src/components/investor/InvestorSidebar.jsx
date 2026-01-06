@@ -278,7 +278,7 @@ const InvestorSidebar = ({
             onClick={handleLogout}
             className={`
               w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 group relative overflow-hidden min-h-[44px] touch-manipulation
-              text-white/80 hover:text-white/80 hover:bg-white/20 hover:scale-105
+              text-white hover:text-white bg-red-600 hover:bg-red-700 hover:scale-105
               ${
                 isCollapsed && window.innerWidth >= 1024 ? "justify-center" : ""
               }

@@ -250,13 +250,13 @@ const FundingPage = () => {
   };
 
   const handleEditFundingRequest = (request) => {
-    setSelectedFundingRequest(request);
-    setShowEditModal(true);
+    const requestId = request?._id || request?.id;
+    navigate(`/entrepreneur/edit-funding/${requestId}`);
   };
 
   const handleViewFundingRequest = (request) => {
-    setSelectedFundingRequest(request);
-    setShowEditModal(true);
+    const requestId = request?._id || request?.id;
+    navigate(`/entrepreneur/view-funding/${requestId}`);
   };
 
   const handleShowContact = async (request) => {

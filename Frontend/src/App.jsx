@@ -163,6 +163,26 @@ const App = () => {
                   </RoleBasedRoute>
                 }
               />
+
+              {/* Edit Funding Request - Full Screen (outside layout) */}
+              <Route
+                path="/entrepreneur/edit-funding/:id"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <FundingRequestPage isEditMode={true} />
+                  </RoleBasedRoute>
+                }
+              />
+
+              {/* View Funding Request Details - Full Screen (outside layout) */}
+              <Route
+                path="/entrepreneur/view-funding/:id"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <FundingRequestPage isViewMode={true} />
+                  </RoleBasedRoute>
+                }
+              />
               <Route
                 path="/submit-idea"
                 element={
