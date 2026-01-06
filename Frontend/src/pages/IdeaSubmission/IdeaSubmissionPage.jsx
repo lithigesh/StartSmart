@@ -1,22 +1,62 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import IdeaMasterForm from "./components/IdeaMasterForm";
 import toast from "react-hot-toast";
 import { Lightbulb } from "lucide-react";
+import { ideasAPI } from "../../services/api";
 
 const IdeaSubmissionPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { id: ideaId } = useParams();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(ideaId ? true : false);
+
+  // Get ideathon ID from location state if redirected from ideathon registration
+  const fromIdeathonId = location.state?.fromIdeathon;
+  const [ideaData, setIdeaData] = useState(null);
+
+  // Fetch idea data when in edit mode
+  useEffect(() => {
+    if (isEditMode && ideaId) {
+      const fetchIdeaData = async () => {
+        try {
+          setIsLoading(true);
+          const response = await ideasAPI.getIdeaById(ideaId);
+          const data = response.data || response;
+          setIdeaData(data);
+        } catch (err) {
+          console.error("Error loading idea:", err);
+          toast.error("Failed to load idea details");
+          // Redirect back if idea not found
+          setTimeout(() => {
+            navigate("/entrepreneur/my-ideas");
+          }, 2000);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchIdeaData();
+    }
+  }, [ideaId, isEditMode, navigate]);
+
+  // Determine if this is edit mode based on URL params
+  useEffect(() => {
+    if (ideaId) {
+      setIsEditMode(true);
+    }
+  }, [ideaId]);
 
   // Handle successful form submission
   const handleFormSuccess = (result) => {
     if (result.success && result.data) {
       // Show success toast with transparency
-      toast.success("Idea submitted successfully!", {
+      toast.success(isEditMode ? "Idea updated successfully!" : "Idea submitted successfully!", {
         duration: 3000,
         position: "bottom-right",
         style: {
@@ -29,9 +69,14 @@ const IdeaSubmissionPage = () => {
         },
       });
 
-      // Navigate back to entrepreneur dashboard after brief delay
+      // Navigate back to ideathon registration if coming from there, otherwise to my ideas
       setTimeout(() => {
-        navigate("/entrepreneur");
+        if (fromIdeathonId) {
+          navigate(`/entrepreneur/ideathon/${fromIdeathonId}/register`);
+        } else {
+          // Navigate to my ideas for all creation and edit modes
+          navigate("/entrepreneur/my-ideas");
+        }
       }, 1500);
     }
   };
@@ -67,11 +112,12 @@ const IdeaSubmissionPage = () => {
                 <div>
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 flex items-center gap-3">
                     <Lightbulb className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-yellow-400 flex-shrink-0" />
-                    Submit Your Idea
+                    {isEditMode ? "Edit Your Idea" : "Submit Your Idea"}
                   </h1>
                   <p className="mt-2 text-gray-300 text-base sm:text-lg">
-                    Share your innovative concept and start your entrepreneurial
-                    journey
+                    {isEditMode
+                      ? "Update your innovative concept and keep your idea fresh"
+                      : "Share your innovative concept and start your entrepreneurial journey"}
                   </p>
                 </div>
                 <button
@@ -87,10 +133,20 @@ const IdeaSubmissionPage = () => {
 
         {/* Form Content */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 lg:py-12">
-          <IdeaMasterForm
-            onSuccess={handleFormSuccess}
-            onError={handleFormError}
-          />
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full mb-4"></div>
+              <p className="text-white/70">Loading idea details...</p>
+            </div>
+          ) : (
+            <IdeaMasterForm
+              ideaId={ideaId}
+              isEditMode={isEditMode}
+              initialData={ideaData || {}}
+              onSuccess={handleFormSuccess}
+              onError={handleFormError}
+            />
+          )}
         </div>
 
         {/* Footer */}

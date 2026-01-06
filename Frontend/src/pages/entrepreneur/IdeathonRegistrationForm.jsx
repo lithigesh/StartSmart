@@ -392,6 +392,19 @@ function IdeathonRegistrationForm({
       setError("");
 
       // Prepare registration data matching backend expectations
+      // Parse team members from comma-separated string
+      let parsedTeamMembers = [];
+      if (formData.teamMembers && formData.teamMembers.trim()) {
+        parsedTeamMembers = formData.teamMembers
+          .split(",")
+          .map((name) => ({
+            name: name.trim(),
+            email: formData.email, // Use the main email for all team members
+            role: "Team Member",
+          }))
+          .filter((member) => member.name); // Filter out empty names
+      }
+
       const registrationData = {
         ideaId: formData.selectedIdeaId,
         pitchDetails: formData.pitchDetails,
@@ -400,11 +413,7 @@ function IdeathonRegistrationForm({
         projectDescription: formData.pitchDetails, // Map pitchDetails to projectDescription
         techStack: "", // Optional field
         githubRepo: formData.githubUrl || "", // Map githubUrl to githubRepo
-        teamMembers: formData.teamMembers.map((member) => ({
-          name: member.name,
-          email: member.email || formData.email,
-          role: member.role || "Team Member",
-        })),
+        teamMembers: parsedTeamMembers,
         additionalInfo: formData.mobileNumber
           ? `Mobile: ${formData.mobileNumber}`
           : "", // Include mobile in additionalInfo

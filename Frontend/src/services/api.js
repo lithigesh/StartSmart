@@ -47,44 +47,15 @@ const getAuthHeadersForUpload = () => {
 
 // Ideas API - For both entrepreneurs and investors
 export const ideasAPI = {
-  // Submit a new idea (for entrepreneurs) - Updated to handle file uploads
+  // Submit a new idea (for entrepreneurs)
   submitIdea: async (ideaData) => {
-    // Check if ideaData contains files (attachments)
-    const hasFiles = ideaData.attachments && ideaData.attachments.length > 0;
+    const response = await fetch(`${API_URL}/api/ideas`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(ideaData),
+    });
 
-    if (hasFiles) {
-      // Use FormData for file uploads
-      const formData = new FormData();
-
-      // Append all form fields
-      Object.keys(ideaData).forEach((key) => {
-        if (key === "attachments") {
-          // Handle file attachments
-          ideaData.attachments.forEach((file) => {
-            formData.append("attachments", file);
-          });
-        } else {
-          // Append other fields
-          formData.append(key, ideaData[key] || "");
-        }
-      });
-
-      const response = await fetch(`${API_URL}/api/ideas`, {
-        method: "POST",
-        headers: getAuthHeadersForUpload(),
-        body: formData,
-      });
-      return handleResponse(response);
-    } else {
-      // Use JSON for ideas without files
-      const response = await fetch(`${API_URL}/api/ideas`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(ideaData),
-      });
-
-      return handleResponse(response);
-    }
+    return handleResponse(response);
   },
 
   // Create a new idea (alias for submitIdea for consistency)

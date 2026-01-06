@@ -171,6 +171,14 @@ const App = () => {
                   </RoleBasedRoute>
                 }
               />
+              <Route
+                path="/edit-idea/:id"
+                element={
+                  <RoleBasedRoute allowedRole="entrepreneur">
+                    <IdeaSubmissionPage />
+                  </RoleBasedRoute>
+                }
+              />
               {/* Ideathon Registration - Full Screen (outside layout) */}
               <Route
                 path="/entrepreneur/ideathon/:id/register"

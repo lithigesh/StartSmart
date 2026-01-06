@@ -144,4 +144,16 @@ exports.validateIdeaCreation = [
         .isLength({ max: 200 })
         .trim()
         .escape(),
+
+    body('uniqueValueProposition')
+        .optional()
+        .isLength({ max: 1000 })
+        .trim()
+        .escape(),
+
+    body('competitiveAdvantage')
+        .optional()
+        .isLength({ max: 1000 })
+        .trim()
+        .escape(),
 ];

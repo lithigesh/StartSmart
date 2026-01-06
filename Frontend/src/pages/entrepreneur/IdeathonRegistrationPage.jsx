@@ -16,7 +16,6 @@ import {
   FaCalendarAlt,
   FaUsers,
 } from "react-icons/fa";
-import IdeaSubmissionForm from "../../components/entrepreneur/IdeaSubmissionForm";
 
 /**
  * IdeathonRegistrationPage Component
@@ -49,7 +48,6 @@ const IdeathonRegistrationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [ideathonDetails, setIdeathonDetails] = useState(null);
-  const [showNewIdeaForm, setShowNewIdeaForm] = useState(false);
   const [isLoadingIdeathon, setIsLoadingIdeathon] = useState(true);
 
   useEffect(() => {
@@ -189,6 +187,20 @@ const IdeathonRegistrationPage = () => {
       const token = localStorage.getItem("token");
       const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5001";
 
+      // Parse team members from newline-separated or comma-separated text
+      let parsedTeamMembers = [];
+      if (formData.teamMembers && formData.teamMembers.trim()) {
+        const memberLines = formData.teamMembers
+          .split(/[\n,]/)
+          .map((name) => name.trim())
+          .filter((name) => name);
+        parsedTeamMembers = memberLines.map((name) => ({
+          name: name,
+          email: formData.email, // Use the contact email for all team members
+          role: "Team Member",
+        }));
+      }
+
       // Prepare JSON data for submission
       const submissionData = {
         ideaId: formData.selectedIdeaId,
@@ -196,7 +208,7 @@ const IdeathonRegistrationPage = () => {
         projectTitle: formData.projectTitle,
         projectDescription: formData.pitchDetails,
         teamName: formData.teamName,
-        teamMembers: formData.teamMembers,
+        teamMembers: parsedTeamMembers,
         mobileNumber: formData.mobileNumber,
         email: formData.email,
         githubUrl: formData.githubUrl,
@@ -245,25 +257,6 @@ const IdeathonRegistrationPage = () => {
       toast.error(err.message || "Registration failed");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Handle new idea submission
-  const handleNewIdeaSubmit = async (newIdeaData) => {
-    try {
-      const response = await ideasAPI.submitIdea(newIdeaData);
-      if (response.success && response.data) {
-        toast.success("New idea created successfully!");
-        await fetchUserIdeas();
-        setFormData((prev) => ({
-          ...prev,
-          selectedIdeaId: response.data._id || response.data.id,
-        }));
-        setShowNewIdeaForm(false);
-      }
-    } catch (err) {
-      console.error("Error creating new idea:", err);
-      toast.error("Failed to create new idea");
     }
   };
 
@@ -342,13 +335,6 @@ const IdeathonRegistrationPage = () => {
           </div>
         </div>
 
-        {/* New Idea Form Modal - Let IdeaSubmissionForm handle its own modal */}
-        <IdeaSubmissionForm
-          isOpen={showNewIdeaForm}
-          onSubmit={handleNewIdeaSubmit}
-          onClose={() => setShowNewIdeaForm(false)}
-        />
-
         {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Select Idea */}
@@ -362,7 +348,7 @@ const IdeathonRegistrationPage = () => {
               </div>
               <button
                 type="button"
-                onClick={() => setShowNewIdeaForm(true)}
+                onClick={() => navigate("/submit-idea", { state: { fromIdeathon: ideathonId } })}
                 className="flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-yellow-400/10 text-yellow-400 rounded-lg hover:bg-yellow-400/20 transition-all border border-yellow-400/20 text-sm sm:text-base min-h-[44px] sm:min-h-0 whitespace-nowrap"
               >
                 <FaPlus className="w-4 h-4" />

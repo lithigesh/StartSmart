@@ -804,8 +804,9 @@ const IdeathonFormModal = ({
 
   const submissionFormatOptions = [
     "Pitch Deck",
-    "Working Prototype",
-    "Business Plan",
+    "Prototype",
+    "Code Repository",
+    "Business Document",
     "Video Presentation",
     "Demo",
     "Research Paper",
@@ -904,14 +905,16 @@ const IdeathonFormModal = ({
                 <label className="block text-white/90 text-sm font-medium mb-2">
                   Location
                 </label>
-                <input
-                  type="text"
+                <select
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200"
-                  placeholder="Virtual / San Francisco, CA"
-                />
+                  className="w-full bg-white/[0.05] border border-white/20 rounded-xl px-4 py-3 text-white backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200 appearance-none cursor-pointer"
+                >
+                  <option value="Online" className="bg-black text-white">Online</option>
+                  <option value="Offline" className="bg-black text-white">Offline</option>
+                  <option value="Hybrid" className="bg-black text-white">Hybrid</option>
+                </select>
               </div>
 
               {/* Start Date */}

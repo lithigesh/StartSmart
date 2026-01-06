@@ -27,13 +27,17 @@ exports.submitIdea = async (req, res, next) => {
       solution,
       competitors,
 
+      // Market & Value Proposition
+      uniqueValueProposition,
+      marketSize,
+      competitiveAdvantage,
+
       // Business Model
       revenueStreams,
       pricingStrategy,
       keyPartnerships,
 
       // Market & Growth
-      marketSize,
       goToMarketStrategy,
       scalabilityPlan,
 
@@ -79,13 +83,17 @@ exports.submitIdea = async (req, res, next) => {
       solution,
       competitors,
 
+      // Market & Value Proposition
+      uniqueValueProposition,
+      marketSize,
+      competitiveAdvantage,
+
       // Business Model
       revenueStreams,
       pricingStrategy,
       keyPartnerships,
 
       // Market & Growth
-      marketSize,
       goToMarketStrategy,
       scalabilityPlan,
 
@@ -519,10 +527,17 @@ exports.updateIdea = async (req, res, next) => {
     idea.targetAudience = req.body.targetAudience || idea.targetAudience;
     idea.problemStatement = req.body.problemStatement || idea.problemStatement;
     idea.solution = req.body.solution || idea.solution;
+    idea.uniqueValueProposition = req.body.uniqueValueProposition || idea.uniqueValueProposition;
+    idea.marketSize = req.body.marketSize || idea.marketSize;
+    idea.competitiveAdvantage = req.body.competitiveAdvantage || idea.competitiveAdvantage;
 
     const updatedIdea = await idea.save();
     res.json(updatedIdea);
   } catch (error) {
+    // Handle DocumentNotFoundError specifically
+    if (error.name === "DocumentNotFoundError") {
+      return res.status(404).json({ message: "Idea not found" });
+    }
     next(error);
   }
 };

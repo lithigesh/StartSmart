@@ -40,22 +40,35 @@ const IdeaMasterForm = ({
       "Zepto’s competitive strengths include its proprietary logistics and inventory software, optimized dark-store operations, improving unit economics, strong repeat purchase behavior (high retention and order frequency), data-driven assortment planning, and rapid expansion capability. Its focus on disciplined execution, customer experience, and operational efficiency positions it strongly in India’s quick-commerce ecosystem.",
   };
 
-  const [formData, setFormData] = useState({
-    title: initialData.title || sampleData.title,
-    description: initialData.description || sampleData.description,
-    category: initialData.category || sampleData.category,
-    stage: initialData.stage || sampleData.stage,
-    targetAudience: initialData.targetAudience || sampleData.targetAudience,
-    problemStatement:
-      initialData.problemStatement || sampleData.problemStatement,
-    solution: initialData.solution || sampleData.solution,
-    uniqueValueProposition:
-      initialData.uniqueValueProposition || sampleData.uniqueValueProposition,
-    marketSize: initialData.marketSize || sampleData.marketSize,
-    competitiveAdvantage:
-      initialData.competitiveAdvantage || sampleData.competitiveAdvantage,
-    attachments: initialData.attachments || null,
-    ...initialData,
+  const [formData, setFormData] = useState(() => {
+    // For edit mode, use initialData values; for new ideas, use empty strings (not sample data)
+    if (isEditMode && initialData?._id) {
+      return {
+        title: initialData?.title || "",
+        description: initialData?.description || "",
+        category: initialData?.category || "",
+        stage: initialData?.stage || "Concept",
+        targetAudience: initialData?.targetAudience || "",
+        problemStatement: initialData?.problemStatement || "",
+        solution: initialData?.solution || "",
+        uniqueValueProposition: initialData?.uniqueValueProposition || "",
+        marketSize: initialData?.marketSize || "",
+        competitiveAdvantage: initialData?.competitiveAdvantage || "",
+      };
+    }
+    // For new ideas, start with empty values (no sample data)
+    return {
+      title: "",
+      description: "",
+      category: "",
+      stage: "Concept",
+      targetAudience: "",
+      problemStatement: "",
+      solution: "",
+      uniqueValueProposition: "",
+      marketSize: "",
+      competitiveAdvantage: "",
+    };
   });
 
   const [errors, setErrors] = useState({});
@@ -74,17 +87,13 @@ const IdeaMasterForm = ({
       uniqueValueProposition: "",
       marketSize: "",
       competitiveAdvantage: "",
-      attachments: null,
     });
     setErrors({});
   };
 
   // Function to load fresh sample data
   const loadSampleData = () => {
-    setFormData({
-      ...sampleData,
-      attachments: null,
-    });
+    setFormData(sampleData);
     setErrors({});
   };
 
@@ -120,6 +129,25 @@ const IdeaMasterForm = ({
   ];
 
   useEffect(() => {
+    // Load idea data when in edit mode
+    if (isEditMode && initialData && initialData._id) {
+      setFormData((prev) => ({
+        ...prev,
+        title: initialData.title || "",
+        description: initialData.description || "",
+        category: initialData.category || "",
+        stage: initialData.stage || "Concept",
+        targetAudience: initialData.targetAudience || "",
+        problemStatement: initialData.problemStatement || "",
+        solution: initialData.solution || "",
+        uniqueValueProposition: initialData.uniqueValueProposition || "",
+        marketSize: initialData.marketSize || "",
+        competitiveAdvantage: initialData.competitiveAdvantage || "",
+      }));
+    }
+  }, [isEditMode, initialData]);
+
+  useEffect(() => {
     // Notify parent component of data changes
     if (onDataChange) {
       onDataChange(formData);
@@ -128,18 +156,17 @@ const IdeaMasterForm = ({
   }, [formData]);
 
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value } = e.target;
 
-    if (name === "attachments") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: files,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Auto-expand textarea on input
+    if (e.target.tagName === "TEXTAREA") {
+      e.target.style.height = "auto";
+      e.target.style.height = Math.min(e.target.scrollHeight, 400) + "px";
     }
 
     // Clear error when user starts typing
@@ -148,6 +175,16 @@ const IdeaMasterForm = ({
         ...prev,
         [name]: "",
       }));
+    }
+  };
+
+  // Auto-expand textarea on mount and focus
+  const expandTextarea = (e) => {
+    if (e && e.target && e.target.tagName === "TEXTAREA") {
+      setTimeout(() => {
+        e.target.style.height = "auto";
+        e.target.style.height = Math.min(e.target.scrollHeight, 400) + "px";
+      }, 0);
     }
   };
 
@@ -205,39 +242,15 @@ const IdeaMasterForm = ({
         "Target audience must be less than 500 characters";
     }
 
-    if (!formData.uniqueValueProposition.trim()) {
-      newErrors.uniqueValueProposition = "Unique value proposition is required";
+    // Optional field validations (no required check, just length validation if provided)
+    if (formData.uniqueValueProposition.trim() && formData.uniqueValueProposition.length > 1000) {
+      newErrors.uniqueValueProposition =
+        "Unique value proposition must be less than 1000 characters";
     }
 
-    // File validation
-    if (formData.attachments && formData.attachments.length > 0) {
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      const allowedTypes = [
-        "application/pdf",
-        "application/vnd.ms-powerpoint",
-        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-      ];
-
-      for (let file of formData.attachments) {
-        if (file.size > maxSize) {
-          newErrors.attachments = "File size must be less than 10MB";
-          break;
-        }
-        if (!allowedTypes.includes(file.type)) {
-          newErrors.attachments =
-            "Invalid file type. Allowed: PDF, PPT, DOC, Images";
-          break;
-        }
-      }
-
-      if (formData.attachments.length > 5) {
-        newErrors.attachments = "Maximum 5 files allowed";
-      }
+    if (formData.competitiveAdvantage.trim() && formData.competitiveAdvantage.length > 1000) {
+      newErrors.competitiveAdvantage =
+        "Competitive advantage must be less than 1000 characters";
     }
 
     setErrors(newErrors);
@@ -268,10 +281,6 @@ const IdeaMasterForm = ({
         // Additional info from form
         uniqueValueProposition: formData.uniqueValueProposition,
         competitiveAdvantage: formData.competitiveAdvantage,
-        ...(formData.attachments &&
-          formData.attachments.length > 0 && {
-            attachments: formData.attachments,
-          }),
 
         // Required fields with default values (will be filled in other forms)
         elevatorPitch:
@@ -534,8 +543,9 @@ const IdeaMasterForm = ({
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
+                    onFocus={expandTextarea}
                     rows={6}
-                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none overflow-hidden ${
                       errors.description
                         ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
@@ -614,8 +624,9 @@ const IdeaMasterForm = ({
                     name="problemStatement"
                     value={formData.problemStatement}
                     onChange={handleInputChange}
+                    onFocus={expandTextarea}
                     rows={4}
-                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none overflow-hidden ${
                       errors.problemStatement
                         ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
@@ -647,8 +658,9 @@ const IdeaMasterForm = ({
                     name="solution"
                     value={formData.solution}
                     onChange={handleInputChange}
+                    onFocus={expandTextarea}
                     rows={4}
-                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none overflow-hidden ${
                       errors.solution
                         ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
@@ -686,22 +698,21 @@ const IdeaMasterForm = ({
                     htmlFor="uniqueValueProposition"
                     className="block text-sm font-medium text-white font-manrope mb-2"
                   >
-                    Unique Value Proposition{" "}
-                    <span className="text-white/70">*</span>
+                    Unique Value Proposition
                   </label>
                   <textarea
                     id="uniqueValueProposition"
                     name="uniqueValueProposition"
                     value={formData.uniqueValueProposition}
                     onChange={handleInputChange}
+                    onFocus={expandTextarea}
                     rows={3}
-                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none ${
+                    className={`w-full px-4 py-3 bg-white/[0.03] border rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none overflow-hidden ${
                       errors.uniqueValueProposition
                         ? "border-white/50 focus:border-white"
                         : "border-white/10 focus:border-white/30"
                     }`}
                     placeholder="What makes your solution unique? How does it differentiate from existing alternatives?"
-                    required
                   />
                   {errors.uniqueValueProposition && (
                     <p className="mt-2 text-sm text-white/70 font-manrope">
@@ -710,86 +721,55 @@ const IdeaMasterForm = ({
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Market Size */}
-                  <div>
-                    <label
-                      htmlFor="marketSize"
-                      className="block text-sm font-medium text-white font-manrope mb-2"
-                    >
-                      Market Size & Opportunity
-                    </label>
-                    <input
-                      type="text"
-                      id="marketSize"
-                      name="marketSize"
-                      value={formData.marketSize}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
-                      placeholder="e.g., $5B market growing at 15% annually"
-                    />
-                  </div>
-
-                  {/* Competitive Advantage */}
-                  <div>
-                    <label
-                      htmlFor="competitiveAdvantage"
-                      className="block text-sm font-medium text-white font-manrope mb-2"
-                    >
-                      Competitive Advantage
-                    </label>
-                    <input
-                      type="text"
-                      id="competitiveAdvantage"
-                      name="competitiveAdvantage"
-                      value={formData.competitiveAdvantage}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30"
-                      placeholder="What gives you an edge over competitors?"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* File Attachments Section */}
-            <div className="space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <h3 className="text-xl font-semibold text-white font-manrope">
-                  Supporting Documents
-                </h3>
-                <p className="text-white/60 font-manrope text-sm mt-1">
-                  Upload any supporting documents (optional)
-                </p>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="attachments"
-                  className="block text-sm font-medium text-white font-manrope mb-2"
-                >
-                  Attachments (Optional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    id="attachments"
-                    name="attachments"
+                {/* Market Size & Opportunity - Full Width */}
+                <div>
+                  <label
+                    htmlFor="marketSize"
+                    className="block text-sm font-medium text-white font-manrope mb-2"
+                  >
+                    Market Size & Opportunity
+                  </label>
+                  <textarea
+                    id="marketSize"
+                    name="marketSize"
+                    value={formData.marketSize}
                     onChange={handleInputChange}
-                    multiple
-                    accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white/20 file:text-white hover:file:bg-white/30"
+                    onFocus={expandTextarea}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 resize-none overflow-hidden"
+                    placeholder="e.g., $5B market growing at 15% annually, with opportunity in enterprise and SMB segments"
                   />
+                  {errors.marketSize && (
+                    <p className="mt-1 text-red-400 text-sm font-manrope">
+                      {errors.marketSize}
+                    </p>
+                  )}
                 </div>
-                {errors.attachments && (
-                  <p className="mt-2 text-sm text-white/70 font-manrope">
-                    {errors.attachments}
-                  </p>
-                )}
-                <p className="mt-2 text-xs text-white/40 font-manrope">
-                  Supported formats: PDF, DOC, PPT, Images • Max size: 10MB per
-                  file • Max files: 5
-                </p>
+
+                {/* Competitive Advantage - Full Width */}
+                <div>
+                  <label
+                    htmlFor="competitiveAdvantage"
+                    className="block text-sm font-medium text-white font-manrope mb-2"
+                  >
+                    Competitive Advantage
+                  </label>
+                  <textarea
+                    id="competitiveAdvantage"
+                    name="competitiveAdvantage"
+                    value={formData.competitiveAdvantage}
+                    onChange={handleInputChange}
+                    onFocus={expandTextarea}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-white/[0.03] border border-white/10 rounded-lg text-white font-manrope placeholder-white/40 backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 resize-none overflow-hidden"
+                    placeholder="What gives you an edge over competitors? Patent, team, technology, market position?"
+                  />
+                  {errors.competitiveAdvantage && (
+                    <p className="mt-1 text-red-400 text-sm font-manrope">
+                      {errors.competitiveAdvantage}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
