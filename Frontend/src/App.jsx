@@ -41,6 +41,7 @@ import SettingsPage from "./pages/entrepreneur/SettingsPage.jsx";
 // Investor Pages
 import InvestorDealsPage from "./pages/investor/InvestorDealsPage.jsx";
 import InvestorIdeaViewPage from "./pages/investor/InvestorIdeaViewPage.jsx";
+import InvestorNotificationsPage from "./pages/investor/NotificationsPage.jsx";
 
 import {
   NotFoundPage,
@@ -130,6 +131,14 @@ const App = () => {
                 element={
                   <RoleBasedRoute allowedRole="investor">
                     <InvestorDealsPage />
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/investor/notifications"
+                element={
+                  <RoleBasedRoute allowedRole="investor">
+                    <InvestorNotificationsPage />
                   </RoleBasedRoute>
                 }
               />

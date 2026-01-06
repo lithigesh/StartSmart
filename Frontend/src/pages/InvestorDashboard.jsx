@@ -20,6 +20,7 @@ import {
 } from "../components/investor";
 import InvestorDealsPage from "./investor/InvestorDealsPage";
 import InvestorFeedbackPage from "./investor/InvestorFeedbackPage";
+import InvestorOverviewPage from "./investor/InvestorOverviewPage";
 import { FaLightbulb, FaHeart, FaBell } from "react-icons/fa";
 
 const InvestorDashboard = () => {
@@ -48,12 +49,30 @@ const InvestorDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Handle navigation from external pages (like Portfolio)
+  // Handle navigation from external pages (like Portfolio) and URL-based routing
   useEffect(() => {
     if (location.state?.activeSection) {
       setActiveSection(location.state.activeSection);
       // Clear the state so it doesn't persist on refresh
       window.history.replaceState({}, document.title);
+    } else {
+      // Map URL path to active section
+      const pathname = location.pathname;
+      if (pathname.includes("/investor/interests")) {
+        setActiveSection("interested-ideas");
+      } else if (pathname.includes("/investor/deals")) {
+        setActiveSection("deals");
+      } else if (pathname.includes("/investor/portfolio")) {
+        setActiveSection("portfolio");
+      } else if (pathname.includes("/investor/browse")) {
+        setActiveSection("browse-ideas");
+      } else if (pathname.includes("/investor/feedback")) {
+        setActiveSection("feedback");
+      } else if (pathname.includes("/investor/settings")) {
+        setActiveSection("settings");
+      } else {
+        setActiveSection("overview");
+      }
     }
   }, [location]);
 
@@ -373,25 +392,7 @@ const InvestorDashboard = () => {
   const renderSectionContent = () => {
     switch (activeSection) {
       case "overview":
-        return (
-          <>
-            {/* Welcome Section */}
-            <InvestorWelcomeSection
-              availableIdeas={availableIdeas}
-              totalInvestments={totalInvestments}
-            />
-
-            {/* Dashboard Cards Grid */}
-            <InvestorDashboardCards dashboardCards={dashboardCards} />
-
-            {/* Error Message */}
-            <ErrorMessage
-              error={error}
-              onRetry={loadDashboardData}
-              onDismiss={() => setError(null)}
-            />
-          </>
-        );
+        return <InvestorOverviewPage />;
 
       case "browse-ideas":
         const filteredIdeasList = getFilteredIdeas(ideas);
@@ -447,6 +448,7 @@ const InvestorDashboard = () => {
         );
 
       case "my-interests":
+      case "interested-ideas":
         return (
           <IdeasSection
             title="My Interested Ideas"

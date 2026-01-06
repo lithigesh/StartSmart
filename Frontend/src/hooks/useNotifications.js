@@ -50,14 +50,15 @@ export const useNotifications = () => {
       await notificationsAPI.markAsRead(notificationId);
 
       // Update local state
-      setNotifications((prev) =>
-        prev.map((notif) =>
+      setNotifications((prev) => {
+        const updated = prev.map((notif) =>
           notif._id === notificationId ? { ...notif, read: true } : notif
-        )
-      );
-
-      // Update unread count
-      setUnreadCount((prev) => Math.max(0, prev - 1));
+        );
+        // Recalculate unread count
+        const unread = updated.filter((notif) => !notif.read).length;
+        setUnreadCount(unread);
+        return updated;
+      });
     } catch (err) {
       console.error("Error marking notification as read:", err);
       setError(err.message);
@@ -71,10 +72,7 @@ export const useNotifications = () => {
       await notificationsAPI.markAllAsRead();
 
       // Update local state
-      setNotifications((prev) =>
-        prev.map((notif) => ({ ...notif, read: true }))
-      );
-
+      setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
       setUnreadCount(0);
     } catch (err) {
       console.error("Error marking all notifications as read:", err);
@@ -89,28 +87,21 @@ export const useNotifications = () => {
       try {
         await notificationsAPI.deleteNotification(notificationId);
 
-        // Find the notification to check if it was unread
-        const notification = notifications.find(
-          (notif) => notif._id === notificationId
-        );
-        const wasUnread = notification && !notification.read;
-
         // Update local state
-        setNotifications((prev) =>
-          prev.filter((notif) => notif._id !== notificationId)
-        );
-
-        // Update unread count if necessary
-        if (wasUnread) {
-          setUnreadCount((prev) => Math.max(0, prev - 1));
-        }
+        setNotifications((prev) => {
+          const updated = prev.filter((notif) => notif._id !== notificationId);
+          // Recalculate unread count
+          const unread = updated.filter((notif) => !notif.read).length;
+          setUnreadCount(unread);
+          return updated;
+        });
       } catch (err) {
         console.error("Error deleting notification:", err);
         setError(err.message);
         throw err;
       }
     },
-    [notifications]
+    []
   );
 
   // Clear all notifications
