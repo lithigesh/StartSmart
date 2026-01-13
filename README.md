@@ -1,36 +1,114 @@
-# StartSmart – AI-Powered Startup Evaluation & Funding Ecosystem
+﻿# StartSmart – AI-Powered Startup Evaluation & Funding Ecosystem
 
-## Table of Contents
+StartSmart is a full-stack platform for early-stage entrepreneurs to submit and validate startup ideas, request funding, participate in ideathons, and communicate with investors/admins.
 
-1. [Introduction](#1-introduction)
-2. [Problem Statement](#2-problem-statement)
-3. [Objective of the Project](#3-objective-of-the-project)
-4. [How the Platform Works](#4-how-the-platform-works)
-5. [Key Features](#5-key-features)
-6. [User Roles and Access Levels](#6-user-roles-and-access-levels)
-7. [Real-World Use Cases](#7-real-world-use-cases)
-8. [Current Progress and Status](#8-current-progress-and-status)
-9. [Future Scope and Enhancements](#9-future-scope-and-enhancements)
-10. [Sample Login Credentials (Demo Access)](#10-sample-login-credentials-demo-access)
-11. [Contributors](#11-contributors)
+This repository contains:
+
+- `Backend/`: Node.js + Express API (MongoDB, JWT, OpenRouter AI analysis, SendGrid email, Socket.IO server)
+- `Frontend/`: React + Vite app (Tailwind + DaisyUI)
 
 ---
 
-## 1 Introduction
+## Quickstart (Local Development)
 
-StartSmart is a full-stack web platform developed to help early-stage entrepreneurs validate their business ideas, request funding, and participate in ideathons or innovation challenges. The main goal of the application is to simplify and automate the startup evaluation process using artificial intelligence while supporting a smooth communication channel between entrepreneurs, investors, and administrators.
+### Prerequisites
 
-This project aims to solve a common problem faced by amateur founders and student innovators: lack of structure and expert insights when pitching business ideas. StartSmart bridges this gap by generating instant AI-driven assessments and enabling transparent, data-based decision-making for funding.
+- Node.js 18+
+- MongoDB connection string (Atlas or local)
+
+### 1) Backend
+
+```bash
+cd Backend
+npm install
+```
+
+Create `Backend/.env`:
+
+```bash
+MONGO_URI=mongodb://127.0.0.1:27017/startsmart
+JWT_SECRET=change_me
+
+# CORS
+FRONTEND_URL=http://localhost:5173
+
+# AI (OpenRouter)
+OPENROUTER_API_KEY=your_openrouter_key
+# Optional: defaults to openai/gpt-4o-mini
+OPENROUTER_MODEL=openai/gpt-4o-mini
+
+# Email (optional)
+SENDGRID_API_KEY=your_sendgrid_key
+VERIFIED_SENDER_EMAIL=verified_sender@example.com
+
+# Admin defaults (optional)
+ADMIN_EMAIL=admin@startsmart.com
+ADMIN_PASSWORD=change_me
+ADMIN_NAME=StartSmart Administrator
+ADMIN_VERIFICATION_PASSWORD=change_me
+
+# Server
+PORT=5001
+NODE_ENV=development
+```
+
+Run the API:
+
+```bash
+npm run dev
+```
+
+Backend runs on `http://localhost:5001`.
+
+### 2) Frontend
+
+```bash
+cd Frontend
+npm install
+```
+
+Create `Frontend/.env`:
+
+```bash
+VITE_API_URL=http://localhost:5001
+```
+
+Run the app:
+
+```bash
+npm run dev
+```
+
+Frontend runs on `http://localhost:5173`.
 
 ---
 
-## 2 Problem Statement
+## Key Features
+
+- **AI idea evaluation** via OpenRouter (configurable model; default `openai/gpt-4o-mini`)
+- **Role-based access** (Entrepreneur / Investor / Admin) using JWT
+- **Funding workflows** including negotiation messaging
+- **Ideathon module** (create, register, withdraw, manage results)
+- **Notifications** endpoints + Socket.IO server available on the backend
+- **PDF report generation** for idea analysis
+
+---
+
+## Sample Login Credentials (Local/Demo)
+
+The backend supports admin defaults via environment variables. If you haven’t customized them, the codebase includes fallbacks for local testing.
+
+For production, always set strong values in `Backend/.env` and never commit secrets.
+
+---
+
+## Problem Statement
 
 Early-stage founders often lack access to proper evaluation mechanisms or expert support to assess the feasibility and potential of their ideas. Traditional funding or ideathon processes can be subjective, slow, and sometimes biased. There is also no uniform digital space where investors can track ideas, analyze submissions, and allocate funds based on real merit.
 
 ---
 
-## 3 Objective of the Project
+## Objective
 
 - Provide an AI-based evaluation system for startup ideas.
 - Create a platform where entrepreneurs and investors can interact digitally.
@@ -40,7 +118,7 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 
 ---
 
-## 4 How the Platform Works
+## How It Works
 
 1. User registers and selects a role (Entrepreneur, Investor, Admin).
 2. Entrepreneurs submit their business ideas through a structured form.
@@ -51,21 +129,7 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 
 ---
 
-## 5 Key Features
-
-- **AI-based Idea Evaluation** - Comprehensive analysis with market viability, SWOT analysis, and growth roadmap using GPT-4o-mini and Gemini 2.0 Flash
-- **Multi-Role Dashboard System** - Separate dashboards for Entrepreneurs, Investors, and Administrators with role-based access control
-- **Intelligent Funding Platform** - Automated funding request management with investor matching and negotiation system
-- **Ideathon Competition System** - Full-featured competition management with registration, submission tracking, and automated notifications
-- **Real-time Notifications** - Toast notifications and live updates for registrations, funding status, and investor interest
-- **Detailed Ideathon Pages** - Comprehensive ideathon information including eligibility criteria, judging criteria, submission formats, and contact details
-- **Withdrawal Management** - Allow users to withdraw from competitions with confirmation dialogs
-- **Secure Authentication** - JWT-based authentication with protected routes and role-based middleware
-- **Responsive Glassmorphism Design** - Modern UI with Tailwind CSS, fully responsive for mobile and desktop
-
----
-
-## 6 User Roles and Access Levels
+## User Roles and Access Levels
 
 | Role         | Key Permissions                                         |
 | ------------ | ------------------------------------------------------- |
@@ -75,7 +139,7 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 
 ---
 
-## 7 Real-World Use Cases
+## Real-World Use Cases
 
 - Students participating in startup-based events or hackathons.
 - Colleges conducting ideathons or entrepreneurship competitions.
@@ -85,37 +149,7 @@ Early-stage founders often lack access to proper evaluation mechanisms or expert
 
 ---
 
-## 8 Current Progress and Status
-
-This project is fully completed and production-ready. All core modules are implemented and tested:
-
-**Completed Features:**
-
-- User authentication and role-based access control
-- AI-powered idea evaluation with multiple models (GPT-4o-mini, Gemini 2.0 Flash)
-- Comprehensive funding request and investor matching system
-- Full ideathon management with registration, tracking, and withdrawal
-- Real-time notification system with toast messages
-- Detailed ideathon pages with all submission requirements
-- PDF report generation for idea analysis
-- Admin panel with user, idea, and competition management
-- Responsive design with modern glassmorphism UI
-- Email notifications via SendGrid integration
-
-**Recent Updates (December 2025):**
-
-- Fixed ideathon registration API endpoints
-- Added dedicated ideathon details pages
-- Implemented toast notifications for all user actions
-- Enhanced idea loading with proper error handling
-- Removed deprecated registration master page from admin
-- Added comprehensive submission format, eligibility, and judging criteria display
-
-The platform is ready for real-world deployment and use by entrepreneurs, investors, and organizations.
-
----
-
-## 9 Future Scope and Enhancements
+## Future Scope and Enhancements
 
 - Integration with real payment gateways for automated funding.
 - Support for video pitch submissions and feedback.
@@ -125,35 +159,15 @@ The platform is ready for real-world deployment and use by entrepreneurs, invest
 
 ---
 
-## 10 Sample Login Credentials (Demo Access)
-
-#### Admin Account
-
-```txt
-Email: admin@startsmart.com
-Password: StartSmart@Admin2025
-```
-
-#### Investor Account
-
-```txt
-Email: investor@startsmart.com
-Password: password123
-```
-
-#### Entrepreneur Account
-
-```txt
-Email: entrepreneur@startsmart.com
-Password: password123
-```
-
-These credentials are for demo and testing only. Passwords should be updated before production use.
-
----
-
-## 11 Contributors
+## Contributors
 
 | [Lithigesh P G](https://github.com/lithigesh)             | [Ponabirami K A](https://github.com/Ponabirami1718)            | [Nanthana S](https://github.com/Nanthana04)                | [Kavinbalaji S](https://github.com/kavinbalaji2005)             |
 | --------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------- |
 | <img src="https://github.com/lithigesh.png" width="90px"> | <img src="https://github.com/Ponabirami1718.png" width="90px"> | <img src="https://github.com/Nanthana04.png" width="90px"> | <img src="https://github.com/kavinbalaji2005.png" width="90px"> |
+
+---
+
+## Notes
+
+- Secrets such as API keys must be provided via environment variables and should not be committed to git.
+- For backend API details, see `Backend/README.md`. For UI details, see `Frontend/README.md`.

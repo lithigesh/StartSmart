@@ -8,6 +8,43 @@
 
 The StartSmart frontend is a modern React application built with Vite, featuring a responsive design with glassmorphism effects and role-based interfaces for entrepreneurs, investors, and administrators.
 
+This README focuses on running the UI with the **current API base URL configuration**.
+
+---
+
+## Prerequisites
+
+- Node.js 18+
+- Backend running locally or deployed
+
+---
+
+## Setup
+
+```bash
+cd Frontend
+npm install
+```
+
+Create `Frontend/.env`:
+
+```bash
+VITE_API_URL=http://localhost:5001
+```
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Build for production:
+
+```bash
+npm run build
+npm run preview
+```
+
 ## Architecture
 
 ```
@@ -112,6 +149,8 @@ Frontend/
 - Feature highlights and benefits
 - Call-to-action buttons for registration
 - Responsive design with animations
+
+> Note: UI behavior may evolve, but the stable configuration point is `VITE_API_URL`.
 
 **Workflow**:
 

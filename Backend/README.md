@@ -9,6 +9,8 @@
 
 The StartSmart backend is a robust Node.js API server built with Express.js and MongoDB, providing comprehensive endpoints for startup evaluation, funding management, and ideathon platforms. It features AI-powered analysis, secure authentication, and role-based access control.
 
+This README focuses on **how to run the API today** (scripts, env vars, and routes as wired in `server.js`).
+
 ## Architecture
 
 ```
@@ -67,6 +69,58 @@ Backend/
 ```
 
 ## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MongoDB connection string (Atlas or local)
+
+### Install
+
+```bash
+cd Backend
+npm install
+```
+
+### Environment Variables
+
+Create `Backend/.env`:
+
+```bash
+# Database + Auth
+MONGO_URI=mongodb://127.0.0.1:27017/startsmart
+JWT_SECRET=change_me
+
+# Server
+PORT=5001
+NODE_ENV=development
+
+# CORS
+FRONTEND_URL=http://localhost:5173
+
+# AI (OpenRouter)
+OPENROUTER_API_KEY=your_openrouter_key
+# Optional: defaults to openai/gpt-4o-mini
+OPENROUTER_MODEL=openai/gpt-4o-mini
+
+# Email (optional)
+SENDGRID_API_KEY=your_sendgrid_key
+VERIFIED_SENDER_EMAIL=verified_sender@example.com
+
+# Admin defaults (optional)
+ADMIN_EMAIL=admin@startsmart.com
+ADMIN_PASSWORD=change_me
+ADMIN_NAME=StartSmart Administrator
+ADMIN_VERIFICATION_PASSWORD=change_me
+```
+
+### Run
+
+```bash
+npm run dev
+```
+
+Server starts on `http://localhost:5001` (or `PORT`).
 
 ## API Routes & Endpoints
 
@@ -130,6 +184,7 @@ POST /api/auth/login
 
 - **File Upload Support**: Attach documents, images, prototypes
 - **AI Analysis Integration**: Google Generative AI for idea evaluation
+- **AI Analysis Integration**: OpenRouter-based AI analysis (configurable model via `OPENROUTER_MODEL`)
 - **Interest Management**: Investor-entrepreneur connection system
 - **PDF Report Generation**: Comprehensive analysis reports
 
@@ -258,6 +313,37 @@ POST /api/auth/login
 | `POST`   | `/interests`         | Investor | Add idea to interests    |
 | `DELETE` | `/interests/:ideaId` | Investor | Remove from interests    |
 | `GET`    | `/analytics`         | Investor | Get investment analytics |
+
+---
+
+## Additional Routes (Implemented)
+
+These routes are mounted in `server.js` and are part of the current API surface:
+
+- `/api/team` (team resources)
+- `/api/aims` (business aims)
+- `/api/sustainability`
+- `/api/feedback`
+- `/api/reports`
+- `/api/notifications`
+- `/api/chart`
+- `/api/comparison`
+- `/api/marketResearch`
+- `/api/app-feedback`
+- `/api/messages` (negotiation messages)
+
+If you are updating client code or Postman collections, use the prefixes above.
+
+---
+
+## Real-time (Socket.IO)
+
+The backend initializes Socket.IO on the same server instance. Current events include:
+
+- `authenticate` (register a userId to a socket)
+- `joinFundingRoom` / `leaveFundingRoom`
+
+The frontend in this repo primarily uses HTTP APIs (including polling for chat) and may not depend on Socket.IO directly.
 
 ### Notification Routes (`/api/notifications`)
 
@@ -497,10 +583,11 @@ const analyzeBusinessIdea = async (ideaData) => {
 
 **Supported AI Models**:
 
-- **GPT-4o-mini** (Default): Cost-effective, reliable analysis
-- **Gemini 2.0 Flash**: Fast processing, free tier available
-- **Claude 3 Haiku**: Advanced reasoning capabilities
-- **GPT-3.5 Turbo**: Budget-friendly option
+- Models are configured via `OPENROUTER_MODEL` in `Backend/.env`.
+- Common options used in this repo:
+  - `openai/gpt-4o-mini` (default)
+  - `google/gemini-2.0-flash-exp:free`
+  - `anthropic/claude-3-haiku`
 
 **Analysis Components**:
 
@@ -510,7 +597,7 @@ const analyzeBusinessIdea = async (ideaData) => {
 - **Financial Projections**: Revenue and cost estimates
 - **Risk Assessment**: Potential challenges and mitigation
 - **Sustainability Score**: Environmental impact evaluation
-- **Market Trends**: AI-powered industry trend analysis (2021-2025)
+- **Market Trends**: AI-powered industry trend analysis (fallback series included if AI is unavailable)
 - **SWOT Analysis**: Comprehensive strengths, weaknesses, opportunities, threats
 - **Growth Roadmap**: Strategic milestones and recommendations
 
@@ -573,17 +660,12 @@ const generateIdeaReport = async (idea, analysis) => {
 
 ```bash
 npm run dev          # Start with nodemon for auto-restart
-npm run init-admin   # Initialize admin account
-npm run setup        # Full setup with dependencies and admin
+npm start            # Production start
 ```
 
 ### Production Deployment
 
-```bash
-npm start            # Production server
-npm run migrate      # Database migrations
-npm run seed         # Seed initial data
-```
+Primary scripts are `npm start` and `npm run dev`. The `package.json` also contains helper scripts like `init-admin`/`setup`; if you rely on them, verify the corresponding script files exist in your checkout.
 
 ### Environment Configuration
 
@@ -597,6 +679,8 @@ SENDGRID_API_KEY=SG.your-sendgrid-key
 VERIFIED_SENDER_EMAIL=your@email.com
 ADMIN_EMAIL=admin@startsmart.com
 ADMIN_PASSWORD=secure_admin_password
+FRONTEND_URL=http://localhost:5173
+PORT=5001
 ```
 
 ```javascript
@@ -609,17 +693,8 @@ const connectDB = async () => {
 };
 ```
 
-### Docker Support
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 5001
-CMD ["npm", "start"]
-```
+> Note: A Dockerfile is not included in this repository at the moment. If you add containerization, ensure `PORT` and `FRONTEND_URL` are set correctly.
 
 ## Testing Strategy
 
