@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash, FaArrowRight } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import SEO from "../components/SEO.jsx";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -71,6 +72,13 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+      <SEO
+        title="Login"
+        description="Log in to StartSmart to access your entrepreneur, investor, or admin dashboard."
+        pathname="/login"
+        noindex
+        nofollow
+      />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}

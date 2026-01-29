@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaArrowLeft, FaExclamationCircle, FaSync } from "react-icons/fa";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import SEO from "../../components/SEO.jsx";
 
 const ServerErrorPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const ServerErrorPage = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+      <SEO title="Server Error" description="Something went wrong on our side." noindex nofollow />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}

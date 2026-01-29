@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin/
+Disallow: /investor
+Disallow: /investor/
+Disallow: /entrepreneur
+Disallow: /entrepreneur/
+Disallow: /submit-idea
+Disallow: /edit-idea
+
+Sitemap: http://localhost:5173/sitemap.xml

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaArrowLeft, FaLock, FaUser } from "react-icons/fa";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import SEO from "../../components/SEO.jsx";
 
 const UnauthorizedPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const UnauthorizedPage = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+      <SEO title="Unauthorized" description="You don't have permission to access this page." noindex nofollow />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}

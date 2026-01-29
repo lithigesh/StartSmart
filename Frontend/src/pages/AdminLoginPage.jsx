@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import SEO from "../components/SEO.jsx";
 import {
   FaLock,
   FaEye,
@@ -116,6 +117,13 @@ const AdminLoginPage = () => {
         <div className="absolute top-1/2 left-1/6 w-16 h-16 bg-white/4 rounded-full animate-ping blur-lg"></div>
       </div>
 
+      <SEO
+        title="Admin Login"
+        description="Admin login for StartSmart platform management."
+        pathname="/admin/login"
+        noindex
+        nofollow
+      />
       <div className="w-full max-w-md mx-auto px-4 z-10">
         {/* Back to home link */}
         <div className="mb-8 text-center">

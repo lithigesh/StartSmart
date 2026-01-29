@@ -22,6 +22,7 @@ import InvestorDealsPage from "./investor/InvestorDealsPage";
 import InvestorFeedbackPage from "./investor/InvestorFeedbackPage";
 import InvestorOverviewPage from "./investor/InvestorOverviewPage";
 import { FaLightbulb, FaHeart, FaBell } from "react-icons/fa";
+import SEO from "../components/SEO.jsx";
 
 const InvestorDashboard = () => {
   const { unreadCount } = useNotifications();
@@ -522,6 +523,13 @@ const InvestorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-black overflow-x-hidden">
+      <SEO
+        title="Investor Dashboard"
+        description="Investor dashboard for browsing and tracking startup opportunities on StartSmart."
+        pathname={location.pathname}
+        noindex
+        nofollow
+      />
       {/* Sidebar */}
       <InvestorSidebar
         activeSection={activeSection}

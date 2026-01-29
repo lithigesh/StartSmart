@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
 import "../styles/AdminEnhancements.css";
+import SEO from "../components/SEO.jsx";
 import {
   FaUsers,
   FaLightbulb,
@@ -81,6 +82,13 @@ const AdminDashboard = () => {
 
   return (
     <div className="h-screen bg-black flex overflow-hidden">
+      <SEO
+        title={getPageTitle()}
+        description="Admin dashboard for managing StartSmart users, ideas, ideathons, and feedback."
+        pathname={currentPath}
+        noindex
+        nofollow
+      />
       {/* Animated background - matching landing page style */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/[0.03] rounded-full animate-pulse blur-xl"></div>

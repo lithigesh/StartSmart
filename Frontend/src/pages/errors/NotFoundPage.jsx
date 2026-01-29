@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaArrowLeft, FaExclamationTriangle } from "react-icons/fa";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import SEO from "../../components/SEO.jsx";
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const NotFoundPage = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+      <SEO title="404 - Page Not Found" description="The page you requested could not be found." noindex nofollow />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}

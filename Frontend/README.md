@@ -30,6 +30,10 @@ Create `Frontend/.env`:
 
 ```bash
 VITE_API_URL=http://localhost:5001
+
+# Used for absolute Open Graph URLs (WhatsApp/Twitter previews) + sitemap/robots generation
+# Example (production): https://your-domain.com
+VITE_SITE_URL=http://localhost:5173
 ```
 
 Start development server:

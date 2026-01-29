@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaHome, FaArrowLeft, FaWifi, FaSync } from "react-icons/fa";
 import StartSmartIcon from "/w_startSmart_icon.png";
+import SEO from "../../components/SEO.jsx";
 
 const NetworkErrorPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const NetworkErrorPage = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+      <SEO title="Network Error" description="Please check your connection and try again." noindex nofollow />
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}

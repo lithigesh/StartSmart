@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import DashboardHeader from "../../components/entrepreneur/DashboardHeader";
 import SideBar from "../../components/entrepreneur/SideBar";
+import SEO from "../../components/SEO.jsx";
 
 const EntrepreneurLayout = () => {
   const [activeSection, setActiveSection] = useState("overview");
@@ -63,6 +64,13 @@ const EntrepreneurLayout = () => {
 
   return (
     <div className="min-h-screen bg-black overflow-x-hidden">
+      <SEO
+        title="Entrepreneur Dashboard"
+        description="Entrepreneur workspace for managing ideas, ideathons, and funding requests on StartSmart."
+        pathname={typeof window !== "undefined" ? window.location.pathname : "/entrepreneur"}
+        noindex
+        nofollow
+      />
       {/* Sidebar */}
       <SideBar 
         activeSection={activeSection} 
