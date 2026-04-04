@@ -9,6 +9,10 @@ This repository contains:
 
 ---
 
+![Start Smart_page-0001](https://github.com/user-attachments/assets/5e059795-f4cd-4bd3-a044-eb7f9219db2a)
+
+---
+
 ## Quickstart (Local Development)
 
 ### Prerequisites
