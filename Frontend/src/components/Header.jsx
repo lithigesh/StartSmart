@@ -2,15 +2,26 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaSignOutAlt, FaSignInAlt, FaUserPlus } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { useBackendStatus } from "../context/BackendStatusContext";
 import StartSmartIcon from "/w_startSmart_icon.png";
 
 export const Header = () => {
   const { isAuthenticated, user, logout, getRoleDashboardUrl } = useAuth();
+  const { isAwake, isWakingUp, triggerWakeup } = useBackendStatus();
   const navigate = useNavigate();
+
+  const isConnecting = !isAwake && isWakingUp;
 
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  const handleAuthClick = (e) => {
+    if (!isAwake) {
+      e.preventDefault();
+      triggerWakeup();
+    }
   };
 
   const getRoleColor = () => {
@@ -65,6 +76,7 @@ export const Header = () => {
                 {/* User Info */}
                 <Link
                   to={getDashboardUrl()}
+                  onClick={handleAuthClick}
                   className="hidden sm:flex items-center gap-3 px-4 py-2 bg-white/[0.08] backdrop-blur-sm border border-white/20 rounded-lg hover:bg-white/[0.12] hover:border-white/30 transition-all duration-300 hover:scale-105 group"
                 >
                   <div
@@ -85,6 +97,7 @@ export const Header = () => {
                 {/* Mobile User Button */}
                 <Link
                   to={getDashboardUrl()}
+                  onClick={handleAuthClick}
                   className="sm:hidden w-10 h-10 bg-white/[0.08] backdrop-blur-sm border border-white/20 rounded-lg flex items-center justify-center hover:bg-white/[0.12] hover:border-white/30 transition-all duration-300 hover:scale-105"
                 >
                   <FaUser className={`w-4 h-4 ${getRoleColor()}`} />
@@ -104,6 +117,7 @@ export const Header = () => {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
+                  onClick={handleAuthClick}
                   className="flex items-center gap-2 px-4 py-2 bg-white/[0.05] border border-white/20 rounded-lg text-white/80 hover:text-white hover:bg-white/[0.10] hover:border-white/30 transition-all duration-300 hover:scale-105 group font-manrope"
                 >
                   <FaSignInAlt className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -112,6 +126,7 @@ export const Header = () => {
 
                 <Link
                   to="/register"
+                  onClick={handleAuthClick}
                   className="relative overflow-hidden flex items-center gap-2 px-4 py-2 bg-white text-black hover:bg-gray-100 rounded-lg transition-all duration-300 hover:scale-105 group font-manrope font-medium shadow-lg"
                 >
                   {/* Shimmer effect */}

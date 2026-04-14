@@ -3,6 +3,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
+import { BackendStatusProvider } from "./context/BackendStatusContext";
+import BackendWakeup from "./components/BackendWakeup";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleBasedRoute from "./components/RoleBasedRoute";
@@ -61,8 +63,10 @@ const App = () => {
   return (
     <ErrorBoundary>
       <Suspense fallback={<LoadingSpinner />}>
-        <AuthProvider>
-          <Toaster
+        <BackendStatusProvider>
+          <AuthProvider>
+            <BackendWakeup />
+            <Toaster
             position="top-right"
             toastOptions={{
               duration: 4000,
@@ -286,7 +290,8 @@ const App = () => {
             <Analytics />
           </BrowserRouter>
         </AuthProvider>
-      </Suspense>
+      </BackendStatusProvider>
+    </Suspense>
     </ErrorBoundary>
   );
 };
